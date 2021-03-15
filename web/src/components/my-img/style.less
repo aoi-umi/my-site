@@ -1,0 +1,30 @@
+@clsPrefix: my-img-;
+
+.@{clsPrefix} {
+  &root {
+    text-align: center;
+    &.fail-icon {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  &image {
+    width: inherit;
+    height: inherit;
+    max-width: inherit;
+    max-height: inherit;
+  }
+
+  &image {
+    object-fit: cover;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: block;
+  }
+
+  &icon {
+    line-height: 90px;
+  }
+}

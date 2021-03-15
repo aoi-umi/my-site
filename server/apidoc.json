@@ -1,0 +1,16 @@
+{
+    "name": "接口文档",
+    "version": "1.0.0",
+    "description": "",
+    "title": "接口文档",
+    "url": "",
+    "header": {
+        "title": "接口文档"
+    },
+    "footer": {},
+    "order": [],
+    "template": {
+        "withCompare": true,
+        "withGenerator": true
+    }
+}

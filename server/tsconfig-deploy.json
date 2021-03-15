@@ -1,0 +1,7 @@
+{
+    "extends": "./tsconfig",
+    "compilerOptions": {
+        "outDir": "./deploy",
+        "sourceMap": false,
+    }
+}

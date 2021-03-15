@@ -1,0 +1,53 @@
+.vjs- {
+  &control-bar {
+    flex-direction: column;
+    height: auto !important;
+  }
+  &danmaku- {
+    &bar,
+    &status-bar {
+      display: flex;
+      height: 3em;
+    }
+    &bar {
+      align-items: center;
+      padding: 5px 10px;
+    }
+    &input {
+      height: 2em;
+      flex-grow: 1;
+      margin: 0 10px;
+      padding: 2px 10px;
+      background: transparent;
+      color: #fff;
+
+      border: 0.06666em solid #fff;
+      border-radius: 0.3em;
+    }
+    &send {
+      cursor: pointer;
+      border: 0.06666em solid #fff !important;
+      border-radius: 0.3em;
+    }
+    &board {
+      position: absolute;
+      overflow: hidden;
+      stroke: 0.5px #000;
+      color: white;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+    &danmaku {
+      display: inline-block;
+      position: absolute;
+      white-space: nowrap;
+      font-size: 25px;
+      padding-top: 5px;
+    }
+    &danmaku-self {
+      border: 1px solid #fff;
+    }
+  }
+}

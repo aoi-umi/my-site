@@ -1,0 +1,44 @@
+.my-editor- {
+  &wrap {
+    position: relative;
+    min-height: 300px;
+    height: auto;
+  }
+
+  &pre {
+    line-height: 1.5;
+    font-size: 14px;
+    padding: 10px 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  &md-editor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+
+    textarea {
+      height: 100%;
+      resize: none;
+    }
+  }
+
+  &preview {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin-top: 10px;
+    line-height: 1.5;
+
+    pre {
+      padding: 5px 10px;
+    }
+
+    code,
+    pre {
+      background-color: #f0f0f0;
+      border-radius: 3px;
+    }
+  }
+}

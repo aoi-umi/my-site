@@ -1,0 +1,64 @@
+@prefix: my-list-;
+.@{prefix} {
+  &toggle-box {
+    justify-content: flex-end;
+    display: flex;
+  }
+
+  &page {
+    text-align: right;
+    margin: 5px;
+    .ivu-page-options {
+      display: block;
+      margin-top: 10px;
+    }
+  }
+
+  &action-box > * {
+    margin: 5px;
+  }
+
+  &bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 12;
+    transform: translateY(100%);
+
+    &.active {
+      transform: translateY(0%);
+    }
+  }
+
+  &query-args-box {
+    transition: max-height 0.5s ease;
+    max-height: 600px;
+    &.collapsed {
+      max-height: 0;
+      overflow: hidden;
+    }
+  }
+  &query-arg-item {
+    margin-bottom: 5px;
+  }
+
+  &content {
+    position: relative;
+    margin-top: 10px;
+  }
+
+  &table {
+    overflow: visible;
+  }
+
+  &bottom-loading {
+    position: relative;
+    min-height: 37px;
+    text-align: center;
+    vertical-align: middle;
+  }
+  &bottom-loading-msg > .ivu-divider-inner-text > * {
+    margin: 0 5px;
+  }
+}

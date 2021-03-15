@@ -1,0 +1,123 @@
+html,
+body {
+  height: auto;
+  background: #f5f7f9;
+  overflow: auto;
+  min-width: 400px;
+}
+
+::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 8px;
+  height: 8px;
+  background-color: #f2f2f2;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background-color: #ccc;
+  min-height: 30px;
+
+  &:hover {
+    background-color: #b3b3b3;
+  }
+}
+
+.hidden {
+  display: none !important;
+}
+
+.invisibility {
+  visibility: hidden !important;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.button-group-normal > {
+  button {
+    margin-right: 5px;
+  }
+}
+
+.dialog-view {
+  .dialog-content {
+    max-width: 400px;
+    min-width: 250px;
+    margin: 0 auto;
+  }
+}
+
+.cover {
+  object-fit: cover;
+  width: 160px !important;
+  height: 90px !important;
+}
+
+img[lazy="loading"] {
+  width: auto !important;
+  height: auto !important;
+}
+
+.form-no-error .ivu-form-item {
+  margin-bottom: 0;
+}
+
+.ivu-avatar img {
+  object-fit: cover;
+}
+
+.ivu-tabs,
+.ivu-table,
+.ivu-table-wrapper {
+  overflow: visible;
+}
+
+.shadow {
+  box-shadow: 1px 1px 5px #888888;
+}
+
+.not-important {
+  color: #798692;
+}
+
+.no-bg {
+  background: none;
+}
+
+.flex-stretch {
+  flex: 1 1 auto;
+  align-self: stretch;
+}
+
+.loading-icon {
+  animation: ani-demo-spin 1s linear infinite;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+@media (min-width: 576px) {
+  .my-list-bottom-bar {
+    left: 58px !important;
+  }
+
+  .comp-side-menu-root.open {
+    .my-list-bottom-bar {
+      left: 180px !important;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .my-video- {
+    &danmaku-box,
+    &danmaku-box-side-bar {
+      display: none;
+    }
+  }
+}

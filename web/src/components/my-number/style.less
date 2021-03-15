@@ -1,0 +1,32 @@
+@radius: 5px;
+.my-number- {
+  &main {
+    display: flex;
+    align-items: center;
+  }
+  &sub,
+  &add {
+    cursor: pointer;
+    border-radius: 0;
+    margin: 0;
+  }
+  &sub {
+    border-top-left-radius: @radius;
+    border-bottom-left-radius: @radius;
+  }
+  &add {
+    border-top-right-radius: @radius;
+    border-bottom-right-radius: @radius;
+  }
+
+  &sub,
+  &add,
+  &num {
+    padding: 2px 4px;
+    background: rgb(223, 223, 223);
+    margin: 0 2px;
+    min-width: 30px;
+    text-align: center;
+    font-weight: bold;
+  }
+}

@@ -1,0 +1,81 @@
+@prefix: comp-side-menu-;
+
+.@{prefix} {
+  &blank {
+    flex: 0 0 78px;
+    position: relative;
+    transition: all 0.2s ease-in-out;
+  }
+
+  &sider {
+    overflow-y: auto;
+  }
+
+  &mask {
+    z-index: 13;
+  }
+
+  &menu {
+    span {
+      display: inline-block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      vertical-align: bottom;
+
+      width: 0px;
+      transition: width 0.2s ease;
+    }
+
+    i {
+      vertical-align: middle;
+      font-size: 22px;
+    }
+  }
+
+  &root.open {
+    .@{prefix}menu {
+      span {
+        width: 69px;
+        transition: width 0.2s ease 0.2s;
+      }
+    }
+  }
+
+  &tooltip {
+    display: flex;
+    justify-content: stretch;
+
+    .ivu-tooltip-rel {
+      display: flex;
+      justify-content: stretch;
+      flex-grow: 1;
+
+      > * {
+        flex-grow: 1;
+      }
+    }
+  }
+
+  &item,
+  &sub-menu > .ivu-menu-submenu-title {
+    padding: 14px !important;
+    padding-left: 20px !important;
+  }
+
+  &item,
+  &sub-menu-title {
+    display: flex;
+  }
+
+  &sub-menu-title > i {
+    margin-right: 6px;
+  }
+}
+
+.ivu-layout-sider-collapsed {
+  .ivu-menu-submenu-title-icon,
+  .ivu-menu-submenu .@{prefix}text {
+    display: none;
+  }
+}

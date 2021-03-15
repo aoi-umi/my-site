@@ -1,0 +1,26 @@
+.my-dock-panel- {
+  &container {
+    display: flex;
+    overflow: auto;
+    flex-shrink: 0;
+  }
+  &stretch {
+    align-self: stretch;
+    flex: 1 1 auto;
+  }
+  &row {
+    flex-direction: row;
+  }
+  &column {
+    flex-direction: column;
+  }
+
+  &item- {
+    &root {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all .2s ease-in-out;
+    }
+  }
+}

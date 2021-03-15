@@ -1,0 +1,71 @@
+@prefix: my-upload-;
+
+.@{prefix} {
+  &item {
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    // vertical-align: middle;
+    line-height: 60px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #fff;
+    position: relative;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    margin-right: 4px;
+
+    img {
+      // width: 100%;
+      height: 100%;
+    }
+    &:hover .@{prefix}item-cover {
+      display: block;
+      cursor: move;
+    }
+  }
+
+  &item-cont {
+    width: inherit;
+    height: inherit;
+  }
+
+  &item-cover {
+    display: none;
+    position: absolute;
+    top: 0;
+    // bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 2;
+
+    i {
+      color: #fff;
+      font-size: 20px;
+      cursor: pointer;
+      margin: 0 2px;
+    }
+  }
+
+  &upload {
+    display: inline-block;
+  }
+
+  &cropper-root {
+    text-align: center;
+    width: 100%;
+  }
+
+  &cropper-cont {
+    display: inline-block;
+  }
+
+  &cropper-circle {
+    .cropper-view-box,
+    .cropper-face {
+      border-radius: 50%;
+    }
+  }
+}

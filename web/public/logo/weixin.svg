@@ -1,0 +1,24 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="50">
+    <defs>
+        <g id="part1">
+            <ellipse cx="155" cy="150" rx="150" ry="110" style="fill:#fff;stroke:#fff;stroke-width:2"/>
+            <circle cx="110" cy="105" r="18" style="fill:#08c406;"/>
+            <circle cx="210" cy="105" r="18" style="fill:#08c406;"/>
+            <polygon points="60,280 80,195 180,200" style="fill:#fff;stroke:#fff;stroke-width:1"/>
+        </g>
+        <g id="part2">
+            <ellipse cx="270" cy="230" rx="125" ry="90" style="fill:#fff;stroke:#08c406;stroke-width:10"/>
+            <circle cx="230" cy="200" r="15" style="fill:#08c406;"/>
+            <circle cx="320" cy="200" r="15" style="fill:#08c406;"/>
+            <polygon points="330,260 360,330 300,300" style="fill:#fff;stroke:#fff;stroke-width:1"/>
+        </g>
+        <g id="full">
+            <use href="#part1" x="0" y="0"/>
+            <use href="#part2" x="0" y="0"/>
+        </g>
+    </defs>
+    <rect width="500" height="500" style="fill:#08c406"/>
+    <use href="#full" x="50" y="60"/>
+</svg>

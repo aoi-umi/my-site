@@ -1,0 +1,29 @@
+{
+    "compilerOptions": {
+        "outDir": "./dest",
+        "rootDir": "./src",
+        "baseUrl": "./src",
+        "paths": {
+            "@/*": [
+                "./*"
+            ]
+        },
+        "typeRoots": [
+            "./node_modules/@types",
+            "./src/typings"
+        ],
+        "sourceMap": true,
+        //"noImplicitAny": false,
+        //"strict": false,
+        "module": "commonjs",
+        "target": "es2019",
+        "lib": [
+            "es2019",
+        ],
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "strictPropertyInitialization": false,
+        "moduleResolution": "node",
+        "skipLibCheck": true
+    }
+}
