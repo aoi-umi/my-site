@@ -159,7 +159,7 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
   stylePrefix = clsPrefix;
 
   private cols?: ColType[];
-  protected created () {
+  protected created() {
     if (this.type == 'table') {
       if (!this.columns && !this.colConfigs) { throw new Error(`type 'table' require 'columns' or 'colConfigs'!`) }
       this.cols = []
@@ -170,7 +170,8 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
             title: ele.text || ele.name,
             align: 'center',
             render: (h, params) => {
-              return (<DynamicComp props={this.dynamicCompOptions} config={ele} data={params.row}
+              let data = this.findOriginData(params.row)
+              return (<DynamicComp props={this.dynamicCompOptions} config={ele} data={data}
               ></DynamicComp>)
             }
           }
@@ -198,25 +199,25 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
     window.addEventListener('scroll', this.handleScrollEnd)
   }
 
-  protected beforeDestroy () {
+  protected beforeDestroy() {
     window.removeEventListener('scroll', this.handleScrollEnd)
   }
 
-  private handleScrollEnd () {
+  private handleScrollEnd() {
     if (this.infiniteScroll && Utils.isScrollEnd()) {
       this.scrollEndHandler()
     }
   }
 
-  private scrollEndHandler () {
+  private scrollEndHandler() {
     if (!this.loadedLastPage && !this.loading) {
       this.handleQuery({ noClear: true })
     }
   }
-  public query (data?: any, noClear?: boolean) {
+  public query(data?: any, noClear?: boolean) {
     return this._handleQuery(data, noClear)
   }
-  private async _handleQuery (data?: any, noClear?: boolean) {
+  private async _handleQuery(data?: any, noClear?: boolean) {
     this.loading = true
     try {
       this.selectedRows = []
@@ -245,7 +246,7 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
     }
   }
 
-  handleQuery (opt?: {
+  handleQuery(opt?: {
     noClear?: boolean;
     resetPage?: boolean;
   }) {
@@ -258,23 +259,23 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
     this.$emit('query', this.model, opt.noClear, this)
   }
 
-  private handlePress (e) {
+  private handlePress(e) {
     if (e.charCode == 13) {
       this.handleQuery({ resetPage: true })
     }
   }
 
-  get selectedRows () {
+  get selectedRows() {
     return this.model.selection
   }
-  set selectedRows (val) {
+  set selectedRows(val) {
     this.model.selection = val
   }
-  private selectionChangeHandler (selection) {
+  private selectionChangeHandler(selection) {
     this.selectedRows = selection
   }
 
-  private currentChangeHandler (_currentRow, _oldCurrentRow) {
+  private currentChangeHandler(_currentRow, _oldCurrentRow) {
     let currentRow = this.findOriginData(_currentRow)
     let oldCurrentRow = this.findOriginData(_oldCurrentRow)
 
@@ -284,7 +285,7 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
     })
   }
 
-  private findOriginData (row) {
+  private findOriginData(row) {
     if (this.data && row) { return this.data.find(ele => ele._index === row._index) }
   }
 
@@ -293,12 +294,14 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
   model = this.value;
 
   @Watch('value')
-  private watchValue (newVal) {
+  private watchValue(newVal) {
     this.model = newVal
   }
 
-  @Watch('data')
-  private watchData (newVal) {
+  @Watch('data', {
+    immediate: true
+  })
+  private watchData(newVal) {
     if (newVal) {
       newVal.forEach((ele, idx) => {
         ele._index = idx
@@ -306,12 +309,12 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
     }
   }
 
-  setQueryByKey (data, keyList: string[]) {
+  setQueryByKey(data, keyList: string[]) {
     keyList.forEach(key => {
       if (data[key]) { this.$set(this.model.query, key, data[key]) }
     })
   }
-  setModel (data, opt: {
+  setModel(data, opt: {
     queryKeyList?: string[];
     toListModel?: (data, model: MyListModel) => any;
   }) {
@@ -331,7 +334,7 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
   };
   loadedLastPage = false;
 
-  private get bottomBarClass () {
+  private get bottomBarClass() {
     const cls = this.getStyleName('bottom-bar')
     if (this.multiOperateBtnList.length && this.selectedRows.length) {
       cls.push('active')
@@ -339,7 +342,7 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
     return cls
   }
 
-  private resetQueryArgs () {
+  private resetQueryArgs() {
     if (this.queryArgs) {
       for (const key in this.queryArgs) {
         this.$set(this.model.query, key, '')
@@ -349,7 +352,7 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
 
   $refs: { page: iView.Page & { currentPage: number } };
 
-  private _customRenderFn (rs: ResultType) {
+  private _customRenderFn(rs: ResultType) {
     let defaultFail
     if (!rs.success || !rs.data.length) {
       const msg = !rs.success ? rs.msg : this.defaultCustomNoDataMsg
@@ -365,7 +368,7 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
     )
   }
 
-  private renderPage (position: string) {
+  private renderPage(position: string) {
     if (!this.infiniteScroll && !this.hidePage && this.result.total !== 0 && (['both', position].includes(this.pagePosition))) {
       return (
         <Page
@@ -390,7 +393,7 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
           }} />)
     }
   }
-  protected render () {
+  protected render() {
     const hideQueryBtn = this.hideQueryBtn || {}
     if (this.$refs.page && this.$refs.page.currentPage !== this.model.page.index) {
       this.$refs.page.currentPage = this.model.page.index

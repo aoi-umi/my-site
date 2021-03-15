@@ -11,6 +11,23 @@ import { Base } from '../base'
 export default class App extends Base {
   configList: DynamicCompConfigType[] = []
   data = {}
+  listData = []
+  compProp = {
+    input: {
+      event: {
+        'on-change': (...args) => {
+          console.log(args)
+        }
+      }
+    },
+    select: {
+      event: {
+        'on-change': (...args) => {
+          console.log(args)
+        }
+      }
+    }
+  }
   selectRow: DynamicCompConfigType = null
   editable = true
 
@@ -21,15 +38,16 @@ export default class App extends Base {
     }] as any
   }
 
-  getDefaultConfig () {
+  getDefaultConfig() {
     return { editable: true }
   }
-  created () {
+  created() {
     this.configList = Object.entries({
       ...DynamicCompType,
       不可编辑输入框: {
-        name: 'input',
-        editable: false
+        name: 'dis-input',
+        editable: false,
+        type: 'input',
       },
       动态组件: {
         name: 'dyn-input'
@@ -37,13 +55,17 @@ export default class App extends Base {
     }).map((ele, index) => {
       let val = ele[1]
       let text = ele[0]
-      let name = ''
-      if (typeof val === 'string') { name = val } else name = val.name
+      let name = '', type = ''
+      if (typeof val === 'string') { name = val } else {
+        name = val.name
+        type = val.type
+      }
+      if (!type) type = name
       let obj = {
         ...this.getDefaultConfig(),
         name,
         text,
-        type: name,
+        type: type,
         isRange: false,
         options: 'options',
         remark: `${text}_${name}`
@@ -59,7 +81,7 @@ export default class App extends Base {
     this.setData()
   }
 
-  dynamicConfig ({ config, name, value, data }) {
+  dynamicConfig({ config, name, value, data }) {
     if (name === 'dyn-input') {
       if (data.input === 'disabled') return { editable: false }
       if (data.input === 'required') return { required: true }
@@ -68,14 +90,14 @@ export default class App extends Base {
     return
   }
 
-  changeOption () {
+  changeOption() {
     this.extraValue.options = {
       选项2: 'option2',
       选项1: 'option1'
     }
   }
 
-  getData (d?) {
+  getData(d?) {
     let data = {}
     this.configList.forEach(ele => {
       data[ele.name] = null
@@ -90,11 +112,12 @@ export default class App extends Base {
     }
     return data
   }
-  setData () {
+  setData() {
     this.data = this.getData()
+    this.listData = [this.getData(), this.getData({ input: 'required' })]
   }
 
-  render () {
+  render() {
     return (
       <div>
         <span>动态组件</span>
@@ -142,6 +165,10 @@ export default class App extends Base {
               <Button on-click={() => {
                 this.changeOption()
               }}>修改选项</Button>
+              <Button on-click={() => {
+                console.log(this.data)
+                console.log(this.listData)
+              }}>查看</Button>
             </div>
             {this.renderSetting()}
           </Col>
@@ -154,6 +181,7 @@ export default class App extends Base {
                   <DynamicComp style='margin: 0 5px 5px 0'
                     config={ele}
                     data={this.data}
+                    compProp={this.compProp}
                     showText
                     editable={this.editable}
                     readonlyType='disabled'
@@ -169,15 +197,16 @@ export default class App extends Base {
           {
             extraValue: this.extraValue,
             editable: this.editable,
-            dynamicConfig: this.dynamicConfig
+            dynamicConfig: this.dynamicConfig,
+            compProp: this.compProp
           }
         }
-        data={[this.getData(), this.getData({ input: 'required' })]}></MyList>
+          data={this.listData}></MyList>
       </div>
     )
   }
 
-  renderSetting () {
+  renderSetting() {
     if (!this.selectRow) return <div />
     return (
       <Form label-width={50} show-message={false}>

@@ -6,6 +6,7 @@ interface VueComponentOptions<Props = any> {
   props?: Props;
   slot?: string;
   name?: string;
+  on?: any;
 }
 
 interface UserInfo {

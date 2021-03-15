@@ -59,6 +59,12 @@ export type DynamicCompConfigType = {
   append?: any
   required?: boolean
 };
+
+type DynamicCompPropType = {
+  [key: string]: {
+    event?: any
+  }
+}
 export class DynamicCompProp {
   @Prop({
     required: true
@@ -69,6 +75,9 @@ export class DynamicCompProp {
     required: true
   })
   data: any;
+
+  @Prop()
+  compProp?: DynamicCompPropType;
 
   @Prop()
   showText?: boolean;
@@ -101,9 +110,9 @@ export class DynamicCompProp {
 })
 class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
   stylePrefix = 'my-dynamic-comp-';
-  created () {
+  created() {
   }
-  render () {
+  render() {
     return (
       <Tooltip class={this.getStyleName('root')} disabled={!this.toolTips}>
         {this.showText &&
@@ -123,7 +132,7 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
 
   private loading = false
 
-  private get selectOptions () {
+  private get selectOptions() {
     let { config, data } = this.getActualOption()
     let val
     if (typeof config.options === 'function') {
@@ -145,23 +154,23 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
 
   private remoteSelectOptions: SelectOptionType[] = []
 
-  private get actuallyEditable () {
+  private get actuallyEditable() {
     return this.actualOption.editable
   }
-  private get actuallyRequired () {
+  private get actuallyRequired() {
     return this.actualOption.config.required
   }
 
-  private get isDate () {
+  private get isDate() {
     let { config } = this.getActualOption()
     return [DynamicCompType.日期, DynamicCompType.日期时间].includes(config.type)
   }
 
-  private get actualOption () {
+  private get actualOption() {
     return this.getActualOption()
   }
   // 获取实际的参数
-  private getActualOption () {
+  private getActualOption() {
     let { config, data } = this
     let cfg
     if (this.dynamicConfig) {
@@ -180,18 +189,22 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
     }
 
     let rangeSeparator = config.rangeSeparator || '-'
+    let event = this.compProp?.[actConfig.name]?.event
+    if (event)
+      event = { ...event }
     return {
       data,
       config: actConfig,
       editable: this.editable && actConfig.editable,
-      rangeSeparator
+      rangeSeparator,
+      event
     }
   }
 
-  private get toolTips () {
+  private get toolTips() {
     return this.getReadonlyValue()
   }
-  private getReadonlyValue () {
+  private getReadonlyValue() {
     let { data, config, rangeSeparator } = this.getActualOption()
 
     let val = data[config.name]
@@ -199,8 +212,9 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
     if (config.type === DynamicCompType.选择器) {
       let match = this.selectOptions.find(ele => ele.value == val)
       if (match) showValue = match.label
-    }
-    if (this.isDate) {
+    } else if (config.type === DynamicCompType.多选框) {
+      showValue = val ? 'True' : 'False'
+    } else if (this.isDate) {
       let fmt = {
         [DynamicCompType.日期]: 'date',
         [DynamicCompType.日期时间]: 'datetime'
@@ -215,14 +229,16 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
     return showValue
   }
 
-  renderText () {
+  renderText() {
     return this.getReadonlyValue()
   }
-  renderComp () {
-    let { data, config, rangeSeparator } = this.getActualOption()
+  renderComp() {
+    let { data, config, rangeSeparator, event } = this.getActualOption()
 
     if (config.type === DynamicCompType.多选框) {
-      return <Checkbox v-model={data[config.name]} disabled={!this.actuallyEditable} />
+      return <Checkbox v-model={data[config.name]}
+        disabled={!this.actuallyEditable}
+        on={event} />
     }
 
     if (this.readonlyType === 'text' && !this.actuallyEditable) {
@@ -241,6 +257,7 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
           clearable transfer filterable
           v-model={data[config.name]} placeholder={config.remark}
           loading={this.loading} remote-method={method} disabled={!this.actuallyEditable}
+          on={event}
         >
           {this.selectOptions?.map((ele) => {
             return <i-option value={ele.value} key={ele.label}>{ele.label}</i-option>
@@ -257,7 +274,9 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
       if (config.isRange) type += 'range'
       return <DatePicker
         clearable transfer
-        type={type} v-model={data[config.name]} disabled={!this.actuallyEditable}
+        type={type} v-model={data[config.name]}
+        disabled={!this.actuallyEditable}
+        on={event}
         placeholder={config.remark} />
     }
 
@@ -268,6 +287,7 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
         <TimePicker
           transfer
           disabled={!this.actuallyEditable}
+          on={event}
           v-model={data[config.name]}
           type={type}
           range-separator={rangeSeparator}
@@ -281,6 +301,7 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
         <InputNumber
           v-model={data[config.name]}
           disabled={!this.actuallyEditable}
+          on={event}
           controls-position='right'
           placeholder={config.remark}
         />
@@ -290,6 +311,7 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
     return <Input
       v-model={data[config.name]}
       disabled={!this.actuallyEditable}
+      on={event}
       placeholder={config.remark}
       clearable
     >
@@ -297,7 +319,7 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
     </Input>
   }
 
-  setSelectOption (opt: { query?}) {
+  setSelectOption(opt: { query?}) {
     let { query } = opt
     let { config, data } = this.getActualOption()
     let rs = (config.options as any)(query)

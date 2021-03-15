@@ -21,20 +21,20 @@ export default class App extends Base {
   title = '';
   $refs: { sideMenu: SideMenu, signIn: SignInModel };
 
-  async logPV () {
+  async logPV() {
     testApi.statPVSave({ path: this.$route.path })
   }
 
   activeName = '';
-  getActiveNameByPath (path: string) {
+  getActiveNameByPath(path: string) {
     return this.$refs.sideMenu?.getActiveNameByPath(path)
   }
 
-  setActiveNameByPath () {
+  setActiveNameByPath() {
     this.activeName = this.getActiveNameByPath(location.pathname)
   }
 
-  protected created () {
+  protected created() {
     this.setRouteTitle()
     this.getUserInfo()
     this.setMenuCfg()
@@ -42,19 +42,19 @@ export default class App extends Base {
     this.logPV()
   }
 
-  protected mounted () {
+  protected mounted() {
   }
 
-  private initAfterRender () {
+  private initAfterRender() {
     this.setActiveNameByPath()
   }
 
-  setRouteTitle () {
+  setRouteTitle() {
     this.title = this.$route.meta.title || ''
     document.title = this.title || env.title
   }
   getingUserInfo = false;
-  async getUserInfo () {
+  async getUserInfo() {
     this.getingUserInfo = true
     let token = LocalStore.getItem(dev.cacheKey.testUser)
     if (token) {
@@ -81,19 +81,19 @@ export default class App extends Base {
     }
   }
 
-  toggleSider () {
+  toggleSider() {
     this.$refs.sideMenu.toggleSider()
   }
 
   @Watch('$route')
-  route (to, from) {
+  route(to, from) {
     this.setRouteTitle()
     this.setActiveNameByPath()
     this.logPV()
   }
 
   private menuCfg: MenuConfig[] = [];
-  private setMenuCfg () {
+  private setMenuCfg() {
     this.menuCfg = [{
       routerConfig: routerConfig.bookmark,
       icon: 'md-home',
@@ -164,7 +164,7 @@ export default class App extends Base {
     }].map(ele => this.convMenu(ele))
   }
 
-  private convMenu (ele) {
+  private convMenu(ele) {
     const { routerConfig, children, ...rest } = ele
     let obj = {} as any
     const routeCfg = routerConfig as MyRouteConfig
@@ -180,14 +180,14 @@ export default class App extends Base {
     return obj
   }
 
-  protected render () {
+  protected render() {
     return (
       <MyLoad loadFn={() => { }} renderFn={this.renderMain} afterLoad={() => {
         this.initAfterRender()
       }} />
     )
   }
-  protected renderMain () {
+  protected renderMain() {
     return (
       <Layout class='layout no-bg'>
         <Modal v-model={this.storeSetting.setting.signInShow} footer-hide on-on-visible-change={(val) => {
@@ -215,7 +215,8 @@ export default class App extends Base {
           />
           <span>{this.title}</span>
           <div class='layout-header-wrap'></div>
-          <div class='layout-header-right button-group-normal'>
+          <div class='layout-header-right button-group-normal' style="position: relative;">
+            {this.getingUserInfo && <Spin fix />}
             {this.storeUser.user.isLogin
               ? <UserAvatarView user={this.storeUser.user} self tipsPlacement='bottom' />
               : [
