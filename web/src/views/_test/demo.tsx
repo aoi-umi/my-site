@@ -237,22 +237,18 @@ export default class App extends Base {
           this.$refs.list.query(q, noClear)
         }}
 
-        queryFn={() => {
+        queryFn={async () => {
           const page = this.$refs.list.model.page
           const total = 25
           const start = (page.index - 1) * page.size
 
           const size = start + page.size > total ? total - start : page.size
           this.setList((page.index - 1) * page.size, size)
-          return new Promise((resolve, reject) => {
-            setTimeout(() => {
-              if (this.fail) { return reject(new Error('test')) }
-              resolve({
-                rows: this.list,
-                total
-              })
-            }, 2000)
-          })
+          await this.$utils.wait(2000)
+          return {
+            rows: this.list,
+            total
+          }
         }}
 
         customRenderFn={(rs) => {
