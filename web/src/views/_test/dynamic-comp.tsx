@@ -38,16 +38,16 @@ export default class App extends Base {
     }] as any
   }
 
-  getDefaultConfig() {
+  getDefaultConfig () {
     return { editable: true }
   }
-  created() {
+  created () {
     this.configList = Object.entries({
       ...DynamicCompType,
       不可编辑输入框: {
         name: 'dis-input',
         editable: false,
-        type: 'input',
+        type: 'input'
       },
       动态组件: {
         name: 'dyn-input'
@@ -55,7 +55,7 @@ export default class App extends Base {
     }).map((ele, index) => {
       let val = ele[1]
       let text = ele[0]
-      let name = '', type = ''
+      let name = ''; let type = ''
       if (typeof val === 'string') { name = val } else {
         name = val.name
         type = val.type
@@ -81,7 +81,7 @@ export default class App extends Base {
     this.setData()
   }
 
-  dynamicConfig({ config, name, value, data }) {
+  dynamicConfig ({ config, name, value, data }) {
     if (name === 'dyn-input') {
       if (data.input === 'disabled') return { editable: false }
       if (data.input === 'required') return { required: true }
@@ -90,14 +90,14 @@ export default class App extends Base {
     return
   }
 
-  changeOption() {
+  changeOption () {
     this.extraValue.options = {
       选项2: 'option2',
       选项1: 'option1'
     }
   }
 
-  getData(d?) {
+  getData (d?) {
     let data = {}
     this.configList.forEach(ele => {
       data[ele.name] = null
@@ -112,12 +112,12 @@ export default class App extends Base {
     }
     return data
   }
-  setData() {
+  setData () {
     this.data = this.getData()
     this.listData = [this.getData(), this.getData({ input: 'required' })]
   }
 
-  render() {
+  render () {
     return (
       <div>
         <span>动态组件</span>
@@ -201,12 +201,12 @@ export default class App extends Base {
             compProp: this.compProp
           }
         }
-          data={this.listData}></MyList>
+        data={this.listData}></MyList>
       </div>
     )
   }
 
-  renderSetting() {
+  renderSetting () {
     if (!this.selectRow) return <div />
     return (
       <Form label-width={50} show-message={false}>

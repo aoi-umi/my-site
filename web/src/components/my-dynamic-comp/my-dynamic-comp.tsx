@@ -110,9 +110,9 @@ export class DynamicCompProp {
 })
 class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
   stylePrefix = 'my-dynamic-comp-';
-  created() {
+  created () {
   }
-  render() {
+  render () {
     return (
       <Tooltip class={this.getStyleName('root')} disabled={!this.toolTips}>
         {this.showText &&
@@ -132,7 +132,7 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
 
   private loading = false
 
-  private get selectOptions() {
+  private get selectOptions () {
     let { config, data } = this.getActualOption()
     let val
     if (typeof config.options === 'function') {
@@ -154,23 +154,23 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
 
   private remoteSelectOptions: SelectOptionType[] = []
 
-  private get actuallyEditable() {
+  private get actuallyEditable () {
     return this.actualOption.editable
   }
-  private get actuallyRequired() {
+  private get actuallyRequired () {
     return this.actualOption.config.required
   }
 
-  private get isDate() {
+  private get isDate () {
     let { config } = this.getActualOption()
     return [DynamicCompType.日期, DynamicCompType.日期时间].includes(config.type)
   }
 
-  private get actualOption() {
+  private get actualOption () {
     return this.getActualOption()
   }
   // 获取实际的参数
-  private getActualOption() {
+  private getActualOption () {
     let { config, data } = this
     let cfg
     if (this.dynamicConfig) {
@@ -190,8 +190,7 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
 
     let rangeSeparator = config.rangeSeparator || '-'
     let event = this.compProp?.[actConfig.name]?.event
-    if (event)
-      event = { ...event }
+    if (event) { event = { ...event } }
     return {
       data,
       config: actConfig,
@@ -201,10 +200,10 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
     }
   }
 
-  private get toolTips() {
+  private get toolTips () {
     return this.getReadonlyValue()
   }
-  private getReadonlyValue() {
+  private getReadonlyValue () {
     let { data, config, rangeSeparator } = this.getActualOption()
 
     let val = data[config.name]
@@ -229,10 +228,10 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
     return showValue
   }
 
-  renderText() {
+  renderText () {
     return this.getReadonlyValue()
   }
-  renderComp() {
+  renderComp () {
     let { data, config, rangeSeparator, event } = this.getActualOption()
 
     if (config.type === DynamicCompType.多选框) {
@@ -319,7 +318,7 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
     </Input>
   }
 
-  setSelectOption(opt: { query?}) {
+  setSelectOption (opt: { query?}) {
     let { query } = opt
     let { config, data } = this.getActualOption()
     let rs = (config.options as any)(query)

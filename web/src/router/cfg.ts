@@ -205,9 +205,9 @@ export default {
   },
   notFound: {
     path: '*',
-    redirect: {
-      path: errPath,
-      query: { code: error.NOT_FOUND.code }
-    }
+    meta: {
+      data: { code: error.NOT_FOUND.code }
+    },
+    component: () => import('../views/error')
   }
 }
