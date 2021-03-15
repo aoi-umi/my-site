@@ -5,11 +5,16 @@ export default {
   test: {
     path: prefix,
     text: '测试',
+    component: () => import('../views/_test/index')
+  },
+  demo: {
+    path: prefix,
+    text: '测试',
     component: () => import('../views/_test/demo')
   },
   testDockPanel: {
     path: `${prefix}/dockpanel`,
-    text: '测试',
+    text: 'dockpanel',
     component: () => import('../views/_test/dock-panel')
   },
   waterfall: {

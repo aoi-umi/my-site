@@ -33,7 +33,7 @@ export default class Waterfall extends Base {
             'https://img-prod-cms-rt-microsoft-com.akamaized.net/cms/api/am/imageFileData/RE1Mu3b?ver=5c31',
             'https://www.tslang.cn/assets/images/ideicons/vscode.svg',
             'http://nginx.org/nginx.png',
-            'https://www.typescriptlang.org/assets/images/logo_nocircle.svg',
+            'https://gblobscdn.gitbook.com/assets%2F-MGP1hmjbQxtuPtZp3IX%2F-MJlyijmUOmEcCoVcDCb%2F-MJlyqbZcVlMmL9DHucN%2FMongoDB.png',
             'http://lesscss.org/public/img/less_logo.png'
           ]
           const src = source[idx % source.length]
