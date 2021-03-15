@@ -209,7 +209,7 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
     let val = data[config.name]
     let showValue = val
     if (config.type === DynamicCompType.选择器) {
-      let match = this.selectOptions.find(ele => ele.value == val)
+      let match = this.selectOptions?.find(ele => ele.value == val)
       if (match) showValue = match.label
     } else if (config.type === DynamicCompType.多选框) {
       showValue = val ? 'True' : 'False'

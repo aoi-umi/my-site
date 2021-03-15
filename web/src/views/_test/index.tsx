@@ -7,7 +7,7 @@ export default class App extends Base {
   list = [];
   created () {
     this.list = Object.entries(routerConfig).filter(ele => {
-      return /^\/test/.test(ele[1].path)
+      return /^\/test\//.test(ele[1].path)
     }).map(ele => {
       let val = ele[1] as any
       return {

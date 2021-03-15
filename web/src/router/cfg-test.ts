@@ -8,7 +8,7 @@ export default {
     component: () => import('../views/_test/index')
   },
   demo: {
-    path: prefix,
+    path: `${prefix}/demo`,
     text: '测试',
     component: () => import('../views/_test/demo')
   },

@@ -1,7 +1,7 @@
 
 import { Component, Vue, Watch } from 'vue-property-decorator'
 
-import { Input, Card, Button, Checkbox, Row, Col, Select, Option, Form, FormItem } from '@/components/iview'
+import { Input, Card, Button, Checkbox, Row, Col, Select, Option, Form, FormItem, Divider } from '@/components/iview'
 
 import { MyList } from '@/components/my-list'
 import { DynamicComp, DynamicCompType, DynamicCompConfigType } from '@/components/my-dynamic-comp'
@@ -35,7 +35,11 @@ export default class App extends Base {
     options: [{
       label: '选项1',
       value: 'option1'
-    }] as any
+    }] as any,
+    options2: {
+      选项2: 'option2',
+      选项1: 'option1'
+    }
   }
 
   getDefaultConfig () {
@@ -117,6 +121,20 @@ export default class App extends Base {
     this.listData = [this.getData(), this.getData({ input: 'required' })]
   }
 
+  selectType = ''
+  selectOption: any
+
+  selectOptionValChange (event) {
+    try {
+      let val = event.target.value
+      if (this.selectType === 'extraValue') { this.selectOption = val } else { this.selectOption = JSON.parse(val) }
+      this.updateSelectOption()
+    } catch (e) { }
+  }
+  updateSelectOption () {
+    this.selectRow.options = this.selectOption
+  }
+
   render () {
     return (
       <div>
@@ -124,7 +142,7 @@ export default class App extends Base {
         <Row gutter={5}>
           <Col xs={12}>
             <MyList
-              tableHeight={200}
+              tableHeight={300}
               on-current-change={(obj) => {
                 this.selectRow = obj.currentRow
               }}
@@ -209,7 +227,7 @@ export default class App extends Base {
   renderSetting () {
     if (!this.selectRow) return <div />
     return (
-      <Form label-width={50} show-message={false}>
+      <Form label-width={80} show-message={false}>
         <FormItem label='name'>
           <Input v-model={this.selectRow.name} on-on-change={() => {
             this.setData()
@@ -232,13 +250,41 @@ export default class App extends Base {
           </Select>
         </FormItem>
 
-        <FormItem label='isRange'>
-          <Checkbox v-model={this.selectRow.isRange} />
-        </FormItem>
-
-        <FormItem label='required'>
+        <FormItem label='必填'>
           <Checkbox v-model={this.selectRow.required} />
         </FormItem>
+
+        {[DynamicCompType.日期, DynamicCompType.日期时间].includes(this.selectRow.type) && <FormItem label='范围'>
+          <Checkbox v-model={this.selectRow.isRange} />
+        </FormItem>}
+
+        {[DynamicCompType.选择器].includes(this.selectRow.type) &&
+          <div>
+            <FormItem label='取值类型'>
+              <Select v-model={this.selectType}>
+                <i-option value='extraValue'>extraValue</i-option>
+                <i-option value='custom'>自定义</i-option>
+              </Select>
+            </FormItem>
+            <FormItem>
+              <div>
+                extraValue可选值：{Object.keys(this.extraValue).join(', ')}
+              </div>
+              <div>
+                自定义为json格式：{[
+                  { Obj选项: 'obj' },
+                  [{ label: '列表选项', value: 'list' }]
+                ].map(ele => JSON.stringify(ele)).join(' 或 ')}
+              </div>
+
+            </FormItem>
+            <FormItem label='取值'>
+              <Input on-on-change={(val) => {
+                this.selectOptionValChange(val)
+              }} />
+            </FormItem>
+          </div>
+        }
       </Form>
     )
   }

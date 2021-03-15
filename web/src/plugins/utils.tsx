@@ -5,7 +5,7 @@ import * as assist from 'iview/src/utils/assist'
 
 import { MyConfirmModalView, MyConfirmModal, MyConfirmModalProp } from '@/components/my-confirm'
 
-import { dev } from '@/config'
+import { dev, myEnum } from '@/config'
 
 const vm = Vue.prototype as Vue
 class Utils {
@@ -112,11 +112,13 @@ declare module 'vue/types/vue' {
   interface Vue {
     $utils: Utils;
     $moment: typeof moment
+    $enum: typeof myEnum
   }
 }
 export default {
   install: function (Vue, options) {
     Vue.prototype.$utils = new Utils()
     Vue.prototype.$moment = moment
+    Vue.prototype.$enum = myEnum
   }
 }
