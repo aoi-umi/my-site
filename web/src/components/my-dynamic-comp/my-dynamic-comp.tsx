@@ -1,6 +1,6 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 
-import { convClass, getCompOpts } from '@/components/utils'
+import { convClass, getCompOpts, Utils } from '@/components/utils'
 import { Prop } from '@/components/property-decorator'
 
 import {
@@ -189,8 +189,13 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
     }
 
     let rangeSeparator = config.rangeSeparator || '-'
-    let event = this.compProp?.[actConfig.name]?.event
-    if (event) { event = { ...event } }
+    let eve = this.compProp?.[actConfig.name]?.event
+    let event = {}
+    if (eve) {
+      for (let key in eve) {
+        event[Utils.stringToHyphen(key)] = eve[key]
+      }
+    }
     return {
       data,
       config: actConfig,

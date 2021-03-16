@@ -15,14 +15,14 @@ export default class App extends Base {
   compProp = {
     input: {
       event: {
-        'on-change': (...args) => {
+        onChange: (...args) => {
           console.log(args)
         }
       }
     },
     select: {
       event: {
-        'on-change': (...args) => {
+        onChange: (...args) => {
           console.log(args)
         }
       }

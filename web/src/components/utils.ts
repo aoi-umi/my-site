@@ -99,5 +99,18 @@ export class Utils {
 
   static isWxClient () {
     return /MicroMessenger/i.test(navigator.userAgent)
-  };
+  }
+
+  // 转换为中划线
+  static stringToHyphen (str) {
+    str = str.replace(/^[A-Z]+/, function () {
+      return arguments[0].toLowerCase()
+    })
+    str = str.replace(/_/g, '-')
+    str = str.replace(/[A-Z]/g, function () {
+      return '-' + arguments[0].toLowerCase()
+    })
+    str = str.toLowerCase()
+    return str
+  }
 }

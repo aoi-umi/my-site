@@ -321,15 +321,18 @@ export default class GoodsMgtDetail extends Base {
 
     private sku: SkuType[] = [];
     private skuCol = [];
-    private createSku (specIdx: number, list: SkuType[] = [], spec?: string[]) {
+    private createSku (specIdx: number, list: SkuType[] = [], allSpec?: string[]) {
       const { specGroup } = this.innerDetail
       if (specGroup.length == 0) { return [] }
 
+      if (!allSpec) { allSpec = [] }
       specGroup[specIdx].value.forEach(ele => {
-        if (specIdx == 0) { spec = [] }
+        let spec = [...allSpec]
         const lastLv = specIdx + 1 === specGroup.length
         if (!lastLv) { spec.push(ele) }
-        if (specIdx + 1 < specGroup.length) { this.createSku(specIdx + 1, list, spec) } else if (lastLv) {
+        if (specIdx + 1 < specGroup.length) {
+          this.createSku(specIdx + 1, list, spec)
+        } else if (lastLv) {
           const currSpec = [...spec, ele]
 
           let match
