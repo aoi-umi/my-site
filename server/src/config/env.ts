@@ -1,6 +1,7 @@
 
 import * as path from 'path';
 import { MongoOpt } from '@/_system/dbMongo';
+import { SequelizeOpt } from '@/_system/dbSequelize';
 
 let processEnv = process.env as {
     NODE_ENV: string;
@@ -9,6 +10,7 @@ let processEnv = process.env as {
     MongoUri?: string;
     Host?: string;
     MQUri?: string;
+    MysqlUri?: string;
     //pm2
     pm_out_log_path?: string;
 };
@@ -40,6 +42,9 @@ export default {
             useUnifiedTopology: true
         }
     } as MongoOpt,
+    sequelize: {
+        uri: processEnv.MysqlUri || 'mysql://test:test@localhost/test',
+    } as SequelizeOpt,
     mq: {
         exchange: name,
         mqUri: processEnv.MQUri || 'amqp://localhost'

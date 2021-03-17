@@ -12,6 +12,7 @@ import './moduleAlias';
 
 import * as config from '@/config';
 import * as db from '@/_system/dbMongo';
+import * as dbSeq from '@/_system/dbSequelize';
 
 debug('my-application');
 
@@ -33,13 +34,18 @@ app.use(cors({
 }));
 (async () => {
     await db.init(config.env.mongoose);
-})().then(async () => {
+    let rs = await dbSeq.init(config.env.sequelize);
+    return {
+        sequelize: rs.sequelize
+    };
+})().then(async (data) => {
     let helpers = await import('./helpers');
     process.on('unhandledRejection', function (e) {
         helpers.logger.error('unhandledRejection');
         helpers.logger.error(e);
     });
     const main = await import('./main');
+    main.sequelize = data.sequelize;
     await main.init(app);
 
     let port = process.env.PORT || config.env.port;

@@ -103,3 +103,8 @@ router.post('/print/mgt/del', UserAuthMid.normal(), MyRequestHandlerMid.convert(
 import * as print from './print';
 router.get('/print/getData', UserAuthMid.normal(), MyRequestHandlerMid.convert(print.getData));
 //#endregion
+
+//#region dynamic sql 
+import * as dynamicSql from './dynamicSql';
+router.post('/dynamicSql/exec', UserAuthMid.normal(), MyRequestHandlerMid.convert(dynamicSql.exec));
+//#endregion

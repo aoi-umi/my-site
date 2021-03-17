@@ -8,6 +8,7 @@ import * as config from '@/config';
 import { MySocket } from '@/_system/socket';
 import { Auth } from '@/_system/auth';
 import { Cache } from '@/_system/cache';
+import { MySequelize } from '@/_system/dbSequelize';
 import routes from '@/routes';
 import { ThirdPartyPayMapper } from '@/3rd-party';
 import * as helpers from '@/helpers';
@@ -17,6 +18,7 @@ import { PayMapper } from './models/mongo/asset';
 
 export const auth = new Auth();
 export const mq = new MQ();
+export let sequelize: MySequelize;
 export const cache = new Cache(config.env.redis.uri, config.env.cachePrefix || '');
 export async function init(app: Koa) {
 
