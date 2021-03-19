@@ -11,7 +11,7 @@ export class MySequelize extends Sequelize {
         super(opt.uri, opt.options);
     }
 
-    async myQuery(sql: string) {
+    async rawQuery(sql: string) {
         let rs = await this.query(sql, { type: QueryTypes.SELECT });
         let result = rs.map(ele => {
             return Object.values(ele);

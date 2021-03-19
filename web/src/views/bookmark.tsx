@@ -1,5 +1,4 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import * as iview from 'iview'
 
 import { Prop } from '@/components/property-decorator'
 
@@ -61,7 +60,7 @@ class BookmarkDetail extends Vue<BookmarkDetailProp & Base> {
     ]
   };
 
-  $refs: { formVaild: iview.Form };
+  $refs: { formVaild: iView.Form };
 
   addTag () {
     const tag = this.tag?.trim()

@@ -1,5 +1,4 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import * as iview from 'iview'
 import axios, { AxiosRequestConfig } from 'axios'
 import { VueCropper } from 'vue-cropper'
 
@@ -131,7 +130,7 @@ class MyUpload extends Vue<MyUploadProp & MyBase> {
     }
   }
 
-  $refs: { upload: iview.Upload & { fileList: FileType[] }, cropper: any, imgViewer: IMyImgViewer };
+  $refs: { upload: iView.Upload & { fileList: FileType[] }, cropper: any, imgViewer: IMyImgViewer };
 
   defaultList = [];
 

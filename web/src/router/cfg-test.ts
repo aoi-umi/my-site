@@ -26,5 +26,10 @@ export default {
     path: `${prefix}/dynamicComp`,
     text: '动态组件',
     component: () => import('../views/_test/dynamic-comp')
+  },
+  testDynamicSql: {
+    path: `${prefix}/dynamicSql`,
+    text: '动态数据',
+    component: () => import('../views/_test/dynamic-sql')
   }
 }

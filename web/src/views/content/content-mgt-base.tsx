@@ -1,5 +1,4 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import * as iview from 'iview'
 
 import { Prop } from '@/components/property-decorator'
 import { testApi } from '@/api'
@@ -304,7 +303,7 @@ class ContentMgtDetailProp {
   mixins: [getCompOpts(ContentMgtDetailProp)]
 })
 export class ContentMgtDetail extends Vue<ContentMgtDetailProp & Base> {
-  $refs: { formVaild: iview.Form, cover: IMyUpload, loadView: IMyLoad };
+  $refs: { formVaild: iView.Form, cover: IMyUpload, loadView: IMyLoad };
 
   @Watch('$route')
   route (to, from) {

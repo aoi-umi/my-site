@@ -5,7 +5,7 @@ export type OperateOption = {
   fn: () => any
   beforeValid?: () => any;
   onSuccessClose?: () => any;
-  validate?: () => Promise<boolean>,
+  validate?: () => Promise<boolean> | void,
   noDefaultHandler?: boolean;
   noSuccessHandler?: boolean;
   noErrorHandler?: boolean;

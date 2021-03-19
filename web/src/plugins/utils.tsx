@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import 'jquery'
 import moment, { Dayjs } from 'dayjs'
-import * as assist from 'iview/src/utils/assist'
 
 import { MyConfirmModalView, MyConfirmModal, MyConfirmModalProp } from '@/components/my-confirm'
 
 import { dev, myEnum } from '@/config'
+import { assist } from './def'
 
 const vm = Vue.prototype as Vue
 class Utils {

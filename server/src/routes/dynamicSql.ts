@@ -8,6 +8,6 @@ import * as main from '@/main';
 
 export let exec: MyRequestHandler = async (opt) => {
     let { reqData } = opt;
-    let rs = await main.sequelize.myQuery(reqData.sql);
+    let rs = await main.sequelize.rawQuery(reqData.sql);
     return rs;
 };

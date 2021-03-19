@@ -1,5 +1,4 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import * as iview from 'iview'
 
 import { dev, myEnum } from '@/config'
 import { testApi } from '@/api'
@@ -79,7 +78,7 @@ export default class UserInfo extends Base {
     }
 
     $refs: {
-        formVaild: iview.Form, loadView: IMyLoad, upload: IMyUpload,
+        formVaild: iView.Form, loadView: IMyLoad, upload: IMyUpload,
         followerList: FollowList, followingList: FollowList,
         articleList: Article, videoList: Video, chatList: ChatList, favouriteList: FavouriteList,
     };
@@ -406,7 +405,7 @@ class UserUnbindProp {
   mixins: [getCompOpts(UserUnbindProp)]
 })
 export class UserUnbind extends Vue<UserUnbindProp & Base> {
-    $refs: { unbind: iview.Form, };
+    $refs: { unbind: iView.Form, };
     isShow = false;
     saving = false;
     form = {

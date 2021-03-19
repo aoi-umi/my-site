@@ -1,8 +1,8 @@
 
 const host = 'sellfishboy.top'
 const ip = '144.202.99.178'
-const env = 'prod'
-// const env = [host, ip].find(ele => location.hostname.includes(ele)) ? 'prod' : 'dev'
+// const env = 'prod'
+const env = [host, ip].find(ele => location.hostname.includes(ele)) ? 'prod' : 'dev'
 const envConfig: {
     [env: string]: {
         title: string;
@@ -17,7 +17,7 @@ const envConfig: {
   },
   dev: {
     title: '开发',
-    host: 'http://192.168.100.119:8080',
+    host: `http://127.0.0.1:8080`,
     apiHost: `//${location.hostname}:8000`
   }
 }

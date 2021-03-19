@@ -52,7 +52,7 @@ export class Base extends MyBase {
   async operateHandler (operate: string, fn: () => any, opt?: {
     beforeValid?: () => any;
     onSuccessClose?: () => any;
-    validate?: () => Promise<boolean>,
+    validate?: () => Promise<boolean> | void,
     noDefaultHandler?: boolean;
     noSuccessHandler?: boolean;
     noErrorHandler?: boolean;

@@ -1,5 +1,4 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import * as iview from 'iview'
 
 import { Prop } from '@/components/property-decorator'
 import * as helpers from '@/helpers'
@@ -60,7 +59,7 @@ export class SignInModel extends Vue<Base & SignInProp> {
       ]
     };
 
-    $refs: { formVaild: iview.Form };
+    $refs: { formVaild: iView.Form };
     private loading = false;
 
     protected created () {
@@ -290,7 +289,7 @@ class SignUp extends Vue<SignUpProp & Base> {
       }]
     };
 
-    $refs: { formVaild: iview.Form };
+    $refs: { formVaild: iView.Form };
 
     protected created () {
       if (this.account) {

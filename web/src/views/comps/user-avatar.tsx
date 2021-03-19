@@ -1,5 +1,4 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import * as iviewTypes from 'iview'
 
 import { Prop } from '@/components/property-decorator'
 import { convClass, getCompOpts } from '@/components/utils'
@@ -26,7 +25,7 @@ class UserAvatarProp {
   showAccount?: boolean;
 
   @Prop()
-  size?: iviewTypes.Avatar['size'];
+  size?: iView.Avatar['size'];
 
   @Prop()
   noTips?: boolean;
@@ -40,7 +39,7 @@ class UserAvatarProp {
   @Prop({
     default: 'right-start'
   })
-  tipsPlacement?: iviewTypes.Poptip['placement'];
+  tipsPlacement?: iView.Poptip['placement'];
 }
 @Component({
   extends: Base,

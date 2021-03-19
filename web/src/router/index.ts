@@ -1,8 +1,7 @@
 import Vue from 'vue'
 import Router, { RouteConfig } from 'vue-router'
 import { getModule } from 'vuex-module-decorators'
-import iview from 'iview'
-const ViewUI = iview as any
+import { iView } from '@/plugins/def'
 
 import { authority } from '../config'
 import store from '../store'
@@ -36,7 +35,7 @@ const router = new Router({
   routes
 })
 router.beforeEach((to, from, next) => {
-  ViewUI.LoadingBar.start()
+  iView.LoadingBar.start()
   if (to.path == routeCfg.index.path) {
     return next(routeCfg.home.path)
   }
@@ -48,6 +47,6 @@ router.beforeEach((to, from, next) => {
   next()
 })
 router.afterEach(route => {
-  ViewUI.LoadingBar.finish()
+  iView.LoadingBar.finish()
 })
 export default router

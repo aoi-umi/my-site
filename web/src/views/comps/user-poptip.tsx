@@ -1,5 +1,4 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import * as iviewTypes from 'iview'
 
 import { Prop } from '@/components/property-decorator'
 import { testApi, testSocket } from '@/api'
@@ -44,10 +43,10 @@ class UserPoptipProp {
     @Prop({
       default: 'right-start'
     })
-    tipsPlacement?: iviewTypes.Poptip['placement'];
+    tipsPlacement?: iView.Poptip['placement'];
 
     @Prop()
-    size?: iviewTypes.Avatar['size'];
+    size?: iView.Avatar['size'];
 }
 @Component({
   extends: Base,

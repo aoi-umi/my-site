@@ -1,5 +1,4 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import * as iview from 'iview'
 
 import {
   Button, Input, Row, Col, Collapse, Panel, Divider,
@@ -41,7 +40,7 @@ type PrintDataType = {
 @Component
 export default class Print extends Base {
   stylePrefix = 'print-'
-  $refs: { loadView: IMyLoad, formVaild: iview.Form };
+  $refs: { loadView: IMyLoad, formVaild: iView.Form };
   hiprintTemplate: any
   itemGroups: ItemGroup[] = []
   testData: any = ''

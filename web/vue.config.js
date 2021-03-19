@@ -22,6 +22,7 @@ let cdnOpt = {
   urlPrefix: 'https://cdn.jsdelivr.net/npm',
   css: {
     'iview/dist/styles/iview.css': `/iview@3.5.4/dist/styles/iview.css`,
+    'view-design/dist/styles/iview.css': `/view-design@4.5.0/dist/styles/iview.css`,
     'video.js/dist/video-js.min.css': `/video.js@7.6.6/dist/video-js.min.css`,
     ...getCdn(`/quill@1.3.7/dist/`, {
       'quill/dist/quill.core.css': 'quill.core.css',
@@ -58,6 +59,10 @@ let cdnOpt = {
     iview: {
       moduleName: 'iview',
       url: `/iview@3.5.4/dist/iview.min.js`
+    },
+    'view-design': {
+      moduleName: 'iview',
+      url: `/view-design@4.5.0/dist/iview.min.js`
     },
 
     'video.js': {

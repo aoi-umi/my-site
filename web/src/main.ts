@@ -1,8 +1,6 @@
 import Vue from 'vue'
-import iView from 'iview'
+import { iView } from '@/plugins/def'
 import VueLazyload from 'vue-lazyload'
-
-import 'iview/dist/styles/iview.css'
 
 Vue.use(iView)
 Vue.use(VueLazyload, {

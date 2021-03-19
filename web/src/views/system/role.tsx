@@ -1,5 +1,4 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import * as iview from 'iview'
 
 import { Prop } from '@/components/property-decorator'
 import { testApi } from '@/api'
@@ -63,7 +62,7 @@ class RoleDetail extends Vue<RoleDetailProp & Base> {
       { required: true, trigger: 'blur' }
     ]
   };
-  $refs: { formVaild: iview.Form, authTransfer: IAuthorityTransfer };
+  $refs: { formVaild: iView.Form, authTransfer: IAuthorityTransfer };
 
   private saving = false;
   private async handleSave () {
