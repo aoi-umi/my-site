@@ -22,7 +22,7 @@ export default class App extends Base {
       <div>
         {this.list.map(ele => {
           return (<div>
-            <a href={ele.href}>{ele.text}</a>
+            <router-link to={ele.href}>{ele.text}</router-link>
           </div>)
         })}
       </div>

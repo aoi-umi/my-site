@@ -332,6 +332,9 @@ export default {
       printGetData: {
         url: '/print/getData',
         method: 'get'
+      },
+      dynamicSqlExec: {
+        url: '/dynamicSql/exec'
       }
     }
   } as TestApiConfigType

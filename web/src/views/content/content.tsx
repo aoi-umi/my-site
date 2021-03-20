@@ -275,14 +275,14 @@ class ContentListItem extends Vue<ContentListItemProp & Base> {
               this.toDetail(ele)
             }}>
               <Row>
-                <Col class={this.getStyleName('top-col')} >
+                <Col class={this.getStyleName('top-col')} span={24}>
                   <h3 class={[...this.getStyleName('list-title'), 'flex-stretch']} title={ele.title}>{ele.title}</h3>
                   {this.mgt && <MyTag value={ele.statusText} />}
                   {this.selectable && <Checkbox value={ele._checked} disabled={ele._disabled} on-on-change={(checked) => {
                     this.$emit('selected-change', checked)
                   }} />}
                 </Col>
-                <Col class={this.getStyleName('user-col')}>
+                <Col class={this.getStyleName('user-col')} span={24}>
                   <UserAvatarView user={ele.user} />
                   {ele.publishAt && <span class='not-important' style={{ marginLeft: '5px' }}>发布于 <Time time={new Date(ele.publishAt)} /></span>}
                 </Col>
