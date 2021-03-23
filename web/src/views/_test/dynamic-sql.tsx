@@ -14,24 +14,39 @@ export default class App extends Base {
     this.init()
   }
 
-  config: { noData?: boolean; name?: string; sql: string }[] = []
+  config: {
+    noData?: boolean; name?: string; sql: string,
+    type?: string, options?: any
+  }[] = []
   result = ''
   params = ''
   paramsDefine = []
 
   init () {
-    this.config = [{
-      name: 'rs1',
-      sql: "select :var1+1 as a union select 'aaa' as a;"
-    },
-    {
-      noData: true,
-      sql: 'set @test=1;'
-    },
-    {
-      name: 'rs2',
-      sql: `select 2+@test as c, ifnull(:var2, 'var2')  as d;`
-    }]
+    this.config = [
+      {
+        name: 'rs1',
+        sql: "select :var1+1 as a union select 'aaa' as a"
+      },
+      {
+        noData: true,
+        sql: 'set @test=1'
+      },
+      {
+        name: 'rs2',
+        sql: 'select 2+@test as c'
+      },
+      {
+        name: 'rs3',
+        sql: 'select * from test',
+        type: 'list',
+        options: {
+          orderBy: 'id desc',
+          pageIndex: 1,
+          pageSize: 2
+        }
+      }
+    ]
     this.paramsDefine = ['var1', 'var2']
     this.params = this.stringify({
       var1: 1
