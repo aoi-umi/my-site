@@ -14,7 +14,7 @@ class File extends GridFSFile {
     account: string;
 
     @prop({
-        type: SchemaTypes.ObjectId
+      type: SchemaTypes.ObjectId
     })
     userId: Types.ObjectId;
 
@@ -26,15 +26,15 @@ class File extends GridFSFile {
 
     @setMethod
     toOutObject() {
-        return {
-            filename: this.filename,
-            fileId: this._id.toString(),
-            rawFileId: this.fileId.toString(),
-            url: '',
-        };
+      return {
+        filename: this.filename,
+        fileId: this._id.toString(),
+        rawFileId: this.fileId.toString(),
+        url: '',
+      };
     }
 }
 
 export const FileModel = getGridFSModel<File, typeof File & IPagination<File>>({
-    schema: File,
+  schema: File,
 });

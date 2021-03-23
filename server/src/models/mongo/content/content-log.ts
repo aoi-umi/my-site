@@ -1,6 +1,6 @@
 import {
-    getModelForClass, ModelType, DocType, InstanceType,
-    setSchema, prop, arrayProp, setMethod, setPlugin
+  getModelForClass, ModelType, DocType, InstanceType,
+  setSchema, prop, arrayProp, setMethod, setPlugin
 } from 'mongoose-ts-ua';
 import { Types, SchemaTypes } from 'mongoose';
 
@@ -13,17 +13,17 @@ export type ContentLogInstanceType = InstanceType<ContentLog>;
 export type ContentLogModelType = ModelType<ContentLog, typeof ContentLog>;
 export type ContentLogDocType = DocType<ContentLogInstanceType>;
 @setSchema({
-    schemaOptions: {
-        toJSON: {
-            virtuals: true
-        }
+  schemaOptions: {
+    toJSON: {
+      virtuals: true
     }
+  }
 })
 @setPlugin(pagination)
 export class ContentLog extends Base {
     @prop({
-        type: SchemaTypes.ObjectId,
-        required: true,
+      type: SchemaTypes.ObjectId,
+      required: true,
     })
     userId: Types.ObjectId;
 
@@ -31,44 +31,44 @@ export class ContentLog extends Base {
     logUser: string;
 
     @prop({
-        required: true,
-        enum: myEnum.contentType.getAllValue(),
+      required: true,
+      enum: myEnum.contentType.getAllValue(),
     })
     contentType: string;
 
     @prop({
-        type: SchemaTypes.ObjectId,
-        required: true,
+      type: SchemaTypes.ObjectId,
+      required: true,
     })
     contentId: Types.ObjectId;
 
     @prop({
-        required: true,
+      required: true,
     })
     srcStatus: number;
 
     @prop({
-        required: true,
+      required: true,
     })
     destStatus: number;
 
     @setMethod
     getStatusText(status) {
-        let map = {
-            [myEnum.contentType.文章]: myEnum.articleStatus,
-            [myEnum.contentType.视频]: myEnum.videoStatus,
-        };
-        return map[this.contentType].getKey(status);
+      let map = {
+        [myEnum.contentType.文章]: myEnum.articleStatus,
+        [myEnum.contentType.视频]: myEnum.videoStatus,
+      };
+      return map[this.contentType].getKey(status);
     }
 
     @prop()
     get srcStatusText() {
-        return this.getStatusText(this.srcStatus);
+      return this.getStatusText(this.srcStatus);
     }
 
     @prop()
     get destStatusText() {
-        return this.getStatusText(this.destStatus);
+      return this.getStatusText(this.destStatus);
     }
 
     @prop()

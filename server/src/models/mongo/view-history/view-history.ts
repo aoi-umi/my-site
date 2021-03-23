@@ -1,13 +1,13 @@
 import {
-    getModelForClass,
-    ModelType,
-    DocType,
-    InstanceType,
-    setSchema,
-    prop,
-    arrayProp,
-    getSchema,
-    setPlugin,
+  getModelForClass,
+  ModelType,
+  DocType,
+  InstanceType,
+  setSchema,
+  prop,
+  arrayProp,
+  getSchema,
+  setPlugin,
 } from 'mongoose-ts-ua';
 import { Types, SchemaTypes } from 'mongoose';
 

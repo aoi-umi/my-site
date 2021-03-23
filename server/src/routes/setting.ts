@@ -9,20 +9,20 @@ import { SettingMapper } from '@/models/mongo/setting';
 
 
 export let detailQuery: MyRequestHandler = async (opt) => {
-    let rs = await SettingMapper.detailQuery();
-    return rs;
+  let rs = await SettingMapper.detailQuery();
+  return rs;
 };
 
 export let save: MyRequestHandler = async (opt) => {
-    let user = opt.myData.user;
-    let data = opt.reqData;
-    let detail = await SettingMapper.detailQuery();
-    ['signUpType', 'signUpFrom', 'signUpTo'].forEach(key => {
-        detail[key] = data[key];
-    });
-    detail.operatorId = user._id;
-    await detail.save();
-    return {
-        _id: detail._id,
-    };
+  let user = opt.myData.user;
+  let data = opt.reqData;
+  let detail = await SettingMapper.detailQuery();
+  ['signUpType', 'signUpFrom', 'signUpTo'].forEach(key => {
+    detail[key] = data[key];
+  });
+  detail.operatorId = user._id;
+  await detail.save();
+  return {
+    _id: detail._id,
+  };
 };

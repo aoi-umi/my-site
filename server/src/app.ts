@@ -21,42 +21,42 @@ const app = new Koa();
 
 app.use(logger('dev'));
 app.use(xmlParser({
-    xmlOptions: {
-        explicitArray: false
-    }
+  xmlOptions: {
+    explicitArray: false
+  }
 }));
 app.use(bodyParser());
 // app.use(express.static(path.join(__dirname, 'public')));
 //app.use(express.static(config.fileDir));
 app.use(cors({
-    credentials: true,
-    // origin: '*',
+  credentials: true,
+  // origin: '*',
 }));
 (async () => {
-    await db.init(config.env.mongoose);
-    let rs = await dbSeq.init(config.env.sequelize);
-    return {
-        sequelize: rs.sequelize
-    };
+  await db.init(config.env.mongoose);
+  let rs = await dbSeq.init(config.env.sequelize);
+  return {
+    sequelize: rs.sequelize
+  };
 })().then(async (data) => {
-    let helpers = await import('./helpers');
-    process.on('unhandledRejection', function (e) {
-        helpers.logger.error('unhandledRejection');
-        helpers.logger.error(e);
-    });
-    const main = await import('./main');
-    main.sequelize = data.sequelize;
-    await main.init(app);
+  let helpers = await import('./helpers');
+  process.on('unhandledRejection', function (e) {
+    helpers.logger.error('unhandledRejection');
+    helpers.logger.error(e);
+  });
+  const main = await import('./main');
+  main.sequelize = data.sequelize;
+  await main.init(app);
 
-    let port = process.env.PORT || config.env.port;
-    const server = app.listen(port);
-    let address = server.address() as AddressInfo;
-    console.log([
-        '#################',
-        '#',
-        `# ${config.env.name} run at ${address.address}:${address.port},version:${config.env.version}`,
-        '#',
-        '#################',
-    ].join('\r\n'));
-    main.initServer(server);
+  let port = process.env.PORT || config.env.port;
+  const server = app.listen(port);
+  let address = server.address() as AddressInfo;
+  console.log([
+    '#################',
+    '#',
+    `# ${config.env.name} run at ${address.address}:${address.port},version:${config.env.version}`,
+    '#',
+    '#################',
+  ].join('\r\n'));
+  main.initServer(server);
 });

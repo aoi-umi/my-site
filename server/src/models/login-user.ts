@@ -21,10 +21,10 @@ export class LoginUser {
     cacheAt?: Date;
 
     nameToString() {
-        return this.nickname + '(' + this.account + ')';
+      return this.nickname + '(' + this.account + ')';
     }
 
     equalsId(id) {
-        return this._id?.equals(id);
+      return this._id?.equals(id);
     }
 }

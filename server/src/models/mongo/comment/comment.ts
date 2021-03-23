@@ -1,6 +1,6 @@
 import {
-    getModelForClass, ModelType, DocType, InstanceType,
-    setSchema, prop, arrayProp, setPlugin
+  getModelForClass, ModelType, DocType, InstanceType,
+  setSchema, prop, arrayProp, setPlugin
 } from 'mongoose-ts-ua';
 import { Types, SchemaTypes } from 'mongoose';
 
@@ -20,47 +20,47 @@ export class Comment extends Base implements IVoteOwner {
      * 所属文章等id
      */
     @prop({
-        required: true,
-        type: SchemaTypes.ObjectId
+      required: true,
+      type: SchemaTypes.ObjectId
     })
     ownerId: Types.ObjectId;
 
     @prop({
-        required: true,
-        type: SchemaTypes.ObjectId
+      required: true,
+      type: SchemaTypes.ObjectId
     })
     userId: Types.ObjectId;
 
     @prop({
-        required: true,
-        enum: myEnum.contentType.getAllValue(),
+      required: true,
+      enum: myEnum.contentType.getAllValue(),
     })
     type: number;
 
     @prop({
-        required: true,
-        enum: myEnum.commentStatus.getAllValue(),
-        default: myEnum.commentStatus.正常
+      required: true,
+      enum: myEnum.commentStatus.getAllValue(),
+      default: myEnum.commentStatus.正常
     })
     status: number;
 
     @prop({
-        type: SchemaTypes.ObjectId
+      type: SchemaTypes.ObjectId
     })
     topId: Types.ObjectId;
 
     @prop({
-        type: SchemaTypes.ObjectId
+      type: SchemaTypes.ObjectId
     })
     quoteId: Types.ObjectId;
 
     @prop({
-        type: SchemaTypes.ObjectId
+      type: SchemaTypes.ObjectId
     })
     quoteUserId: Types.ObjectId;
 
     @prop({
-        required: true
+      required: true
     })
     floor: number;
 
@@ -71,18 +71,18 @@ export class Comment extends Base implements IVoteOwner {
     comment: string;
 
     @prop({
-        default: 0
+      default: 0
     })
     like: number;
 
     @prop({
-        default: 0
+      default: 0
     })
     dislike: number;
 
     @prop()
     get canDel() {
-        return this.status !== myEnum.commentStatus.已删除;
+      return this.status !== myEnum.commentStatus.已删除;
     }
 }
 

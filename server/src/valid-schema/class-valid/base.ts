@@ -33,7 +33,7 @@ export class DelBase {
     @IsArray()
     @ArrayMinSize(1)
     @Transform(value => {
-        return arrayTransform(value, Types.ObjectId);
+      return arrayTransform(value, Types.ObjectId);
     })
     idList: Types.ObjectId[];
 }

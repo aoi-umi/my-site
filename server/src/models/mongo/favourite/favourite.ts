@@ -1,6 +1,6 @@
 import {
-    getModelForClass, ModelType, DocType, InstanceType,
-    setSchema, prop, arrayProp, getSchema, setPlugin
+  getModelForClass, ModelType, DocType, InstanceType,
+  setSchema, prop, arrayProp, getSchema, setPlugin
 } from 'mongoose-ts-ua';
 import { Types, SchemaTypes } from 'mongoose';
 
@@ -16,7 +16,7 @@ export type FavouriteDocType = DocType<FavouriteInstanceType>;
 @setSchema()
 export class Favourite extends ContentContactBase {
     @prop({
-        required: true,
+      required: true,
     })
     favourite: boolean;
 

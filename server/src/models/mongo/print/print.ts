@@ -1,6 +1,6 @@
 import {
-    getModelForClass, ModelType, DocType, InstanceType,
-    setSchema, prop, arrayProp, setPlugin
+  getModelForClass, ModelType, DocType, InstanceType,
+  setSchema, prop, arrayProp, setPlugin
 } from 'mongoose-ts-ua';
 import { Types, SchemaTypes } from 'mongoose';
 
@@ -13,32 +13,32 @@ export type PrintInstanceType = InstanceType<Print>;
 export type PrintModelType = ModelType<Print, typeof Print>;
 export type PrintDocType = DocType<PrintInstanceType>;
 @setSchema({
-    schemaOptions: {
-        toJSON: {
-            virtuals: true
-        }
+  schemaOptions: {
+    toJSON: {
+      virtuals: true
     }
+  }
 })
 @setPlugin(pagination)
 export class Print extends Base {
     @prop({
-        type: SchemaTypes.ObjectId,
+      type: SchemaTypes.ObjectId,
     })
     userId: Types.ObjectId;
     
     @prop({
-        required: true,
-        trim: true,
+      required: true,
+      trim: true,
     })
     name: string;
 
     @prop({
-        trim: true,
+      trim: true,
     })
     desc: string;
     
     @prop({
-        required: true,
+      required: true,
     })
     data: Object;
 }

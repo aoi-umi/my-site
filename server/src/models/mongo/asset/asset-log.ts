@@ -1,6 +1,6 @@
 import {
-    getModelForClass, ModelType, DocType, InstanceType,
-    setSchema, prop, arrayProp, getSchema, SubDocType, setPlugin
+  getModelForClass, ModelType, DocType, InstanceType,
+  setSchema, prop, arrayProp, getSchema, SubDocType, setPlugin
 } from 'mongoose-ts-ua';
 import { Types, SchemaTypes } from 'mongoose';
 import * as Int32 from 'mongoose-int32';
@@ -16,11 +16,11 @@ export type AssetLogModelType = ModelType<AssetLog, typeof AssetLog>;
 export type AssetLogDocType = DocType<AssetLogInstanceType>;
 
 @setSchema({
-    schemaOptions: { _id: false }
+  schemaOptions: { _id: false }
 })
 class AssetLogRemark {
     @prop({
-        type: SchemaTypes.ObjectId,
+      type: SchemaTypes.ObjectId,
     })
     notifyId: Types.ObjectId;
 
@@ -28,57 +28,57 @@ class AssetLogRemark {
     msg: string;
 
     @prop({
-        default: Date.now
+      default: Date.now
     })
     at: Date;
 }
 
 @setSchema({
-    schemaOptions: {
-        toJSON: {
-            virtuals: true
-        }
+  schemaOptions: {
+    toJSON: {
+      virtuals: true
     }
+  }
 })
 @setPlugin(pagination)
 export class AssetLog extends Base {
 
     @prop({
-        enum: myEnum.assetType.getAllValue(),
-        required: true,
+      enum: myEnum.assetType.getAllValue(),
+      required: true,
     })
     type: number;
 
     @prop()
     get typeText() {
-        return myEnum.assetType.getKey(this.type);
+      return myEnum.assetType.getKey(this.type);
     }
 
     @prop({
-        enum: myEnum.assetSourceType.getAllValue(),
-        required: true,
+      enum: myEnum.assetSourceType.getAllValue(),
+      required: true,
     })
     sourceType: number;
 
     @prop()
     get sourceTypeText() {
-        return myEnum.assetSourceType.getKey(this.sourceType);
+      return myEnum.assetSourceType.getKey(this.sourceType);
     }
 
     @prop({
-        enum: myEnum.assetLogStatus.getAllValue(),
-        default: myEnum.assetLogStatus.未完成
+      enum: myEnum.assetLogStatus.getAllValue(),
+      default: myEnum.assetLogStatus.未完成
     })
     status: number;
 
     @prop()
     get statusText() {
-        return myEnum.assetLogStatus.getKey(this.status);
+      return myEnum.assetLogStatus.getKey(this.status);
     }
 
     @prop({
-        type: SchemaTypes.ObjectId,
-        required: true,
+      type: SchemaTypes.ObjectId,
+      required: true,
     })
     orderId: Types.ObjectId;
 
@@ -86,19 +86,19 @@ export class AssetLog extends Base {
     outOrderNo: string;
 
     @prop({
-        required: true,
-        index: { unique: true },
+      required: true,
+      index: { unique: true },
     })
     orderNo: string;
 
     @prop()
     get money() {
-        return mathjs.round(this.moneyCent / 100, 2) as number;
+      return mathjs.round(this.moneyCent / 100, 2) as number;
     }
 
     @prop({
-        type: Int32,
-        required: true
+      type: Int32,
+      required: true
     })
     moneyCent: number;
 
@@ -106,7 +106,7 @@ export class AssetLog extends Base {
     req: string;
 
     @prop({
-        type: SchemaTypes.ObjectId,
+      type: SchemaTypes.ObjectId,
     })
     notifyId: Types.ObjectId;
 
@@ -114,7 +114,7 @@ export class AssetLog extends Base {
     remark: string;
 
     @arrayProp({
-        type: AssetLogRemark
+      type: AssetLogRemark
     })
     remarkList: SubDocType<AssetLogRemark>[];
 }

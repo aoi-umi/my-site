@@ -1,6 +1,6 @@
 import {
-    Model, ModelType, DocType, InstanceType,
-    setSchema, setStatic,
+  Model, ModelType, DocType, InstanceType,
+  setSchema, setStatic,
 } from 'mongoose-ts-ua';
 
 export type BaseInstanceType = InstanceType<Base>;

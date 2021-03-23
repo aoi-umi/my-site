@@ -2,7 +2,7 @@ import * as Q from 'q';
 import * as mongoose from 'mongoose';
 import { Model, Types, ConnectionOptions } from 'mongoose';
 import {
-    config as mongooseTsConfig
+  config as mongooseTsConfig
 } from 'mongoose-ts-ua';
 import * as mongodb from 'mongodb';
 import { ClientSession, CommonOptions } from 'mongodb';
@@ -43,51 +43,51 @@ declare module 'mongoose' {
 }
 
 export async function transaction(fn: (session: ClientSession) => any, conn?: mongoose.Connection) {
-    const session = await (conn || mongoose.connection).startSession();
-    session.startTransaction({
-        readConcern: {
-            level: 'snapshot'
-        },
-        writeConcern: {
-            w: 'majority'
-        }
-    });
-    let result;
-    try {
-        result = await fn(session);
-        await session.commitTransaction();
-    } catch (e) {
-        await session.abortTransaction();
-        throw e;
+  const session = await (conn || mongoose.connection).startSession();
+  session.startTransaction({
+    readConcern: {
+      level: 'snapshot'
+    },
+    writeConcern: {
+      w: 'majority'
     }
-    return result;
+  });
+  let result;
+  try {
+    result = await fn(session);
+    await session.commitTransaction();
+  } catch (e) {
+    await session.abortTransaction();
+    throw e;
+  }
+  return result;
 }
 
 let orgModel = mongoose.model;
 let coll = {};
 //事务中无法创建表，定义的时候创建
 function createCollection(model) {
-    (async () => {
-        let collectionName = model.collection.collectionName;
-        //防止重复处理
-        if (coll[collectionName])
-            return;
-        coll[collectionName] = true;
-        let listCol = model.collection.conn.db.listCollections({
-            name: collectionName,
-        });
-        let t = await Q.denodeify<any[]>(listCol.toArray.bind(listCol))();
-        if (!t.length) {
-            let x = await model.collection.conn.createCollection(collectionName);
-        }
-    })().catch(e => {
-        console.log(e);
+  (async () => {
+    let collectionName = model.collection.collectionName;
+    //防止重复处理
+    if (coll[collectionName])
+      return;
+    coll[collectionName] = true;
+    let listCol = model.collection.conn.db.listCollections({
+      name: collectionName,
     });
+    let t = await Q.denodeify<any[]>(listCol.toArray.bind(listCol))();
+    if (!t.length) {
+      let x = await model.collection.conn.createCollection(collectionName);
+    }
+  })().catch(e => {
+    console.log(e);
+  });
 }
 (mongoose.model as any) = function () {
-    let model: Model<any> = orgModel.apply(mongoose, arguments);
-    createCollection(model);
-    return model;
+  let model: Model<any> = orgModel.apply(mongoose, arguments);
+  createCollection(model);
+  return model;
 };
 
 // mongoose.connection.once('open', () => {
@@ -101,8 +101,8 @@ export type MongoOpt = {
     options?: ConnectionOptions
 }
 export async function init(mongoOpt: MongoOpt) {
-    mongooseTsConfig.schemaOptions = { timestamps: true, versionKey: false, id: false };
-    mongooseTsConfig.toCollectionName = common.stringToLowerCaseWithUnderscore;
-    await mongoose.connect(mongoOpt.uri, mongoOpt.options);
+  mongooseTsConfig.schemaOptions = { timestamps: true, versionKey: false, id: false };
+  mongooseTsConfig.toCollectionName = common.stringToLowerCaseWithUnderscore;
+  await mongoose.connect(mongoOpt.uri, mongoOpt.options);
 }
 

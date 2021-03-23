@@ -1,6 +1,6 @@
 import {
-    getModelForClass, ModelType, DocType, InstanceType,
-    setSchema, prop, arrayProp, setMethod
+  getModelForClass, ModelType, DocType, InstanceType,
+  setSchema, prop, arrayProp, setMethod
 } from 'mongoose-ts-ua';
 import { Types, SchemaTypes } from 'mongoose';
 
@@ -10,22 +10,22 @@ export type UserLogInstanceType = InstanceType<UserLog>;
 export type UserLogModelType = ModelType<UserLog, typeof UserLog>;
 export type UserLogDocType = DocType<UserLogInstanceType>;
 @setSchema({
-    schemaOptions: {
-        toJSON: {
-            virtuals: true
-        }
+  schemaOptions: {
+    toJSON: {
+      virtuals: true
     }
+  }
 })
 export class UserLog extends Base {
     @prop({
-        required: true,
-        type: SchemaTypes.ObjectId,
+      required: true,
+      type: SchemaTypes.ObjectId,
     })
     userId: Types.ObjectId;
 
     @prop({
-        required: true,
-        type: SchemaTypes.ObjectId,
+      required: true,
+      type: SchemaTypes.ObjectId,
     })
     operatorId: Types.ObjectId;
 
@@ -36,7 +36,7 @@ export class UserLog extends Base {
     remark: string;
 
     @prop({
-        type: Object
+      type: Object
     })
     oldData: any;
 }

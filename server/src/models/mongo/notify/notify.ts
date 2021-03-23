@@ -1,6 +1,6 @@
 import {
-    getModelForClass, ModelType, DocType, InstanceType,
-    setSchema, prop, arrayProp, getSchema, setPlugin
+  getModelForClass, ModelType, DocType, InstanceType,
+  setSchema, prop, arrayProp, getSchema, setPlugin
 } from 'mongoose-ts-ua';
 import { Types, SchemaTypes } from 'mongoose';
 
@@ -13,26 +13,26 @@ export type NotifyInstanceType = InstanceType<Notify>;
 export type NotifyModelType = ModelType<Notify, typeof Notify>;
 export type NotifyDocType = DocType<NotifyInstanceType>;
 @setSchema({
-    schemaOptions: {
-        toJSON: { virtuals: true }
-    }
+  schemaOptions: {
+    toJSON: { virtuals: true }
+  }
 })
 @setPlugin(pagination)
 export class Notify extends Base {
     @prop({
-        enum: myEnum.notifyType.getAllValue(),
-        required: true,
+      enum: myEnum.notifyType.getAllValue(),
+      required: true,
     })
     type: number;
 
     @prop()
     get typeText() {
-        return myEnum.notifyType.getKey(this.type);
+      return myEnum.notifyType.getKey(this.type);
     }
 
     @prop({
-        required: true,
-        index: { unique: true }
+      required: true,
+      index: { unique: true }
     })
     orderNo: string;
 
@@ -40,12 +40,12 @@ export class Notify extends Base {
     outOrderNo: string;
 
     @prop({
-        type: Object
+      type: Object
     })
     value: any;
 
     @prop({
-        type: Object
+      type: Object
     })
     raw: any;
 }

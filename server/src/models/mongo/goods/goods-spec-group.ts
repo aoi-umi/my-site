@@ -1,6 +1,6 @@
 import {
-    getModelForClass, ModelType, DocType, InstanceType,
-    setSchema, prop, arrayProp, getSchema
+  getModelForClass, ModelType, DocType, InstanceType,
+  setSchema, prop, arrayProp, getSchema
 } from 'mongoose-ts-ua';
 import { Types, SchemaTypes } from 'mongoose';
 
@@ -14,19 +14,19 @@ export type GoodsSpecGroupDocType = DocType<GoodsSpecGroupInstanceType>;
 @setSchema()
 export class GoodsSpecGroup extends Base {
     @prop({
-        type: SchemaTypes.ObjectId,
-        required: true
+      type: SchemaTypes.ObjectId,
+      required: true
     })
     spuId: Types.ObjectId;
 
     @prop({
-        required: true,
+      required: true,
     })
     name: string;
 
     @arrayProp({
-        required: true,
-        type: String
+      required: true,
+      type: String
     })
     value: string[];
 }

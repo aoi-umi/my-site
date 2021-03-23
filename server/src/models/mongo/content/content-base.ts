@@ -1,6 +1,6 @@
 import {
-    getModelForClass, ModelType, DocType, InstanceType,
-    setSchema, prop, arrayProp, setPlugin
+  getModelForClass, ModelType, DocType, InstanceType,
+  setSchema, prop, arrayProp, setPlugin
 } from 'mongoose-ts-ua';
 import { Types, SchemaTypes } from 'mongoose';
 
@@ -17,13 +17,13 @@ export type ContentBaseModelType = ModelType<ContentBase, typeof ContentBase & I
 @setPlugin(pagination)
 export abstract class ContentBase extends Base implements IVoteOwner, IFavouriteOwner {
     @prop({
-        type: SchemaTypes.ObjectId,
-        required: true,
+      type: SchemaTypes.ObjectId,
+      required: true,
     })
     userId: Types.ObjectId;
 
     @prop({
-        default: ''
+      default: ''
     })
     profile: string;
 
@@ -31,7 +31,7 @@ export abstract class ContentBase extends Base implements IVoteOwner, IFavourite
     cover: string;
 
     @prop({
-        required: true,
+      required: true,
     })
     title: string;
 
@@ -39,37 +39,37 @@ export abstract class ContentBase extends Base implements IVoteOwner, IFavourite
     abstract get statusText(): string;
 
     @arrayProp({
-        type: String
+      type: String
     })
     cate: string[];
 
     @prop({
-        default: 0
+      default: 0
     })
     readTimes: number;
 
     @prop({
-        default: 0
+      default: 0
     })
     commentCount: number;
 
     @prop({
-        default: 0
+      default: 0
     })
     like: number;
 
     @prop({
-        default: 0
+      default: 0
     })
     dislike: number;
 
     @prop({
-        default: 0
+      default: 0
     })
     favourite: number;
 
     @prop({
-        default: ''
+      default: ''
     })
     remark: string;
 

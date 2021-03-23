@@ -18,16 +18,16 @@ export interface MyRequestHandler {
 }
 
 export class MyRequestHandlerMid {
-    static convert(fn: MyRequestHandler) {
-        let rh = async (ctx: Context & RouterContext, next) => {
-            let rs = await myRequestHandler(async (opt) => {
-                opt.reqData = ctx.method === 'GET' ? ctx.request.query : ctx.request.body;
-                opt.myData = ctx.myData;
-                let rs = await fn(opt, ctx, next);
-                return rs;
-            }, ctx);
-            return rs;
-        };
-        return rh;
-    }
+  static convert(fn: MyRequestHandler) {
+    let rh = async (ctx: Context & RouterContext, next) => {
+      let rs = await myRequestHandler(async (opt) => {
+        opt.reqData = ctx.method === 'GET' ? ctx.request.query : ctx.request.body;
+        opt.myData = ctx.myData;
+        let rs = await fn(opt, ctx, next);
+        return rs;
+      }, ctx);
+      return rs;
+    };
+    return rh;
+  }
 }

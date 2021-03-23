@@ -1,6 +1,6 @@
 import {
-    getModelForClass, ModelType, DocType, InstanceType,
-    setSchema, prop, arrayProp
+  getModelForClass, ModelType, DocType, InstanceType,
+  setSchema, prop, arrayProp
 } from 'mongoose-ts-ua';
 import { Types, SchemaTypes } from 'mongoose';
 import * as Int32 from 'mongoose-int32';
@@ -15,26 +15,26 @@ export type DanmakuModelType = ModelType<Danmaku, typeof Danmaku>;
 @setSchema()
 export class Danmaku extends Base {
     @prop({
-        type: SchemaTypes.ObjectId,
-        required: true,
+      type: SchemaTypes.ObjectId,
+      required: true,
     })
     userId: Types.ObjectId;
     
     @prop({
-        type: SchemaTypes.ObjectId,
-        required: true,
+      type: SchemaTypes.ObjectId,
+      required: true,
     })
     videoId: Types.ObjectId;
 
     @prop({
-        required: true,
+      required: true,
     })
     msg: string;
 
     //位置,毫秒
     @prop({
-        type: Int32,
-        required: true,
+      type: Int32,
+      required: true,
     })
     pos: number;
 
@@ -42,7 +42,7 @@ export class Danmaku extends Base {
     color: string;
 
     @prop({
-        enum: myEnum.danmakuType.getAllValue(),
+      enum: myEnum.danmakuType.getAllValue(),
     })
     type: number;
 }

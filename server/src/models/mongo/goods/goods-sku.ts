@@ -1,6 +1,6 @@
 import {
-    getModelForClass, ModelType, DocType, InstanceType,
-    setSchema, prop, arrayProp, getSchema
+  getModelForClass, ModelType, DocType, InstanceType,
+  setSchema, prop, arrayProp, getSchema
 } from 'mongoose-ts-ua';
 import { Types, SchemaTypes } from 'mongoose';
 
@@ -12,56 +12,56 @@ export type GoodsSkuModelType = ModelType<GoodsSku, typeof GoodsSku>;
 export type GoodsSkuDocType = DocType<GoodsSkuInstanceType>;
 
 @setSchema({
-    schemaOptions: {
-        toJSON: { virtuals: true }
-    }
+  schemaOptions: {
+    toJSON: { virtuals: true }
+  }
 })
 export class GoodsSku extends Base {
     @prop({
-        type: SchemaTypes.ObjectId,
-        required: true
+      type: SchemaTypes.ObjectId,
+      required: true
     })
     spuId: Types.ObjectId;
 
     @prop({
-        required: true,
+      required: true,
     })
     name: string;
 
     @arrayProp({
-        required: true,
-        type: String,
+      required: true,
+      type: String,
     })
     spec: string[];
 
     @prop({
-        // required: true,
+      // required: true,
     })
     code: string;
 
     @prop({
-        required: true,
-        enum: myEnum.goodsSkuStatus.getAllValue(),
+      required: true,
+      enum: myEnum.goodsSkuStatus.getAllValue(),
     })
     status: number;
 
     @prop({
-        required: true
+      required: true
     })
     price: number;
 
     @prop({
-        required: true
+      required: true
     })
     quantity: number;
 
     @prop({
-        default: 0,
+      default: 0,
     })
     saleQuantity: number;
 
     @arrayProp({
-        type: String,
+      type: String,
     })
     imgs: string[];
 }

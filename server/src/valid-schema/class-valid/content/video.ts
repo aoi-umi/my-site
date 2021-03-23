@@ -6,8 +6,8 @@ import { myEnum } from '@/config';
 
 import { arrayTransform } from '../util';
 import {
-    ContentQuery, ContentDetailQuery,
-    ContentSave, ContentDel, ContentMgtAudit
+  ContentQuery, ContentDetailQuery,
+  ContentSave, ContentDel, ContentMgtAudit
 } from './content';
 
 export class VideoQuery extends ContentQuery {
@@ -21,7 +21,7 @@ export class VideoSave extends ContentSave {
     @IsArray()
     @ArrayMinSize(1)
     @Transform(value => {
-        return arrayTransform(value, Types.ObjectId);
+      return arrayTransform(value, Types.ObjectId);
     })
     videoIdList: Types.ObjectId[];
 }

@@ -40,7 +40,7 @@ export class ContentMgtAudit {
     @IsDefined()
     @IsArray()
     @Transform(value => {
-        return arrayTransform(value, Types.ObjectId);
+      return arrayTransform(value, Types.ObjectId);
     })
     idList: Types.ObjectId[];
 

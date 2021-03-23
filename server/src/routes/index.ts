@@ -3,16 +3,16 @@ import { UserAuthMid, FileMid, MyRequestHandlerMid, UserStatMid } from '@/middle
 import { auth, env } from '@/config';
 
 let router = new Router({
-    prefix: env.urlPrefix
+  prefix: env.urlPrefix
 });
 export default router;
 
 
 router.get('/server/info', UserStatMid.stat, MyRequestHandlerMid.convert(() => {
-    return {
-        name: env.name,
-        version: env.version,
-    };
+  return {
+    name: env.name,
+    version: env.version,
+  };
 }));
 
 import user from './user';

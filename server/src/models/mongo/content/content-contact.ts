@@ -1,13 +1,13 @@
 import {
-    getModelForClass,
-    ModelType,
-    DocType,
-    InstanceType,
-    setSchema,
-    prop,
-    arrayProp,
-    getSchema,
-    setPlugin,
+  getModelForClass,
+  ModelType,
+  DocType,
+  InstanceType,
+  setSchema,
+  prop,
+  arrayProp,
+  getSchema,
+  setPlugin,
 } from 'mongoose-ts-ua';
 import { Types, SchemaTypes } from 'mongoose';
 
@@ -26,20 +26,20 @@ export type ContentContactBaseDocType = DocType<ContentContactBaseInstanceType>;
 @setPlugin(pagination)
 export class ContentContactBase extends Base {
     @prop({
-        required: true,
-        type: SchemaTypes.ObjectId,
+      required: true,
+      type: SchemaTypes.ObjectId,
     })
     userId: Types.ObjectId;
 
     @prop({
-        required: true,
-        type: SchemaTypes.ObjectId,
+      required: true,
+      type: SchemaTypes.ObjectId,
     })
     ownerId: Types.ObjectId;
 
     @prop({
-        required: true,
-        enum: myEnum.contentType.getAllValue(),
+      required: true,
+      enum: myEnum.contentType.getAllValue(),
     })
     type: number;
 }

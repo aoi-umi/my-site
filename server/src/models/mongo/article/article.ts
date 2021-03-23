@@ -1,6 +1,6 @@
 import {
-    getModelForClass, ModelType, DocType, InstanceType,
-    setSchema, prop, arrayProp
+  getModelForClass, ModelType, DocType, InstanceType,
+  setSchema, prop, arrayProp
 } from 'mongoose-ts-ua';
 
 import { myEnum } from '@/config';
@@ -11,43 +11,43 @@ export type ArticleInstanceType = InstanceType<Article>;
 export type ArticleModelType = ModelType<Article, typeof Article>;
 export type ArticleDocType = DocType<ArticleInstanceType>;
 @setSchema({
-    schemaOptions: {
-        toJSON: {
-            virtuals: true
-        }
+  schemaOptions: {
+    toJSON: {
+      virtuals: true
     }
+  }
 })
 export class Article extends ContentBase {
     @prop({
-        required: true,
+      required: true,
     })
     content: string;
 
     @prop({
-        enum: myEnum.articleContentType.getAllValue(),
-        default: myEnum.articleContentType.默认,
+      enum: myEnum.articleContentType.getAllValue(),
+      default: myEnum.articleContentType.默认,
     })
     contentType: number;
 
     @prop({
-        enum: myEnum.articleStatus.getAllValue(),
-        required: true
+      enum: myEnum.articleStatus.getAllValue(),
+      required: true
     })
     status: number;
 
     @prop()
     get statusText() {
-        return myEnum.articleStatus.getKey(this.status);
+      return myEnum.articleStatus.getKey(this.status);
     }
 
     @prop()
     get canUpdate() {
-        return [myEnum.articleStatus.草稿, myEnum.articleStatus.审核不通过, myEnum.articleStatus.审核通过].includes(this.status);
+      return [myEnum.articleStatus.草稿, myEnum.articleStatus.审核不通过, myEnum.articleStatus.审核通过].includes(this.status);
     }
 
     @prop()
     get canDel() {
-        return ![myEnum.articleStatus.已删除].includes(this.status);
+      return ![myEnum.articleStatus.已删除].includes(this.status);
     }
 }
 
