@@ -10,6 +10,7 @@
     "eslint.options": {
       "extensions": [".ts"]
     },
-    "eslint.validate": ["typescript"]
+    "eslint.validate": ["typescript"],
+    "editor.tabSize": 2
   }
   

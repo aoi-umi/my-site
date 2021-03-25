@@ -8,6 +8,7 @@ import * as net from 'net';
 import * as crypto from 'crypto';
 import * as Q from 'q';
 import * as zlib from 'zlib';
+import * as uuid from 'uuid';
 import * as config from '@/config';
 
 
@@ -99,19 +100,9 @@ export let promisifyAll = function (obj) {
       obj[key + 'Promise'] = promisify(obj[key], obj);
   }
 };
-export let s4 = function (count?: number) {
-  let str = '';
-  if (count == undefined)
-    count = 1;
-  if (count > 0) {
-    for (let i = 0; i < count; i++) {
-      str += (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-    }
-  }
-  return str;
-};
+
 export let guid = function () {
-  return `${s4(2)}-${s4()}-${s4()}-${s4()}-${s4(3)}`;
+  return uuid.v4();
 };
 
 //字符串
@@ -257,6 +248,14 @@ export let error = function (msg, code?, option?: { remark?: string, format?: st
   err.code = code;
   err.status = status;
   return err;
+};
+
+export const wait = (ms: number) => {
+  return new Promise<void>((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, ms);
+  });
 };
 //#endregion
 

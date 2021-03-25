@@ -40,13 +40,32 @@ export class MySequelize extends Sequelize {
     super(opt.uri, opt.options);
   }
 
+  private getParamsWithSql(sql, params) {
+    let newParams = {
+      ...params
+    };
+    let reg = /:+(?!\d)(\w+)/g;
+    
+    let rs;
+    do {
+      rs = reg.exec(sql);
+      if (rs) {
+        let key = rs[1];
+        if (newParams[key] === undefined)
+          newParams[key] = '';
+      }
+    } while (rs);
+    return newParams;
+  }
+
   async rawQuery(sql: string | string[], params?: any) {
     let sqlStr = typeof sql === 'string' ? sql : sql.join(';\r\n');
     sqlStr = sqlStr.trim();
     if (!sqlStr.endsWith(';')) sqlStr += ';';
     let result: any[];
     try {
-      let rs = await this.query(sqlStr, { type: QueryTypes.RAW, replacements: params });
+      let newParams = this.getParamsWithSql(sqlStr, params);
+      let rs = await this.query(sqlStr, { type: QueryTypes.RAW, replacements: newParams });
       result = rs[0].filter(ele => ele instanceof Array);
     } catch (e) {
       console.error(e.message);

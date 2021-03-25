@@ -17,7 +17,9 @@ export default class App extends Base {
   }
 
   get isRoot () {
-    return this.$route.path === routerConfig.test.path
+    let path = this.$route.path
+    if (path.endsWith('/')) { path = path.replace(/\/$/, '') }
+    return path === routerConfig.test.path
   }
 
   render () {

@@ -20,7 +20,6 @@ export default class App extends Base {
   }[] = []
   result = ''
   params = ''
-  paramsDefine = []
 
   init () {
     this.config = [
@@ -47,7 +46,6 @@ export default class App extends Base {
         }
       }
     ]
-    this.paramsDefine = ['var1', 'var2']
     this.params = this.stringify({
       var1: 1
     })
@@ -60,7 +58,6 @@ export default class App extends Base {
   test () {
     this.operateHandler('', async () => {
       let rs = await testApi.dynamicSqlExec({
-        paramsDefine: this.paramsDefine.filter(ele => ele),
         params: JSON.parse(this.params),
         config: this.config
       })
@@ -71,17 +68,9 @@ export default class App extends Base {
   render () {
     return (
       <div>
-        <Row>
+        <Row gutter={5}>
           <Col span={12}>
             <Form label-position='right' label-width={60}>
-              <Button on-click={() => {
-                this.paramsDefine.push('')
-              }}>添加</Button>
-              <FormItem label='参数定义'>
-                {this.paramsDefine.map((ele, idx) => {
-                  return <Input v-model={this.paramsDefine[idx]} />
-                })}
-              </FormItem>
               <FormItem label='参数'>
                 <Input type='textarea' v-model={this.params} rows={4}>
                 </Input>
