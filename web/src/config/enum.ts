@@ -117,6 +117,34 @@ const enumDefine = {
     限时开放: 1,
     关闭: 2,
     限时关闭: 3
+  },
+  dynamicSqlType: {
+    列表: 'list',
+    无数据: 'noData'
+  },
+
+  dynamicCompType: {
+    输入框: 'input',
+    数字输入框: 'input-number',
+    选择器: 'select',
+    多选框: 'checkbox',
+    日期: 'date',
+    时间: 'time',
+    日期时间: 'datetime'
+  },
+  dynamicCompStringQueryType: {
+    等于: 'eq',
+    模糊: 'like',
+    左模糊: 'left-like',
+    右模糊: 'right-like'
+  },
+  dynamicCompNumQueryType: {
+    大于: '>',
+    大于等于: '>=',
+    小于: '<',
+    小于等于: '<=',
+    等于: '=',
+    不等于: '!='
   }
 }
 

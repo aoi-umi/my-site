@@ -4,11 +4,23 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import { Input, Card, Button, Checkbox, Row, Col, Select, Option, Form, FormItem, Divider } from '@/components/iview'
 
 import { MyList } from '@/components/my-list'
-import { DynamicComp, DynamicCompType, DynamicCompConfigType } from '@/components/my-dynamic-comp'
+import { DynamicComp, DynamicCompConfigType } from '@/components/my-dynamic-comp'
+import { myEnum } from '@/config'
+const { dynamicCompType } = myEnum
 import { Base } from '../base'
+import { MyBase } from '@/components/my-base'
+import { getCompOpts, convClass } from '@/components/utils'
+import { Prop } from '@/components/property-decorator'
 
-@Component({})
-export default class App extends Base {
+export class DynamicCompDemoProp {
+  @Prop()
+  comp?: boolean;
+}
+@Component({
+  extends: MyBase,
+  mixins: [getCompOpts(DynamicCompDemoProp)]
+})
+export default class App extends Vue<DynamicCompDemoProp & MyBase> {
   configList: DynamicCompConfigType[] = []
   data = {}
   listData = []
@@ -46,50 +58,63 @@ export default class App extends Base {
     return { editable: true }
   }
   created () {
-    this.configList = Object.entries({
-      ...DynamicCompType,
-      不可编辑输入框: {
-        name: 'dis-input',
-        editable: false,
-        type: 'input'
-      },
-      动态组件: {
-        name: 'dyn-input'
-      }
-    }).map((ele, index) => {
-      let val = ele[1]
-      let text = ele[0]
-      let name = ''; let type = ''
-      if (typeof val === 'string') { name = val } else {
-        name = val.name
-        type = val.type
-      }
-      if (!type) type = name
+    if (!this.comp) {
+      this.setConfigList(Object.entries({
+        ...dynamicCompType,
+        不可编辑输入框: {
+          name: 'dis-input',
+          editable: false,
+          type: 'input'
+        },
+        动态组件: {
+          name: 'dyn-input'
+        }
+      }).map((ele: any) => {
+        let val = ele[1]
+        let text = ele[0]
+        let name = ''; let type = ''
+        if (typeof val === 'string') { name = val } else {
+          name = val.name
+          type = val.type
+        }
+        if (!type) type = name
+
+        let obj = {
+          name,
+          type,
+          text,
+          remark: `${text}_${name}`
+        }
+        if (typeof val !== 'string') {
+          obj = {
+            ...obj,
+            ...val
+          }
+        }
+        return obj
+      }))
+      this.setData()
+    }
+  }
+
+  setConfigList (data: Partial<DynamicCompConfigType>[]) {
+    this.configList.splice(0, this.configList.length)
+    this.configList.push(...data.map((ele: any, index) => {
       let obj = {
         ...this.getDefaultConfig(),
-        name,
-        text,
-        type: type,
         isRange: false,
         options: 'options',
-        remark: `${text}_${name}`
-      }
-      if (!(typeof val === 'string')) {
-        obj = {
-          ...obj,
-          ...val
-        }
+        ...ele
       }
       return obj
-    })
-    this.setData()
+    }))
   }
 
   dynamicConfig ({ config, name, value, data }) {
     if (name === 'dyn-input') {
       if (data.input === 'disabled') return { editable: false }
       if (data.input === 'required') return { required: true }
-      if (DynamicCompType[data.input]) return { type: DynamicCompType[data.input] }
+      if (dynamicCompType[data.input]) return { type: dynamicCompType[data.input] }
     }
     return
   }
@@ -101,7 +126,7 @@ export default class App extends Base {
     }
   }
 
-  getData (d?) {
+  private getData (d?) {
     let data = {}
     this.configList.forEach(ele => {
       data[ele.name] = null
@@ -116,9 +141,20 @@ export default class App extends Base {
     }
     return data
   }
-  setData () {
+  private setData () {
     this.data = this.getData()
     this.listData = [this.getData(), this.getData({ input: 'required' })]
+  }
+
+  getAdvData () {
+    let data = {}
+    this.configList.forEach(ele => {
+      data[ele.name] = {
+        mode: ele.queryMatchMode?.value,
+        value: this.data[ele.name]
+      }
+    })
+    return data
   }
 
   selectType = ''
@@ -211,7 +247,7 @@ export default class App extends Base {
             })}
           </Row>
         </div>
-        <MyList hideSearchBox colConfigs={this.configList} dynamicCompOptions={
+        {!this.comp && <MyList hideSearchBox colConfigs={this.configList} dynamicCompOptions={
           {
             extraValue: this.extraValue,
             editable: this.editable,
@@ -219,7 +255,7 @@ export default class App extends Base {
             compProp: this.compProp
           }
         }
-        data={this.listData}></MyList>
+        data={this.listData}></MyList>}
       </div>
     )
   }
@@ -240,7 +276,7 @@ export default class App extends Base {
         </FormItem>
         <FormItem label='type'>
           <Select v-model={this.selectRow.type}>
-            {this.$utils.obj2arr(DynamicCompType).map(ele => {
+            {this.$utils.obj2arr(dynamicCompType).map(ele => {
               return (
                 <i-option key={ele.key} value={ele.value}>
                   {ele.key}
@@ -254,11 +290,11 @@ export default class App extends Base {
           <Checkbox v-model={this.selectRow.required} />
         </FormItem>
 
-        {[DynamicCompType.日期, DynamicCompType.日期时间].includes(this.selectRow.type) && <FormItem label='范围'>
+        {[dynamicCompType.日期, dynamicCompType.日期时间].includes(this.selectRow.type) && <FormItem label='范围'>
           <Checkbox v-model={this.selectRow.isRange} />
         </FormItem>}
 
-        {[DynamicCompType.选择器].includes(this.selectRow.type) &&
+        {[dynamicCompType.选择器].includes(this.selectRow.type) &&
           <div>
             <FormItem label='取值类型'>
               <Select v-model={this.selectType}>
@@ -289,3 +325,5 @@ export default class App extends Base {
     )
   }
 }
+
+export const DynamicCompDemo = convClass<DynamicCompDemoProp>(App)

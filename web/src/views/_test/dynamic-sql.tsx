@@ -1,25 +1,42 @@
 
 import { Component, Vue, Watch } from 'vue-property-decorator'
 
-import { Input, Card, Button, Checkbox, Row, Col, Select, Option, Form, FormItem, Divider } from '@/components/iview'
+import { Input, Card, Button, Checkbox, Row, Col, Select, Form, FormItem, Divider, Tabs, TabPane } from '@/components/iview'
 
 import { MyList } from '@/components/my-list'
-import { DynamicComp, DynamicCompType, DynamicCompConfigType } from '@/components/my-dynamic-comp'
-import { Base } from '../base'
+import { DynamicComp, DynamicCompConfigType } from '@/components/my-dynamic-comp'
 import { testApi } from '@/api'
+import { myEnum } from '@/config'
 
+import { Base } from '../base'
+import DynamicCompDemoModel, { DynamicCompDemo } from './dynamic-comp'
 @Component({})
 export default class App extends Base {
+  $refs: { dynamicComp: DynamicCompDemoModel }
   created () {
     this.init()
   }
 
+  mounted () {
+    let dynamicComp = this.$refs.dynamicComp
+    dynamicComp.setConfigList([{
+      name: 'testStr',
+      text: 'testStr',
+      editable: true,
+      queryMatchMode: { show: true, value: '' }
+    }])
+    dynamicComp.data = {
+      testStr: 'a'
+    }
+  }
+
   config: {
     noData?: boolean; name?: string; sql: string,
-    type?: string, options?: any
+    type?: string, orderBy?: string
   }[] = []
   result = ''
   params = ''
+  querySqlName = 'rs3'
 
   init () {
     this.config = [
@@ -28,7 +45,7 @@ export default class App extends Base {
         sql: "select :var1+1 as a union select 'aaa' as a"
       },
       {
-        noData: true,
+        type: myEnum.dynamicSqlType.无数据,
         sql: 'set @test=1'
       },
       {
@@ -38,12 +55,8 @@ export default class App extends Base {
       {
         name: 'rs3',
         sql: 'select * from test',
-        type: 'list',
-        options: {
-          orderBy: 'id desc',
-          pageIndex: 1,
-          pageSize: 2
-        }
+        type: myEnum.dynamicSqlType.列表,
+        orderBy: 'id desc'
       }
     ]
     this.params = this.stringify({
@@ -57,9 +70,21 @@ export default class App extends Base {
 
   test () {
     this.operateHandler('', async () => {
+      let dynamicComp = this.$refs.dynamicComp
+      let queryArgs = dynamicComp.getAdvData()
+
+      let options: any[] = [{ name: this.querySqlName, queryArgs }]
+      let rs3 = options.find(ele => ele.name === 'rs3')
+      if (!rs3) {
+        rs3 = { name: 'rs3' }
+        options.push(rs3)
+      }
+      rs3.pageIndex = 1
+      rs3.pageSize = 2
       let rs = await testApi.dynamicSqlExec({
         params: JSON.parse(this.params),
-        config: this.config
+        config: this.config,
+        options
       })
       this.result = this.stringify(rs)
     })
@@ -70,34 +95,18 @@ export default class App extends Base {
       <div>
         <Row gutter={5}>
           <Col span={12}>
-            <Form label-position='right' label-width={60}>
-              <FormItem label='参数'>
-                <Input type='textarea' v-model={this.params} rows={4}>
-                </Input>
-              </FormItem>
-              <Button on-click={() => {
-                this.config.push({
-                  name: '',
-                  sql: ''
-                })
-              }}>添加</Button>
-              {this.config.map(ele => {
-                return (
-                  <div>
-                    <FormItem label='名字'>
-                      <Input v-model={ele.name} />
-                    </FormItem>
-                    <FormItem label='无数据'>
-                      <Checkbox v-model={ele.noData} />
-                    </FormItem>
-                    <FormItem label='sql'>
-                      <Input v-model={ele.sql} type='textarea' />
-                    </FormItem>
-                    <Divider />
-                  </div>
-                )
-              })}
-            </Form>
+            <Tabs>
+              <TabPane label='sql'>
+                {this.renderSqlSetting()}
+              </TabPane>
+              <TabPane label='查询参数'>
+                <div>
+                  <span>sql名字</span>
+                  <Input v-model={this.querySqlName} />
+                </div>
+                {<DynamicCompDemo comp ref='dynamicComp' />}
+              </TabPane>
+            </Tabs>
           </Col>
           <Col span={12}>
             <Button on-click={this.test}>测试</Button>
@@ -106,6 +115,51 @@ export default class App extends Base {
           </Col>
         </Row>
       </div>
+    )
+  }
+
+  renderSqlSetting () {
+    return (
+      <Form label-position='right' label-width={60}>
+        <FormItem label='参数'>
+          <Input type='textarea' v-model={this.params} rows={4}>
+          </Input>
+        </FormItem>
+        <Button on-click={() => {
+          this.config.push({
+            name: '',
+            sql: ''
+          })
+        }}>添加</Button>
+        {this.config.map(ele => {
+          return (
+            <Row gutter={5}>
+              <Col span={12}>
+                <span>名字</span>
+                <Input v-model={ele.name} />
+              </Col>
+              <Col span={12}>
+                <span>类型</span>
+                <Select v-model={ele.type} clearable>
+                  {myEnum.dynamicSqlType.toArray().map(ele => {
+                    return <i-option value={ele.value}>{ele.key}</i-option>
+                  })}
+                </Select>
+              </Col>
+              <Col span={24}>
+                <span>sql</span>
+                <Input v-model={ele.sql} type='textarea' />
+              </Col>
+              <Col span={24}>
+                <Button type='error' on-click={() => {
+                  this.config.splice(this.config.indexOf(ele), 1)
+                }}>删除</Button>
+              </Col>
+              <Divider />
+            </Row>
+          )
+        })}
+      </Form>
     )
   }
 }

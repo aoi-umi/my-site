@@ -5,6 +5,7 @@ import { MyData } from '@/typings/libs';
 
 export type MyRequestHandlerOpt = {
     reqData?: any;
+    params?: any;
     reqOption?: any;
     myData?: MyData;
     json?: boolean;
@@ -23,6 +24,7 @@ export class MyRequestHandlerMid {
       let rs = await myRequestHandler(async (opt) => {
         opt.reqData = ctx.method === 'GET' ? ctx.request.query : ctx.request.body;
         opt.myData = ctx.myData;
+        opt.params = ctx.params;
         let rs = await fn(opt, ctx, next);
         return rs;
       }, ctx);

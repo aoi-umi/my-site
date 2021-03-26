@@ -1,38 +1,39 @@
 import { Sequelize, Options, QueryTypes } from 'sequelize';
+import { myEnum } from '@/config';
 
 
 export type SequelizeOpt = {
-    uri: string;
-    options?: Options
+  uri: string;
+  options?: Options
 }
 
 export type QueryConfig = {
-    // {param1: 'int', param2: 'varchar(50)'}
-    paramsDefine?: { [key: string]: string }
-    params?: any
-    // string类型直接返回数组, 否则按配置构造模型
-    config: QuerySqlConfig[] | string[]
+  // {param1: 'int', param2: 'varchar(50)'}
+  paramsDefine?: { [key: string]: string }
+  params?: any
+  // string类型直接返回数组, 否则按配置构造模型
+  config: QuerySqlConfig[] | string[]
+  options?: (QuerySqlOptions & { name: string })[]
 }
 
-export const QuerySqlConfigType = {
-  列表: 'list'
-};
 const QuerySqlConfigInnerType = {
   列表计数: 'calc'
 };
 
 type QuerySqlConfig = {
-    sql: string
-    name: string
-    parentName?: string
-    noData?: boolean
-    type?: string
-    options?: {
-        pageIndex?: number
-        pageSize?: number
-        orderBy?: string
-        where?: any
-    }
+  sql: string
+  name: string
+  parentName?: string
+  type?: string
+  orderBy?: string
+  options?: QuerySqlOptions
+}
+
+type QuerySqlOptions = {
+  pageIndex?: number
+  pageSize?: number
+  where?: any
+  queryArgs?: any
 }
 
 export class MySequelize extends Sequelize {
@@ -45,7 +46,7 @@ export class MySequelize extends Sequelize {
       ...params
     };
     let reg = /:+(?!\d)(\w+)/g;
-    
+
     let rs;
     do {
       rs = reg.exec(sql);
@@ -79,10 +80,10 @@ export class MySequelize extends Sequelize {
     let options = { ...ele.options };
     let sql = ele.sql;
     let countSql = '';
-    if (ele.type === QuerySqlConfigType.列表) {
-      if (!options.orderBy
-                || !options.pageIndex
-                || !options.pageSize) throw new Error('列表类型需要排序和分页');
+    if (ele.type === myEnum.dynamicSqlType.列表) {
+      if (!ele.orderBy
+        || !options.pageIndex
+        || !options.pageSize) throw new Error('列表类型需要排序和分页');
       let from = (options.pageIndex - 1) * options.pageSize;
       let size = options.pageSize;
       let querySql = ele.sql;
@@ -119,15 +120,19 @@ export class MySequelize extends Sequelize {
     let config2: QuerySqlConfig[] = [];
     if (!isCfg) {
       sqlList = [
-        ...sqlList,
         ...cfg.config,
       ];
     } else {
+      if (cfg.options?.length) {
+        config.forEach(ele => {
+          let match = cfg.options.find(o => o.name === ele.name);
+          ele.options = match;
+        });
+      }
       sqlList = [
-        ...sqlList,
         ...config.map((ele) => {
           let rs = this.getSql(ele);
-          if (ele.type === QuerySqlConfigType.列表) {
+          if (ele.type === myEnum.dynamicSqlType.列表) {
             config2.push({
               ...this.getConfigByType(ele.name, QuerySqlConfigInnerType.列表计数),
               sql: rs.countSql,
@@ -159,14 +164,14 @@ export class MySequelize extends Sequelize {
     let obj = {};
     let idx = 0;
     for (let ele of config) {
-      if (ele.noData) continue;
+      if (ele.type === myEnum.dynamicSqlType.无数据) continue;
       if (!ele.name) {
         idx++;
         continue;
       }
       let val = result[idx];
       switch (ele.type) {
-      case QuerySqlConfigType.列表:
+      case myEnum.dynamicSqlType.列表:
         val = {
           rows: val
         };
