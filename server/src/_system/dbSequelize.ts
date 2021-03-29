@@ -1,5 +1,6 @@
 import { Sequelize, Options, QueryTypes } from 'sequelize';
 import { myEnum } from '@/config';
+import * as common from '@/_system/common';
 
 
 export type SequelizeOpt = {
@@ -37,6 +38,7 @@ type QuerySqlOptions = {
 }
 
 export class MySequelize extends Sequelize {
+  options: Options;
   constructor(opt: SequelizeOpt) {
     super(opt.uri, opt.options);
   }
@@ -87,13 +89,51 @@ export class MySequelize extends Sequelize {
       let from = (options.pageIndex - 1) * options.pageSize;
       let size = options.pageSize;
       let querySql = ele.sql;
-      sql = `select * from (${querySql}) t limit ${from}, ${size}`;
-      countSql = `select count(1) as count from (${querySql}) t`;
+      let whereSql = this.getWhereSql(options);
+
+      sql = `select * from (${querySql}) t ${whereSql} order by ${ele.orderBy} limit ${from}, ${size}`;
+      countSql = `select count(1) as count from (${querySql}) t ${whereSql}`;
     }
     return {
       sql,
       countSql
     };
+  }
+
+  private getWhereSql(options: QuerySqlOptions) {
+    let whereSql = [];
+
+    let queryArgs = options.queryArgs as { [key: string]: { value: any, mode: string } };
+    if (queryArgs) {
+      for (let key in queryArgs) {
+        let args = queryArgs[key];
+        let val = args.value;
+        if (typeof val === 'string')
+          val = val.trim();
+        if ([undefined, null, ''].includes(val))
+          continue;
+        let op = '';
+        switch (args.mode) {
+        case myEnum.dynamicCompStringQueryType.模糊:
+          op = 'like';
+          val = `%${val}%`;
+          break;
+        case myEnum.dynamicCompStringQueryType.左模糊:
+          op = 'like';
+          val = `%${val}`;
+          break;
+        case myEnum.dynamicCompStringQueryType.右模糊:
+          op = 'like';
+          val = `${val}%`;
+          break;
+        default:
+          op = '=';
+          break;
+        }
+        whereSql.push(`${key} ${op} ${common.sqlEscape(val, this.options.timezone, this.options.dialect)}`);
+      }
+    }
+    return whereSql.length ? `where ${whereSql.join(' and ')}` : '';
   }
 
   async queryByConfig(cfg: QueryConfig) {

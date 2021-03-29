@@ -411,7 +411,7 @@ class MyUpload extends Vue<MyUploadProp & MyBase> {
                   class={this.shape == 'circle' ? this.getStyleName('cropper-circle') : ''}
                 />
               </div>
-              <div>
+              <div class='button-group-normal'>
                 <Button on-click={() => {
                   this.cropperShow = false
                 }}>取消</Button>

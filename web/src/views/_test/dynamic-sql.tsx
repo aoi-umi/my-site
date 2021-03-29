@@ -23,7 +23,7 @@ export default class App extends Base {
       name: 'testStr',
       text: 'testStr',
       editable: true,
-      queryMatchMode: { show: true, value: '' }
+      queryMatchMode: { show: true, value: myEnum.dynamicCompStringQueryType.模糊 }
     }])
     dynamicComp.data = {
       testStr: 'a'
@@ -37,6 +37,7 @@ export default class App extends Base {
   result = ''
   params = ''
   querySqlName = 'rs3'
+  querySqlOption = JSON.stringify({ pageIndex: 1, pageSize: 2 }, null, '  ')
 
   init () {
     this.config = [
@@ -73,14 +74,15 @@ export default class App extends Base {
       let dynamicComp = this.$refs.dynamicComp
       let queryArgs = dynamicComp.getAdvData()
 
-      let options: any[] = [{ name: this.querySqlName, queryArgs }]
-      let rs3 = options.find(ele => ele.name === 'rs3')
-      if (!rs3) {
-        rs3 = { name: 'rs3' }
-        options.push(rs3)
+      let opt = {
+        ...JSON.parse(this.querySqlOption),
+        name: this.querySqlName, queryArgs
       }
-      rs3.pageIndex = 1
-      rs3.pageSize = 2
+      let options: any[] = [opt]
+
+      if (this.querySqlName !== 'rs3') {
+        options.push({ name: 'rs3', pageIndex: 1, pageSize: 2 })
+      }
       let rs = await testApi.dynamicSqlExec({
         params: JSON.parse(this.params),
         config: this.config,
@@ -103,8 +105,9 @@ export default class App extends Base {
                 <div>
                   <span>sql名字</span>
                   <Input v-model={this.querySqlName} />
+                  <Input v-model={this.querySqlOption} type='textarea' rows={3}></Input>
                 </div>
-                {<DynamicCompDemo comp ref='dynamicComp' />}
+                {<DynamicCompDemo ref='dynamicComp' comp advQuery/>}
               </TabPane>
             </Tabs>
           </Col>

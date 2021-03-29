@@ -252,7 +252,7 @@ export default class GoodsMgtDetail extends Base {
       const groupProp = `specGroup.${gIdx}`
       return (
         <div>
-          <Row>
+          <Row gutter={10}>
             <Col xs={20} sm={10}>
               <FormItem label={'规格' + (gIdx + 1)} prop={groupProp + '.name'}
                 rules={{
@@ -280,7 +280,7 @@ export default class GoodsMgtDetail extends Base {
               </FormItem>
             </Col>
           </Row>
-          <Row>
+          <Row gutter={10}>
             {g.value.map((v, vIdx) => {
               return (
                 <Col xs={24} sm={12}>

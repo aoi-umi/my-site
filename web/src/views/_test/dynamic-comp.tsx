@@ -15,6 +15,9 @@ import { Prop } from '@/components/property-decorator'
 export class DynamicCompDemoProp {
   @Prop()
   comp?: boolean;
+
+  @Prop()
+  advQuery?:boolean
 }
 @Component({
   extends: MyBase,
@@ -100,14 +103,18 @@ export default class App extends Vue<DynamicCompDemoProp & MyBase> {
   setConfigList (data: Partial<DynamicCompConfigType>[]) {
     this.configList.splice(0, this.configList.length)
     this.configList.push(...data.map((ele: any, index) => {
-      let obj = {
-        ...this.getDefaultConfig(),
-        isRange: false,
-        options: 'options',
-        ...ele
-      }
-      return obj
+      return this.getConfigObj(ele)
     }))
+  }
+
+  private getConfigObj (ele) {
+    return {
+      ...this.getDefaultConfig(),
+      isRange: false,
+      options: 'options',
+      queryMatchMode: this.advQuery ? { show: true, value: '' } : null,
+      ...ele
+    }
   }
 
   dynamicConfig ({ config, name, value, data }) {
@@ -203,12 +210,11 @@ export default class App extends Vue<DynamicCompDemoProp & MyBase> {
               hidePage
             >
               <Button on-click={() => {
-                this.configList.push({
-                  ...this.getDefaultConfig(),
+                this.configList.push(this.getConfigObj({
                   name: 'unknow',
                   text: '未命名',
                   type: 'input'
-                })
+                }))
               }}>新增</Button>
             </MyList>
           </Col>

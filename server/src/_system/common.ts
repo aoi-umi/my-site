@@ -9,6 +9,7 @@ import * as crypto from 'crypto';
 import * as Q from 'q';
 import * as zlib from 'zlib';
 import * as uuid from 'uuid';
+import * as  SqlString from 'sequelize/lib/sql-string';
 import * as config from '@/config';
 
 
@@ -277,11 +278,11 @@ export let extend = function (...args) {
 
 type RequestServiceOption = AxiosRequestConfig & { raw?: boolean };
 export type RequestServiceByConfigOption = {
-    serviceName?: string;
-    methodName?: string;
-    beforeRequest?: Function;
-    afterResponse?: Function;
-    outLog?: any;
+  serviceName?: string;
+  methodName?: string;
+  beforeRequest?: Function;
+  afterResponse?: Function;
+  outLog?: any;
 } & RequestServiceOption;
 export let requestServiceByConfig = function (option: RequestServiceByConfigOption) {
   let method = '';
@@ -290,63 +291,63 @@ export let requestServiceByConfig = function (option: RequestServiceByConfigOpti
   let startTime = new Date().getTime();
   return promise(async function () {
     let errStr = `service "${option.serviceName}"`;
-        type Args = {
-            host: string;
-        };
-        let service = config.env.api[option.serviceName] as {
-            defaultArgs: Args,
-            method: {
-                [methodName: string]: {
-                    url: string;
-                    method: string;
-                    isUseDefault: boolean;
-                    args: Args;
-                }
-            }
-        };
-        if (!service) throw error(`${errStr} is not exist!`);
-        let serviceArgs = clone(service.defaultArgs);
-
-        let defaultMethodArgs = {
-          isUseDefault: true,
-          method: 'POST',
-        };
-        let methodConfig = service.method[option.methodName];
-        methodConfig = extend(defaultMethodArgs, methodConfig);
-
-        if (!methodConfig.isUseDefault) {
-          serviceArgs = extend(serviceArgs, methodConfig.args);
+    type Args = {
+      host: string;
+    };
+    let service = config.env.api[option.serviceName] as {
+      defaultArgs: Args,
+      method: {
+        [methodName: string]: {
+          url: string;
+          method: string;
+          isUseDefault: boolean;
+          args: Args;
         }
+      }
+    };
+    if (!service) throw error(`${errStr} is not exist!`);
+    let serviceArgs = clone(service.defaultArgs);
 
-        let host = serviceArgs.host;
-        if (!host) throw error(`${errStr} host is empty!`);
+    let defaultMethodArgs = {
+      isUseDefault: true,
+      method: 'POST',
+    };
+    let methodConfig = service.method[option.methodName];
+    methodConfig = extend(defaultMethodArgs, methodConfig);
 
-        method = methodConfig.method;
-        url = methodConfig.url;
-        if (!url) throw error(`${errStr} method "${option.methodName}" url is empty!`);
-        url = host + url;
-        let opt: AxiosRequestConfig = {
-          url: url,
-          data: option.data,
-          method: method as any
-        };
-        if (option.beforeRequest) {
-          //发送的参数 当前所用参数
-          await option.beforeRequest(opt, serviceArgs);
-        }
-        log.guid = guid();
-        log.url = url;
-        log.req = opt.data;
-        log.method = `[${option.serviceName}][${option.methodName}]`;
-        let { response, data } = await requestService(opt);
-        log.duration = startTime - new Date().getTime();
+    if (!methodConfig.isUseDefault) {
+      serviceArgs = extend(serviceArgs, methodConfig.args);
+    }
 
-        log.result = true;
-        log.res = data;
-        if (option.afterResponse) {
-          data = await option.afterResponse(data, response);
-        }
-        return data;
+    let host = serviceArgs.host;
+    if (!host) throw error(`${errStr} host is empty!`);
+
+    method = methodConfig.method;
+    url = methodConfig.url;
+    if (!url) throw error(`${errStr} method "${option.methodName}" url is empty!`);
+    url = host + url;
+    let opt: AxiosRequestConfig = {
+      url: url,
+      data: option.data,
+      method: method as any
+    };
+    if (option.beforeRequest) {
+      //发送的参数 当前所用参数
+      await option.beforeRequest(opt, serviceArgs);
+    }
+    log.guid = guid();
+    log.url = url;
+    log.req = opt.data;
+    log.method = `[${option.serviceName}][${option.methodName}]`;
+    let { response, data } = await requestService(opt);
+    log.duration = startTime - new Date().getTime();
+
+    log.result = true;
+    log.res = data;
+    if (option.afterResponse) {
+      data = await option.afterResponse(data, response);
+    }
+    return data;
   }).fail(function (e) {
     log.result = false;
     log.res = e;
@@ -478,11 +479,11 @@ export let streamToBuffer = function (stream: fs.ReadStream) {
 };
 
 export let getListDiff = function <T1, T2>(option: {
-    list: T1[],
-    newList?: T2[],
-    compare?: (t1: T1, t2: T2) => boolean,
-    delReturnValue?: (t: T1) => any,
-    addReturnValue?: (t: T2) => any,
+  list: T1[],
+  newList?: T2[],
+  compare?: (t1: T1, t2: T2) => boolean,
+  delReturnValue?: (t: T1) => any,
+  addReturnValue?: (t: T2) => any,
 }) {
   let opt: any = {
     compare: function (item1, item2) {
@@ -544,6 +545,16 @@ export let isObjectEmpty = function (obj) {
   }
   return empty;
 };
+
+export const sqlEscape = exports.escape = (val, timezone, dialect) => {
+  return SqlString.escape(
+    val,
+    timezone,
+    dialect,
+    true
+  );
+};
+
 //#endregion
 
 //删除require
