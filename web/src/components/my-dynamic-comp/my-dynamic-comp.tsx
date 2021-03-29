@@ -37,7 +37,7 @@ export type DynamicCompConfigType = {
   queryMatchMode?: {
     show?: boolean,
     value?: string
-  }
+  },
 };
 
 type DynamicCompPropType = {

@@ -80,7 +80,7 @@ class MyListProp<QueryArgs = any> {
   columns?: ColType[];
 
   @Prop()
-  colConfigs?: DynamicCompConfigType[];
+  colConfigs?: (DynamicCompConfigType & { width?: number })[];
 
   @Prop()
   dynamicCompOptions?: Partial<DynamicCompProp>
@@ -169,6 +169,8 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
             key: ele.name,
             title: ele.text || ele.name,
             align: 'center',
+            minWidth: 120,
+            width: ele.width,
             render: (h, params) => {
               let data = this.findOriginData(params.row)
               return (<DynamicComp props={this.dynamicCompOptions} config={ele} data={data}

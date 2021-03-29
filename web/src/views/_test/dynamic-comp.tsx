@@ -1,7 +1,7 @@
 
 import { Component, Vue, Watch } from 'vue-property-decorator'
 
-import { Input, Card, Button, Checkbox, Row, Col, Select, Option, Form, FormItem, Divider } from '@/components/iview'
+import { Input, Card, Button, Checkbox, Row, Col, Select, Option, Form, FormItem, Divider, InputNumber } from '@/components/iview'
 
 import { MyList } from '@/components/my-list'
 import { DynamicComp, DynamicCompConfigType } from '@/components/my-dynamic-comp'
@@ -11,13 +11,14 @@ import { Base } from '../base'
 import { MyBase } from '@/components/my-base'
 import { getCompOpts, convClass } from '@/components/utils'
 import { Prop } from '@/components/property-decorator'
+import MyDetail from '@/components/my-detail/my-detail'
 
 export class DynamicCompDemoProp {
   @Prop()
   comp?: boolean;
 
   @Prop()
-  advQuery?:boolean
+  advQuery?: boolean
 }
 @Component({
   extends: MyBase,
@@ -43,7 +44,12 @@ export default class App extends Vue<DynamicCompDemoProp & MyBase> {
       }
     }
   }
-  selectRow: DynamicCompConfigType = null
+  selectRow: DynamicCompConfigType & {
+    // my detail
+    size?: number
+    // my list
+    width?: number
+  } = null
   editable = true
 
   extraValue = {
@@ -70,7 +76,9 @@ export default class App extends Vue<DynamicCompDemoProp & MyBase> {
           type: 'input'
         },
         动态组件: {
-          name: 'dyn-input'
+          name: 'dyn-input',
+          size: 2,
+          width: 200
         }
       }).map((ele: any) => {
         let val = ele[1]
@@ -234,24 +242,15 @@ export default class App extends Vue<DynamicCompDemoProp & MyBase> {
           </Col>
         </Row>
         <div>
-          <Row>
-            {this.configList.map(ele => {
-              return (
-                <Col xs={6}>
-                  <DynamicComp style='margin: 0 5px 5px 0'
-                    config={ele}
-                    data={this.data}
-                    compProp={this.compProp}
-                    showText
-                    editable={this.editable}
-                    readonlyType='disabled'
-                    extraValue={this.extraValue}
-                    dynamicConfig={this.dynamicConfig}
-                  />
-                </Col>
-              )
-            })}
-          </Row>
+          <MyDetail itemConfigs={this.configList} dynamicCompOptions={
+            {
+              data: this.data,
+              extraValue: this.extraValue,
+              editable: this.editable,
+              dynamicConfig: this.dynamicConfig,
+              compProp: this.compProp
+            }
+          } />
         </div>
         {!this.comp && <MyList hideSearchBox colConfigs={this.configList} dynamicCompOptions={
           {
@@ -294,6 +293,12 @@ export default class App extends Vue<DynamicCompDemoProp & MyBase> {
 
         <FormItem label='必填'>
           <Checkbox v-model={this.selectRow.required} />
+        </FormItem>
+        <FormItem label='size'>
+          <InputNumber v-model={this.selectRow.size} />
+        </FormItem>
+        <FormItem label='width'>
+          <InputNumber v-model={this.selectRow.width} />
         </FormItem>
 
         {[dynamicCompType.日期, dynamicCompType.日期时间].includes(this.selectRow.type) && <FormItem label='范围'>
