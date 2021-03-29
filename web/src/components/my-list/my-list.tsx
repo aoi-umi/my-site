@@ -423,7 +423,7 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
               </Row>
               {this.customQueryNode}
               <Divider size='small' />
-              <Row gutter={5} type='flex' justify='end'>
+              <div class={['button-group-normal', ...this.getStyleName('op-box')]} >
                 {[{
                   name: 'reset',
                   text: '重置',
@@ -449,15 +449,13 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
                   }
                 }].filter(ele => !hideQueryBtn.all && !hideQueryBtn[ele.name]).map(ele => {
                   return (
-                    <Col>
-                      <Button type={ele.type as any} loading={ele.loading && ele.loading()} on-click={() => {
-                        ele.click()
-                      }}>{ele.text}</Button>
-                    </Col>
+                    <Button type={ele.type as any} loading={ele.loading && ele.loading()} on-click={() => {
+                      ele.click()
+                    }}>{ele.text}</Button>
                   )
                 })}
                 {this.customOperateView}
-              </Row>
+              </div>
             </div>
           </Card>
         }

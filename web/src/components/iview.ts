@@ -1,5 +1,7 @@
-const iview = require('view-design')
+const iview = require('@/plugins/def').iView
 import { convClass } from './utils'
+
+import './iview.less'
 
 export const Affix = convClass<iView.Affix, true>(iview.Affix)
 export const AutoComplete = convClass<iView.AutoComplete, true>(iview.AutoComplete)

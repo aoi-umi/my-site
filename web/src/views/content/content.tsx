@@ -288,7 +288,7 @@ class ContentListItem extends Vue<ContentListItemProp & Base> {
                 </Col>
               </Row>
               <Row class={this.getStyleName('content-row')}>
-                <Col class={this.getStyleName('cover-col')}>
+                <Col class={this.getStyleName('cover-col')} span={24}>
                   {ele.coverUrl && <img class={[...this.getStyleName('cover'), 'my-upload-item cover']} v-lazy={ele.coverUrl} />}
                   {!min && <p class={this.getStyleName('profile')}>{ele.profile || this.cfg.profile}</p>}
                 </Col>

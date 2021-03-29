@@ -4,6 +4,7 @@ export function convClass<prop, partial extends boolean = false> (t) {
   type P = (partial extends false ? prop : Partial<prop>);
   return t as {
     new(props: P & VueComponentOptions<Partial<prop>>): any
+    props: { [key in keyof prop]: { default: any } }
   }
 }
 

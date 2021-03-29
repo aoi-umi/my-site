@@ -1,6 +1,5 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/property-decorator'
 import { myEnum } from '@/config'
 import { Tabs, TabPane, Modal, Input } from '@/components/iview'
 
