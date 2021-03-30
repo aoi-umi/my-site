@@ -3,8 +3,6 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 
 import { Input, Card, Button, Checkbox, Row, Col, Select, Form, FormItem, Divider, Tabs, TabPane } from '@/components/iview'
 
-import { MyList } from '@/components/my-list'
-import { DynamicComp, DynamicCompConfigType } from '@/components/my-dynamic-comp'
 import { testApi } from '@/api'
 import { myEnum } from '@/config'
 
@@ -22,8 +20,11 @@ export default class App extends Base {
     dynamicComp.setConfigList([{
       name: 'testStr',
       text: 'testStr',
-      editable: true,
       queryMatchMode: { show: true, value: myEnum.dynamicCompStringQueryType.模糊 }
+    }, {
+      name: 'testInt',
+      text: 'testInt',
+      calcType: myEnum.dynamicSqlCalcType.求和
     }])
     dynamicComp.data = {
       testStr: 'a'
@@ -73,16 +74,18 @@ export default class App extends Base {
     this.operateHandler('', async () => {
       let dynamicComp = this.$refs.dynamicComp
       let queryArgs = dynamicComp.getAdvData()
+      let fields = dynamicComp.getFields()
 
       let opt = {
-        ...JSON.parse(this.querySqlOption),
-        name: this.querySqlName, queryArgs
+        name: this.querySqlName,
+        query: {
+          ...JSON.parse(this.querySqlOption),
+          queryArgs
+        },
+        fields
       }
       let options: any[] = [opt]
 
-      if (this.querySqlName !== 'rs3') {
-        options.push({ name: 'rs3', pageIndex: 1, pageSize: 2 })
-      }
       let rs = await testApi.dynamicSqlExec({
         params: JSON.parse(this.params),
         config: this.config,
@@ -107,7 +110,9 @@ export default class App extends Base {
                   <Input v-model={this.querySqlName} />
                   <Input v-model={this.querySqlOption} type='textarea' rows={3}></Input>
                 </div>
-                {<DynamicCompDemo ref='dynamicComp' comp advQuery/>}
+                {<DynamicCompDemo ref='dynamicComp' comp advQuery
+                  colConfig={{ span: 6 }}
+                />}
               </TabPane>
             </Tabs>
           </Col>

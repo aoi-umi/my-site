@@ -14,11 +14,20 @@ export type QueryConfig = {
   params?: any
   // string类型直接返回数组, 否则按配置构造模型
   config: QuerySqlConfig[] | string[]
-  options?: (QuerySqlOptions & { name: string })[]
+  options?: QueryConfigOption[]
 }
 
+type QueryConfigOption = {
+  name: string
+  query?: QuerySqlOptions
+  fields?: QueryFieldsOptions
+}
+
+type QueryFieldsOptions = { [key: string]: { name: string, calcType?: string } }
+
 const QuerySqlConfigInnerType = {
-  列表计数: 'calc'
+  列表计数: 'calc',
+  列表分页计数: 'subCalc',
 };
 
 type QuerySqlConfig = {
@@ -27,7 +36,7 @@ type QuerySqlConfig = {
   parentName?: string
   type?: string
   orderBy?: string
-  options?: QuerySqlOptions
+  options?: QueryConfigOption
 }
 
 type QuerySqlOptions = {
@@ -78,29 +87,38 @@ export class MySequelize extends Sequelize {
     return result;
   }
 
-  private getSql(ele: QuerySqlConfig) {
+  private getListSql(ele: QuerySqlConfig) {
     let options = { ...ele.options };
     let sql = ele.sql;
-    let countSql = '';
-    if (ele.type === myEnum.dynamicSqlType.列表) {
-      if (!ele.orderBy
-        || !options.pageIndex
-        || !options.pageSize) throw new Error('列表类型需要排序和分页');
-      let from = (options.pageIndex - 1) * options.pageSize;
-      let size = options.pageSize;
-      let querySql = ele.sql;
-      let whereSql = this.getWhereSql(options);
+    let calcSql = '';
+    let subCalcSql = '';
+    if (!ele.orderBy) throw new Error('列表类型需要排序');
+    let srcSql = ele.sql;
+    let { whereSql, limit } = this.getWhereSql(options.query);
+    let { groupSql } = this.getGroupSql(options.fields);
 
-      sql = `select * from (${querySql}) t ${whereSql} order by ${ele.orderBy} limit ${from}, ${size}`;
-      countSql = `select count(1) as count from (${querySql}) t ${whereSql}`;
+    sql = `select * from (${srcSql}) t ${whereSql} order by ${ele.orderBy} ${limit}`;
+
+    let count = 'count(1) as count';
+    if (groupSql)
+      count = `${count}, ${groupSql}`;
+    if (groupSql || limit) {
+      calcSql = `select ${count} from (${srcSql}) t ${whereSql}`;
+    }
+    if (groupSql && limit) {
+      subCalcSql = `select ${groupSql} from (${sql}) t`;
     }
     return {
       sql,
-      countSql
+      calcSql,
+      subCalcSql
     };
   }
 
   private getWhereSql(options: QuerySqlOptions) {
+    options = {
+      ...options,
+    };
     let whereSql = [];
 
     let queryArgs = options.queryArgs as { [key: string]: { value: any, mode: string } };
@@ -133,7 +151,41 @@ export class MySequelize extends Sequelize {
         whereSql.push(`${key} ${op} ${common.sqlEscape(val, this.options.timezone, this.options.dialect)}`);
       }
     }
-    return whereSql.length ? `where ${whereSql.join(' and ')}` : '';
+
+
+    //分页
+    let limit = '';
+    if (options.pageIndex && options.pageSize) {
+      let from = (options.pageIndex - 1) * options.pageSize;
+      let size = options.pageSize;
+      limit = `limit ${from}, ${size}`;
+    }
+    return {
+      whereSql: whereSql.length ? `where ${whereSql.join(' and ')}` : '',
+      limit
+    };
+  }
+
+  private getGroupSql(options: QueryFieldsOptions) {
+    options = {
+      ...options
+    };
+    let groupSql = [];
+    for (let key in options) {
+      let field = options[key];
+      let fieldName = `\`${field.name}\``;
+      if (!field.calcType) continue;
+      switch (field.calcType) {
+      default:
+        groupSql.push(`${field.calcType}(${fieldName}) as ${fieldName}`);
+        break;
+      }
+    }
+
+    // 汇总
+    return {
+      groupSql: groupSql.length ? `${groupSql.join(', ')}` : ''
+    };
   }
 
   async queryByConfig(cfg: QueryConfig) {
@@ -163,7 +215,7 @@ export class MySequelize extends Sequelize {
         ...cfg.config,
       ];
     } else {
-      if (cfg.options?.length) {
+      if (cfg.options) {
         config.forEach(ele => {
           let match = cfg.options.find(o => o.name === ele.name);
           ele.options = match;
@@ -171,15 +223,25 @@ export class MySequelize extends Sequelize {
       }
       sqlList = [
         ...config.map((ele) => {
-          let rs = this.getSql(ele);
           if (ele.type === myEnum.dynamicSqlType.列表) {
-            config2.push({
-              ...this.getConfigByType(ele.name, QuerySqlConfigInnerType.列表计数),
-              sql: rs.countSql,
-            });
-            sqlList2.push(rs.countSql);
+            let rs = this.getListSql(ele);
+            if (rs.calcSql) {
+              config2.push({
+                ...this.getConfigByType(ele.name, QuerySqlConfigInnerType.列表计数),
+                sql: rs.calcSql,
+              });
+              sqlList2.push(rs.calcSql);
+            }
+            if (rs.subCalcSql) {
+              config2.push({
+                ...this.getConfigByType(ele.name, QuerySqlConfigInnerType.列表分页计数),
+                sql: rs.subCalcSql,
+              });
+              sqlList2.push(rs.subCalcSql);
+            }
+            return rs.sql;
           }
-          return rs.sql;
+          return ele.sql;
         }),
       ];
       config = [...config, ...config2];
@@ -200,8 +262,7 @@ export class MySequelize extends Sequelize {
     };
   }
 
-  getObjByConfig(config: QuerySqlConfig[], result: any[]) {
-    let obj = {};
+  private configFor(config: QuerySqlConfig[], fn: (ele: QuerySqlConfig, idx: number) => void) {
     let idx = 0;
     for (let ele of config) {
       if (ele.type === myEnum.dynamicSqlType.无数据) continue;
@@ -209,10 +270,20 @@ export class MySequelize extends Sequelize {
         idx++;
         continue;
       }
+      fn(ele, idx);
+      idx++;
+    }
+
+  }
+
+  getObjByConfig(config: QuerySqlConfig[], result: any[]) {
+    let obj = {};
+    this.configFor(config, (ele, idx) => {
       let val = result[idx];
       switch (ele.type) {
       case myEnum.dynamicSqlType.列表:
         val = {
+          count: val.length,
           rows: val
         };
         break;
@@ -222,16 +293,21 @@ export class MySequelize extends Sequelize {
           calc: val[0],
         };
         break;
+      case QuerySqlConfigInnerType.列表分页计数:
+        val = {
+          subCalc: val[0],
+        };
+        break;
       }
       if (ele.parentName)
         obj[ele.parentName] = {
-          ...val,
           ...obj[ele.parentName],
+          ...val,
         };
       else
         obj[ele.name] = val;
-      idx++;
-    }
+    });
+
     return obj;
   }
 

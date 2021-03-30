@@ -122,6 +122,10 @@ const enumDefine = {
     列表: 'list',
     无数据: 'noData'
   },
+  dynamicSqlCalcType: {
+    求和: 'sum',
+    平均: 'avg'
+  },
 
   dynamicCompType: {
     输入框: 'input',

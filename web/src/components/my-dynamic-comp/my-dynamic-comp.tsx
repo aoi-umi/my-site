@@ -38,6 +38,8 @@ export type DynamicCompConfigType = {
     show?: boolean,
     value?: string
   },
+
+  calcType?: string
 };
 
 type DynamicCompPropType = {

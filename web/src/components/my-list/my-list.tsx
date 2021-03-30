@@ -80,7 +80,7 @@ class MyListProp<QueryArgs = any> {
   columns?: ColType[];
 
   @Prop()
-  colConfigs?: (DynamicCompConfigType & { width?: number })[];
+  itemConfigs?: (DynamicCompConfigType & { width?: number })[];
 
   @Prop()
   dynamicCompOptions?: Partial<DynamicCompProp>
@@ -161,10 +161,10 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
   private cols?: ColType[];
   protected created () {
     if (this.type == 'table') {
-      if (!this.columns && !this.colConfigs) { throw new Error(`type 'table' require 'columns' or 'colConfigs'!`) }
+      if (!this.columns && !this.itemConfigs) { throw new Error(`type 'table' require 'columns' or 'colConfigs'!`) }
       this.cols = []
-      if (this.colConfigs) {
-        this.cols.push(...this.colConfigs.map(ele => {
+      if (this.itemConfigs) {
+        this.cols.push(...this.itemConfigs.map(ele => {
           return {
             key: ele.name,
             title: ele.text || ele.name,

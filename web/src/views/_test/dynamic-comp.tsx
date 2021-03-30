@@ -6,12 +6,12 @@ import { Input, Card, Button, Checkbox, Row, Col, Select, Option, Form, FormItem
 import { MyList } from '@/components/my-list'
 import { DynamicComp, DynamicCompConfigType } from '@/components/my-dynamic-comp'
 import { myEnum } from '@/config'
-const { dynamicCompType } = myEnum
-import { Base } from '../base'
+const { dynamicCompType, dynamicSqlCalcType } = myEnum
 import { MyBase } from '@/components/my-base'
 import { getCompOpts, convClass } from '@/components/utils'
 import { Prop } from '@/components/property-decorator'
 import MyDetail from '@/components/my-detail/my-detail'
+import { Base } from '@/views/base'
 
 export class DynamicCompDemoProp {
   @Prop()
@@ -19,12 +19,15 @@ export class DynamicCompDemoProp {
 
   @Prop()
   advQuery?: boolean
+
+  @Prop()
+  colConfig?: any
 }
 @Component({
-  extends: MyBase,
+  extends: Base,
   mixins: [getCompOpts(DynamicCompDemoProp)]
 })
-export default class App extends Vue<DynamicCompDemoProp & MyBase> {
+export default class App extends Vue<DynamicCompDemoProp & Base> {
   configList: DynamicCompConfigType[] = []
   data = {}
   listData = []
@@ -64,7 +67,7 @@ export default class App extends Vue<DynamicCompDemoProp & MyBase> {
   }
 
   getDefaultConfig () {
-    return { editable: true }
+    return { editable: true, calcType: '' }
   }
   created () {
     if (!this.comp) {
@@ -172,6 +175,17 @@ export default class App extends Vue<DynamicCompDemoProp & MyBase> {
     return data
   }
 
+  getFields () {
+    let data = {}
+    this.configList.forEach(ele => {
+      data[ele.name] = {
+        name: ele.name,
+        calcType: ele.calcType
+      }
+    })
+    return data
+  }
+
   selectType = ''
   selectOption: any
 
@@ -250,9 +264,9 @@ export default class App extends Vue<DynamicCompDemoProp & MyBase> {
               dynamicConfig: this.dynamicConfig,
               compProp: this.compProp
             }
-          } />
+          } colConfig={this.colConfig}/>
         </div>
-        {!this.comp && <MyList hideSearchBox colConfigs={this.configList} dynamicCompOptions={
+        {!this.comp && <MyList hideSearchBox itemConfigs={this.configList} dynamicCompOptions={
           {
             extraValue: this.extraValue,
             editable: this.editable,
@@ -281,13 +295,7 @@ export default class App extends Vue<DynamicCompDemoProp & MyBase> {
         </FormItem>
         <FormItem label='type'>
           <Select v-model={this.selectRow.type}>
-            {this.$utils.obj2arr(dynamicCompType).map(ele => {
-              return (
-                <i-option key={ele.key} value={ele.value}>
-                  {ele.key}
-                </i-option>
-              )
-            })}
+            {this.renderOptionByObj(dynamicCompType)}
           </Select>
         </FormItem>
 
@@ -301,6 +309,11 @@ export default class App extends Vue<DynamicCompDemoProp & MyBase> {
           <InputNumber v-model={this.selectRow.width} />
         </FormItem>
 
+        {this.advQuery && <FormItem label='计算'>
+          <Select v-model={this.selectRow.calcType}>
+            {this.renderOptionByObj(dynamicSqlCalcType)}
+          </Select>
+        </FormItem>}
         {[dynamicCompType.日期, dynamicCompType.日期时间].includes(this.selectRow.type) && <FormItem label='范围'>
           <Checkbox v-model={this.selectRow.isRange} />
         </FormItem>}

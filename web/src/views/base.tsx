@@ -112,4 +112,14 @@ export class Base extends MyBase {
   protected setTitle (title: string) {
     document.title = title
   }
+
+  protected renderOptionByObj (obj) {
+    return this.$utils.obj2arr(obj).map(ele => {
+      return (
+        <i-option key={ele.key} value={ele.value}>
+          {ele.key}
+        </i-option>
+      )
+    })
+  }
 }
