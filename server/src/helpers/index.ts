@@ -34,7 +34,7 @@ export let myRequestHandler = async function (fn: (opt?: MyRequestHandlerOpt) =>
   let opt: MyRequestHandlerOpt = {
     json: true,
   };
-    //let log = helpers.expressCreateLog(req, res);
+  //let log = helpers.expressCreateLog(req, res);
   try {
     let result = await fn(opt);
     //fn中自行处理
@@ -52,8 +52,7 @@ export let myRequestHandler = async function (fn: (opt?: MyRequestHandlerOpt) =>
       }
       ctx.setHeader('Content-Disposition', disposition);
       ctx.end(result.fileBuff);
-    }
-    else {
+    } else {
       if (!opt.originRes) {
         result = {
           result: true,

@@ -1,4 +1,5 @@
 import { Context } from 'koa';
+import { RouterContext } from '@koa/router';
 import { plainToClass } from 'class-transformer';
 
 import * as config from '@/config';
@@ -58,9 +59,10 @@ export class UserAuthMid {
   }
 
   static normal(authData?: AuthType) {
-    return async (c, next) => {
-      let ctx = c as Context;
-      let token = ctx.request.get(config.dev.cache.user.prefix);
+    return async (ctx: Context & RouterContext, next) => {
+      // let ctx = c as Context;
+      let tokenKey = config.dev.cache.user.prefix;
+      let token = ctx.request.get(tokenKey) || ctx.query[tokenKey];
       let user = await UserAuthMid.getUser(token, {
         autoLogin: true,
         resetOpt: { imgHost: ctx.myData.imgHost }

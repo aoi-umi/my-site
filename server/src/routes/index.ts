@@ -16,13 +16,12 @@ router.get('/server/info', UserStatMid.stat, MyRequestHandlerMid.convert(() => {
 }));
 
 import user from './user';
-router.use(user.routes());
-
 import content from './content';
-router.use(content.routes());
-
 import my from './my';
-router.use(my.routes());
+
+[user, content, my].forEach(ele => {
+  router.use(ele.routes());
+});
 
 //#region bookmark 
 import * as bookmark from './bookmark';
