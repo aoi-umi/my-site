@@ -12,7 +12,6 @@ import { Table, Icon, Poptip } from '../iview'
 
 import './style.less'
 import { DanmakuPlayer, DanmakuPlayerOptions, DanmakuDataType } from './videojs-comp'
-import { dev } from '@/config'
 
 class MyVideoProp {
     @Prop()

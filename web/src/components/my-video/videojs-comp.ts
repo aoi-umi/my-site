@@ -48,11 +48,18 @@ export class DanmakuPlayer {
     get options () {
       return this.player.options_ as DanmakuPlayerOptions
     }
-    constructor (id: any, options?: DanmakuPlayerOptions, ready?: () => void) {
+    constructor (id: any, options?: DanmakuPlayerOptions, ready?: (player: VideoJsPlayer) => void) {
+      options = {
+        defaultVolume: 0.2,
+        ...options
+      }
       options.danmaku = {
         ...options.danmaku
       }
-      this.player = videojs(id, options, ready)
+      this.player = videojs(id, options, () => {
+        this.player.volume(options.defaultVolume)
+        ready && ready(this.player)
+      })
       if (options.danmaku.danmakuList) {
         this.danmakuDataList = [
           ...options.danmaku.danmakuList
