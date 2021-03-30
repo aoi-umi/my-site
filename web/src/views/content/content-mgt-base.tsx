@@ -440,6 +440,7 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp & Base> {
               format={['jpg', 'jpeg', 'png', 'bmp', 'gif']}
               width={160} height={90}
               v-model={this.coverList}
+              showProgress
             />
           </FormItem>
           <FormItem label='标题' prop='title'>
@@ -452,7 +453,7 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp & Base> {
           <FormItem prop='setPublishAt'>
             <label style={{ marginRight: '5px' }}>
               <Checkbox v-model={detail.setPublish} />
-                            指定时间发布
+              指定时间发布
             </label>
             <DatePicker v-model={detail.setPublishAt} type='datetime' options={{
               disabledDate: (date?: Date) => {

@@ -143,6 +143,7 @@ export default class VideoMgtDetail extends VideoMgtBase {
               })
             }}
             v-model={this.videoList}
+            showProgress
           >
           </MyUpload>
         </FormItem>

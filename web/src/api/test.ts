@@ -168,12 +168,27 @@ export class TestApi extends ApiModel<TestApiMethod> {
     return this.afterResponse(res) as FileUploadRes
   }
 
-  async imgUpload (file) {
+  uploader (file, url) {
     const formData = new FormData()
     formData.append('file', file)
-    return this.requestByConfig<FileUploadRes>(this.apiConfig.method.imgUpload, {
-      data: formData
+    let obj = {
+      result: null as Promise<FileUploadRes>,
+      progress: 0
+    }
+    let result = this.requestByConfig<FileUploadRes>(url, {
+      data: formData,
+      onUploadProgress: (progress) => {
+        obj.progress = Math.round(
+          progress.loaded / progress.total * 100
+        )
+      }
     })
+    obj.result = result
+    return obj
+  }
+
+  imgUpload (file) {
+    return this.uploader(file, this.apiConfig.method.imgUpload)
   }
 
   imgUrl = '';

@@ -1,6 +1,13 @@
 @prefix: my-upload-;
 
 .@{prefix} {
+  &item-parent {
+    display: flex;
+  }
+  &item-root {
+    display: flex;
+    flex-direction: column;
+  }
   &item {
     display: inline-block;
     width: 60px;
@@ -51,6 +58,15 @@
 
   &upload {
     display: inline-block;
+  }
+  &progress {
+    .ivu-progress-bg {
+      display: flex;
+      align-items: center;
+    }
+    .ivu-progress-inner-text {
+      line-height: 1;
+    }
   }
 
   &cropper-root {

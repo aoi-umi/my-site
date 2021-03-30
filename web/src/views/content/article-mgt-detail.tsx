@@ -93,7 +93,8 @@ export default class ArticleMgtDetail extends ArticleMgtBase {
     let match = this.uploadFile.find(ele => ele.file === file)
     if (!match) {
       try {
-        const t = await testApi.imgUpload(file)
+        const rs = testApi.imgUpload(file)
+        let t = await rs.result
         match = {
           file,
           url: t.url

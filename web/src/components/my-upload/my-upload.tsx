@@ -25,7 +25,7 @@ export type FileType = {
   url?: string;
   percentage?: number;
   status?: string;
-  showProgress?: boolean;
+  // showProgress?: boolean;
   metadata?: any;
 
   file?: File;
@@ -108,6 +108,9 @@ class MyUploadProp {
 
   @Prop()
   showVideoCrop?: boolean;
+
+  @Prop()
+  showProgress?: boolean
 }
 @Component({
   extends: MyBase,
@@ -122,9 +125,10 @@ class MyUpload extends Vue<MyUploadProp & MyBase> {
   @Watch('value')
   private watchValue (newVal: any[]) {
     if (newVal) {
-      this.fileList = this.maxCount > 0 && newVal.length > this.maxCount
+      let fileList = this.maxCount > 0 && newVal.length > this.maxCount
         ? newVal.slice(0, this.maxCount)
         : newVal
+      this.setFile(fileList, { willUpload: false })
     } else {
       this.fileList = []
     }
@@ -202,11 +206,17 @@ class MyUpload extends Vue<MyUploadProp & MyBase> {
           const formData = new FormData()
           const uploadFile = Utils.base64ToFile(file.data, file.file.name)
           formData.append('file', uploadFile)
+          file.percentage = 0
           const rs = await axios.request({
             method: 'post',
             url: this.uploadUrl,
             data: formData,
-            headers
+            headers,
+            onUploadProgress: (progress) => {
+              file.percentage = Math.round(
+                progress.loaded / progress.total * 100
+              )
+            }
           })
           file.uploadRes = this.successHandler && this.successHandler(rs.data, file)
           file.willUpload = false
@@ -287,14 +297,22 @@ class MyUpload extends Vue<MyUploadProp & MyBase> {
     return false
   }
 
-  setFile (data: SetFileType | SetFileType[]) {
+  private getDefaultFileData () {
+    return {
+      status: 'finished',
+      willUpload: true,
+      percentage: 0
+    }
+  }
+
+  setFile (data: SetFileType | SetFileType[], option?) {
     const list = data instanceof Array ? data : [data]
     this.fileList = list.map(ele => {
       return {
         ...ele,
         originData: ele.data,
-        status: 'finished',
-        willUpload: true
+        ...this.getDefaultFileData(),
+        ...option
       }
     })
   }
@@ -303,11 +321,10 @@ class MyUpload extends Vue<MyUploadProp & MyBase> {
     const file = {
       data: data,
       originData: originData || data,
-      status: 'finished',
       file: this.file,
       fileType: this.fileType,
-      willUpload: true,
-      originFileType: this.file.type
+      originFileType: this.file.type,
+      ...this.getDefaultFileData()
     }
     const rs = this.checkSize(this.file, data)
     if (!rs) { return false }
@@ -332,40 +349,50 @@ class MyUpload extends Vue<MyUploadProp & MyBase> {
     }
     const coverHeight = '50px' || height
     return (
-      <div>
+      <div class={this.getStyleName('item-parent')}>
         {this.fileList.map((item, idx) => {
           const isImg = item.fileType === FileDataType.图片
           const isVideo = item.fileType === FileDataType.视频
           const itemRefName = 'itemRef' + idx
           return (
-            <div class={[...this.getStyleName('item'), this.shape == 'circle' ? style.cls.circle : '']} style={{ width, height }}
-              v-dragging={{ item, list: this.fileList, group: 'upload-item' }}
-              key={idx}
-            >
-              {isImg && <MyImg ref={itemRefName} class={this.getStyleName('item-cont')} src={item.url || item.data} />}
-              {isVideo && <MyVideo ref={itemRefName} class={this.getStyleName('item-cont')} options={{
-                sources: [{
-                  type: item.originFileType,
-                  src: item.url || item.data
-                }],
-                danmaku: {
-                  hide: true
-                }
-              }} />}
-              <div class={this.getStyleName('item-cover')} style={{ lineHeight: coverHeight }}>
-                {isImg && item.originData && <Icon type='md-create' nativeOn-click={() => { this.handleEdit(item) }} />}
-                <Icon type='md-camera' nativeOn-click={() => {
-                  this.handleSelectFile(item)
-                }} />
-                {isImg && <Icon type='md-eye' nativeOn-click={() => { this.handleView(item) }} />}
-                <Icon type='md-trash' nativeOn-click={() => { this.handleRemove(item) }} />
-                {isVideo && this.showVideoCrop && <Icon type='md-crop' nativeOn-click={() => {
-                  const ref: IMyVideo = this.$refs[itemRefName]
-                  let data = null
-                  if (ref) { data = ref.capture() }
-                  this.$emit('video-crop', data, item)
+            <div class={this.getStyleName('item-root')}>
+              <div class={[...this.getStyleName('item'), this.shape == 'circle' ? style.cls.circle : '']} style={{ width, height }}
+                v-dragging={{ item, list: this.fileList, group: 'upload-item' }}
+                key={idx}
+              >
+                {isImg && <MyImg ref={itemRefName} class={this.getStyleName('item-cont')} src={item.url || item.data} />}
+                {isVideo && <MyVideo ref={itemRefName} class={this.getStyleName('item-cont')} options={{
+                  sources: [{
+                    type: item.originFileType,
+                    src: item.url || item.data
+                  }],
+                  danmaku: {
+                    hide: true
+                  }
                 }} />}
+                <div class={this.getStyleName('item-cover')} style={{ lineHeight: coverHeight }}>
+                  {isImg && item.originData && <Icon type='md-create' nativeOn-click={() => { this.handleEdit(item) }} />}
+                  <Icon type='md-camera' nativeOn-click={() => {
+                    this.handleSelectFile(item)
+                  }} />
+                  {isImg && <Icon type='md-eye' nativeOn-click={() => { this.handleView(item) }} />}
+                  <Icon type='md-trash' nativeOn-click={() => { this.handleRemove(item) }} />
+                  {isVideo && this.showVideoCrop && <Icon type='md-crop' nativeOn-click={() => {
+                    const ref: IMyVideo = this.$refs[itemRefName]
+                    let data = null
+                    if (ref) { data = ref.capture() }
+                    this.$emit('video-crop', data, item)
+                  }} />}
+                </div>
               </div>
+              {this.showProgress && <div class={this.getStyleName('progress')}>
+                <Progress
+                  style={{ width }}
+                  percent={item.percentage}
+                  stroke-width={5}
+                  hide-info
+                />
+              </div>}
             </div>
           )
         })}
