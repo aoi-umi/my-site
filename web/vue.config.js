@@ -75,7 +75,7 @@ let cdnOpt = {
     },
     echarts: {
       moduleName: 'echarts',
-      url: `/echarts@4.5.0/dist/echarts.min.js`
+      url: `/echarts@5.0.2/dist/echarts.min.js`
     },
     jquery: {
       moduleName: 'jQuery',

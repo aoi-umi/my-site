@@ -4,9 +4,9 @@ import { StatUserModel } from '@/models/mongo/statistics';
 import { myEnum, dev } from '@/config';
 export class StatUserMapper {
   static async create(data: {
-        type: string;
-        val: string;
-    }[]) {
+    type: string;
+    val: string;
+  }[]) {
     let today = moment().startOf('d').toDate();
     for (let ele of data) {
       let obj = { date: today, type: ele.type, val: ele.val };
@@ -21,7 +21,8 @@ export class StatUserMapper {
 
   static async query() {
     // 最近n天
-    let nDay = moment().startOf('d').subtract(15, 'd').toDate();
+    let n = 15;
+    let nDay = moment().startOf('d').subtract(n, 'd').toDate();
     let rectRs = await StatUserModel.aggregate([
       { $match: { date: { $gt: nDay } } },
       { $group: { _id: { type: '$type', date: '$date' }, times: { $sum: '$times' } } }
@@ -52,17 +53,33 @@ export class StatUserMapper {
       let m = totalRs.find(rs => rs._id === type);
       total[type] = m?.times || 0;
     });
+
+    // pv统计
+    let pvStatN = 20;
+    let pvStat = await StatUserModel.aggregate([{
+      $match: { type: 'pv', val: { $nin: ['/', '/user/signIn'] } }
+    }, {
+      $group: { _id: '$val', times: { $sum: '$times' } }
+    }, {
+      $sort: { times: -1 }
+    }, {
+      $limit: pvStatN
+    }]);
     return {
       total,
-      recently
+      recently,
+      pvStat: {
+        n: pvStatN,
+        data: pvStat
+      }
     };
   }
 
   static createRange(opt: {
-        from, to?,
-        add?: number | { value: number, unit: moment.OpUnitType },
-        getVal?: (d: any) => any,
-    }) {
+    from, to?,
+    add?: number | { value: number, unit: moment.OpUnitType },
+    getVal?: (d: any) => any,
+  }) {
     let list = [];
     let from = moment(opt.from).startOf('d');
     let to = moment(opt.to).startOf('d');
@@ -73,15 +90,15 @@ export class StatUserMapper {
   }
 
   static fillData(data: any[], opt: {
-        range,
-        comp: string | ((d: any) => any),
-        getVal?: (d: any) => any,
-    }) {
+    range,
+    comp: string | ((d: any) => any),
+    getVal?: (d: any) => any,
+  }) {
     let list = [];
     for (let i of opt.range) {
       let val = data.find(ele =>
         moment(typeof opt.comp === 'function' ? opt.comp(ele) : ele[opt.comp]).startOf('d').toDate().getTime()
-                === i.toDate().getTime());
+        === i.toDate().getTime());
       if (opt.getVal)
         val = opt.getVal(val);
       list.push(val);
