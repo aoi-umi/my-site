@@ -403,6 +403,7 @@ class MyUpload extends Vue<MyUploadProp & MyBase> {
           ref='upload'
           show-upload-list={false}
           format={this.format}
+          accept={this.format.map(ele => `.${ele}`).join(',')}
           max-size={this.maxSize}
           // props={{
           //     onSuccess: this.handleSuccess,
