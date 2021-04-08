@@ -355,9 +355,13 @@ class MyUpload extends Vue<MyUploadProp & MyBase> {
           const itemRefName = 'itemRef' + idx
           return (
             <div class={this.getStyleName('item-root')}>
-              <div class={[...this.getStyleName('item'), this.shape == 'circle' ? style.cls.circle : '']} style={{ width, height }}
-                v-dragging={{ item, list: this.fileList, group: 'upload-item' }}
-                key={idx}
+              <div class={[
+                ...this.getStyleName('item'),
+                this.shape == 'circle' ? style.cls.circle : '',
+                this.fileList.length > 1 ? 'move' : ''
+              ]} style={{ width, height }}
+              v-dragging={{ item, list: this.fileList, group: 'upload-item' }}
+              key={idx}
               >
                 {isImg && <MyImg ref={itemRefName} class={this.getStyleName('item-cont')} src={item.url || item.data} />}
                 {isVideo && <MyVideo ref={itemRefName} class={this.getStyleName('item-cont')} options={{
@@ -369,7 +373,7 @@ class MyUpload extends Vue<MyUploadProp & MyBase> {
                     hide: true
                   }
                 }} />}
-                <div class={this.getStyleName('item-cover')} style={{ lineHeight: coverHeight }}>
+                <div class={[...this.getStyleName('item-cover')]} style={{ lineHeight: coverHeight }}>
                   {isImg && item.originData && <Icon type='md-create' nativeOn-click={() => { this.handleEdit(item) }} />}
                   <Icon type='md-camera' nativeOn-click={() => {
                     this.handleSelectFile(item)
