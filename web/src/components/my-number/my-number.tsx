@@ -6,8 +6,6 @@ import { convClass, getCompOpts } from '../utils'
 import { Icon, Button } from '../iview'
 import { MyBase } from '../my-base'
 
-import './style.less'
-
 class MyNumberProp {
     @Prop({
       default: 0

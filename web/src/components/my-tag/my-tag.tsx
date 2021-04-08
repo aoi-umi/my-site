@@ -6,7 +6,6 @@ import { convClass, getCompOpts } from '../utils'
 import { Tag, Tooltip } from '../iview'
 import { MyBase } from '../my-base'
 import { TagType } from './model'
-import './style.less'
 export type RenderTagType = string | TagType;
 
 export class MyTagBaseProp<T = RenderTagType> {

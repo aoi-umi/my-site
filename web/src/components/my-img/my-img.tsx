@@ -6,8 +6,6 @@ import { convClass, getCompOpts } from '../utils'
 import { Icon } from '../iview'
 import { MyBase } from '../my-base'
 
-import './style.less'
-
 class MyImgProp {
     @Prop()
     src?: string;

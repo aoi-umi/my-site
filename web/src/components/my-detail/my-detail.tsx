@@ -9,7 +9,6 @@ import {
 import { MyBase } from '../my-base'
 import { getCompOpts, convClass } from '../utils'
 
-import './style.less'
 type MyDetailDynamicCompConfigType = DynamicCompConfigType & {
   size?: number
 }

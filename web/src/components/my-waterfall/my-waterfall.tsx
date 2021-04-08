@@ -4,7 +4,6 @@ import { Prop } from '@/components/property-decorator'
 
 import { convClass, Utils, getCompOpts } from '../utils'
 import { MyBase } from '../my-base'
-import './my-waterfall.less'
 import { Checkbox } from '../iview'
 import { MyImgViewer, IMyImgViewer } from '../my-img-viewer'
 

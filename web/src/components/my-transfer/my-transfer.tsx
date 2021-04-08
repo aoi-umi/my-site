@@ -6,8 +6,6 @@ import { convClass, getCompOpts } from '../utils'
 import { Button, Transfer } from '../iview'
 import { MyBase } from '../my-base'
 
-import './style.less'
-
 type DataType = {
     key: string;
     label: string;

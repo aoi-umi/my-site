@@ -1,4 +1,4 @@
-import './style.less'
+import './style'
 
 const clsPrefix = 'my-comp-'
 export const cls = {

@@ -12,7 +12,6 @@ import { MyBase } from '../my-base'
 import { MyVideo, IMyVideo } from '../my-video'
 
 import * as style from '../style'
-import './style.less'
 
 export const FileDataType = {
   未知: 0,

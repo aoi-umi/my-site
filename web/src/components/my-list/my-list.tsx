@@ -12,8 +12,6 @@ import { MyBase } from '../my-base'
 import * as style from '../style'
 import { MyListModel, MyListResult } from './model'
 
-import './style.less'
-
 type QueryArgsType = {
   [key: string]: {
     label?: string;

@@ -11,8 +11,6 @@ import { Input, RadioGroup, Radio, Row, Col } from '../iview'
 import { convClass, getCompOpts } from '../utils'
 import { MyInputBase, MyInputBaseProp } from '../my-input/my-input'
 
-import './style.less'
-
 const ContentType = {
   default: 0,
   markdown: 1

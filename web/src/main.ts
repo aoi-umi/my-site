@@ -16,6 +16,7 @@ import router from './router'
 import store from './store'
 import { env } from './config'
 
+import './components/style'
 import './assets/style/index.less'
 
 Vue.config.productionTip = false

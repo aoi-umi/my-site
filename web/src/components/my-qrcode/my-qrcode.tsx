@@ -6,8 +6,6 @@ import { Prop } from '@/components/property-decorator'
 
 import { getCompOpts, convClass } from '../utils'
 import { MyBase } from '../my-base'
-
-import './my-qrcode.less'
 import { Spin } from '../iview'
 
 class MyQrcodeProp {

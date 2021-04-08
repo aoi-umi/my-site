@@ -5,8 +5,6 @@ import { Button, Row, Col, Modal } from '../iview'
 import { convClass, getCompOpts } from '../utils'
 import { MyBase } from '../my-base'
 
-import './style.less'
-
 type BtnType = {
   text: string;
   type?: string;

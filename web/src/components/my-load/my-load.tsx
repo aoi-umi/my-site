@@ -7,8 +7,6 @@ import { Spin, Button, Card } from '../iview'
 import { MyBase } from '../my-base'
 import { cls } from '../style'
 
-import './style.less'
-
 class MyLoadProp {
   @Prop()
   loadFn: () => Promise<any> | any;

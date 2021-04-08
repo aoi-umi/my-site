@@ -14,9 +14,7 @@ import {
   TimePicker,
   Tooltip
 } from '../iview'
-import '../style'
 import { MyBase } from '../my-base'
-import './my-dynamic-comp.less'
 
 type SelectOptionType = { label: string; value: any };
 

@@ -9,8 +9,6 @@ import { MyImg } from '../my-img'
 import { MyBase } from '../my-base'
 import * as style from '../style'
 
-import './style.less'
-
 class MyImgViewerProp {
     @Prop({
       default: ''

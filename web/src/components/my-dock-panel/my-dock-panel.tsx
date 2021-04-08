@@ -6,8 +6,6 @@ import { Button, Row, Col, Modal } from '../iview'
 import { convClass, getCompOpts, getInstCompName } from '../utils'
 import { MyBase } from '../my-base'
 
-import './style.less'
-
 class MyDockPanelProp {
 }
 @Component({
