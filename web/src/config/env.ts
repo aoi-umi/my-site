@@ -1,8 +1,8 @@
 
 const host = 'sellfishboy.top'
 const ip = '144.202.99.178'
-// const env = 'prod'
-const env = [host, ip].find(ele => location.hostname.includes(ele)) ? 'prod' : 'dev'
+const env = 'prod'
+// const env = [host, ip].find(ele => location.hostname.includes(ele)) ? 'prod' : 'dev'
 const envConfig: {
     [env: string]: {
         title: string;

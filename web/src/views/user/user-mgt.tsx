@@ -221,7 +221,7 @@ export default class UserMgt extends Base {
         title: '操作',
         key: 'action',
         fixed: 'right',
-        width: 100,
+        width: 120,
         hide: !this.storeUser.user.existsAuth([authority.userMgtEdit, authority.userMgtDisable]),
         render: (h, params) => {
           const detail = params.row

@@ -362,7 +362,7 @@ export default class UserInfo extends Base {
           <UserUnbindView ref='userUnbind' on-success={(type) => {
             detail.bind[type] = false
           }} />
-          <Form class='form-no-error' label-width={60}>
+          <Form class='form-no-error' label-width={80}>
             <FormItem label='状态'>
               {detail.statusText}
             </FormItem>

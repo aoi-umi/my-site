@@ -1,6 +1,5 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import * as echarts from 'echarts'
-import * as QRCode from 'qrcode'
 import { VideoJsPlayer } from 'video.js'
 
 import { Prop } from '@/components/property-decorator'
@@ -11,6 +10,7 @@ import { MyUpload, IMyUpload } from '@/components/my-upload'
 import { MyVideo, IMyVideo } from '@/components/my-video'
 import { MyEditor } from '@/components/my-editor'
 import { convClass, getCompOpts } from '@/components/utils'
+import { MyQrcode, IMyQrcode } from '@/components/my-qrcode'
 
 import { Base } from '../base'
 import './demo.less'
@@ -50,17 +50,10 @@ export default class App extends Base {
     this.$refs.list.query()
     this.chart = echarts.init(this.$refs.echart)
     this.setECharts()
-    this.qrcode()
     this.player = this.$refs.video.player
     // this.player.on(DanmakuPlayer.Event.danmakuSend, (e, data) => {
     //     console.log(data);
     // });
-  }
-
-  async qrcode () {
-    await QRCode.toCanvas(this.$refs.canvas, 'qrcode').catch(e => {
-      console.error(e)
-    })
   }
 
   setECharts () {
@@ -113,10 +106,10 @@ export default class App extends Base {
       <div>
         <TsxView />
         <TsxView2 test='传参属性1' />
+        <MyQrcode text='qrcode' showText/>
         <div class={this.getStyleName('box1')}>
           {this.renderVideo()}
           {this.renderEditor()}
-          <canvas ref='canvas'></canvas>
           <div>
             <MyUpload ref='upload' width={100} height={100}
               headers={testApi.defaultHeaders}
@@ -140,7 +133,7 @@ export default class App extends Base {
   }
 
   videoIdText = '';
-  videoId = '5da6efd5929f9b23549931ef';
+  videoId = '5da80f96cb21fc0abc856e75';
   renderVideo () {
     const danmakuList = []
     // test
