@@ -13,15 +13,13 @@ export class PrintMapper {
 
     if (data.name)
       query.name = new RegExp(escapeRegExp(data.name), 'i');
+    let $or = [{ userId: null }, ];
     if (opt.user.isLogin) {
-      $and.push({
-        $or: [{ userId: null }, { userId: opt.user._id }]
-      });
-    } else {
-      $and.push({
-        $or: [{ userId: null }, ]
-      });
+      $or.push({ userId: opt.user._id });
     }
+    $and.push({
+      $or
+    });
     if ($and.length)
       query.$and = $and;
     let rs = await PrintModel.findAndCountAll({

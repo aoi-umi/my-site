@@ -188,7 +188,12 @@ const cfg = {
   compMgt: {
     path: '/compMgt',
     text: '组件管理',
-    component: () => import('../views/print/print-temp-mgt')
+    component: () => import('../views/comp-mgt/comp-mgt')
+  },
+  compMgtDetail: {
+    path: '/compMgt/detail',
+    text: '组件管理',
+    component: () => import('../views/comp-mgt/comp')
   }
 }
 

@@ -12,6 +12,7 @@ import { getCompOpts, convClass } from '@/components/utils'
 import { Prop } from '@/components/decorator'
 import MyDetail from '@/components/my-detail/my-detail'
 import { Base } from '@/views/base'
+import CompView, { Comp } from '../comp-mgt/comp'
 
 export class DynamicCompDemoProp {
   @Prop()
@@ -28,6 +29,7 @@ export class DynamicCompDemoProp {
   mixins: [getCompOpts(DynamicCompDemoProp)]
 })
 export default class App extends Vue<DynamicCompDemoProp & Base> {
+  $refs: { comp: CompView }
   configList: DynamicCompConfigType[] = []
   data = {}
   listData = []
@@ -47,12 +49,6 @@ export default class App extends Vue<DynamicCompDemoProp & Base> {
       }
     }
   }
-  selectRow: DynamicCompConfigType & {
-    // my detail
-    size?: number
-    // my list
-    width?: number
-  } = null
   editable = true
 
   extraValue = {
@@ -66,12 +62,9 @@ export default class App extends Vue<DynamicCompDemoProp & Base> {
     }
   }
 
-  getDefaultConfig () {
-    return { editable: true, calcType: '' }
-  }
-  created () {
+  mounted () {
     if (!this.comp) {
-      this.setConfigList(Object.entries({
+      this.$refs.comp.setConfigList(Object.entries({
         ...dynamicCompType,
         不可编辑输入框: {
           name: 'dis-input',
@@ -82,6 +75,17 @@ export default class App extends Vue<DynamicCompDemoProp & Base> {
           name: 'dyn-input',
           size: 2,
           width: 200
+        },
+        动态Select: {
+          name: 'dyn-select',
+          type: 'select',
+          actOptions: (val) => {
+            return this.$utils.obj2arr({
+              a: 'a',
+              ab: 'ab',
+              b: 'b'
+            }).filter(ele => !val || ele.key.includes(val) || ele.value.includes(val))
+          }
         }
       }).map((ele: any) => {
         let val = ele[1]
@@ -93,7 +97,7 @@ export default class App extends Vue<DynamicCompDemoProp & Base> {
         }
         if (!type) type = name
 
-        let obj = {
+        let obj: any = {
           name,
           type,
           text,
@@ -105,26 +109,13 @@ export default class App extends Vue<DynamicCompDemoProp & Base> {
             ...val
           }
         }
+        if (obj.name === 'select') {
+          obj.optionType = 'extraValue'
+          obj.options = 'options'
+        }
         return obj
       }))
       this.setData()
-    }
-  }
-
-  setConfigList (data: Partial<DynamicCompConfigType>[]) {
-    this.configList.splice(0, this.configList.length)
-    this.configList.push(...data.map((ele: any, index) => {
-      return this.getConfigObj(ele)
-    }))
-  }
-
-  private getConfigObj (ele) {
-    return {
-      ...this.getDefaultConfig(),
-      isRange: false,
-      options: 'options',
-      queryMatchMode: this.advQuery ? { show: true, value: '' } : null,
-      ...ele
     }
   }
 
@@ -168,7 +159,7 @@ export default class App extends Vue<DynamicCompDemoProp & Base> {
     let data = {}
     this.configList.forEach(ele => {
       data[ele.name] = {
-        mode: ele.queryMatchMode?.value,
+        mode: ele.queryMode?.value,
         value: this.data[ele.name]
       }
     })
@@ -186,75 +177,29 @@ export default class App extends Vue<DynamicCompDemoProp & Base> {
     return data
   }
 
-  selectType = ''
-  selectOption: any
-
-  selectOptionValChange (event) {
-    try {
-      let val = event.target.value
-      if (this.selectType === 'extraValue') { this.selectOption = val } else { this.selectOption = JSON.parse(val) }
-      this.updateSelectOption()
-    } catch (e) { }
-  }
-  updateSelectOption () {
-    this.selectRow.options = this.selectOption
+  setConfigList (data: Partial<DynamicCompConfigType>[]) {
+    this.$refs.comp.setConfigList(data)
   }
 
   render () {
     return (
       <div>
         <span>动态组件</span>
-        <Row gutter={5}>
-          <Col xs={12}>
-            <MyList
-              tableHeight={300}
-              on-current-change={(obj) => {
-                this.selectRow = obj.currentRow
-              }}
-              columns={[{
-                key: 'name',
-                render: (h, params) => {
-                  return (<div>{params.row.name}</div>)
-                }
-              }, {
-                key: 'op',
-                title: '删除',
-                render: (h, params) => {
-                  return (<div>
-                    <a on-click={() => {
-                      this.configList.splice(params['index'], 1)
-                    }}>删除</a>
-                  </div>)
-                }
-              }]}
-              data={this.configList}
-              hideSearchBox
-              hidePage
-            >
-              <Button on-click={() => {
-                this.configList.push(this.getConfigObj({
-                  name: 'unknow',
-                  text: '未命名',
-                  type: 'input'
-                }))
-              }}>新增</Button>
-            </MyList>
-          </Col>
-          <Col xs={12}>
-            <div>
-              <Checkbox v-model={this.editable}>可编辑</Checkbox>
+        <Comp ref='comp' configList={this.configList} on-name-change={() => {
+          this.setData()
+        }} />
+        <div>
+          <Checkbox v-model={this.editable}>可编辑</Checkbox>
 
-              <Button on-click={() => {
-                this.changeOption()
-              }}>修改选项</Button>
-              <Button on-click={() => {
-                console.log(this.data)
-                console.log(this.listData)
-              }}>查看</Button>
-            </div>
-            {this.renderSetting()}
-          </Col>
-        </Row>
+          <Button on-click={() => {
+            this.changeOption()
+          }}>修改选项</Button>
+          <Button on-click={() => {
+            console.log(this.data)
+            console.log(this.listData)
+          }}>查看</Button>
+        </div>
+
         <div>
           <MyDetail itemConfigs={this.configList} dynamicCompOptions={
             {
@@ -264,7 +209,7 @@ export default class App extends Vue<DynamicCompDemoProp & Base> {
               dynamicConfig: this.dynamicConfig,
               compProp: this.compProp
             }
-          } colConfig={this.colConfig}/>
+          } colConfig={this.colConfig} />
         </div>
         {!this.comp && <MyList hideSearchBox itemConfigs={this.configList} dynamicCompOptions={
           {
@@ -276,76 +221,6 @@ export default class App extends Vue<DynamicCompDemoProp & Base> {
         }
         data={this.listData}></MyList>}
       </div>
-    )
-  }
-
-  renderSetting () {
-    if (!this.selectRow) return <div />
-    return (
-      <Form label-width={80} show-message={false}>
-        <FormItem label='name'>
-          <Input v-model={this.selectRow.name} on-on-change={() => {
-            this.setData()
-          }}>
-          </Input>
-        </FormItem>
-        <FormItem label='text'>
-          <Input v-model={this.selectRow.text}>
-          </Input>
-        </FormItem>
-        <FormItem label='type'>
-          <Select v-model={this.selectRow.type}>
-            {this.renderOptionByObj(dynamicCompType)}
-          </Select>
-        </FormItem>
-
-        <FormItem label='必填'>
-          <Checkbox v-model={this.selectRow.required} />
-        </FormItem>
-        <FormItem label='size'>
-          <InputNumber v-model={this.selectRow.size} />
-        </FormItem>
-        <FormItem label='width'>
-          <InputNumber v-model={this.selectRow.width} />
-        </FormItem>
-
-        {this.advQuery && <FormItem label='计算'>
-          <Select v-model={this.selectRow.calcType}>
-            {this.renderOptionByObj(dynamicSqlCalcType)}
-          </Select>
-        </FormItem>}
-        {[dynamicCompType.日期, dynamicCompType.日期时间].includes(this.selectRow.type) && <FormItem label='范围'>
-          <Checkbox v-model={this.selectRow.isRange} />
-        </FormItem>}
-
-        {[dynamicCompType.选择器].includes(this.selectRow.type) &&
-          <div>
-            <FormItem label='取值类型'>
-              <Select v-model={this.selectType}>
-                <i-option value='extraValue'>extraValue</i-option>
-                <i-option value='custom'>自定义</i-option>
-              </Select>
-            </FormItem>
-            <FormItem>
-              <div>
-                extraValue可选值：{Object.keys(this.extraValue).join(', ')}
-              </div>
-              <div>
-                自定义为json格式：{[
-                  { Obj选项: 'obj' },
-                  [{ label: '列表选项', value: 'list' }]
-                ].map(ele => JSON.stringify(ele)).join(' 或 ')}
-              </div>
-
-            </FormItem>
-            <FormItem label='取值'>
-              <Input on-on-change={(val) => {
-                this.selectOptionValChange(val)
-              }} />
-            </FormItem>
-          </div>
-        }
-      </Form>
     )
   }
 }

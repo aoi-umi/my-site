@@ -335,6 +335,21 @@ export default {
       },
       dynamicSqlExec: {
         url: '/dynamicSql/exec'
+      },
+
+      compMgtSave: {
+        url: '/comp/mgt/save'
+      },
+      compMgtQuery: {
+        url: '/comp/mgt/query',
+        method: 'get'
+      },
+      compMgtDetailQuery: {
+        url: '/comp/mgt/detailQuery',
+        method: 'get'
+      },
+      compMgtDel: {
+        url: '/print/mgt/del'
       }
     }
   } as TestApiConfigType

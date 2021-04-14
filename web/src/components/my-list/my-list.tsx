@@ -156,49 +156,53 @@ class MyListProp<QueryArgs = any> {
 class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> & MyBase> {
   stylePrefix = clsPrefix;
 
-  private cols?: ColType[];
+  private cols?: ColType[] = [];
   protected created () {
     if (this.type == 'table') {
       if (!this.columns && !this.itemConfigs) { throw new Error(`type 'table' require 'columns' or 'colConfigs'!`) }
-      this.cols = []
-      if (this.itemConfigs) {
-        this.cols.push(...this.itemConfigs.map(ele => {
-          return {
-            key: ele.name,
-            title: ele.text || ele.name,
-            align: 'center',
-            minWidth: 120,
-            width: ele.width,
-            render: (h, params) => {
-              let data = this.findOriginData(params.row)
-              return (<DynamicComp props={this.dynamicCompOptions} config={ele} data={data}
-              ></DynamicComp>)
-            }
-          }
-        }))
-      }
-      if (this.columns) { this.cols.push(...this.columns) }
-      let defaultColumn = {
-        ...this.defaultColumn
-      }
-      this.cols.forEach(ele => {
-        for (const key in defaultColumn) {
-          if (!(key in ele)) { ele[key] = defaultColumn[key] }
-        }
-      })
     } else if (this.type == 'custom' && !this.customRenderFn) {
       throw new Error(`type 'custom' require 'customRenderFn'!`)
     }
-    if (this.data) {
-      this.result.data = this.data
-      this.result.total = this.data.length
-    } else {
-      this.result.msg = '暂无数据'
-    }
 
-    window.addEventListener('scroll', this.handleScrollEnd)
+    this.addEvent()
   }
 
+  @Watch('itemConfigs', {
+    immediate: true
+  })
+  private setCols () {
+    if (this.type !== 'table') return
+    this.cols = []
+    if (this.itemConfigs) {
+      this.cols.push(...this.itemConfigs.map(ele => {
+        return {
+          key: ele.name,
+          title: ele.text || ele.name,
+          align: 'center',
+          minWidth: 120,
+          width: ele.width,
+          render: (h, params) => {
+            let data = this.findOriginData(params.row)
+            return (<DynamicComp props={this.dynamicCompOptions} config={ele} data={data}
+            ></DynamicComp>)
+          }
+        }
+      }))
+    }
+    if (this.columns) { this.cols.push(...this.columns) }
+    let defaultColumn = {
+      ...this.defaultColumn
+    }
+    this.cols.forEach(ele => {
+      for (const key in defaultColumn) {
+        if (!(key in ele)) { ele[key] = defaultColumn[key] }
+      }
+    })
+  }
+
+  private addEvent () {
+    window.addEventListener('scroll', this.handleScrollEnd)
+  }
   protected beforeDestroy () {
     window.removeEventListener('scroll', this.handleScrollEnd)
   }
@@ -228,7 +232,13 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
       const rs = this.queryFn && await this.queryFn(data)
       this.result.msg = ''
       if (rs) {
-        if (this.infiniteScroll) { this.result.data = [...this.result.data, ...rs.rows] } else { this.result.data = rs.rows }
+        let d = []
+        if (this.infiniteScroll) {
+          d = [...this.result.data, ...rs.rows]
+        } else {
+          d = rs.rows
+        }
+        this.setResultData(d)
         this.result.total = rs.total
       }
       const lastPage = Math.ceil(this.result.total / this.model.page.size)
@@ -244,6 +254,13 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
     } finally {
       this.loading = false
     }
+  }
+
+  private setResultData (data) {
+    data.forEach((ele, idx) => {
+      ele._index = idx
+    })
+    this.result.data = data
   }
 
   handleQuery (opt?: {
@@ -286,7 +303,7 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
   }
 
   private findOriginData (row) {
-    if (this.data && row) { return this.data.find(ele => ele._index === row._index) }
+    if (this.result.data && row) { return this.result.data.find(ele => ele._index === row._index) }
   }
 
   private showQuery = true;
@@ -302,10 +319,11 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
     immediate: true
   })
   private watchData (newVal) {
-    if (newVal) {
-      newVal.forEach((ele, idx) => {
-        ele._index = idx
-      })
+    if (this.data) {
+      this.setResultData(this.data)
+      this.result.total = this.data.length
+    } else {
+      this.result.msg = '暂无数据'
     }
   }
 

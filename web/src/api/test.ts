@@ -119,6 +119,11 @@ type TestApiMethod = ApiMethod<ApiMethodConfigType, {
 
   printGetData,
   dynamicSqlExec,
+
+  compMgtQuery,
+  compMgtSave,
+  compMgtDetailQuery,
+  compMgtDel,
 }>;
 export type TestApiConfigType = ApiConfigModel<TestApiMethod>;
 
@@ -543,6 +548,24 @@ export class TestApi extends ApiModel<TestApiMethod> {
   // #region dynamicSql
   async dynamicSqlExec (data) {
     return this.requestByConfig(this.apiConfig.method.dynamicSqlExec, { data })
+  }
+  // #endregion
+
+  // #region dynamic comp
+  async compMgtQuery (data) {
+    return this.requestByConfig(this.apiConfig.method.compMgtQuery, { data })
+  }
+
+  async compMgtDetailQuery (data) {
+    return this.requestByConfig(this.apiConfig.method.compMgtDetailQuery, { data })
+  }
+
+  async compMgtSave (data) {
+    return this.requestByConfig(this.apiConfig.method.compMgtSave, { data })
+  }
+
+  async compMgtDel (data) {
+    return this.requestByConfig(this.apiConfig.method.compMgtDel, { data })
   }
   // #endregion
 }

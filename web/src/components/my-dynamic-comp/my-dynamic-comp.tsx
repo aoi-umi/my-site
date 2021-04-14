@@ -28,11 +28,13 @@ export type DynamicCompConfigType = {
   // 是否区间
   isRange?: boolean;
   rangeSeparator?: string;
-  options?: string | { [key: string]: number | string }
+  optionType?: string;
+  actOptions?: string | { [key: string]: number | string }
   | SelectOptionType[] | ((query: string) => Promise<SelectOptionType[]>);
+  options?: string
   append?: any
   required?: boolean
-  queryMatchMode?: {
+  queryMode?: {
     show?: boolean,
     value?: string
   },
@@ -116,11 +118,12 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
   private get selectOptions () {
     let { config, data } = this.getActualOption()
     let val
-    if (typeof config.options === 'function') {
+    let options = config.actOptions
+    if (typeof options === 'function') {
       val = this.remoteSelectOptions
-    } else if (typeof config.options === 'string') {
-      val = this.extraValue[config.options]
-    } else { val = config.options }
+    } else if (typeof options === 'string') {
+      val = this.extraValue[options]
+    } else { val = options }
 
     if (val && !(val instanceof Array)) {
       val = Object.entries(val).map(ele => {
@@ -149,7 +152,7 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
 
   private get queryMatchMode () {
     let { config } = this.getActualOption()
-    return config.queryMatchMode
+    return config.queryMode
   }
 
   private get actualOption () {
@@ -244,7 +247,7 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
     }
 
     if (config.type === dynamicCompType.选择器) {
-      let isFn = typeof config.options === 'function'
+      let isFn = typeof config.actOptions === 'function'
       let method: any = !isFn ? null : (query) => {
         this.setSelectOption({
           query
@@ -335,18 +338,17 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
     )
   }
 
-  setSelectOption (opt: { query?}) {
+  async setSelectOption (opt: { query?}) {
     let { query } = opt
     let { config, data } = this.getActualOption()
-    let rs = (config.options as any)(query)
     this.loading = true
     let value
-    rs.then(v => {
-      value = v
-    }).finally(() => {
+    try {
+      value = await (config.actOptions as any)(query)
+    } finally {
       this.remoteSelectOptions = value || []
       this.loading = false
-    })
+    }
   }
 }
 

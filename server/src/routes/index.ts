@@ -93,7 +93,7 @@ router.get('/stat/query', MyRequestHandlerMid.convert(stat.query));
 //#endregion
 
 //#region print 
-import * as printTemp from './printTemp';
+import * as printTemp from './print-temp';
 router.get('/print/mgt/query', UserAuthMid.normal(), MyRequestHandlerMid.convert(printTemp.mgtQuery));
 router.get('/print/mgt/detailQuery', UserAuthMid.normal(), MyRequestHandlerMid.convert(printTemp.mgtDetailQuery));
 router.post('/print/mgt/save', UserAuthMid.normal(), MyRequestHandlerMid.convert(printTemp.mgtSave));
@@ -104,6 +104,14 @@ router.get('/print/getData', UserAuthMid.normal(), MyRequestHandlerMid.convert(p
 //#endregion
 
 //#region dynamic sql 
-import * as dynamicSql from './dynamicSql';
+import * as dynamicSql from './dynamic-sql';
 router.post('/dynamicSql/exec', UserAuthMid.normal(), MyRequestHandlerMid.convert(dynamicSql.exec));
+//#endregion
+
+//#region comp 
+import * as comp from './comp';
+router.get('/comp/mgt/query', UserAuthMid.normal(), MyRequestHandlerMid.convert(comp.mgtQuery));
+router.get('/comp/mgt/detailQuery', UserAuthMid.normal(), MyRequestHandlerMid.convert(comp.mgtDetailQuery));
+router.post('/comp/mgt/save', UserAuthMid.normal(), MyRequestHandlerMid.convert(comp.mgtSave));
+router.post('/comp/mgt/del', UserAuthMid.normal(), MyRequestHandlerMid.convert(comp.mgtDel));
 //#endregion
