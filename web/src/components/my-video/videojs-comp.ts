@@ -124,6 +124,7 @@ export class DanmakuPlayer {
 
     private startPos = 0;
     private videoWidth = 0;
+    private _resizeHandler;
     private bindEvent () {
       // 快进/快退
       this.player.on('keydown', this.keydownHandler.bind(this))
@@ -165,8 +166,13 @@ export class DanmakuPlayer {
 
       // 大小改变
       this.videoWidth = this.danmakuBoard.clientWidth
-      window.addEventListener('resize', this.resizeHandler.bind(this))
       this.player.on(Event.widthChange, this.resize.bind(this))
+      this._resizeHandler = this.resizeHandler.bind(this)
+      window.addEventListener('resize', this._resizeHandler)
+    }
+
+    private unbindEvent () {
+      window.removeEventListener('resize', this._resizeHandler)
     }
 
     private keydownHandler (e: KeyboardEvent) {
@@ -402,9 +408,5 @@ export class DanmakuPlayer {
     dispose () {
       this.player.dispose()
       this.unbindEvent()
-    }
-
-    private unbindEvent () {
-      window.removeEventListener('resize', this.resizeHandler)
     }
 }
