@@ -3,7 +3,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import { testApi } from '@/api'
 import { convert } from '@/helpers'
 import { MyList, IMyList, Const as MyListConst, MyListModel } from '@/components/my-list'
-import { Base } from './base'
+import { Base } from '../base'
 import { routerConfig } from '@/router'
 
 @Component

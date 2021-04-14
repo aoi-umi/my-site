@@ -161,6 +161,9 @@ export default class App extends Base {
     }, {
       routerConfig: routerConfig.printMgt,
       icon: 'md-print'
+    }, {
+      routerConfig: routerConfig.compMgt,
+      icon: 'md-construct'
     }].map(ele => this.convMenu(ele))
   }
 

@@ -9,10 +9,10 @@ import { testApi } from '@/api'
 import { OperateModel } from '@/helpers'
 import { routerConfig } from '@/router'
 
-import { Base } from './base'
-
 import '@public/hiprint/css/hiprint.css'
 import '@public/hiprint/css/print-lock.css'
+
+import { Base } from '../base'
 import './print.less'
 
 type ItemGroup = {

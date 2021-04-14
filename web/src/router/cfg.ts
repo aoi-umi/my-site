@@ -172,17 +172,23 @@ const cfg = {
   printMgt: {
     path: '/printTempMgt',
     text: '模板管理',
-    component: () => import('../views/print-temp-mgt')
+    component: () => import('../views/print/print-temp-mgt')
   },
   printMgtDetail: {
     path: '/printTempMgt/detail',
     text: '模板设置',
-    component: () => import('../views/print')
+    component: () => import('../views/print/print')
   },
   printPreview: {
     path: '/print/preview',
     text: '打印',
-    component: () => import('../views/print')
+    component: () => import('../views/print/print')
+  },
+
+  compMgt: {
+    path: '/compMgt',
+    text: '组件管理',
+    component: () => import('../views/print/print-temp-mgt')
   }
 }
 
