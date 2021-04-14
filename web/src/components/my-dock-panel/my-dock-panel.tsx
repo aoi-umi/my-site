@@ -1,7 +1,7 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { VNode } from 'vue'
 
-import { Prop } from '@/components/property-decorator'
+import { Prop } from '@/components/decorator'
 import { Button, Row, Col, Modal } from '../iview'
 import { convClass, getCompOpts, getInstCompName } from '../utils'
 import { MyBase } from '../my-base'

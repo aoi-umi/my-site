@@ -2,7 +2,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import * as QRCode from 'qrcode'
 
-import { Prop } from '@/components/property-decorator'
+import { Prop } from '@/components/decorator'
 
 import { getCompOpts, convClass } from '../utils'
 import { MyBase } from '../my-base'

@@ -2,7 +2,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import axios, { AxiosRequestConfig } from 'axios'
 import { VueCropper } from 'vue-cropper'
 
-import { Prop } from '@/components/property-decorator'
+import { Prop } from '@/components/decorator'
 
 import { Upload, Modal, Icon, Progress, Button } from '../iview'
 import { Utils, convClass, getCompOpts } from '../utils'

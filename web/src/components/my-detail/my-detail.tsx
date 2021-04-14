@@ -1,6 +1,6 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/property-decorator'
+import { Prop } from '@/components/decorator'
 import { DynamicCompConfigType, DynamicComp, DynamicCompProp } from '../my-dynamic-comp'
 import {
   Table, Page, Row, Col,

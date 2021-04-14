@@ -3,7 +3,7 @@ import marked from 'marked'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/github.css'
 
-import { Prop } from '@/components/property-decorator'
+import { Prop } from '@/components/decorator'
 import { testApi } from '@/api'
 import { myEnum, dev } from '@/config'
 import { Divider, Affix, Card } from '@/components/iview'

@@ -1,7 +1,7 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 
 import { convClass, getCompOpts, Utils } from '@/components/utils'
-import { Prop } from '@/components/property-decorator'
+import { Prop } from '@/components/decorator'
 import { myEnum } from '@/config'
 const { dynamicCompType, dynamicCompNumQueryType, dynamicCompStringQueryType } = myEnum
 

@@ -9,7 +9,7 @@ import { myEnum } from '@/config'
 const { dynamicCompType, dynamicSqlCalcType } = myEnum
 import { MyBase } from '@/components/my-base'
 import { getCompOpts, convClass } from '@/components/utils'
-import { Prop } from '@/components/property-decorator'
+import { Prop } from '@/components/decorator'
 import MyDetail from '@/components/my-detail/my-detail'
 import { Base } from '@/views/base'
 

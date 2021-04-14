@@ -1,4 +1,5 @@
 import './style.less'
+import '../my-buttons/style.less'
 import '../my-confirm/style.less'
 import '../my-detail/style.less'
 import '../my-dock-panel/style.less'

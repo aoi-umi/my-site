@@ -6,7 +6,7 @@ import 'quill/dist/quill.bubble.css'
 
 import marked from 'marked'
 
-import { Prop } from '@/components/property-decorator'
+import { Prop } from '@/components/decorator'
 import { Input, RadioGroup, Radio, Row, Col } from '../iview'
 import { convClass, getCompOpts } from '../utils'
 import { MyInputBase, MyInputBaseProp } from '../my-input/my-input'

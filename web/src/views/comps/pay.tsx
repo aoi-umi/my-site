@@ -1,6 +1,6 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/property-decorator'
+import { Prop } from '@/components/decorator'
 import { myEnum } from '@/config'
 import { convClass, getCompOpts } from '@/components/utils'
 import { RadioGroup, Radio, Button, Modal, Spin } from '@/components/iview'

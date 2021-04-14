@@ -2,7 +2,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import * as echarts from 'echarts'
 import { VideoJsPlayer } from 'video.js'
 
-import { Prop } from '@/components/property-decorator'
+import { Prop } from '@/components/decorator'
 import { testSocket, testApi } from '@/api'
 import { Input, Card, Button, Checkbox } from '@/components/iview'
 import { MyList, IMyList } from '@/components/my-list'
@@ -14,6 +14,7 @@ import { MyQrcode, IMyQrcode } from '@/components/my-qrcode'
 
 import { Base } from '../base'
 import './demo.less'
+import { MyButtons } from '@/components/my-buttons'
 
 @Component({})
 export default class App extends Base {
@@ -101,12 +102,30 @@ export default class App extends Base {
   }
 
   fail = false;
+  btnDisabled = false
   protected render () {
     return (
       <div>
+        <MyButtons value={[
+          { name: 'test', text: '测试', type: 'text',
+            disabled: () => {
+              return this.btnDisabled
+            } },
+          {
+            name: 'testGroup1', text: '测试组1', group: '测试组',
+            click: (btn) => {
+              this.$Message.info(`点击了${btn.name}`)
+            }
+          },
+          { name: 'testGroup2', text: '测试组2', group: '测试组',
+            click: (btn) => {
+              this.btnDisabled = !this.btnDisabled
+            }
+          }
+        ]} />
         <TsxView />
         <TsxView2 test='传参属性1' />
-        <MyQrcode text='qrcode' showText/>
+        <MyQrcode text='qrcode' showText />
         <div class={this.getStyleName('box1')}>
           {this.renderVideo()}
           {this.renderEditor()}
@@ -280,7 +299,7 @@ class Tsx extends Vue<PropClass> {
 }
 const TsxView = convClass<PropClass>(Tsx)
 
-class PropClass2 extends PropClass {
+class PropClass2 {
   @Prop({
     default: '组件2'
   })
