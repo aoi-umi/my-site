@@ -23,5 +23,5 @@ export const mgtSave: MyRequestHandler = async (opt) => {
 
 export const mgtDel: MyRequestHandler = async (opt) => {
   let data = opt.reqData;
-  let rs = await CompModel.deleteMany({ _id: { $in: data.idList } });
+  let rs = await CompMapper.del({ _id: data.idList}, {user: opt.myData.user});
 };

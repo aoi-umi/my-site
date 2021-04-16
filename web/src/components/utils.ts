@@ -1,4 +1,6 @@
+import Vue from 'vue'
 import copy from 'copy-to-clipboard'
+import AsyncValidator, { ValidateOption } from 'async-validator'
 
 export function convClass<prop, partial extends boolean = false> (t) {
   type P = (partial extends false ? prop : Partial<prop>);
@@ -28,6 +30,7 @@ export function getInstCompName (inst) {
   if (inst.componentOptions) { return inst.componentOptions.Ctor.options.name }
 }
 
+const vm = Vue.prototype
 export class Utils {
   static base64ToFile = (dataUrl: string, filename: string) => {
     const arr = dataUrl.split(',')
@@ -113,5 +116,53 @@ export class Utils {
     })
     str = str.toLowerCase()
     return str
+  }
+
+  static getObjByDynCfg (cfgs) {
+    let obj: any = {}
+    cfgs?.forEach(ele => {
+      obj[ele.name] = null
+    })
+    return obj
+  }
+
+  static getValidRulesByDynCfg (cfgs) {
+    let obj = {}
+    cfgs?.forEach(ele => {
+      if (ele.required) {
+        obj[ele.name] = {
+          required: true,
+          message: `请填写[${ele.text}]`
+        }
+      }
+    })
+    return obj
+  }
+
+  static valid (data, rules, opt?: ValidateOption & { showMsg?: boolean }) {
+    opt = {
+      firstFields: true,
+      first: true,
+      showMsg: true,
+      ...opt
+    }
+    let { showMsg, ...validOpt } = opt
+    const validator = new AsyncValidator(rules)
+    const result = {
+      success: false,
+      msg: '',
+      invalidFields: null
+    }
+    return new Promise<typeof result>((resolve) => {
+      validator.validate(data, validOpt, (errors, invalidFields) => {
+        result.success = !errors
+        result.msg = errors ? errors[0].message : ''
+        result.invalidFields = invalidFields
+      })
+      if (showMsg && !result.success) {
+        vm.$Message.warning(result.msg)
+      }
+      resolve(result)
+    })
   }
 }

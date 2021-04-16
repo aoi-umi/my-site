@@ -349,7 +349,7 @@ export default {
         method: 'get'
       },
       compMgtDel: {
-        url: '/print/mgt/del'
+        url: '/comp/mgt/del'
       }
     }
   } as TestApiConfigType

@@ -6,6 +6,7 @@ import { BaseMapper } from '../_base';
 
 import { CompInstanceType, CompModel, } from './comp';
 import { CompConfigInstanceType, CompConfigModel, } from './comp-config';
+import { CompModuleModel } from './comp-module';
 
 export class CompMapper {
   static async query(data, opt: {
@@ -36,11 +37,20 @@ export class CompMapper {
     user: LoginUser
   }) {
     let main = await CompModel.findById(data._id);
-    let config = await CompConfigModel.find({compId: main._id});
+    let config = await CompConfigModel.find({ compId: main._id });
     return {
       main,
       config
     };
+  }
+
+  private static async findDetail(data, opt: {
+    user: LoginUser
+  }) {
+    let detail = await CompModel.findOne({ _id: data._id });
+    if (detail.userId && !opt.user.equalsId(detail.userId))
+      throw new Error('无权限处理');
+    return detail;
   }
 
   static async save(data: any, opt: {
@@ -54,18 +64,33 @@ export class CompMapper {
       detail = new CompModel(data);
       await detail.save();
     } else {
-      detail = await CompModel.findOne({ _id: data._id });
-      if (detail.userId && !opt.user.equalsId(detail.userId))
-        throw new Error('无权限修改');
+      detail = await this.findDetail(data, opt);
       let update: any = {};
-      ['name', 'data'].forEach(key => {
-        console.log(key);
+      ['name', 'text'].forEach(key => {
         update[key] = data[key];
       });
-      await transaction(async (session) => {
-        await detail.update(update, {session});
-      });
+      await detail.update(update);
     }
     return detail;
+  }
+
+  static async del(data, opt: {
+    user: LoginUser
+  }) {
+    let $or = [{ userId: null }, ];
+    if (opt.user.isLogin) {
+      $or.push({ userId: opt.user._id });
+    }
+    let comp = await CompModel.find({ $and: [{ _id: data._id }, { $or}] });
+    let id = comp.map(ele => ele._id);
+    if (!id.length) return;
+    let cond = { $in: id };
+    await transaction(async (session) => {
+      await Promise.all([
+        CompModel.deleteMany({ _id: cond }, { session }),
+        CompModuleModel.deleteMany({ compId: cond }, { session }),
+        CompConfigModel.deleteMany({ compId: cond }, { session })
+      ]);
+    });
   }
 }

@@ -6,6 +6,7 @@ export type OperateOption = {
   beforeValid?: () => any;
   onSuccessClose?: () => any;
   validate?: () => Promise<boolean> | void,
+  noValidMessage?: boolean
   noDefaultHandler?: boolean;
   noSuccessHandler?: boolean;
   noErrorHandler?: boolean;
@@ -29,7 +30,7 @@ export class OperateModel {
       if (opt.validate) {
         let valid = await opt.validate()
         if (!valid) {
-          vm.$Message.error('参数有误')
+          if (!this.opt.noValidMessage) { vm.$Message.error('参数有误') }
           return
         }
       }

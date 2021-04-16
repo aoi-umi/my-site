@@ -41,6 +41,7 @@ export type DynamicCompConfigType = {
   },
 
   calcType?: string
+  sort?: number
 };
 
 type DynamicCompPropType = {
@@ -96,6 +97,7 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
 
   created () {
   }
+
   render () {
     return (
       <Tooltip class={this.getStyleName('root')} disabled={!this.toolTips}>

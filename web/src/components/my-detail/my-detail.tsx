@@ -7,9 +7,10 @@ import {
   Input, Button, Divider, Card, Icon, Spin
 } from '../iview'
 import { MyBase } from '../my-base'
-import { getCompOpts, convClass } from '../utils'
+import { getCompOpts, convClass, Utils } from '../utils'
+import { MyButtonsModel, MyButtons } from '../my-buttons'
 
-type MyDetailDynamicCompConfigType = DynamicCompConfigType & {
+export type MyDetailDynamicCompConfigType = DynamicCompConfigType & {
   size?: number
 }
 class MyDetailProp {
@@ -19,6 +20,9 @@ class MyDetailProp {
   @Prop()
   dynamicCompOptions: Omit<DynamicCompProp, 'config'>
 
+  @Prop({})
+  buttonConfigs?: MyButtonsModel[];
+
   @Prop()
   colConfig?: Partial<iView.Col>
 }
@@ -27,8 +31,13 @@ class MyDetailProp {
   extends: MyBase,
   mixins: [getCompOpts(MyDetailProp)]
 })
-class MyDetailModel extends Vue<MyDetailProp & MyBase> {
+export class MyDetailView extends Vue<MyDetailProp & MyBase> {
   stylePrefix = 'my-detail-'
+
+  valid () {
+    let rules = Utils.getValidRulesByDynCfg(this.itemConfigs)
+    return Utils.valid(this.dynamicCompOptions.data, rules)
+  }
 
   private getColConfig (ele: MyDetailDynamicCompConfigType) {
     let obj = this.colConfig || {
@@ -46,9 +55,25 @@ class MyDetailModel extends Vue<MyDetailProp & MyBase> {
     }
     return obj
   }
-  render () {
+
+  protected render () {
     return (
-      <Row>
+      <div>
+        {this.renderBtns()}
+        {this.renderItem()}
+      </div>
+    )
+  }
+
+  protected renderBtns () {
+    return (
+      this.buttonConfigs && this.buttonConfigs.length && <MyButtons value={this.buttonConfigs} />
+    )
+  }
+
+  protected renderItem () {
+    return (
+      <Row class={this.getStyleName('item-main')}>
         {this.itemConfigs.map(ele => {
           let colConfig = this.getColConfig(ele)
           return (
@@ -68,5 +93,4 @@ class MyDetailModel extends Vue<MyDetailProp & MyBase> {
   }
 }
 
-const MyDetail = convClass<MyDetailProp>(MyDetailModel)
-export default MyDetail
+export const MyDetail = convClass<MyDetailProp>(MyDetailView)

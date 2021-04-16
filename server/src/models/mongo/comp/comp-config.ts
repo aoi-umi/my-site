@@ -19,53 +19,62 @@ export type CompConfigDocType = DocType<CompConfigInstanceType>;
   }
 })
 export class CompConfig extends Base {
-    @prop({
-      type: SchemaTypes.ObjectId,
-      required: true
-    })
-    compId: Types.ObjectId;
-    
-    @prop({
-      required: true,
-      trim: true,
-    })
-    name: string;
-    
-    @prop({
-      required: true,
-      trim: true,
-    })
-    text: string;
-    
-    @prop()
-    editable: boolean
-    
-    @prop()
-    remark: string
-    
-    @prop()
-    type: string
+  @prop({
+    type: SchemaTypes.ObjectId,
+    required: true
+  })
+  compId: Types.ObjectId;
 
-    @prop()
-    options: string
+  @prop({
+    type: SchemaTypes.ObjectId,
+    required: true
+  })
+  moduleId: Types.ObjectId;
 
-    @prop()
-    optionType: string
-    
-    @prop()
-    isRange: boolean
-    
-    @prop()
-    required: boolean
-    
-    @prop()
-    disabled: boolean
+  @prop({
+    required: true,
+    trim: true,
+  })
+  name: string;
 
-    @prop()
-    queryMode: string
+  @prop({
+    required: true,
+    trim: true,
+  })
+  text: string;
 
-    @prop()
-    calcType: string
+  @prop()
+  editable: boolean
+
+  @prop()
+  remark: string
+
+  @prop()
+  type: string
+
+  @prop()
+  options: string
+
+  @prop()
+  optionType: string
+
+  @prop()
+  isRange: boolean
+
+  @prop()
+  required: boolean
+
+  @prop()
+  disabled: boolean
+
+  @prop()
+  queryMode: string
+
+  @prop()
+  calcType: string
+
+  @prop()
+  sort: number;
 }
 
 export const CompConfigModel = getModelForClass<CompConfig, typeof CompConfig>(CompConfig);

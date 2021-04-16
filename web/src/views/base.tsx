@@ -34,7 +34,7 @@ export class Base extends MyBase {
     this.isSmall = document.body.clientWidth < 576
   }
 
-  getOpModel (opt:OperateOption) {
+  getOpModel (opt: OperateOption) {
     return new OperateModel({
       defaultErrHandler: (e) => {
         if (e.code == error.NO_LOGIN.code) {

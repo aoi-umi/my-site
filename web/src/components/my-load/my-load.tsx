@@ -30,6 +30,9 @@ class MyLoadProp {
 
   @Prop()
   errMsgFn?: (e) => string;
+
+  @Prop()
+  outLoading?: boolean;
 }
 @Component({
   extends: MyBase,
@@ -81,7 +84,12 @@ class MyLoad extends Vue<MyLoadProp & MyBase> {
       )
     }
 
-    return this.renderFn(this.result.data)
+    return (
+      <div>
+        {this.outLoading && <Spin size='large' fix />}
+        {this.renderFn(this.result.data)}
+      </div>
+    )
   }
 }
 

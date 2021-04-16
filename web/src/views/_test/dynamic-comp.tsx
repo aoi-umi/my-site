@@ -10,7 +10,7 @@ const { dynamicCompType, dynamicSqlCalcType } = myEnum
 import { MyBase } from '@/components/my-base'
 import { getCompOpts, convClass } from '@/components/utils'
 import { Prop } from '@/components/decorator'
-import MyDetail from '@/components/my-detail/my-detail'
+import { MyDetail } from '@/components/my-detail'
 import { Base } from '@/views/base'
 import CompView, { Comp } from '../comp-mgt/comp'
 
@@ -185,7 +185,7 @@ export default class App extends Vue<DynamicCompDemoProp & Base> {
     return (
       <div>
         <span>动态组件</span>
-        <Comp ref='comp' configList={this.configList} on-name-change={() => {
+        <Comp ref='comp' itemOnly configList={this.configList} on-name-change={() => {
           this.setData()
         }} />
         <div>
