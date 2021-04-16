@@ -56,6 +56,9 @@ export default class CompMgt extends Base {
           queryArgs={{
             name: {
               label: '名字'
+            },
+            text: {
+              label: '显示'
             }
           }}
           columns={[{
@@ -66,7 +69,10 @@ export default class CompMgt extends Base {
           }, {
             title: '名字',
             key: 'name',
-            sortable: 'custom',
+            minWidth: 120
+          }, {
+            title: '显示',
+            key: 'text',
             minWidth: 120
           }, {
             title: '操作',

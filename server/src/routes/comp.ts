@@ -21,6 +21,15 @@ export const mgtSave: MyRequestHandler = async (opt) => {
   return { _id: rs._id };
 };
 
+export const mgtModuleSave: MyRequestHandler = async (opt) => {
+  let rs = await CompMapper.moduleSave(opt.reqData, { user: opt.myData.user });
+  return rs;
+};
+
+export const mgtConfigSave: MyRequestHandler = async (opt) => {
+  let rs = await CompMapper.configSave(opt.reqData, { user: opt.myData.user });
+};
+
 export const mgtDel: MyRequestHandler = async (opt) => {
   let data = opt.reqData;
   let rs = await CompMapper.del({ _id: data.idList}, {user: opt.myData.user});

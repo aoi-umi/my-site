@@ -1,7 +1,8 @@
 import { LoginUser } from '@/models/login-user';
 import * as ValidSchema from '@/valid-schema/class-valid';
-import { escapeRegExp } from '@/_system/common';
+import { error, escapeRegExp } from '@/_system/common';
 import { transaction } from '@/_system/dbMongo';
+import * as config from '@/config';
 import { BaseMapper } from '../_base';
 
 import { CompInstanceType, CompModel, } from './comp';
@@ -14,8 +15,10 @@ export class CompMapper {
   }) {
     let query: any = {}, $and = [];
 
-    if (data.name)
-      query.name = new RegExp(escapeRegExp(data.name), 'i');
+    ['name', 'text'].forEach(key => {
+      if (data[key])
+        query[key] = new RegExp(escapeRegExp(data[key]), 'i');
+    });
     let $or = [{ userId: null }, ];
     if (opt.user.isLogin) {
       $or.push({ userId: opt.user._id });
@@ -36,18 +39,31 @@ export class CompMapper {
   static async detailQuery(data, opt: {
     user: LoginUser
   }) {
-    let main = await CompModel.findById(data._id);
-    let config = await CompConfigModel.find({ compId: main._id });
+    let main = await this.findDetail(data, opt);
+    let [
+      moduleList,
+      configList
+    ] = await Promise.all([
+      CompModuleModel.find({ compId: main._id }),
+      CompConfigModel.find({ compId: main._id })
+    ]);
+    let moduleListDoc = moduleList.map(ele => {
+      let json = ele.toJSON();
+      json.configList = configList.filter(cfg => cfg.moduleId.equals(ele._id));
+      return json;
+    });
     return {
       main,
-      config
+      moduleList: moduleListDoc,
     };
   }
 
-  private static async findDetail(data, opt: {
+  private static async findDetail(data: { _id: any }, opt: {
     user: LoginUser
   }) {
     let detail = await CompModel.findOne({ _id: data._id });
+    if (!detail)
+      throw error('', config.error.DB_NO_DATA);
     if (detail.userId && !opt.user.equalsId(detail.userId))
       throw new Error('无权限处理');
     return detail;
@@ -74,22 +90,51 @@ export class CompMapper {
     return detail;
   }
 
+  static async moduleSave(data: { compId: any, moduleList: any[] }, opt: {
+    user: LoginUser
+  }) {
+    let detail = await this.findDetail({ _id: data.compId }, opt);
+    let delModule = {
+      $nin: []
+    };
+    data.moduleList.forEach(ele => {
+      ele.compId = detail._id;
+      if (ele._id)
+        delModule.$nin.push(ele._id);
+    });
+    let moduleList;
+    await transaction(async (session) => {
+      let rs = await Promise.all([
+        CompModuleModel.deleteMany({ compId: detail._id }, { session }),
+        CompConfigModel.deleteMany({ compId: detail._id, moduleId: delModule }, { session }),
+        CompModuleModel.create(data.moduleList, { session })
+      ]);
+      moduleList = rs[2];
+    });
+    return { moduleList };
+  }
+
+  static async configSave(data: any, opt: {
+    user: LoginUser
+  }) {
+    let detail = await this.findDetail(data, opt);
+  }
+
   static async del(data, opt: {
     user: LoginUser
   }) {
-    let $or = [{ userId: null }, ];
+    let $or = [{ userId: null }];
     if (opt.user.isLogin) {
       $or.push({ userId: opt.user._id });
     }
-    let comp = await CompModel.find({ $and: [{ _id: data._id }, { $or}] });
+    let comp = await CompModel.find({ $and: [{ _id: data._id }, { $or }] });
     let id = comp.map(ele => ele._id);
     if (!id.length) return;
-    let cond = { $in: id };
     await transaction(async (session) => {
       await Promise.all([
-        CompModel.deleteMany({ _id: cond }, { session }),
-        CompModuleModel.deleteMany({ compId: cond }, { session }),
-        CompConfigModel.deleteMany({ compId: cond }, { session })
+        CompModel.deleteMany({ _id: id }, { session }),
+        CompModuleModel.deleteMany({ compId: id }, { session }),
+        CompConfigModel.deleteMany({ compId: id }, { session })
       ]);
     });
   }

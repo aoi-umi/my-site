@@ -113,5 +113,7 @@ import * as comp from './comp';
 router.get('/comp/mgt/query', UserAuthMid.normal(), MyRequestHandlerMid.convert(comp.mgtQuery));
 router.get('/comp/mgt/detailQuery', UserAuthMid.normal(), MyRequestHandlerMid.convert(comp.mgtDetailQuery));
 router.post('/comp/mgt/save', UserAuthMid.normal(), MyRequestHandlerMid.convert(comp.mgtSave));
+router.post('/comp/mgt/moduleSave', UserAuthMid.normal(), MyRequestHandlerMid.convert(comp.mgtModuleSave));
+router.post('/comp/mgt/configSave', UserAuthMid.normal(), MyRequestHandlerMid.convert(comp.mgtConfigSave));
 router.post('/comp/mgt/del', UserAuthMid.normal(), MyRequestHandlerMid.convert(comp.mgtDel));
 //#endregion

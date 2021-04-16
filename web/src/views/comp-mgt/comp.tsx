@@ -55,11 +55,28 @@ export default class CompView extends Vue<Base & CompProp> {
   stylePrefix = 'comp-mgt-detail-'
   $refs: {
     loadView: IMyLoad, formVaild: iView.Form,
-    main: MyDetailView
+    main: MyDetailView, module: IMyList
   };
 
+  private saveOp: OperateModel = null
   protected created () {
+    this.saveOp = this.getOpModel({
+      prefix: '保存',
+      noValidMessage: true,
+      noSuccessHandler: true,
+      fn: async (type) => {
+        switch (type) {
+          case 'main':
+            await this.mainSave()
+            break
+          case 'module':
+            await this.moduleSave()
+            break
+        }
+      }
+    })
     this.mainInit()
+    this.moduleInit()
   }
 
   protected mounted () {
@@ -92,6 +109,7 @@ export default class CompView extends Vue<Base & CompProp> {
         main: {}
       }
     }
+    this.setModuleList(detail.moduleList || [])
     this.detail = detail
   }
 
@@ -102,9 +120,12 @@ export default class CompView extends Vue<Base & CompProp> {
   async afterLoad () {
   }
 
+  setModuleList (data: Partial<CompModuleType>[]) {
+    this.moduleList.splice(0, this.moduleList.length, ...data as any)
+  }
+
   setConfigList (data: Partial<DynamicCompConfigType>[]) {
-    this.configList.splice(0, this.configList.length)
-    this.configList.push(...data.map((ele: any, index) => {
+    this.configList.splice(0, this.configList.length, ...data.map((ele: any, index) => {
       return this.getConfigObj(ele)
     }))
   }
@@ -161,7 +182,7 @@ export default class CompView extends Vue<Base & CompProp> {
               </TabPane>
               <TabPane label='配置信息' disabled={!this.hasDetail}>
                 {this.renderModule()}
-                {this.renderItem()}
+                {(this.selectModuleIdx >= 0) && this.renderItem()}
               </TabPane>
             </Tabs>
           )
@@ -170,29 +191,23 @@ export default class CompView extends Vue<Base & CompProp> {
     )
   }
 
-  private saveOp: OperateModel = null
   protected mainBtns: MyButtonsModel[] = []
   private mainInit () {
-    this.saveOp = this.getOpModel({
-      prefix: '保存',
-      noValidMessage: true,
-      validate: async () => {
-        let valid = await this.$refs.main.valid()
-        return valid.success
-      },
-      fn: async () => {
-        let rs = await testApi.compMgtSave(this.detail.main)
-        this._id = rs._id
-        this.refresh()
-      }
-    })
     this.mainBtns = [{
       name: 'save',
       text: '保存',
       click: () => {
-        this.saveOp.run()
+        this.saveOp.run('main')
       }
     }]
+  }
+
+  private async mainSave () {
+    let valid = await this.$refs.main.valid()
+    if (!valid.success) return
+    let rs = await testApi.compMgtSave(this.detail.main)
+    this._id = rs._id
+    this.refresh()
   }
 
   protected mainConfig: DynamicCompConfigType[] = [{
@@ -213,7 +228,8 @@ export default class CompView extends Vue<Base & CompProp> {
     }} buttonConfigs={this.mainBtns} />
   }
 
-  private selectModule: CompModuleType = null
+  private moduleBtns: MyButtonsModel[] = []
+  private selectModuleIdx = -1
   private moduleConfig: DynamicCompConfigType[] = [{
     name: 'name',
     text: '名字',
@@ -225,26 +241,61 @@ export default class CompView extends Vue<Base & CompProp> {
     required: true,
     editable: true
   }, {
+    name: 'viewType',
+    text: '类型',
+    editable: true,
+    type: dynamicCompType.选择器,
+    actOptions: dynamicCompViewType as any
+  }, {
     name: 'group',
     text: '分组',
     editable: true
   }]
+
+  private moduleInit () {
+    this.moduleBtns = [{
+      name: 'add',
+      text: '新增',
+      click: () => {
+        this.moduleList.push(Utils.getObjByDynCfg(this.moduleConfig))
+      }
+    }, {
+      name: 'save',
+      text: '保存',
+      click: () => {
+        this.saveOp.run('module')
+      }
+    }]
+  }
+
+  private async moduleSave () {
+    let valid = await this.$refs.module.valid()
+    if (!valid.success) return
+    let rs = await testApi.compMgtModuleSave({
+      compId: this._id,
+      moduleList: this.moduleList
+    })
+    this.moduleList = rs.moduleList
+  }
+
   protected renderModule () {
     return (
       <div>
         <MyList
+          ref='module'
           draggable
           tableHeight={300}
-          on-current-change={(obj) => {
-            this.selectModule = obj.currentRow
-          }}
           itemConfigs={this.moduleConfig}
           columns={[{
             key: 'op',
             title: '操作',
             render: (h, params) => {
-              return (<div>
+              return (<div class={this.getStyleName('op')}>
+                {params.row._id && <a on-click={() => {
+                  this.selectModuleIdx = params['index']
+                }}>编辑</a>}
                 <a on-click={() => {
+                  if (this.selectModuleIdx === params['index']) { this.selectModuleIdx = -1 }
                   this.moduleList.splice(params['index'], 1)
                 }}>删除</a>
               </div>)
@@ -253,24 +304,15 @@ export default class CompView extends Vue<Base & CompProp> {
           data={this.moduleList}
           hideSearchBox
           hidePage
+          buttonConfigs={this.moduleBtns}
         >
           模块
-          <div>
-            <Button on-click={() => {
-              this.moduleList.push(Utils.getObjByDynCfg(this.moduleConfig))
-            }}>新增</Button>
-          </div>
         </MyList>
       </div>
     )
   }
 
-  private selectConfig: DynamicCompConfigType & {
-    // my detail
-    size?: number
-    // my list
-    width?: number
-  } = null
+  private selectConfig: DynamicCompConfigType = null
   private selectOption: any
 
   selectOptionValChange (event) {
@@ -297,13 +339,6 @@ export default class CompView extends Vue<Base & CompProp> {
     return (
       <Row class={this.getStyleName('config')} gutter={5}>
         <Col xs={12}>
-          {!this.itemOnly && (
-            <div>
-              <Select>
-                {this.renderOptionByObj(dynamicCompViewType)}
-              </Select>
-            </div>
-          )}
           <MyList
             draggable
             tableHeight={300}

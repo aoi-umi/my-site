@@ -11,6 +11,7 @@ import { Utils, getCompOpts, convClass } from '../utils'
 import { MyBase } from '../my-base'
 import * as style from '../style'
 import { MyListModel, MyListResult } from './model'
+import { MyButtonsModel, MyButtons } from '../my-buttons'
 
 type QueryArgsType = {
   [key: string]: {
@@ -153,6 +154,9 @@ class MyListProp<QueryArgs = any> {
     // default: true
   })
   draggable?:boolean
+
+  @Prop({})
+  buttonConfigs?: MyButtonsModel[];
 }
 @Component({
   extends: MyBase,
@@ -201,6 +205,19 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
     this.cols.forEach(ele => {
       for (const key in defaultColumn) {
         if (!(key in ele)) { ele[key] = defaultColumn[key] }
+      }
+    })
+  }
+
+  valid () {
+    let rules = Utils.getValidRulesByDynCfg(this.itemConfigs)
+    return Utils.valid({ data: this.result.data }, {
+      data: {
+        type: 'array',
+        defaultField: {
+          type: 'object',
+          fields: rules
+        }
       }
     })
   }
@@ -489,6 +506,7 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
         }
         <div class={this.getStyleName('content')}>
           {this.$slots.default}
+          {this.renderBtns()}
           {this.renderPage('top')}
           {this.type == 'table'
             ? <Table
@@ -550,6 +568,11 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
             })}
           </Card>}
       </div>
+    )
+  }
+  protected renderBtns () {
+    return (
+      this.buttonConfigs && this.buttonConfigs.length && <MyButtons value={this.buttonConfigs} />
     )
   }
 }

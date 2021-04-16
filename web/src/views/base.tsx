@@ -43,6 +43,8 @@ export class Base extends MyBase {
           })
         } else if (e.code == error.NOT_FOUND.code) {
           this.toError(error.NOT_FOUND)
+        } else {
+          this.$Message.error(e.message)
         }
       },
       ...opt

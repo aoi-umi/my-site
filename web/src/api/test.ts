@@ -122,6 +122,8 @@ type TestApiMethod = ApiMethod<ApiMethodConfigType, {
 
   compMgtQuery,
   compMgtSave,
+  compMgtModuleSave,
+  compMgtConfigSave,
   compMgtDetailQuery,
   compMgtDel,
 }>;
@@ -562,6 +564,14 @@ export class TestApi extends ApiModel<TestApiMethod> {
 
   async compMgtSave (data) {
     return this.requestByConfig(this.apiConfig.method.compMgtSave, { data })
+  }
+
+  async compMgtModuleSave (data) {
+    return this.requestByConfig(this.apiConfig.method.compMgtModuleSave, { data })
+  }
+
+  async compMgtConfigSave (data) {
+    return this.requestByConfig(this.apiConfig.method.compMgtConfigSave, { data })
   }
 
   async compMgtDel (data) {

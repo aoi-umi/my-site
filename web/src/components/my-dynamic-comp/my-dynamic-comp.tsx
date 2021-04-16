@@ -42,6 +42,11 @@ export type DynamicCompConfigType = {
 
   calcType?: string
   sort?: number
+
+  // my detail
+  size?: number
+  // my list
+  width?: number
 };
 
 type DynamicCompPropType = {

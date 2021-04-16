@@ -340,6 +340,12 @@ export default {
       compMgtSave: {
         url: '/comp/mgt/save'
       },
+      compMgtModuleSave: {
+        url: '/comp/mgt/moduleSave'
+      },
+      compMgtConfigSave: {
+        url: '/comp/mgt/configSave'
+      },
       compMgtQuery: {
         url: '/comp/mgt/query',
         method: 'get'

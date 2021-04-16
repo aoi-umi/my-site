@@ -1,8 +1,8 @@
 import Vue from 'vue'
 const vm = Vue.prototype as Vue
 export type OperateOption = {
-  prefix: string
-  fn: () => any
+  prefix?: string
+  fn: (args?) => any
   beforeValid?: () => any;
   onSuccessClose?: () => any;
   validate?: () => Promise<boolean> | void,
@@ -19,7 +19,7 @@ export class OperateModel {
     this.opt = opt
   }
 
-  async run () {
+  async run (args?) {
     if (this.loading) return
 
     this.loading = true
@@ -34,7 +34,7 @@ export class OperateModel {
           return
         }
       }
-      await opt.fn()
+      await opt.fn(args)
       if (!opt.noDefaultHandler && !opt.noSuccessHandler) {
         vm.$Message.success({
           content: operate + '成功',
