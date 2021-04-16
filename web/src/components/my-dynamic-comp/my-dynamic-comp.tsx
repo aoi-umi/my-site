@@ -34,6 +34,7 @@ export type DynamicCompConfigType = {
   options?: string
   append?: any
   required?: boolean
+  disabled?: boolean
   queryMode?: {
     show?: boolean,
     value?: string
@@ -257,8 +258,8 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
         <Select
           clearable transfer filterable
           v-model={data[config.name]} placeholder={config.remark}
-          loading={this.loading} remote-method={method} disabled={!this.actuallyEditable}
-          on={event}
+          loading={this.loading} disabled={!this.actuallyEditable}
+          on={event} on-on-query-change={method}
         >
           {this.renderOption(this.selectOptions)}
         </Select>

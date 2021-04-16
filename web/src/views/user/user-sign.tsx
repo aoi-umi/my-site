@@ -52,10 +52,10 @@ export class SignInModel extends Vue<Base & SignInProp> {
 
     private rules = {
       account: [
-        { required: true, trigger: 'blur' }
+        { required: true,  }
       ],
       password: [
-        { required: true, trigger: 'blur' }
+        { required: true,  }
       ]
     };
 
@@ -260,7 +260,7 @@ class SignUp extends Vue<SignUpProp & Base> {
 
     private rules = {
       account: [
-        { required: true, trigger: 'blur' },
+        { required: true,  },
         {
           asyncValidator: async (rule, value) => {
             const rs = await testApi.userAccountExists({ val: value })
@@ -270,13 +270,13 @@ class SignUp extends Vue<SignUpProp & Base> {
         }
       ],
       nickname: [
-        { required: true, trigger: 'blur' }
+        { required: true,  }
       ],
       password: [
-        { required: true, trigger: 'blur' }
+        { required: true,  }
       ],
       passwordRepeat: [{
-        required: true, trigger: 'blur'
+        required: true, 
       }, {
         validator: (rule, value, callback) => {
           if (value !== this.innerDetail.password) {
@@ -285,7 +285,7 @@ class SignUp extends Vue<SignUpProp & Base> {
             callback()
           }
         },
-        trigger: 'blur'
+        
       }]
     };
 

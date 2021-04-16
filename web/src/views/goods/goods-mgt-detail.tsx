@@ -110,15 +110,15 @@ export default class GoodsMgtDetail extends Base {
   private setRules () {
     const spuRules = {
       name: [
-        { required: true, trigger: 'blur', message: '请填写名称' }
+        { required: true, message: '请填写名称' }
       ],
       profile: [
-        { required: true, trigger: 'blur', message: '请填写简介' }
+        { required: true, message: '请填写简介' }
       ]
     }
     const rules = {
       saveSku: [
-        { type: 'array', required: true, trigger: 'blur', message: '请设置sku' }
+        { type: 'array', required: true, message: '请设置sku' }
       ]
     }
     for (const key in spuRules) {
@@ -256,7 +256,7 @@ export default class GoodsMgtDetail extends Base {
             <Col xs={20} sm={10}>
               <FormItem label={'规格' + (gIdx + 1)} prop={groupProp + '.name'}
                 rules={{
-                  required: true, trigger: 'blur',
+                  required: true,
                   message: '请填写规格名'
                 }}
               >
@@ -286,7 +286,7 @@ export default class GoodsMgtDetail extends Base {
                 <Col xs={24} sm={12}>
                   <FormItem prop={groupProp + '.value.' + vIdx}
                     rules={{
-                      required: true, trigger: 'blur',
+                      required: true,
                       message: '请填写值'
                     }}
                   >

@@ -148,6 +148,11 @@ class MyListProp<QueryArgs = any> {
 
   @Prop()
   tableHeight?: string | number
+
+  @Prop({
+    // default: true
+  })
+  draggable?:boolean
 }
 @Component({
   extends: MyBase,
@@ -300,6 +305,11 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
       currentRow,
       oldCurrentRow
     })
+  }
+
+  private dragDropHadnler (a, b) {
+    let data = this.result.data
+    data.splice(b, 0, ...data.splice(a, 1))
   }
 
   private findOriginData (row) {
@@ -511,6 +521,8 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
               height={this.tableHeight}
               highlight-row
               on-on-current-change={this.currentChangeHandler}
+              draggable={this.draggable}
+              on-on-drag-drop={this.dragDropHadnler}
             >
             </Table>
             : this._customRenderFn(this.result)

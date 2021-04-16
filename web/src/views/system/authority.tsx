@@ -51,10 +51,10 @@ class AuthorityDetail extends Vue<AuthorityDetailProp & Base> {
 
     private rules = {
       name: [
-        { required: true, trigger: 'blur' }
+        { required: true,  }
       ],
       code: [
-        { required: true, trigger: 'blur' }
+        { required: true,  }
       ]
     };
     $refs: { formVaild: iView.Form };

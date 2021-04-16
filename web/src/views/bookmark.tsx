@@ -53,10 +53,10 @@ class BookmarkDetail extends Vue<BookmarkDetailProp & Base> {
 
   private rules = {
     name: [
-      { required: true, trigger: 'blur' }
+      { required: true }
     ],
     url: [
-      { required: true, trigger: 'blur' }
+      { required: true }
     ]
   };
 

@@ -316,7 +316,7 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp & Base> {
   private getCommonRules () {
     return {
       title: [
-        { required: true, trigger: 'blur' }
+        { required: true,  }
       ],
       setPublishAt: [{
         validator: (rule, value, callback) => {
@@ -327,7 +327,7 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp & Base> {
             callback()
           }
         },
-        trigger: 'blur'
+        
       }]
     }
   }

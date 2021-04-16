@@ -11,7 +11,7 @@ import { routerConfig } from '@/router'
 import { IMyLoad, MyLoad } from '@/components/my-load'
 import { DynamicCompConfigType } from '@/components/my-dynamic-comp'
 import { myEnum } from '@/config'
-const { dynamicCompType, dynamicSqlCalcType } = myEnum
+const { dynamicCompType, dynamicSqlCalcType, dynamicCompViewType } = myEnum
 import { convClass, getCompOpts } from '@/components/utils'
 
 import { Base } from '../base'
@@ -34,6 +34,7 @@ export class CompProp {
 
 })
 export default class CompView extends Vue<Base & CompProp> {
+  stylePrefix = 'comp-mgt-detail-'
   $refs: { loadView: IMyLoad, formVaild: iView.Form };
 
   selectRow: DynamicCompConfigType & {
@@ -109,10 +110,10 @@ export default class CompView extends Vue<Base & CompProp> {
 
   rules = {
     name: [
-      { required: true, trigger: 'blur' }
+      { required: true }
     ],
     text: [
-      { required: true, trigger: 'blur' }
+      { required: true }
     ]
   }
 
@@ -121,10 +122,10 @@ export default class CompView extends Vue<Base & CompProp> {
       <MyLoad
         ref='loadView'
         loadFn={this.loadDetail}
+        afterLoad={this.afterLoad}
         renderFn={() => {
           return this.renderMain()
         }}
-        afterLoad={this.afterLoad}
       />
     )
   }
@@ -132,67 +133,86 @@ export default class CompView extends Vue<Base & CompProp> {
   protected renderMain () {
     return (
       <div class={this.getStyleName('root')}>
-        <Row gutter={5}>
-          <Col xs={12}>
-            <MyList
-              tableHeight={300}
-              on-current-change={(obj) => {
-                this.selectRow = obj.currentRow
-              }}
-              columns={[{
-                key: 'name',
-                title: '名称'
-              }, {
-                key: 'text',
-                title: '显示文本'
-              }, {
-                key: 'op',
-                title: '删除',
-                render: (h, params) => {
-                  return (<div>
-                    <a on-click={() => {
-                      this.configList.splice(params['index'], 1)
-                    }}>删除</a>
-                  </div>)
-                }
-              }]}
-              data={this.configList}
-              hideSearchBox
-              hidePage
-            >
-              <Button on-click={() => {
-                this.configList.push(this.getConfigObj({
-                  name: '',
-                  text: '',
-                  type: 'input'
-                }))
-              }}>新增</Button>
-            </MyList>
-          </Col>
-          <Col xs={12}>
-
-            {this.renderSetting()}
-          </Col>
-        </Row>
+        {this.renderModule()}
+        {this.renderItem()}
       </div>
+    )
+  }
+
+  protected renderModule () {
+    return (
+      <div></div>
+    )
+  }
+
+  protected renderItem () {
+    return (
+      <Row gutter={5}>
+        <Col xs={12}>
+          <div>
+            <Select>
+              {this.renderOptionByObj(dynamicCompViewType)}
+            </Select>
+          </div>
+          <MyList
+            draggable
+            tableHeight={300}
+            on-current-change={(obj) => {
+              this.selectRow = obj.currentRow
+            }}
+            columns={[{
+              key: 'name',
+              title: '名称'
+            }, {
+              key: 'text',
+              title: '显示文本'
+            }, {
+              key: 'op',
+              title: '操作',
+              render: (h, params) => {
+                return (<div>
+                  <a on-click={() => {
+                    this.configList.splice(params['index'], 1)
+                  }}>删除</a>
+                </div>)
+              }
+            }]}
+            data={this.configList}
+            hideSearchBox
+            hidePage
+          >
+            <Button on-click={() => {
+              this.configList.push(this.getConfigObj({
+                name: '',
+                text: '',
+                type: 'input'
+              }))
+            }}>新增</Button>
+          </MyList>
+        </Col>
+        <Col xs={12}>
+
+          {this.renderSetting()}
+        </Col>
+      </Row>
     )
   }
 
   renderSetting () {
     if (!this.selectRow) return <div />
     return (
-      <Form label-width={80} show-message={false} rules={this.rules}>
-        <FormItem label='name' prop='name'>
+      <Form props={{ model: this.selectRow }} label-width={80} show-message={false} rules={this.rules}>
+        <FormItem label='名字' prop='name'>
           <Input v-model={this.selectRow.name} on-on-change={() => {
             this.$emit('name-change')
           }}>
           </Input>
         </FormItem>
-        <FormItem label='text' prop='text'>
+        <FormItem label='显示文本' prop='text'>
           <Input v-model={this.selectRow.text}>
           </Input>
         </FormItem>
-        <FormItem label='type'>
+        <FormItem label='类型'>
           <Select v-model={this.selectRow.type}>
             {this.renderOptionByObj(dynamicCompType)}
           </Select>
@@ -201,10 +221,13 @@ export default class CompView extends Vue<Base & CompProp> {
         <FormItem label='必填'>
           <Checkbox v-model={this.selectRow.required} />
         </FormItem>
-        <FormItem label='size'>
+        <FormItem label='禁用'>
+          <Checkbox v-model={this.selectRow.disabled} />
+        </FormItem>
+        <FormItem label='占比(1-24)'>
           <InputNumber v-model={this.selectRow.size} />
         </FormItem>
-        <FormItem label='width'>
+        <FormItem label='宽度'>
           <InputNumber v-model={this.selectRow.width} />
         </FormItem>
 

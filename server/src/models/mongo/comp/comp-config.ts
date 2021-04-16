@@ -57,6 +57,9 @@ export class CompConfig extends Base {
     
     @prop()
     required: boolean
+    
+    @prop()
+    disabled: boolean
 
     @prop()
     queryMode: string

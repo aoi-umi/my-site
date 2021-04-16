@@ -62,10 +62,10 @@ class PayMgtDetail extends Vue<PayMgtDetailProp & Base> {
 
     private rules = {
       title: [
-        { required: true, trigger: 'blur' }
+        { required: true,  }
       ],
       content: [
-        { required: true, trigger: 'blur' }
+        { required: true,  }
       ]
     };
     $refs: { formVaild: iView.Form };

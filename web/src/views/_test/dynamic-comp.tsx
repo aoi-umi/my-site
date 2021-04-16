@@ -219,7 +219,7 @@ export default class App extends Vue<DynamicCompDemoProp & Base> {
             compProp: this.compProp
           }
         }
-        data={this.listData}></MyList>}
+        data={this.listData} ></MyList>}
       </div>
     )
   }

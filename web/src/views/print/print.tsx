@@ -51,7 +51,7 @@ export default class Print extends Base {
 
   private rules = {
     name: [
-      { required: true, trigger: 'blur' }
+      { required: true,  }
     ]
   };
 

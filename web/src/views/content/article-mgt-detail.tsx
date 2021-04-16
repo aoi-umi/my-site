@@ -36,7 +36,7 @@ export default class ArticleMgtDetail extends ArticleMgtBase {
   private getRules () {
     return {
       content: [
-        { required: true, trigger: 'blur' }
+        { required: true,  }
       ]
     }
   }

@@ -122,7 +122,7 @@ export default class UserInfo extends Base {
               callback()
             }
           },
-          trigger: 'blur'
+          
         }],
         newPwd: [{
           validator: (rule, value, callback) => {
@@ -132,7 +132,7 @@ export default class UserInfo extends Base {
               callback()
             }
           },
-          trigger: 'blur'
+          
         }],
         newPwdRepeat: [{
           validator: (rule, value, callback) => {
@@ -142,7 +142,7 @@ export default class UserInfo extends Base {
               callback()
             }
           },
-          trigger: 'blur'
+          
         }]
       }
     }
@@ -427,7 +427,7 @@ export class UserUnbind extends Vue<UserUnbindProp & Base> {
     rules = {
       pwd: [{
         required: true,
-        trigger: 'blur'
+        
       }]
     };
 

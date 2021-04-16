@@ -195,6 +195,11 @@ const enumDefineFront = {
     登录: 'login',
     绑定: 'bind',
     扫码: 'scan'
+  },
+  dynamicCompViewType: {
+    表单: 'form',
+    列表: 'list',
+    查询条件: 'query'
   }
 }
 export const enumDef = {
