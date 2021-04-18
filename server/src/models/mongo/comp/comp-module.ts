@@ -40,6 +40,11 @@ export class CompModule extends Base {
     @prop({
       trim: true,
     })
+    viewType: string;
+    
+    @prop({
+      trim: true,
+    })
     group: string;
     
     @prop()

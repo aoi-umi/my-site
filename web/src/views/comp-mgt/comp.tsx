@@ -25,10 +25,11 @@ const SelectOptionsType = {
 }
 
 type CompModuleType = {
+  _id?: string
   name: string;
   text: string;
   group: string;
-  sort?: number
+  sort?: number;
 }
 
 export class CompProp {
@@ -55,12 +56,12 @@ export default class CompView extends Vue<Base & CompProp> {
   stylePrefix = 'comp-mgt-detail-'
   $refs: {
     loadView: IMyLoad, formVaild: iView.Form,
-    main: MyDetailView, module: IMyList
+    main: MyDetailView, module: IMyList, config: IMyList
   };
 
-  private saveOp: OperateModel = null
+  private op: OperateModel = null
   protected created () {
-    this.saveOp = this.getOpModel({
+    this.op = this.getOpModel({
       prefix: '保存',
       noValidMessage: true,
       noSuccessHandler: true,
@@ -72,11 +73,18 @@ export default class CompView extends Vue<Base & CompProp> {
           case 'module':
             await this.moduleSave()
             break
+          case 'config':
+            await this.configSave()
+            break
+          case 'configQuery':
+            await this.configQuery()
+            break
         }
       }
     })
     this.mainInit()
     this.moduleInit()
+    this.configInit()
   }
 
   protected mounted () {
@@ -161,7 +169,7 @@ export default class CompView extends Vue<Base & CompProp> {
     return (
       <MyLoad
         ref='loadView'
-        outLoading={this.saveOp.loading}
+        outLoading={this.op.loading}
         loadFn={this.loadDetail}
         afterLoad={this.afterLoad}
         renderFn={() => {
@@ -182,7 +190,10 @@ export default class CompView extends Vue<Base & CompProp> {
               </TabPane>
               <TabPane label='配置信息' disabled={!this.hasDetail}>
                 {this.renderModule()}
-                {(this.selectModuleIdx >= 0) && this.renderItem()}
+                {(this.selectModuleIdx >= 0) && <div>
+                  当前模块: {this.moduleList[this.selectModuleIdx].name}
+                  {this.renderItem()}
+                </div>}
               </TabPane>
             </Tabs>
           )
@@ -197,7 +208,7 @@ export default class CompView extends Vue<Base & CompProp> {
       name: 'save',
       text: '保存',
       click: () => {
-        this.saveOp.run('main')
+        this.op.run('main')
       }
     }]
   }
@@ -263,7 +274,7 @@ export default class CompView extends Vue<Base & CompProp> {
       name: 'save',
       text: '保存',
       click: () => {
-        this.saveOp.run('module')
+        this.op.run('module')
       }
     }]
   }
@@ -293,6 +304,7 @@ export default class CompView extends Vue<Base & CompProp> {
               return (<div class={this.getStyleName('op')}>
                 {params.row._id && <a on-click={() => {
                   this.selectModuleIdx = params['index']
+                  this.op.run('configQuery')
                 }}>编辑</a>}
                 <a on-click={() => {
                   if (this.selectModuleIdx === params['index']) { this.selectModuleIdx = -1 }
@@ -335,11 +347,61 @@ export default class CompView extends Vue<Base & CompProp> {
       { required: true }
     ]
   }
+  private configBtns: MyButtonsModel[] = []
+  private configInit () {
+    this.configBtns = [{
+      name: 'add',
+      text: '新增',
+      click: () => {
+        this.configList.push(this.getConfigObj({
+          name: '',
+          text: '',
+          type: 'input'
+        }))
+      }
+    }, {
+      name: 'save',
+      text: '保存',
+      click: () => {
+        this.op.run('config')
+      }
+    }]
+  }
+
+  private async configQuery () {
+    let m = this.moduleList[this.selectModuleIdx]
+    let rs = await testApi.compMgtConfigQuery({
+      compId: this._id,
+      moduleId: m._id
+    })
+    this.setConfigList(rs)
+  }
+
+  private async configSave () {
+    let valid = await Utils.valid({ data: this.configList }, {
+      data: {
+        type: 'array',
+        defaultField: {
+          type: 'object',
+          fields: this.rules
+        }
+      }
+    })
+    if (!valid.success) return
+    let m = this.moduleList[this.selectModuleIdx]
+    await testApi.compMgtConfigSave({
+      compId: this._id,
+      moduleId: m._id,
+      configList: this.configList
+    })
+  }
+
   protected renderItem () {
     return (
       <Row class={this.getStyleName('config')} gutter={5}>
         <Col xs={12}>
           <MyList
+            ref='config'
             draggable
             tableHeight={300}
             on-current-change={(obj) => {
@@ -363,16 +425,10 @@ export default class CompView extends Vue<Base & CompProp> {
               }
             }]}
             data={this.configList}
+            buttonConfigs={this.configBtns}
             hideSearchBox
             hidePage
           >
-            <Button on-click={() => {
-              this.configList.push(this.getConfigObj({
-                name: '',
-                text: '',
-                type: 'input'
-              }))
-            }}>新增</Button>
           </MyList>
         </Col>
         <Col xs={12}>

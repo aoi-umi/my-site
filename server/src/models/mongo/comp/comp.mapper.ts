@@ -40,21 +40,10 @@ export class CompMapper {
     user: LoginUser
   }) {
     let main = await this.findDetail(data, opt);
-    let [
-      moduleList,
-      configList
-    ] = await Promise.all([
-      CompModuleModel.find({ compId: main._id }),
-      CompConfigModel.find({ compId: main._id })
-    ]);
-    let moduleListDoc = moduleList.map(ele => {
-      let json = ele.toJSON();
-      json.configList = configList.filter(cfg => cfg.moduleId.equals(ele._id));
-      return json;
-    });
+    let moduleList = await CompModuleModel.find({ compId: main._id });
     return {
       main,
-      moduleList: moduleListDoc,
+      moduleList,
     };
   }
 
@@ -114,10 +103,30 @@ export class CompMapper {
     return { moduleList };
   }
 
+  static async configQuery(data: any, opt: {
+    user: LoginUser
+  }) {
+    return CompConfigModel.find(data);
+  }
+
   static async configSave(data: any, opt: {
     user: LoginUser
   }) {
-    let detail = await this.findDetail(data, opt);
+    let detail = await this.findDetail({ _id: data.compId }, opt);
+    
+    data.configList.forEach(ele => {
+      ele.compId = detail._id;
+      ele.moduleId = data.moduleId;
+    });
+    let configList;
+    await transaction(async (session) => {
+      let rs = await Promise.all([
+        CompConfigModel.deleteMany({ compId: detail._id, moduleId: data.moduleId }, { session }),
+        CompConfigModel.create(data.configList, { session })
+      ]);
+      configList = rs[1];
+    });
+    return { configList };
   }
 
   static async del(data, opt: {

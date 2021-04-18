@@ -346,6 +346,10 @@ export default {
       compMgtConfigSave: {
         url: '/comp/mgt/configSave'
       },
+      compMgtConfigQuery: {
+        url: '/comp/mgt/configQuery',
+        method: 'get'
+      },
       compMgtQuery: {
         url: '/comp/mgt/query',
         method: 'get'

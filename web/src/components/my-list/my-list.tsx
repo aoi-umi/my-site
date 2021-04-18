@@ -572,7 +572,7 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
   }
   protected renderBtns () {
     return (
-      this.buttonConfigs && this.buttonConfigs.length && <MyButtons value={this.buttonConfigs} />
+      this.buttonConfigs && this.buttonConfigs.length > 0 && <MyButtons value={this.buttonConfigs} />
     )
   }
 }
