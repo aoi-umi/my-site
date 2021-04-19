@@ -11,6 +11,7 @@ export class MyButtonsModel {
     let obj = {}
     for (let v of val) {
       let group = v.group || v.text
+      if (!group) continue
       let o = obj[group]
       if (!o) { o = obj[group] = [] }
       o.push(v)

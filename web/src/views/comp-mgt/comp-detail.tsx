@@ -11,6 +11,7 @@ import { Prop } from '@/components/decorator'
 
 import { Base } from '../base'
 import { CompModuleType } from './comp-mgt-detail'
+import { Divider } from '@/components/iview'
 
 @Component
 export default class CompDetailPage extends Base {
@@ -28,7 +29,7 @@ export default class CompDetailPage extends Base {
     this.detail = await testApi.compDetailQuery({ _id: this._id })
     let data = {}
     this.detail.moduleList.forEach(ele => {
-      let d = Utils.getObjByDynCfg(ele.configList)
+      let d = Utils.getObjByDynCfg(ele.itemList)
       if (ele.viewType === dynamicCompViewType.列表) {
         data[ele.name] = [d]
       } else {
@@ -52,7 +53,7 @@ export default class CompDetailPage extends Base {
   }
 
   protected renderDetail () {
-    return <CompDetail compConfig={this.detail} data={this.data}/>
+    return <CompDetail compConfig={this.detail} data={this.data} />
   }
 }
 
@@ -78,25 +79,37 @@ class CompDetailView extends Vue<Base & CompDetailProp> {
   private watchCompConfig () {
     this.detail = this.compConfig
   }
-  private detail;
+  private detail: CompDetailType;
   protected render () {
     return (
       <div>
-        {this.detail.moduleList.map(m => {
-          m.configList.forEach(ele => {
-            if (!ele.queryMatchMode)ele.queryMatchMode = {}
+        {this.detail.moduleList.map((m, idx) => {
+          m.itemList.forEach(ele => {
+            if (!ele.queryMatchMode) ele.queryMatchMode = {}
             ele.queryMatchMode.show = m.viewType === dynamicCompViewType.查询条件
           })
+          let view
           if (m.viewType === dynamicCompViewType.列表) {
-            return <MyList
+            view = <MyList
               hideSearchBox
               hidePage
               data={this.data[m.name]}
-              itemConfigs={m.configList} />
+              itemConfigs={m.itemList}
+              buttonConfigs={m.buttonList} />
+          } else {
+            view = <MyDetail
+              itemConfigs={m.itemList}
+              buttonConfigs={m.buttonList}
+              dynamicCompOptions={
+                { data: this.data[m.name] }
+              } />
           }
-          return <MyDetail itemConfigs={m.configList} dynamicCompOptions={
-            { data: this.data[m.name] }
-          } />
+          return (
+            <div>
+              {view}
+              {this.detail.moduleList.length > 1 && idx < this.detail.moduleList.length - 1 && <Divider/>}
+            </div>
+          )
         })}
       </div>
     )

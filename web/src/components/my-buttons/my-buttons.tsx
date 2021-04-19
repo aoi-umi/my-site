@@ -21,7 +21,8 @@ class MyButtonsProp {
 class MyButtonsView extends Vue<MyButtonsProp & MyBase> {
   stylePrefix = 'my-buttons-'
   @Watch('value', {
-    immediate: true
+    immediate: true,
+    deep: true
   })
   private watchValue (val) {
     this.val = MyButtonsModel.createGroup(val)

@@ -67,7 +67,7 @@ export class MyDetailView extends Vue<MyDetailProp & MyBase> {
 
   protected renderBtns () {
     return (
-      this.buttonConfigs && this.buttonConfigs.length && <MyButtons value={this.buttonConfigs} />
+      this.buttonConfigs?.length > 0 && <MyButtons value={this.buttonConfigs} />
     )
   }
 

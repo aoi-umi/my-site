@@ -28,7 +28,8 @@ export type CompModuleType = {
   group: string;
   sort?: number;
 
-  configList?: DynamicCompConfigType[]
+  itemList?: DynamicCompConfigType[]
+  buttonList?: MyButtonsModel[]
 }
 
 export class CompMgtDetailProp {
@@ -38,7 +39,12 @@ export class CompMgtDetailProp {
   @Prop({
     default: () => []
   })
-  configList?: DynamicCompConfigType[]
+  itemList?: DynamicCompConfigType[]
+
+  @Prop({
+    default: () => []
+  })
+  buttonList?: MyButtonsModel[]
 
   @Prop({
     default: () => []
@@ -130,14 +136,14 @@ export default class CompMgtDetailView extends Vue<Base & CompMgtDetailProp> {
     this.moduleList.splice(0, this.moduleList.length, ...data as any)
   }
 
-  setConfigList (data: Partial<DynamicCompConfigType>[]) {
-    this.configList.splice(0, this.configList.length, ...data.map((ele: any, index) => {
-      return this.getConfigObj(ele)
+  setItemList (data: Partial<DynamicCompConfigType>[]) {
+    this.itemList.splice(0, this.itemList.length, ...data.map((ele: any, index) => {
+      return this.getItemObj(ele)
     }))
     this.setConfigData()
   }
 
-  getDefaultConfig () {
+  getDefaultItem () {
     return {
       editable: true,
       calcType: '',
@@ -152,11 +158,17 @@ export default class CompMgtDetailView extends Vue<Base & CompMgtDetailProp> {
     }
   }
 
-  private getConfigObj (ele: DynamicCompConfigType) {
+  private getItemObj (ele: DynamicCompConfigType) {
     return {
-      ...this.getDefaultConfig(),
+      ...this.getDefaultItem(),
       ...ele
     }
+  }
+
+  setButtonList (data: Partial<MyButtonsModel>[]) {
+    this.buttonList.splice(0, this.buttonList.length, ...data.map((ele: any, index) => {
+      return ele
+    }))
   }
 
   protected render () {
@@ -186,7 +198,18 @@ export default class CompMgtDetailView extends Vue<Base & CompMgtDetailProp> {
                 {this.renderModule()}
                 {(this.selectedModuleIdx >= 0) && <div>
                   <Divider />
-                  当前模块: {this.selectedModule.name}
+                  <div>
+                    当前模块: {this.selectedModule.name}
+                  </div>
+                  <Button on-click={() => {
+                    this.op.run('config')
+                  }}>保存</Button>
+                  <div>
+                    按钮设置
+                  </div>
+                  {this.renderButtonConfig()}
+                  <Divider />
+                  字段设置
                   {this.renderItem()}
                   <Divider />
                   {this.renderPreview()}
@@ -267,7 +290,7 @@ export default class CompMgtDetailView extends Vue<Base & CompMgtDetailProp> {
       event: {
         onChange: ({ data }) => {
           if (data === this.selectedModule) {
-            this.configList.forEach(ele => {
+            this.itemList.forEach(ele => {
               if (this.selectedModule.viewType === dynamicCompViewType.查询条件) {
                 if (ele.queryMatchMode) { ele.queryMatchMode.show = true }
               } else {
@@ -371,22 +394,39 @@ export default class CompMgtDetailView extends Vue<Base & CompMgtDetailProp> {
     ]
   }
   private configBtns: MyButtonsModel[] = []
+  private buttonBtns: MyButtonsModel[] = []
+  private buttonConfig: DynamicCompConfigType[] = [{
+    name: 'name',
+    text: '名字',
+    required: true,
+    editable: true
+  }, {
+    name: 'text',
+    text: '显示',
+    required: true,
+    editable: true
+  }, {
+    name: 'group',
+    text: '分组',
+    editable: true
+  }]
   private configInit () {
     this.configBtns = [{
       name: 'add',
       text: '新增',
       click: () => {
-        this.configList.push(this.getConfigObj({
+        this.itemList.push(this.getItemObj({
           name: '',
           text: '',
           type: 'input'
         }))
       }
-    }, {
-      name: 'save',
-      text: '保存',
+    }]
+    this.buttonBtns = [{
+      name: 'add',
+      text: '新增',
       click: () => {
-        this.op.run('config')
+        this.buttonList.push(Utils.getObjByDynCfg(this.buttonConfig))
       }
     }]
   }
@@ -397,11 +437,12 @@ export default class CompMgtDetailView extends Vue<Base & CompMgtDetailProp> {
       compId: this._id,
       moduleId: m._id
     })
-    this.setConfigList(rs)
+    this.setItemList(rs.itemList)
+    this.setButtonList(rs.buttonList)
   }
 
   private async configSave () {
-    let valid = await Utils.valid({ data: this.configList }, {
+    let itemValid = await Utils.valid({ data: this.itemList }, {
       data: {
         type: 'array',
         defaultField: {
@@ -410,26 +451,66 @@ export default class CompMgtDetailView extends Vue<Base & CompMgtDetailProp> {
         }
       }
     })
-    if (!valid.success) return
+    if (!itemValid.success) return
+
+    let btnRules = Utils.getValidRulesByDynCfg(this.buttonConfig)
+    let buttonValid = await Utils.valid({ data: this.buttonList }, {
+      data: {
+        type: 'array',
+        defaultField: {
+          type: 'object',
+          fields: btnRules
+        }
+      }
+    })
+    if (!buttonValid.success) return
+
     let m = this.selectedModule
     let rs = await testApi.compMgtConfigSave({
       compId: this._id,
       moduleId: m._id,
-      configList: this.configList.map(ele => {
+      buttonList: this.buttonList,
+      itemList: this.itemList.map(ele => {
         return {
           ...ele,
           queryMode: ele.queryMatchMode?.value
         }
       })
     })
-    this.setConfigList(rs.configList)
+    this.setItemList(rs.itemList)
+    this.setButtonList(rs.buttonList)
   }
 
   private setConfigData () {
-    this.defConfigData = Utils.getObjByDynCfg(this.configList)
+    this.defConfigData = Utils.getObjByDynCfg(this.itemList)
   }
 
-  // todo 按钮
+  protected renderButtonConfig () {
+    return (
+      <MyList
+        ref='buttonConfig'
+        draggable
+        tableHeight={300}
+        data={this.buttonList}
+        buttonConfigs={this.buttonBtns}
+        hideSearchBox
+        hidePage
+        itemConfigs={this.buttonConfig}
+        columns={[{
+          key: 'op',
+          title: '操作',
+          render: (h, params) => {
+            return (<div>
+              <a on-click={() => {
+                this.buttonList.splice(params['index'], 1)
+              }}>删除</a>
+            </div>)
+          }
+        }]}
+      />
+    )
+  }
+
   protected renderItem () {
     return (
       <Row class={this.getStyleName('config')} gutter={5}>
@@ -453,12 +534,12 @@ export default class CompMgtDetailView extends Vue<Base & CompMgtDetailProp> {
               render: (h, params) => {
                 return (<div>
                   <a on-click={() => {
-                    this.configList.splice(params['index'], 1)
+                    this.itemList.splice(params['index'], 1)
                   }}>删除</a>
                 </div>)
               }
             }]}
-            data={this.configList}
+            data={this.itemList}
             buttonConfigs={this.configBtns}
             hideSearchBox
             hidePage
@@ -555,7 +636,7 @@ export default class CompMgtDetailView extends Vue<Base & CompMgtDetailProp> {
       data={data}
       compConfig={{
         main: {},
-        moduleList: [{ ...m, configList: this.configList }]
+        moduleList: [{ ...m, itemList: this.itemList, buttonList: this.buttonList }]
       }} />
   }
 }

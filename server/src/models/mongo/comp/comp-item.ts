@@ -7,9 +7,9 @@ import { Types, SchemaTypes } from 'mongoose';
 import { Base } from '../_base';
 
 
-export type CompConfigInstanceType = InstanceType<CompConfig>;
-export type CompConfigModelType = ModelType<CompConfig, typeof CompConfig>;
-export type CompConfigDocType = DocType<CompConfigInstanceType>;
+export type CompItemInstanceType = InstanceType<CompItem>;
+export type CompItemModelType = ModelType<CompItem, typeof CompItem>;
+export type CompItemDocType = DocType<CompItemInstanceType>;
 
 @setSchema({
   schemaOptions: {
@@ -18,7 +18,7 @@ export type CompConfigDocType = DocType<CompConfigInstanceType>;
     }
   }
 })
-export class CompConfig extends Base {
+export class CompItem extends Base {
   @prop({
     type: SchemaTypes.ObjectId,
     required: true
@@ -79,5 +79,5 @@ export class CompConfig extends Base {
   sort: number;
 }
 
-export const CompConfigModel = getModelForClass<CompConfig, typeof CompConfig>(CompConfig);
+export const CompItemModel = getModelForClass<CompItem, typeof CompItem>(CompItem);
 

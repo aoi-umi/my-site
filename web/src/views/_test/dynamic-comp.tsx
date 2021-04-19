@@ -30,7 +30,7 @@ export class DynamicCompDemoProp {
 })
 export default class App extends Vue<DynamicCompDemoProp & Base> {
   $refs: { comp: CompMgtDetailView }
-  configList: DynamicCompConfigType[] = []
+  itemList: DynamicCompConfigType[] = []
   data = {}
   listData = []
   compProp = {
@@ -64,7 +64,7 @@ export default class App extends Vue<DynamicCompDemoProp & Base> {
 
   mounted () {
     if (!this.comp) {
-      this.$refs.comp.setConfigList(Object.entries({
+      this.$refs.comp.setItemList(Object.entries({
         ...dynamicCompType,
         不可编辑输入框: {
           name: 'dis-input',
@@ -137,7 +137,7 @@ export default class App extends Vue<DynamicCompDemoProp & Base> {
 
   private getData (d?) {
     let data = {}
-    this.configList.forEach(ele => {
+    this.itemList.forEach(ele => {
       data[ele.name] = null
     })
     data['input'] = 'disabled'
@@ -157,7 +157,7 @@ export default class App extends Vue<DynamicCompDemoProp & Base> {
 
   getAdvData () {
     let data = {}
-    this.configList.forEach(ele => {
+    this.itemList.forEach(ele => {
       data[ele.name] = {
         mode: ele.queryMatchMode?.value,
         value: this.data[ele.name]
@@ -168,7 +168,7 @@ export default class App extends Vue<DynamicCompDemoProp & Base> {
 
   getFields () {
     let data = {}
-    this.configList.forEach(ele => {
+    this.itemList.forEach(ele => {
       data[ele.name] = {
         name: ele.name,
         calcType: ele.calcType
@@ -178,14 +178,14 @@ export default class App extends Vue<DynamicCompDemoProp & Base> {
   }
 
   setConfigList (data: Partial<DynamicCompConfigType>[]) {
-    this.$refs.comp.setConfigList(data)
+    this.$refs.comp.setItemList(data)
   }
 
   render () {
     return (
       <div>
         <span>动态组件</span>
-        <CompMgtDetail ref='comp' itemOnly configList={this.configList} on-name-change={() => {
+        <CompMgtDetail ref='comp' itemOnly itemList={this.itemList} on-name-change={() => {
           this.setData()
         }} />
         <div>
@@ -201,7 +201,7 @@ export default class App extends Vue<DynamicCompDemoProp & Base> {
         </div>
 
         <div>
-          <MyDetail itemConfigs={this.configList} dynamicCompOptions={
+          <MyDetail itemConfigs={this.itemList} dynamicCompOptions={
             {
               data: this.data,
               extraValue: this.extraValue,
@@ -211,7 +211,7 @@ export default class App extends Vue<DynamicCompDemoProp & Base> {
             }
           } colConfig={this.colConfig} />
         </div>
-        {!this.comp && <MyList hideSearchBox itemConfigs={this.configList} dynamicCompOptions={
+        {!this.comp && <MyList hideSearchBox itemConfigs={this.itemList} dynamicCompOptions={
           {
             extraValue: this.extraValue,
             editable: this.editable,

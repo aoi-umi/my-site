@@ -6,8 +6,9 @@ import * as config from '@/config';
 import { BaseMapper } from '../_base';
 
 import { CompInstanceType, CompModel, } from './comp';
-import { CompConfigInstanceType, CompConfigModel, } from './comp-config';
+import { CompItemInstanceType, CompItemModel, } from './comp-item';
 import { CompModuleModel } from './comp-module';
+import { CompButtonModel } from './comp-button';
 
 type DetailQueryOptType = {
   user: LoginUser,
@@ -56,12 +57,16 @@ export class CompMapper {
     let moduleList = await CompModuleModel.find({ compId: main._id }).sort({
       sort: 1
     });
-    let configList = await CompConfigModel.find({ compId: main._id }).sort({
+    let itemList = await CompItemModel.find({ compId: main._id }).sort({
+      sort: 1
+    });
+    let buttonList = await CompButtonModel.find({ compId: main._id }).sort({
       sort: 1
     });
     let moduleListDoc = moduleList.map(ele => {
       let json = ele.toJSON();
-      json.configList = configList.filter(cfg => cfg.moduleId.equals(ele._id));
+      json.itemList = itemList.filter(cfg => cfg.moduleId.equals(ele._id));
+      json.buttonList = buttonList.filter(cfg => cfg.moduleId.equals(ele._id));
       return json;
     });
     return {
@@ -133,7 +138,7 @@ export class CompMapper {
     await transaction(async (session) => {
       let rs = await Promise.all([
         CompModuleModel.deleteMany({ compId: detail._id }, { session }),
-        CompConfigModel.deleteMany({ compId: detail._id, moduleId: delModule }, { session }),
+        CompItemModel.deleteMany({ compId: detail._id, moduleId: delModule }, { session }),
         CompModuleModel.create(data.moduleList, { session })
       ]);
       moduleList = rs[2];
@@ -144,7 +149,16 @@ export class CompMapper {
   static async configQuery(data: any, opt: {
     user: LoginUser
   }) {
-    return CompConfigModel.find(data);
+    let itemList = await CompItemModel.find(data).sort({
+      sort: 1
+    });
+    let buttonList = await CompButtonModel.find(data).sort({
+      sort: 1
+    });
+    return {
+      itemList,
+      buttonList
+    };
   }
 
   static async configSave(data: any, opt: {
@@ -152,20 +166,29 @@ export class CompMapper {
   }) {
     let detail = await this.findDetail({ _id: data.compId }, opt);
 
-    data.configList.forEach((ele, idx) => {
+    data.itemList.forEach((ele, idx) => {
       ele.compId = detail._id;
       ele.moduleId = data.moduleId;
-      ele.sort = data.idx;
+      ele.sort = idx;
     });
-    let configList;
+    data.buttonList.forEach((ele, idx) => {
+      ele.compId = detail._id;
+      ele.moduleId = data.moduleId;
+      ele.sort = idx;
+    });
+    let itemList, buttonList;
     await transaction(async (session) => {
       let rs = await Promise.all([
-        CompConfigModel.deleteMany({ compId: detail._id, moduleId: data.moduleId }, { session }),
-        CompConfigModel.create(data.configList, { session })
+        CompItemModel.deleteMany({ compId: detail._id, moduleId: data.moduleId }, { session }),
+        CompItemModel.create(data.itemList, { session }),
+
+        CompButtonModel.deleteMany({ compId: detail._id, moduleId: data.moduleId }, { session }),
+        CompButtonModel.create(data.buttonList, { session }),
       ]);
-      configList = rs[1];
+      itemList = rs[1];
+      buttonList = rs[3];
     });
-    return { configList };
+    return { itemList, buttonList };
   }
 
   static async del(data, opt: {
@@ -182,7 +205,7 @@ export class CompMapper {
       await Promise.all([
         CompModel.deleteMany({ _id: id }, { session }),
         CompModuleModel.deleteMany({ compId: id }, { session }),
-        CompConfigModel.deleteMany({ compId: id }, { session })
+        CompItemModel.deleteMany({ compId: id }, { session })
       ]);
     });
   }
