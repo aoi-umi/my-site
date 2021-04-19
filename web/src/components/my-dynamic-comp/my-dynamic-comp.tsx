@@ -18,6 +18,11 @@ import { MyBase } from '../my-base'
 
 type SelectOptionType = { label: string; value: any };
 
+export const DynamicCompSelectOptionsType = {
+  extraValue: 'extraValue',
+  自定义: 'custom'
+}
+
 export type DynamicCompConfigType = {
   name: string;
   text: string;
@@ -126,23 +131,24 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
 
   private get selectOptions () {
     let { config, data } = this.getActualOption()
-    let val
-    let options = config.actOptions
-    if (typeof options === 'function') {
-      val = this.remoteSelectOptions
-    } else if (typeof options === 'string') {
-      val = this.extraValue[options]
-    } else { val = options }
+    let actOptions
+    if (config.actOptions) {
+      actOptions = config.actOptions
+    } else if (config.optionType === DynamicCompSelectOptionsType.extraValue) {
+      actOptions = config.options
+    } else if (config.options) {
+      actOptions = JSON.parse(config.options)
+    }
 
-    if (val && !(val instanceof Array)) {
-      val = Object.entries(val).map(ele => {
+    if (actOptions && !(actOptions instanceof Array)) {
+      actOptions = Object.entries(actOptions).map(ele => {
         return {
           label: ele[0],
           value: ele[1]
         }
       })
     }
-    return val as SelectOptionType[]
+    return actOptions as SelectOptionType[]
   }
 
   private remoteSelectOptions: SelectOptionType[] = []

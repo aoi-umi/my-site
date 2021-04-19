@@ -42,7 +42,9 @@ export class CompMapper {
 
   static async mgtDetailQuery(data, opt: DetailQueryOptType) {
     let main = await this.findDetail(data, opt);
-    let moduleList = await CompModuleModel.find({ compId: main._id });
+    let moduleList = await CompModuleModel.find({ compId: main._id }).sort({
+      sort: 1
+    });
     return {
       main,
       moduleList,
@@ -51,11 +53,15 @@ export class CompMapper {
 
   static async detailQuery(data, opt: DetailQueryOptType) {
     let main = await this.findDetail(data, opt);
-    let moduleList = await CompModuleModel.find({ compId: main._id });
-    let configList = await CompConfigModel.find({ compId: main._id });
-    let moduleListDoc = moduleList.map(ele=>{
+    let moduleList = await CompModuleModel.find({ compId: main._id }).sort({
+      sort: 1
+    });
+    let configList = await CompConfigModel.find({ compId: main._id }).sort({
+      sort: 1
+    });
+    let moduleListDoc = moduleList.map(ele => {
       let json = ele.toJSON();
-      json.configList = configList.filter(cfg=>cfg.moduleId.equals(ele._id));
+      json.configList = configList.filter(cfg => cfg.moduleId.equals(ele._id));
       return json;
     });
     return {
@@ -64,19 +70,19 @@ export class CompMapper {
     };
   }
 
-  private static async findDetail(data: { _id?: any, name?:any }, opt: DetailQueryOptType) {
-    let cond:any = {};
+  private static async findDetail(data: { _id?: any, name?: any }, opt: DetailQueryOptType) {
+    let cond: any = {};
     if (data._id)
       cond._id = data._id;
     else if (data.name)
       cond.name = data.name;
-    else 
+    else
       throw new Error('缺少参数');
     let detail = await CompModel.findOne(cond);
     if (!detail)
       throw error('', config.error.DB_NO_DATA);
     let checkPer = !opt.preview;
-    if (checkPer) { 
+    if (checkPer) {
       if (detail.userId && !opt.user.equalsId(detail.userId))
         throw new Error('无权限处理');
     }
@@ -87,6 +93,12 @@ export class CompMapper {
     user: LoginUser
   }) {
     let detail: CompInstanceType;
+    let existsCond: any = { name: data.name };
+    if (data._id)
+      existsCond._id = { $ne: data._id };
+    let exists = await CompModel.findOne(existsCond);
+    if (exists)
+      throw new Error(`[${data.name}]已存在`);
     if (!data._id) {
       delete data._id;
       if (opt.user.isLogin)
@@ -111,8 +123,9 @@ export class CompMapper {
     let delModule = {
       $nin: []
     };
-    data.moduleList.forEach(ele => {
+    data.moduleList.forEach((ele, idx) => {
       ele.compId = detail._id;
+      ele.sort = idx;
       if (ele._id)
         delModule.$nin.push(ele._id);
     });
@@ -139,9 +152,10 @@ export class CompMapper {
   }) {
     let detail = await this.findDetail({ _id: data.compId }, opt);
 
-    data.configList.forEach(ele => {
+    data.configList.forEach((ele, idx) => {
       ele.compId = detail._id;
       ele.moduleId = data.moduleId;
+      ele.sort = data.idx;
     });
     let configList;
     await transaction(async (session) => {

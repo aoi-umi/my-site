@@ -9,7 +9,7 @@ import { Prop } from '@/components/decorator'
 import { MyList, IMyList } from '@/components/my-list'
 import { routerConfig } from '@/router'
 import { IMyLoad, MyLoad } from '@/components/my-load'
-import { DynamicCompConfigType } from '@/components/my-dynamic-comp'
+import { DynamicCompConfigType, DynamicCompSelectOptionsType } from '@/components/my-dynamic-comp'
 import { myEnum } from '@/config'
 const { dynamicCompType, dynamicSqlCalcType, dynamicCompViewType } = myEnum
 import { convClass, getCompOpts, Utils } from '@/components/utils'
@@ -17,12 +17,8 @@ import { MyDetail, MyDetailView } from '@/components/my-detail'
 import { MyButtonsModel } from '@/components/my-buttons'
 
 import { Base } from '../base'
+import { CompDetail } from './comp-detail'
 import './comp-mgt.less'
-
-const SelectOptionsType = {
-  extraValue: 'extraValue',
-  自定义: 'custom'
-}
 
 export type CompModuleType = {
   _id?: string
@@ -32,7 +28,7 @@ export type CompModuleType = {
   group: string;
   sort?: number;
 
-  configList?: CompModuleType[]
+  configList?: DynamicCompConfigType[]
 }
 
 export class CompMgtDetailProp {
@@ -157,18 +153,9 @@ export default class CompMgtDetailView extends Vue<Base & CompMgtDetailProp> {
   }
 
   private getConfigObj (ele: DynamicCompConfigType) {
-    let actOptions
-    if (typeof ele.actOptions === 'function') {
-      actOptions = ele.actOptions
-    } else if (ele.optionType === SelectOptionsType.extraValue) {
-      actOptions = ele.options
-    } else if (ele.options) {
-      actOptions = JSON.parse(ele.options)
-    }
     return {
       ...this.getDefaultConfig(),
-      ...ele,
-      actOptions
+      ...ele
     }
   }
 
@@ -363,7 +350,9 @@ export default class CompMgtDetailView extends Vue<Base & CompMgtDetailProp> {
   selectOptionValChange (event) {
     try {
       let val = this.selectConfig.options
-      if (this.selectConfig.optionType === SelectOptionsType.extraValue) { this.selectOption = val } else { this.selectOption = JSON.parse(val) }
+      if (this.selectConfig.optionType === DynamicCompSelectOptionsType.extraValue) {
+        this.selectOption = val
+      } else { this.selectOption = JSON.parse(val) }
       this.updateSelectOption()
     } catch (e) { }
   }
@@ -440,6 +429,7 @@ export default class CompMgtDetailView extends Vue<Base & CompMgtDetailProp> {
     this.defConfigData = Utils.getObjByDynCfg(this.configList)
   }
 
+  // todo 按钮
   protected renderItem () {
     return (
       <Row class={this.getStyleName('config')} gutter={5}>
@@ -456,7 +446,7 @@ export default class CompMgtDetailView extends Vue<Base & CompMgtDetailProp> {
               title: '名称'
             }, {
               key: 'text',
-              title: '显示文本'
+              title: '显示'
             }, {
               key: 'op',
               title: '操作',
@@ -512,7 +502,7 @@ export default class CompMgtDetailView extends Vue<Base & CompMgtDetailProp> {
         <FormItem label='禁用'>
           <Checkbox v-model={this.selectConfig.disabled} />
         </FormItem>
-        <FormItem label='占比(1-24)'>
+        <FormItem label='占比'>
           <InputNumber v-model={this.selectConfig.size} />
         </FormItem>
         <FormItem label='宽度'>
@@ -532,7 +522,7 @@ export default class CompMgtDetailView extends Vue<Base & CompMgtDetailProp> {
           <div>
             <FormItem label='取值类型'>
               <Select v-model={this.selectConfig.optionType}>
-                {this.renderOptionByObj(SelectOptionsType)}
+                {this.renderOptionByObj(DynamicCompSelectOptionsType)}
               </Select>
             </FormItem>
             <FormItem>
@@ -557,16 +547,16 @@ export default class CompMgtDetailView extends Vue<Base & CompMgtDetailProp> {
 
   protected renderPreview () {
     let m = this.selectedModule
-    if (m.viewType === dynamicCompViewType.列表) {
-      return <MyList
-        hideSearchBox
-        hidePage
-        data={[this.defConfigData]}
-        itemConfigs={this.configList} />
+    let data = {
+      [m.name]: m.viewType === dynamicCompViewType.列表
+        ? [this.defConfigData] : this.defConfigData
     }
-    return <MyDetail itemConfigs={this.configList} dynamicCompOptions={
-      { data: this.defConfigData }
-    } />
+    return <CompDetail
+      data={data}
+      compConfig={{
+        main: {},
+        moduleList: [{ ...m, configList: this.configList }]
+      }} />
   }
 }
 

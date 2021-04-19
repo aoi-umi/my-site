@@ -52,13 +52,13 @@ export default class CompDetailPage extends Base {
   }
 
   protected renderDetail () {
-    return <CompMgtDetail compConfig={this.detail} data={this.data}/>
+    return <CompDetail compConfig={this.detail} data={this.data}/>
   }
 }
 
 type CompDetailType = {
   main: any
-  moduleList: CompModuleType[]
+  moduleList: Partial<CompModuleType>[]
 }
 
 export class CompDetailProp {
@@ -74,10 +74,19 @@ export class CompDetailProp {
   mixins: [getCompOpts(CompDetailProp)]
 })
 class CompDetailView extends Vue<Base & CompDetailProp> {
+  @Watch('compConfig', { immediate: true })
+  private watchCompConfig () {
+    this.detail = this.compConfig
+  }
+  private detail;
   protected render () {
     return (
       <div>
-        {this.compConfig.moduleList.map(m => {
+        {this.detail.moduleList.map(m => {
+          m.configList.forEach(ele => {
+            if (!ele.queryMatchMode)ele.queryMatchMode = {}
+            ele.queryMatchMode.show = m.viewType === dynamicCompViewType.查询条件
+          })
           if (m.viewType === dynamicCompViewType.列表) {
             return <MyList
               hideSearchBox
@@ -94,4 +103,4 @@ class CompDetailView extends Vue<Base & CompDetailProp> {
   }
 }
 
-export const CompMgtDetail = convClass<CompDetailProp>(CompDetailView)
+export const CompDetail = convClass<CompDetailProp>(CompDetailView)

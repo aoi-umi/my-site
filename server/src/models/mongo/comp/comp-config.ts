@@ -52,7 +52,9 @@ export class CompConfig extends Base {
   @prop()
   type: string
 
-  @prop()
+  @prop({
+    trim: true
+  })
   options: string
 
   @prop()
