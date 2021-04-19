@@ -117,4 +117,6 @@ router.post('/comp/mgt/moduleSave', UserAuthMid.normal(), MyRequestHandlerMid.co
 router.post('/comp/mgt/configSave', UserAuthMid.normal(), MyRequestHandlerMid.convert(comp.mgtConfigSave));
 router.get('/comp/mgt/configQuery', UserAuthMid.normal(), MyRequestHandlerMid.convert(comp.mgtConfigQuery));
 router.post('/comp/mgt/del', UserAuthMid.normal(), MyRequestHandlerMid.convert(comp.mgtDel));
+
+router.get('/comp/detailQuery', UserAuthMid.normal(), MyRequestHandlerMid.convert(comp.detailQuery));
 //#endregion

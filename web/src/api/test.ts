@@ -127,6 +127,7 @@ type TestApiMethod = ApiMethod<ApiMethodConfigType, {
   compMgtConfigQuery,
   compMgtDetailQuery,
   compMgtDel,
+  compDetailQuery,
 }>;
 export type TestApiConfigType = ApiConfigModel<TestApiMethod>;
 
@@ -581,6 +582,10 @@ export class TestApi extends ApiModel<TestApiMethod> {
 
   async compMgtDel (data) {
     return this.requestByConfig(this.apiConfig.method.compMgtDel, { data })
+  }
+
+  async compDetailQuery (data) {
+    return this.requestByConfig(this.apiConfig.method.compDetailQuery, { data })
   }
   // #endregion
 }

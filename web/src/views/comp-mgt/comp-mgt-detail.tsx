@@ -3,10 +3,10 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import { testApi } from '@/api'
 import { convert, OperateModel } from '@/helpers'
 
-import { Input, Button, Checkbox, Row, Col, Select, Form, FormItem, InputNumber, Tabs, TabPane } from '@/components/iview'
+import { Input, Button, Checkbox, Row, Col, Select, Form, FormItem, InputNumber, Tabs, TabPane, Divider } from '@/components/iview'
 
 import { Prop } from '@/components/decorator'
-import { MyList, IMyList, Const as MyListConst, MyListModel } from '@/components/my-list'
+import { MyList, IMyList } from '@/components/my-list'
 import { routerConfig } from '@/router'
 import { IMyLoad, MyLoad } from '@/components/my-load'
 import { DynamicCompConfigType } from '@/components/my-dynamic-comp'
@@ -24,15 +24,18 @@ const SelectOptionsType = {
   自定义: 'custom'
 }
 
-type CompModuleType = {
+export type CompModuleType = {
   _id?: string
   name: string;
   text: string;
+  viewType: string;
   group: string;
   sort?: number;
+
+  configList?: CompModuleType[]
 }
 
-export class CompProp {
+export class CompMgtDetailProp {
   @Prop()
   itemOnly?: boolean
 
@@ -49,10 +52,9 @@ export class CompProp {
 
 @Component({
   extends: Base,
-  mixins: [getCompOpts(CompProp)]
-
+  mixins: [getCompOpts(CompMgtDetailProp)]
 })
-export default class CompView extends Vue<Base & CompProp> {
+export default class CompMgtDetailView extends Vue<Base & CompMgtDetailProp> {
   stylePrefix = 'comp-mgt-detail-'
   $refs: {
     loadView: IMyLoad, formVaild: iView.Form,
@@ -136,16 +138,21 @@ export default class CompView extends Vue<Base & CompProp> {
     this.configList.splice(0, this.configList.length, ...data.map((ele: any, index) => {
       return this.getConfigObj(ele)
     }))
+    this.setConfigData()
   }
 
   getDefaultConfig () {
     return {
       editable: true,
       calcType: '',
-      queryMatchMode: null,
+      queryMode: null,
       isRange: false,
       optionType: null,
-      options: null
+      options: null,
+      queryMatchMode: {
+        show: this.selectedModule?.viewType === dynamicCompViewType.查询条件,
+        value: null
+      }
     }
   }
 
@@ -190,9 +197,12 @@ export default class CompView extends Vue<Base & CompProp> {
               </TabPane>
               <TabPane label='配置信息' disabled={!this.hasDetail}>
                 {this.renderModule()}
-                {(this.selectModuleIdx >= 0) && <div>
-                  当前模块: {this.moduleList[this.selectModuleIdx].name}
+                {(this.selectedModuleIdx >= 0) && <div>
+                  <Divider />
+                  当前模块: {this.selectedModule.name}
                   {this.renderItem()}
+                  <Divider />
+                  {this.renderPreview()}
                 </div>}
               </TabPane>
             </Tabs>
@@ -240,7 +250,10 @@ export default class CompView extends Vue<Base & CompProp> {
   }
 
   private moduleBtns: MyButtonsModel[] = []
-  private selectModuleIdx = -1
+  private selectedModuleIdx = -1
+  private get selectedModule () {
+    if (this.selectedModuleIdx >= 0) { return this.moduleList[this.selectedModuleIdx] }
+  }
   private moduleConfig: DynamicCompConfigType[] = [{
     name: 'name',
     text: '名字',
@@ -262,6 +275,23 @@ export default class CompView extends Vue<Base & CompProp> {
     text: '分组',
     editable: true
   }]
+  moduleProp = {
+    viewType: {
+      event: {
+        onChange: ({ data }) => {
+          if (data === this.selectedModule) {
+            this.configList.forEach(ele => {
+              if (this.selectedModule.viewType === dynamicCompViewType.查询条件) {
+                if (ele.queryMatchMode) { ele.queryMatchMode.show = true }
+              } else {
+                if (ele.queryMatchMode) { ele.queryMatchMode.show = false }
+              }
+            })
+          }
+        }
+      }
+    }
+  }
 
   private moduleInit () {
     this.moduleBtns = [{
@@ -297,17 +327,20 @@ export default class CompView extends Vue<Base & CompProp> {
           draggable
           tableHeight={300}
           itemConfigs={this.moduleConfig}
+          dynamicCompOptions={{
+            compProp: this.moduleProp
+          }}
           columns={[{
             key: 'op',
             title: '操作',
             render: (h, params) => {
               return (<div class={this.getStyleName('op')}>
                 {params.row._id && <a on-click={() => {
-                  this.selectModuleIdx = params['index']
+                  this.selectedModuleIdx = params['index']
                   this.op.run('configQuery')
                 }}>编辑</a>}
                 <a on-click={() => {
-                  if (this.selectModuleIdx === params['index']) { this.selectModuleIdx = -1 }
+                  if (this.selectedModuleIdx === params['index']) { this.selectedModuleIdx = -1 }
                   this.moduleList.splice(params['index'], 1)
                 }}>删除</a>
               </div>)
@@ -339,6 +372,7 @@ export default class CompView extends Vue<Base & CompProp> {
     this.selectConfig.actOptions = this.selectOption
   }
 
+  private defConfigData = {}
   rules = {
     name: [
       { required: true }
@@ -369,7 +403,7 @@ export default class CompView extends Vue<Base & CompProp> {
   }
 
   private async configQuery () {
-    let m = this.moduleList[this.selectModuleIdx]
+    let m = this.selectedModule
     let rs = await testApi.compMgtConfigQuery({
       compId: this._id,
       moduleId: m._id
@@ -388,12 +422,22 @@ export default class CompView extends Vue<Base & CompProp> {
       }
     })
     if (!valid.success) return
-    let m = this.moduleList[this.selectModuleIdx]
-    await testApi.compMgtConfigSave({
+    let m = this.selectedModule
+    let rs = await testApi.compMgtConfigSave({
       compId: this._id,
       moduleId: m._id,
-      configList: this.configList
+      configList: this.configList.map(ele => {
+        return {
+          ...ele,
+          queryMode: ele.queryMatchMode?.value
+        }
+      })
     })
+    this.setConfigList(rs.configList)
+  }
+
+  private setConfigData () {
+    this.defConfigData = Utils.getObjByDynCfg(this.configList)
   }
 
   protected renderItem () {
@@ -438,13 +482,14 @@ export default class CompView extends Vue<Base & CompProp> {
     )
   }
 
-  renderSetting () {
+  protected renderSetting () {
     if (!this.selectConfig) return <div />
     return (
       <Form props={{ model: this.selectConfig }} label-width={80} show-message={false} rules={this.rules}>
         <FormItem label='名字' prop='name'>
           <Input v-model={this.selectConfig.name} on-on-change={() => {
             this.$emit('name-change')
+            this.setConfigData()
           }}>
           </Input>
         </FormItem>
@@ -509,6 +554,20 @@ export default class CompView extends Vue<Base & CompProp> {
       </Form>
     )
   }
+
+  protected renderPreview () {
+    let m = this.selectedModule
+    if (m.viewType === dynamicCompViewType.列表) {
+      return <MyList
+        hideSearchBox
+        hidePage
+        data={[this.defConfigData]}
+        itemConfigs={this.configList} />
+    }
+    return <MyDetail itemConfigs={this.configList} dynamicCompOptions={
+      { data: this.defConfigData }
+    } />
+  }
 }
 
-export const Comp = convClass<CompProp>(CompView)
+export const CompMgtDetail = convClass<CompMgtDetailProp>(CompMgtDetailView)

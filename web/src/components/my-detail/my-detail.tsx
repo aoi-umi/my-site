@@ -74,7 +74,7 @@ export class MyDetailView extends Vue<MyDetailProp & MyBase> {
   protected renderItem () {
     return (
       <Row class={this.getStyleName('item-main')}>
-        {this.itemConfigs.map(ele => {
+        {this.itemConfigs.map((ele, idx) => {
           let colConfig = this.getColConfig(ele)
           return (
             <Col props={colConfig}>

@@ -9,6 +9,10 @@ import { CompInstanceType, CompModel, } from './comp';
 import { CompConfigInstanceType, CompConfigModel, } from './comp-config';
 import { CompModuleModel } from './comp-module';
 
+type DetailQueryOptType = {
+  user: LoginUser,
+  preview?: boolean
+}
 export class CompMapper {
   static async query(data, opt: {
     user: LoginUser
@@ -36,9 +40,7 @@ export class CompMapper {
     return rs;
   }
 
-  static async detailQuery(data, opt: {
-    user: LoginUser
-  }) {
+  static async mgtDetailQuery(data, opt: DetailQueryOptType) {
     let main = await this.findDetail(data, opt);
     let moduleList = await CompModuleModel.find({ compId: main._id });
     return {
@@ -47,14 +49,37 @@ export class CompMapper {
     };
   }
 
-  private static async findDetail(data: { _id: any }, opt: {
-    user: LoginUser
-  }) {
-    let detail = await CompModel.findOne({ _id: data._id });
+  static async detailQuery(data, opt: DetailQueryOptType) {
+    let main = await this.findDetail(data, opt);
+    let moduleList = await CompModuleModel.find({ compId: main._id });
+    let configList = await CompConfigModel.find({ compId: main._id });
+    let moduleListDoc = moduleList.map(ele=>{
+      let json = ele.toJSON();
+      json.configList = configList.filter(cfg=>cfg.moduleId.equals(ele._id));
+      return json;
+    });
+    return {
+      main,
+      moduleList: moduleListDoc,
+    };
+  }
+
+  private static async findDetail(data: { _id?: any, name?:any }, opt: DetailQueryOptType) {
+    let cond:any = {};
+    if (data._id)
+      cond._id = data._id;
+    else if (data.name)
+      cond.name = data.name;
+    else 
+      throw new Error('缺少参数');
+    let detail = await CompModel.findOne(cond);
     if (!detail)
       throw error('', config.error.DB_NO_DATA);
-    if (detail.userId && !opt.user.equalsId(detail.userId))
-      throw new Error('无权限处理');
+    let checkPer = !opt.preview;
+    if (checkPer) { 
+      if (detail.userId && !opt.user.equalsId(detail.userId))
+        throw new Error('无权限处理');
+    }
     return detail;
   }
 
@@ -113,7 +138,7 @@ export class CompMapper {
     user: LoginUser
   }) {
     let detail = await this.findDetail({ _id: data.compId }, opt);
-    
+
     data.configList.forEach(ele => {
       ele.compId = detail._id;
       ele.moduleId = data.moduleId;

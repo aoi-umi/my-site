@@ -20,7 +20,7 @@ export default class App extends Base {
     dynamicComp.setConfigList([{
       name: 'testStr',
       text: 'testStr',
-      queryMode: { show: true, value: myEnum.dynamicCompStringQueryType.模糊 }
+      queryMatchMode: { show: true, value: myEnum.dynamicCompStringQueryType.模糊 }
     }, {
       name: 'testInt',
       text: 'testInt',

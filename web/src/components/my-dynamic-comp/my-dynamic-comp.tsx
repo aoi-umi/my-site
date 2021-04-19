@@ -35,7 +35,8 @@ export type DynamicCompConfigType = {
   append?: any
   required?: boolean
   disabled?: boolean
-  queryMode?: {
+  queryMode?: string;
+  queryMatchMode?: {
     show?: boolean,
     value?: string
   },
@@ -160,7 +161,8 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
 
   private get queryMatchMode () {
     let { config } = this.getActualOption()
-    return config.queryMode
+
+    return config.queryMatchMode
   }
 
   private get actualOption () {
@@ -190,7 +192,9 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
     let event = {}
     if (eve) {
       for (let key in eve) {
-        event[Utils.stringToHyphen(key)] = eve[key]
+        event[Utils.stringToHyphen(key)] = () => {
+          eve[key]({ value: data[config.name], config, data })
+        }
       }
     }
     return {

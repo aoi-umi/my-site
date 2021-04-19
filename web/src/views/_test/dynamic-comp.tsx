@@ -12,7 +12,7 @@ import { getCompOpts, convClass } from '@/components/utils'
 import { Prop } from '@/components/decorator'
 import { MyDetail } from '@/components/my-detail'
 import { Base } from '@/views/base'
-import CompView, { Comp } from '../comp-mgt/comp'
+import CompMgtDetailView, { CompMgtDetail } from '../comp-mgt/comp-mgt-detail'
 
 export class DynamicCompDemoProp {
   @Prop()
@@ -29,7 +29,7 @@ export class DynamicCompDemoProp {
   mixins: [getCompOpts(DynamicCompDemoProp)]
 })
 export default class App extends Vue<DynamicCompDemoProp & Base> {
-  $refs: { comp: CompView }
+  $refs: { comp: CompMgtDetailView }
   configList: DynamicCompConfigType[] = []
   data = {}
   listData = []
@@ -159,7 +159,7 @@ export default class App extends Vue<DynamicCompDemoProp & Base> {
     let data = {}
     this.configList.forEach(ele => {
       data[ele.name] = {
-        mode: ele.queryMode?.value,
+        mode: ele.queryMatchMode?.value,
         value: this.data[ele.name]
       }
     })
@@ -185,7 +185,7 @@ export default class App extends Vue<DynamicCompDemoProp & Base> {
     return (
       <div>
         <span>动态组件</span>
-        <Comp ref='comp' itemOnly configList={this.configList} on-name-change={() => {
+        <CompMgtDetail ref='comp' itemOnly configList={this.configList} on-name-change={() => {
           this.setData()
         }} />
         <div>

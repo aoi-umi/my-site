@@ -360,6 +360,10 @@ export default {
       },
       compMgtDel: {
         url: '/comp/mgt/del'
+      },
+      compDetailQuery: {
+        url: '/comp/detailQuery',
+        method: 'get'
       }
     }
   } as TestApiConfigType

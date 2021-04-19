@@ -193,7 +193,12 @@ const cfg = {
   compMgtDetail: {
     path: '/compMgt/detail',
     text: '组件管理',
-    component: () => import('../views/comp-mgt/comp')
+    component: () => import('../views/comp-mgt/comp-mgt-detail')
+  },
+  compMgtPreview: {
+    path: '/compMgt/preview',
+    text: '组件预览',
+    component: () => import('../views/comp-mgt/comp-detail')
   }
 }
 

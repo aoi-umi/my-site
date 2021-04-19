@@ -1,5 +1,5 @@
 interface VueComponentOptions<Props = any> {
-  key?: string;
+  key?: any;
   ref?: any;
   class?: any;
   style?: { [key: string]: any } | string;

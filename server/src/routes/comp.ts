@@ -12,7 +12,7 @@ export const mgtQuery: MyRequestHandler = async (opt) => {
 };
 
 export const mgtDetailQuery: MyRequestHandler = async (opt) => {
-  let rs = await CompMapper.detailQuery(opt.reqData, { user: opt.myData.user });
+  let rs = await CompMapper.mgtDetailQuery(opt.reqData, { user: opt.myData.user });
   return rs;
 };
 
@@ -39,4 +39,9 @@ export const mgtConfigQuery: MyRequestHandler = async (opt) => {
 export const mgtDel: MyRequestHandler = async (opt) => {
   let data = opt.reqData;
   let rs = await CompMapper.del({ _id: data.idList}, {user: opt.myData.user});
+};
+
+export const detailQuery: MyRequestHandler = async (opt) => {
+  let rs = await CompMapper.detailQuery(opt.reqData, { user: opt.myData.user, preview: true });
+  return rs;
 };

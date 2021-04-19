@@ -48,6 +48,13 @@ export default class CompMgt extends Base {
     })
   }
 
+  toPreview (query) {
+    this.$router.push({
+      path: routerConfig.compMgtPreview.path,
+      query
+    })
+  }
+
   protected render () {
     return (
       <div>
@@ -86,6 +93,10 @@ export default class CompMgt extends Base {
                     let row = params.row
                     this.toDetail({ _id: row._id })
                   }}>编辑</a>
+                  <a on-click={() => {
+                    let row = params.row
+                    this.toPreview({ _id: row._id })
+                  }}>预览</a>
                   <a on-click={() => {
                     this.delHandler([params.row._id])
                   }}>删除</a>
