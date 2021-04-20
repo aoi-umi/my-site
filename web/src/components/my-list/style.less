@@ -1,5 +1,10 @@
 @prefix: my-list-;
 .@{prefix} {
+  &root {
+    .drag-btn {
+      cursor: move;
+    }
+  }
   &toggle-box {
     justify-content: flex-end;
     display: flex;
@@ -43,7 +48,7 @@
     margin-bottom: 5px;
   }
 
-  &op-box{
+  &op-box {
     display: flex;
     justify-content: flex-end;
   }

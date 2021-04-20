@@ -1,4 +1,5 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
+import Sortable from 'sortablejs'
 
 import { Prop } from '@/components/decorator'
 import { DynamicCompConfigType, DynamicComp, DynamicCompProp } from '../my-dynamic-comp'
@@ -160,9 +161,12 @@ class MyListProp<QueryArgs = any> {
 }
 @Component({
   extends: MyBase,
-  mixins: [getCompOpts(MyListProp)]
+  mixins: [getCompOpts(MyListProp)],
+  components: {
+  }
 })
 class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> & MyBase> {
+  $refs: { table:iView.Table, page: iView.Page & { currentPage: number } };
   stylePrefix = clsPrefix;
 
   private cols?: ColType[] = [];
@@ -176,12 +180,61 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
     this.addEvent()
   }
 
+  private dragInst
+  mounted () {
+    if (this.draggable) {
+      this.dragInst = Sortable.create(
+        this.$refs.table.$el.querySelector('.ivu-table-tbody'),
+        {
+          handle: '.drag-btn',
+          onEnd: ({ newIndex, oldIndex }) => {
+            let data = this.result.data
+            this.result.data = []
+            // this.dragDropHadnler(oldIndex, newIndex)
+            this.$nextTick(() => {
+              data.splice(newIndex, 0, ...data.splice(oldIndex, 1))
+              this.result.data = data
+            })
+          }
+        }
+      )
+    }
+  }
+
   @Watch('itemConfigs', {
     immediate: true
   })
   private setCols () {
     if (this.type !== 'table') return
     this.cols = []
+    if (this.draggable) {
+      this.cols.push({
+        key: '__sort',
+        title: '排序',
+        width: 80,
+        render: () => {
+          return (
+            <div>
+              <Icon class='drag-btn' type='md-menu' size={24}/>
+            </div>
+          )
+        }
+      })
+    }
+    // this.cols.push({
+    //   key: '__custom',
+    //   title: '测试',
+    //   width: 80,
+    //   render: (h, params: any) => {
+    //     let data = this.result.data[params.index]
+    //     return (
+    //       <div>
+    //         {params.index},
+    //         {data.name}
+    //       </div>
+    //     )
+    //   }
+    // })
     if (this.itemConfigs) {
       this.cols.push(...this.itemConfigs.map(ele => {
         return {
@@ -191,7 +244,7 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
           minWidth: 120,
           width: ele.width,
           render: (h, params) => {
-            let data = this.findOriginData(params.row)
+            let data = this.result.data[params.index]
             return (<DynamicComp props={this.dynamicCompOptions} config={ele} data={data}
             ></DynamicComp>)
           }
@@ -226,6 +279,9 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
     window.addEventListener('scroll', this.handleScrollEnd)
   }
   protected beforeDestroy () {
+    if (this.dragInst) {
+      this.dragInst.destroy()
+    }
     window.removeEventListener('scroll', this.handleScrollEnd)
   }
 
@@ -279,9 +335,9 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
   }
 
   private setResultData (data) {
-    data.forEach((ele, idx) => {
-      ele._index = idx
-    })
+    // data.forEach((ele, idx) => {
+    //   ele._index = idx
+    // })
     this.result.data = data
   }
 
@@ -314,24 +370,22 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
     this.selectedRows = selection
   }
 
-  private currentChangeHandler (_currentRow, _oldCurrentRow) {
-    let currentRow = this.findOriginData(_currentRow)
-    let oldCurrentRow = this.findOriginData(_oldCurrentRow)
+  private currentChangeHandler (_currentRow, index) {
+    let currentRow = this.result.data[index]
 
     this.$emit('current-change', {
-      currentRow,
-      oldCurrentRow
+      currentRow
     })
   }
 
-  private dragDropHadnler (a, b) {
-    let data = this.result.data
-    data.splice(b, 0, ...data.splice(a, 1))
-  }
+  // private dragDropHadnler (a, b) {
+  //   let data = this.result.data
+  //   data.splice(b, 0, ...data.splice(a, 1))
+  // }
 
-  private findOriginData (row) {
-    if (this.result.data && row) { return this.result.data.find(ele => ele._index === row._index) }
-  }
+  // private findOriginData (row) {
+  //   if (this.result.data && row) { return this.result.data.find(ele => ele._index === row._index) }
+  // }
 
   private showQuery = true;
   private loading = false;
@@ -345,10 +399,10 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
   @Watch('data', {
     immediate: true
   })
-  private watchData (newVal) {
-    if (this.data) {
-      this.setResultData(this.data)
-      this.result.total = this.data.length
+  private setData (val: any[]) {
+    if (val) {
+      this.setResultData(val)
+      this.result.total = val.length
     } else {
       this.result.msg = '暂无数据'
     }
@@ -394,8 +448,6 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
       }
     }
   }
-
-  $refs: { page: iView.Page & { currentPage: number } };
 
   private _customRenderFn (rs: ResultType) {
     let defaultFail
@@ -443,8 +495,9 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
     if (this.$refs.page && this.$refs.page.currentPage !== this.model.page.index) {
       this.$refs.page.currentPage = this.model.page.index
     }
+    // console.log(this.result.data.map(ele => ele.name))
     return (
-      <div>
+      <div class={this.getStyleName('root')}>
         {!this.hideSearchBox &&
           <Card>
             <div class={this.getStyleName('toggle-box')}>
@@ -510,6 +563,7 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
           {this.renderPage('top')}
           {this.type == 'table'
             ? <Table
+              ref='table'
               class={this.getStyleName('table')} columns={this.cols.filter(ele => {
                 const sort = this.model.sort
                 ele.sortType = '' as any
@@ -538,9 +592,7 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
               }}
               height={this.tableHeight}
               highlight-row
-              on-on-current-change={this.currentChangeHandler}
-              draggable={this.draggable}
-              on-on-drag-drop={this.dragDropHadnler}
+              on-on-row-click={this.currentChangeHandler}
             >
             </Table>
             : this._customRenderFn(this.result)

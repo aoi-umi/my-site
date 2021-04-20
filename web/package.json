@@ -28,6 +28,7 @@
     "parse-json": "^5.1.0",
     "qrcode": "1.4.2",
     "socket.io-client": "2.2.0",
+    "sortablejs": "^1.13.0",
     "video.js": "^6.13.0",
     "view-design": "^4.5.0",
     "vue": "2.6.10",

@@ -203,7 +203,7 @@ export default class CompMgtDetailView extends Vue<Base & CompMgtDetailProp> {
                   </div>
                   <Button on-click={() => {
                     this.op.run('config')
-                  }}>保存</Button>
+                  }} type='primary'>保存</Button>
                   <div>
                     按钮设置
                   </div>
@@ -227,6 +227,7 @@ export default class CompMgtDetailView extends Vue<Base & CompMgtDetailProp> {
     this.mainBtns = [{
       name: 'save',
       text: '保存',
+      type: 'primary',
       click: () => {
         this.op.run('main')
       }
@@ -313,6 +314,7 @@ export default class CompMgtDetailView extends Vue<Base & CompMgtDetailProp> {
     }, {
       name: 'save',
       text: '保存',
+      type: 'primary',
       click: () => {
         this.op.run('module')
       }

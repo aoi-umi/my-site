@@ -165,4 +165,12 @@ export class Utils {
       resolve(result)
     })
   }
+
+  static wait (ms?) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve()
+      }, ms || 0)
+    })
+  }
 }
