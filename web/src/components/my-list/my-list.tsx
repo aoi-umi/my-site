@@ -190,7 +190,6 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
           onEnd: ({ newIndex, oldIndex }) => {
             let data = this.result.data
             this.result.data = []
-            // this.dragDropHadnler(oldIndex, newIndex)
             this.$nextTick(() => {
               data.splice(newIndex, 0, ...data.splice(oldIndex, 1))
               this.result.data = data
@@ -377,15 +376,6 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
       currentRow
     })
   }
-
-  // private dragDropHadnler (a, b) {
-  //   let data = this.result.data
-  //   data.splice(b, 0, ...data.splice(a, 1))
-  // }
-
-  // private findOriginData (row) {
-  //   if (this.result.data && row) { return this.result.data.find(ele => ele._index === row._index) }
-  // }
 
   private showQuery = true;
   private loading = false;

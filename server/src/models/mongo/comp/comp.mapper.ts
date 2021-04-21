@@ -185,8 +185,8 @@ export class CompMapper {
         CompButtonModel.deleteMany({ compId: detail._id, moduleId: data.moduleId }, { session }),
         CompButtonModel.create(data.buttonList, { session }),
       ]);
-      itemList = rs[1];
-      buttonList = rs[3];
+      itemList = rs[1] || [];
+      buttonList = rs[3] || [];
     });
     return { itemList, buttonList };
   }

@@ -43,7 +43,7 @@ class MyButtonsView extends Vue<MyButtonsProp & MyBase> {
     return (
       <Dropdown on-on-click={(name) => this.groupClickHandler(name)}>
         <Button type={this.type as any}>
-          {grp.group}
+          {grp.group.text}
           <Icon type='ios-arrow-down'></Icon>
         </Button>
         <DropdownMenu slot='list'>

@@ -22,11 +22,11 @@ export class Xml {
         attrNodeName: xmlAttrKey,
         tagValueProcessor: a => {
           if (typeof a !== 'string') return a
-          return escape(a)
+          return xmlEscape(a)
         },
         attrValueProcessor: a => {
           if (typeof a !== 'string') return a
-          return escape(a)
+          return xmlEscape(a)
         }
       })
       _j2xParser = j2xParser

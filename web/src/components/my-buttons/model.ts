@@ -1,3 +1,5 @@
+import { Utils, MyGroupType } from '../utils'
+
 export class MyButtonsModel {
   name: string
   text: string
@@ -8,21 +10,18 @@ export class MyButtonsModel {
   click?: (btn: MyButtonsModel) => any
 
   static createGroup (val: MyButtonsModel[]) {
-    let obj = {}
-    for (let v of val) {
-      let group = v.group || v.text
-      if (!group) continue
-      let o = obj[group]
-      if (!o) { o = obj[group] = [] }
-      o.push(v)
-    }
-    return Object.entries(obj).map((ele: any) => {
+    let obj = Utils.group(val, (v) => {
+      let group = v.group ? `_group_${v.group}` : v.name
+      if (!group) return
+      let text = v.group || v.text
       return {
-        group: ele[0],
-        child: ele[1]
-      } as MyButtonsGroup
+        name: group,
+        text
+      }
     })
+
+    return obj
   }
 }
 
-export type MyButtonsGroup = { group: string, child: MyButtonsModel[] }
+export type MyButtonsGroup = MyGroupType<MyButtonsModel>

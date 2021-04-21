@@ -173,4 +173,28 @@ export class Utils {
       }, ms || 0)
     })
   }
+
+  static group<T, U extends { name: string }> (list: T[], groupFn: (v: T) => U) {
+    let obj: MyGroupType<T, U>[] = []
+    for (let v of list) {
+      let g = groupFn(v)
+      if (!g) continue
+      let o = obj.find(ele => ele.group.name === g.name)
+      if (!o) {
+        o = {
+          group: g,
+          child: []
+        }
+        obj.push(o)
+      }
+      o.child.push(v)
+    }
+    return obj
+  }
+}
+
+type GroupDefaultType = { name: string, text?: string }
+export type MyGroupType<T, U extends GroupDefaultType = GroupDefaultType> = {
+  group: U,
+  child: T[]
 }
