@@ -84,6 +84,7 @@ export default class CompMgtDetailView extends Vue<Base & CompMgtDetailProp> {
             await this.configQuery()
             break
         }
+        if (['main', 'module', 'config'].includes(type)) { this.$Message.success('保存成功') }
       }
     })
     this.mainInit()

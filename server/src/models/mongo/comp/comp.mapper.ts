@@ -139,9 +139,9 @@ export class CompMapper {
       let rs = await Promise.all([
         CompModuleModel.deleteMany({ compId: detail._id }, { session }),
         CompItemModel.deleteMany({ compId: detail._id, moduleId: delModule }, { session }),
-        CompModuleModel.create(data.moduleList, { session })
+        CompButtonModel.deleteMany({ compId: detail._id, moduleId: delModule }, { session }),
       ]);
-      moduleList = rs[2];
+      moduleList = await CompModuleModel.create(data.moduleList, { session });
     });
     return { moduleList };
   }
@@ -180,13 +180,14 @@ export class CompMapper {
     await transaction(async (session) => {
       let rs = await Promise.all([
         CompItemModel.deleteMany({ compId: detail._id, moduleId: data.moduleId }, { session }),
-        CompItemModel.create(data.itemList, { session }),
-
         CompButtonModel.deleteMany({ compId: detail._id, moduleId: data.moduleId }, { session }),
+      ]);
+      let saveRs = await Promise.all([
+        CompItemModel.create(data.itemList, { session }),
         CompButtonModel.create(data.buttonList, { session }),
       ]);
-      itemList = rs[1] || [];
-      buttonList = rs[3] || [];
+      itemList = saveRs[0] || [];
+      buttonList = saveRs[1] || [];
     });
     return { itemList, buttonList };
   }
@@ -205,7 +206,8 @@ export class CompMapper {
       await Promise.all([
         CompModel.deleteMany({ _id: id }, { session }),
         CompModuleModel.deleteMany({ compId: id }, { session }),
-        CompItemModel.deleteMany({ compId: id }, { session })
+        CompItemModel.deleteMany({ compId: id }, { session }),
+        CompButtonModel.deleteMany({ compId: id }, { session })
       ]);
     });
   }
