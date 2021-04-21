@@ -369,9 +369,18 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
     this.selectedRows = selection
   }
 
-  private currentChangeHandler (_currentRow, index) {
+  private currentChangeHandler (currentRow) {
+    if (!currentRow) {
+      this.currentChange(null)
+    }
+  }
+
+  private rowClickHandler (_currentRow, index) {
     let currentRow = this.result.data[index]
 
+    this.currentChange(currentRow)
+  }
+  private currentChange (currentRow) {
     this.$emit('current-change', {
       currentRow
     })
@@ -582,7 +591,8 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
               }}
               height={this.tableHeight}
               highlight-row
-              on-on-row-click={this.currentChangeHandler}
+              on-on-current-change={this.currentChangeHandler}
+              on-on-row-click={this.rowClickHandler}
             >
             </Table>
             : this._customRenderFn(this.result)

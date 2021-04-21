@@ -142,6 +142,7 @@ export default class CompMgtDetailView extends Vue<Base & CompMgtDetailProp> {
       return this.getItemObj(ele)
     }))
     this.setConfigData()
+    this.selectConfig = null
   }
 
   getDefaultItem () {
@@ -205,13 +206,15 @@ export default class CompMgtDetailView extends Vue<Base & CompMgtDetailProp> {
                   <Button on-click={() => {
                     this.op.run('config')
                   }} type='primary'>保存</Button>
-                  <div>
-                    按钮设置
-                  </div>
-                  {this.renderButtonConfig()}
-                  <Divider />
-                  字段设置
-                  {this.renderItem()}
+                  <Tabs>
+                    <TabPane label='字段设置'>
+                      {this.renderItem()}
+                    </TabPane>
+                    <TabPane label='按钮设置'>
+                      {this.renderButtonConfig()}
+                    </TabPane>
+                  </Tabs>
+
                   <Divider />
                   {this.renderPreview()}
                 </div>}
