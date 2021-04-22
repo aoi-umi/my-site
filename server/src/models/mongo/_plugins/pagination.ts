@@ -9,43 +9,43 @@ import { parseBool } from '@/_system/common';
 type PaginationModelType = ModelType<{}, IPagination<{}>>;
 
 type FindAndCountAllOpt = {
-    conditions?: any,
-    projection?: any,
-    sort?: any,
-    orderBy?: string;
-    sortOrder?: any;
-    page?: number,
-    rows?: number,
-    getAll?: boolean | string,
+  conditions?: any,
+  projection?: any,
+  sort?: any,
+  orderBy?: string;
+  sortOrder?: any;
+  page?: number,
+  rows?: number,
+  getAll?: boolean | string,
 };
 type AggregatePaginateOpt<U> = {
-    extraPipeline?: any[];
+  extraPipeline?: any[];
 
-    //只按其中一个排序
-    sort?: Object;
-    orderBy?: string;
-    sortOrder?: any;
+  //只按其中一个排序
+  sort?: Object;
+  orderBy?: string;
+  sortOrder?: any;
 
-    group?: U;
+  group?: U;
 
-    page?: number;
-    rows?: number;
-    noTotal?: boolean;
-    getAll?: boolean;
+  page?: number;
+  rows?: number;
+  noTotal?: boolean;
+  getAll?: boolean;
 };
 type GetSortConditionOpt = {
-    sort?: any,
-    orderBy?: string;
-    sortOrder?: any;
+  sort?: any,
+  orderBy?: string;
+  sortOrder?: any;
 };
 export interface IPagination<T> {
-    findAndCountAll(opt: FindAndCountAllOpt): Promise<{ total: number; rows: InstanceType<T>[] }>;
-    aggregatePaginate<S = {}, U = { total: any }>(pipeline: any[], opt?: AggregatePaginateOpt<U>): Promise<{
-        rows: (DocType<InstanceType<T>> & S)[],
-        total: number,
-        groupRs: { [key in keyof U]: number } & { _id: any, total: number }
-    }>;
-    getSortCondition(opt: GetSortConditionOpt): any;
+  findAndCountAll(opt: FindAndCountAllOpt): Promise<{ total: number; rows: InstanceType<T>[] }>;
+  aggregatePaginate<S = {}, U = { total: any }>(pipeline: any[], opt?: AggregatePaginateOpt<U>): Promise<{
+    rows: (DocType<InstanceType<T>> & S)[],
+    total: number,
+    groupRs: { [key in keyof U]: number } & { _id: any, total: number }
+  }>;
+  getSortCondition(opt: GetSortConditionOpt): any;
 };
 const Pagination: IPagination<{}> = {
   async findAndCountAll(opt) {
@@ -81,10 +81,10 @@ const Pagination: IPagination<{}> = {
   },
 
   /**
- 	* 分页
- 	* @param model
- 	* @param pipeline 列表计数共用，过滤条件
- 	* @param opt.extraPipeline 仅列表，排序等
+    * 分页
+    * @param model
+    * @param pipeline 列表计数共用，过滤条件
+    * @param opt.extraPipeline 仅列表，排序等
      */
   async aggregatePaginate<U>(pipeline, opt?) {
     let model = this as PaginationModelType;

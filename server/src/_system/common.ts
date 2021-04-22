@@ -190,6 +190,24 @@ export function distinct<T = any>(list: T[], fn?: (list: T[], val: T) => boolean
   }
   return rtn;
 }
+
+type PromiseAllByConfigOption<T> = {
+  [key in keyof T]: {
+    fn: () => any
+  }
+}
+
+export async function promiseAllByConfig<T extends Object>(obj: PromiseAllByConfigOption<T>) {
+  let list = Object.entries(obj);
+  let rs = await Promise.all(list.map(ele => {
+    return ele[1].fn();
+  }));
+  let returnObj = {};
+  list.forEach((ele, idx) => {
+    returnObj[ele[0]] = rs[idx];
+  });
+  return returnObj as { [key in keyof PromiseAllByConfigOption<T>]: any };
+}
 //#endregion
 
 //#region 同名但实现不同

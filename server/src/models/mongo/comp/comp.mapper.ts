@@ -136,11 +136,9 @@ export class CompMapper {
     });
     let moduleList;
     await transaction(async (session) => {
-      let rs = await Promise.all([
-        CompModuleModel.deleteMany({ compId: detail._id }, { session }),
-        CompItemModel.deleteMany({ compId: detail._id, moduleId: delModule }, { session }),
-        CompButtonModel.deleteMany({ compId: detail._id, moduleId: delModule }, { session }),
-      ]);
+      await CompModuleModel.deleteMany({ compId: detail._id }, { session });
+      await CompItemModel.deleteMany({ compId: detail._id, moduleId: delModule }, { session });
+      await CompButtonModel.deleteMany({ compId: detail._id, moduleId: delModule }, { session });
       moduleList = await CompModuleModel.create(data.moduleList, { session });
     });
     return { moduleList };
@@ -178,16 +176,15 @@ export class CompMapper {
     });
     let itemList, buttonList;
     await transaction(async (session) => {
-      let rs = await Promise.all([
-        CompItemModel.deleteMany({ compId: detail._id, moduleId: data.moduleId }, { session }),
-        CompButtonModel.deleteMany({ compId: detail._id, moduleId: data.moduleId }, { session }),
-      ]);
-      let saveRs = await Promise.all([
-        CompItemModel.create(data.itemList, { session }),
-        CompButtonModel.create(data.buttonList, { session }),
-      ]);
-      itemList = saveRs[0] || [];
-      buttonList = saveRs[1] || [];
+      await CompItemModel.deleteMany({ compId: detail._id, moduleId: data.moduleId }, { session });
+      await CompButtonModel.deleteMany({ compId: detail._id, moduleId: data.moduleId }, { session });
+
+      itemList = await CompItemModel.create(data.itemList, { session });
+      buttonList = await CompButtonModel.create(data.buttonList, { session });
+      if (!itemList)
+        itemList = [];
+      if (!buttonList)
+        buttonList = [];
     });
     return { itemList, buttonList };
   }
@@ -203,12 +200,10 @@ export class CompMapper {
     let id = comp.map(ele => ele._id);
     if (!id.length) return;
     await transaction(async (session) => {
-      await Promise.all([
-        CompModel.deleteMany({ _id: id }, { session }),
-        CompModuleModel.deleteMany({ compId: id }, { session }),
-        CompItemModel.deleteMany({ compId: id }, { session }),
-        CompButtonModel.deleteMany({ compId: id }, { session })
-      ]);
+      await CompModel.deleteMany({ _id: id }, { session });
+      await CompModuleModel.deleteMany({ compId: id }, { session });
+      await CompItemModel.deleteMany({ compId: id }, { session });
+      await CompButtonModel.deleteMany({ compId: id }, { session });
     });
   }
 }
