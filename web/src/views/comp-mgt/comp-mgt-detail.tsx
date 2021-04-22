@@ -9,7 +9,7 @@ import { Prop } from '@/components/decorator'
 import { MyList, IMyList } from '@/components/my-list'
 import { routerConfig } from '@/router'
 import { IMyLoad, MyLoad } from '@/components/my-load'
-import { DynamicCompConfigType, DynamicCompSelectOptionsType } from '@/components/my-dynamic-comp'
+import { DynamicCompConfigType, DynamicCompSelectOptionsType, DynamicCompPropType, DynamicCompConfigFnType } from '@/components/my-dynamic-comp'
 import { myEnum } from '@/config'
 const { dynamicCompType, dynamicSqlCalcType, dynamicCompViewType } = myEnum
 import { convClass, getCompOpts, Utils } from '@/components/utils'
@@ -29,6 +29,8 @@ export type CompModuleType = {
   sort?: number;
 
   itemList?: DynamicCompConfigType[]
+  itemProp?: DynamicCompPropType
+  itemDynamicConfigFn?: DynamicCompConfigFnType,
   buttonList?: MyButtonsModel[]
 }
 

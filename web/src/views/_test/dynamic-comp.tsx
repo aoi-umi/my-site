@@ -1,13 +1,12 @@
 
 import { Component, Vue, Watch } from 'vue-property-decorator'
 
-import { Input, Card, Button, Checkbox, Row, Col, Select, Option, Form, FormItem, Divider, InputNumber } from '@/components/iview'
+import { Button, Checkbox } from '@/components/iview'
 
 import { MyList } from '@/components/my-list'
 import { DynamicComp, DynamicCompConfigType } from '@/components/my-dynamic-comp'
 import { myEnum } from '@/config'
 const { dynamicCompType, dynamicSqlCalcType } = myEnum
-import { MyBase } from '@/components/my-base'
 import { getCompOpts, convClass } from '@/components/utils'
 import { Prop } from '@/components/decorator'
 import { MyDetail } from '@/components/my-detail'
@@ -206,7 +205,7 @@ export default class App extends Vue<DynamicCompDemoProp & Base> {
               data: this.data,
               extraValue: this.extraValue,
               editable: this.editable,
-              dynamicConfig: this.dynamicConfig,
+              dynamicConfigFn: this.dynamicConfig,
               compProp: this.compProp
             }
           } colConfig={this.colConfig} />
@@ -215,7 +214,7 @@ export default class App extends Vue<DynamicCompDemoProp & Base> {
           {
             extraValue: this.extraValue,
             editable: this.editable,
-            dynamicConfig: this.dynamicConfig,
+            dynamicConfigFn: this.dynamicConfig,
             compProp: this.compProp
           }
         }

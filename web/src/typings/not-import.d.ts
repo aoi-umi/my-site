@@ -9,6 +9,12 @@ interface VueComponentOptions<Props = any> {
   on?: any;
 }
 
+type DeepPartial<T> = T extends Function
+  ? T
+  : T extends object
+  ? { [P in keyof T]?: DeepPartial<T[P]> }
+  : T;
+
 interface UserInfo {
   _id: string;
   account: string;

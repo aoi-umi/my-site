@@ -57,7 +57,7 @@ export default class CompDetailPage extends Base {
   }
 }
 
-type CompDetailType = {
+export type CompDetailType = {
   main: any
   moduleList: Partial<CompModuleType>[]
 }
@@ -74,7 +74,7 @@ export class CompDetailProp {
   extends: Base,
   mixins: [getCompOpts(CompDetailProp)]
 })
-class CompDetailView extends Vue<Base & CompDetailProp> {
+export class CompDetailView extends Vue<Base & CompDetailProp> {
   @Watch('compConfig', { immediate: true })
   private watchCompConfig () {
     this.setDetail(this.compConfig)
@@ -111,7 +111,6 @@ class CompDetailView extends Vue<Base & CompDetailProp> {
                   })}
                 </Tabs>
               )
-
               }
             </div>
           )
@@ -131,15 +130,41 @@ class CompDetailView extends Vue<Base & CompDetailProp> {
         hidePage
         data={this.data[m.name]}
         itemConfigs={m.itemList}
-        buttonConfigs={m.buttonList} />
+        buttonConfigs={m.buttonList}
+        dynamicCompOptions={{
+          compProp: m.itemProp,
+          dynamicConfigFn: m.itemDynamicConfigFn
+        }}
+      />
     } else {
       return <MyDetail
         itemConfigs={m.itemList}
         buttonConfigs={m.buttonList}
-        dynamicCompOptions={
-          { data: this.data[m.name] }
-        } />
+        dynamicCompOptions={{
+          data: this.data[m.name],
+          compProp: m.itemProp,
+          dynamicConfigFn: m.itemDynamicConfigFn
+        }} />
     }
+  }
+
+  async valid (opt?) {
+    let rules = {}
+    this.compConfig.moduleList.map(m => {
+      let rule = Utils.getValidRulesByDynCfg(m.itemList)
+      rules[m.name] = m.viewType === dynamicCompViewType.列表 ? {
+        type: 'array',
+        defaultField: {
+          type: 'object',
+          fields: rule
+        }
+      } : {
+        type: 'object',
+        fields: rule
+      }
+    })
+    console.log(this.data, rules)
+    return Utils.valid(this.data, rules, opt)
   }
 }
 

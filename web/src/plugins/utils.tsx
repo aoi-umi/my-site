@@ -3,6 +3,7 @@ import 'jquery'
 import moment, { Dayjs } from 'dayjs'
 
 import { MyConfirmModalView, MyConfirmModal, MyConfirmModalProp } from '@/components/my-confirm'
+import { CompModuleType } from '@/views/comp-mgt/comp-mgt-detail'
 
 import { dev, myEnum } from '@/config'
 import { assist } from './def'
@@ -106,6 +107,34 @@ class Utils {
       datetime: 'YYYY-MM-DD HH:mm:ss'
     }[fmt] || fmt
     return !date ? '' : moment(date).format(format)
+  }
+
+  dynamicCompMergeModule (mod: Partial<CompModuleType>[], mod2: DeepPartial<CompModuleType>[]) {
+    return mod.map(m => {
+      let { itemList, buttonList } = m
+      let matchModule = mod2.find(ele2 => ele2.name === m.name)
+      let obj = {
+        ...m,
+        ...matchModule
+      }
+      if (matchModule) {
+        obj.itemList = itemList.map(ele => {
+          let match = matchModule.itemList?.find(ele2 => ele2.name === ele.name)
+          return {
+            ...ele,
+            ...match
+          }
+        })
+        obj.buttonList = buttonList.map(ele => {
+          let match = matchModule.buttonList?.find(ele2 => ele2.name === ele.name)
+          return {
+            ...ele,
+            ...match
+          }
+        })
+      }
+      return obj as CompModuleType
+    })
   }
 }
 declare module 'vue/types/vue' {

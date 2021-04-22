@@ -55,11 +55,28 @@ export type DynamicCompConfigType = {
   width?: number
 };
 
-type DynamicCompPropType = {
+export type DynamicCompPropType = {
   [key: string]: {
-    event?: any
+    event?: {
+      [key: string]: (args: DynamicCompEventType) => any
+    }
   }
 }
+
+export type DynamicCompEventType = {
+  value: any,
+  config: DynamicCompConfigType,
+  data: any,
+  rawArgs: any[]
+}
+
+export type DynamicCompConfigFnType = (opt: {
+  config: DynamicCompConfigType,
+  name: string,
+  value: any,
+  data: any,
+}) => any
+
 export class DynamicCompProp {
   @Prop({
     required: true
@@ -91,12 +108,7 @@ export class DynamicCompProp {
   extraValue?: Object
 
   @Prop()
-  dynamicConfig?: (opt: {
-    config: DynamicCompConfigType,
-    name: string,
-    value: any,
-    data: any,
-  }) => any
+  dynamicConfigFn?: DynamicCompConfigFnType
 }
 
 @Component({
@@ -135,18 +147,22 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
     if (config.actOptions) {
       actOptions = config.actOptions
     } else if (config.optionType === DynamicCompSelectOptionsType.extraValue) {
-      actOptions = config.options
+      actOptions = this.extraValue[config.options]
     } else if (config.options) {
       actOptions = JSON.parse(config.options)
     }
 
-    if (actOptions && !(actOptions instanceof Array)) {
-      actOptions = Object.entries(actOptions).map(ele => {
-        return {
-          label: ele[0],
-          value: ele[1]
-        }
-      })
+    if (actOptions) {
+      if (typeof actOptions === 'function') {
+        actOptions = this.remoteSelectOptions
+      } else if (!(actOptions instanceof Array)) {
+        actOptions = Object.entries(actOptions).map(ele => {
+          return {
+            label: ele[0],
+            value: ele[1]
+          }
+        })
+      }
     }
     return actOptions as SelectOptionType[]
   }
@@ -178,8 +194,8 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
   private getActualOption () {
     let { config, data } = this
     let cfg
-    if (this.dynamicConfig) {
-      cfg = this.dynamicConfig({
+    if (this.dynamicConfigFn) {
+      cfg = this.dynamicConfigFn({
         config, name: config.name,
         value: data[config.name],
         data
@@ -198,8 +214,11 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
     let event = {}
     if (eve) {
       for (let key in eve) {
-        event[Utils.stringToHyphen(key)] = () => {
-          eve[key]({ value: data[config.name], config, data })
+        event[Utils.stringToHyphen(key)] = (...args) => {
+          eve[key]({
+            value: data[config.name], config,
+            data, rawArgs: args
+          })
         }
       }
     }
