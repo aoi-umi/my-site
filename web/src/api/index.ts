@@ -11,10 +11,10 @@ export type ApiMethod<U, T> = {
   [P in keyof T]: U
 }
 
-import { TestApi } from './test'
+import { TestApi, TestApiMethod } from './test'
 export * from './test'
 
-export const testApi = new TestApi(api.test)
+export const testApi = TestApi.create<TestApiMethod, TestApi>(new TestApi(api.test))
 
 import { TestSocket } from './test-socket'
 export const testSocket = new TestSocket(env.socket.test.host, {

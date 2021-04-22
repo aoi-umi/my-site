@@ -51,10 +51,10 @@ class AuthorityDetail extends Vue<AuthorityDetailProp & Base> {
 
     private rules = {
       name: [
-        { required: true,  }
+        { required: true }
       ],
       code: [
-        { required: true,  }
+        { required: true }
       ]
     };
     $refs: { formVaild: iView.Form };
@@ -146,7 +146,7 @@ export default class Authority extends Base {
     statusList: TagType[] = [];
     async delClick () {
       await this.operateHandler('删除', async () => {
-        await testApi.authorityDel(this.delIds)
+        await testApi.authorityDel({ idList: this.delIds })
         this.delIds = []
         this.delShow = false
         this.$refs.list.query()

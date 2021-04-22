@@ -34,7 +34,7 @@ class ChatDetail extends Base {
 
     async getUserDetail () {
       const query = this.$route.query
-      this.detail = await testApi.userDetailQuery(query._id)
+      this.detail = await testApi.userDetailQuery({ _id: query._id })
       this.loadChat().then(() => {
         this.scrollBottom()
       })

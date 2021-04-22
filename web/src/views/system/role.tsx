@@ -56,10 +56,10 @@ class RoleDetail extends Vue<RoleDetailProp & Base> {
 
   private rules = {
     name: [
-      { required: true,  }
+      { required: true }
     ],
     code: [
-      { required: true,  }
+      { required: true }
     ]
   };
   $refs: { formVaild: iView.Form, authTransfer: IAuthorityTransfer };
@@ -157,7 +157,7 @@ export default class Role extends Base {
   statusList: TagType[] = [];
   async delClick () {
     await this.operateHandler('删除', async () => {
-      await testApi.roleDel(this.delIds)
+      await testApi.roleDel({ idList: this.delIds })
       this.delIds = []
       this.delShow = false
       this.$refs.list.query()

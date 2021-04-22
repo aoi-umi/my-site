@@ -96,7 +96,7 @@ class UserPoptip extends Vue<UserPoptipProp & Base> {
       this.operateHandler('', async () => {
         this.loadFailMsg = ''
         this.loading = true
-        this.userDetail = await testApi.userDetailQuery(this.user._id)
+        this.userDetail = await testApi.userDetailQuery({ _id: this.user._id })
       }, { noDefaultHandler: true }).then(rs => {
         if (!rs.success) { this.loadFailMsg = '获取用户信息出错' }
       }).finally(() => {

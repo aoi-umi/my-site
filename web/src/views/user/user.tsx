@@ -70,7 +70,7 @@ export default class UserInfo extends Base {
       if (self) {
         detail = await testApi.userDetail()
       } else {
-        detail = await testApi.userDetailQuery(query._id)
+        detail = await testApi.userDetailQuery({ _id: query._id })
       }
       detail.self = self
       this.detail = detail
@@ -121,8 +121,8 @@ export default class UserInfo extends Base {
             } else {
               callback()
             }
-          },
-          
+          }
+
         }],
         newPwd: [{
           validator: (rule, value, callback) => {
@@ -131,8 +131,8 @@ export default class UserInfo extends Base {
             } else {
               callback()
             }
-          },
-          
+          }
+
         }],
         newPwdRepeat: [{
           validator: (rule, value, callback) => {
@@ -141,8 +141,8 @@ export default class UserInfo extends Base {
             } else {
               callback()
             }
-          },
-          
+          }
+
         }]
       }
     }
@@ -426,8 +426,8 @@ export class UserUnbind extends Vue<UserUnbindProp & Base> {
 
     rules = {
       pwd: [{
-        required: true,
-        
+        required: true
+
       }]
     };
 
