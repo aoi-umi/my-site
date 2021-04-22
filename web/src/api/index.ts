@@ -7,14 +7,10 @@ export type ApiListQueryArgs = {
   sortOrder?: string;
 }
 
-export type ApiMethod<U, T> = {
-  [P in keyof T]: U
-}
-
-import { TestApi, TestApiMethod } from './test'
+import { TestApi, TestMethod } from './test'
 export * from './test'
 
-export const testApi = TestApi.create<TestApiMethod, TestApi>(new TestApi(api.test))
+export const testApi = TestApi.create<TestMethod, TestApi>(new TestApi(api.test))
 
 import { TestSocket } from './test-socket'
 export const testSocket = new TestSocket(env.socket.test.host, {

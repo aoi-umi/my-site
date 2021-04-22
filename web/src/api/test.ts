@@ -3,10 +3,10 @@ import { LocalStore } from '@/store'
 import { error } from '../helpers/utils'
 import { dev } from '../config'
 
-import { ApiModel, ApiConfigModel, ApiMethodConfigType } from './model'
-import { ApiListQueryArgs, ApiMethod } from '.'
+import { ApiModel, ApiConfigModel, ApiMethodConfigType, ApiMethod, ApiMethodInferType } from './model'
+import { ApiListQueryArgs } from '.'
 
-export type TestApiMethod = ApiMethod<ApiMethodConfigType, {
+export type TestMethod = {
   serverInfo,
   userSignUp,
   userSignUpCheck,
@@ -25,7 +25,7 @@ export type TestApiMethod = ApiMethod<ApiMethodConfigType, {
   userMgtSave,
   userMgtDisable,
 
-  bookmarkQuery,
+  bookmarkQuery: ApiMethodInferType<any, ListResult>,
   bookmarkSave,
   bookmarkDel,
 
@@ -128,8 +128,8 @@ export type TestApiMethod = ApiMethod<ApiMethodConfigType, {
   compMgtDetailQuery,
   compMgtDel,
   compDetailQuery,
-}>;
-export type TestApiConfigType = ApiConfigModel<TestApiMethod>;
+}
+export type TestApiConfigType = ApiConfigModel<TestMethod>;
 
 export type Result<T = any> = {
   result: boolean;
@@ -142,7 +142,7 @@ export type ListResult<T = any> = {
   total: number;
   rows: T[];
 };
-export class TestApi extends ApiModel<TestApiMethod> {
+export class TestApi extends ApiModel<TestMethod> {
   constructor (apiConfig: TestApiConfigType) {
     super(apiConfig, {
       beforeRequest: (req) => {

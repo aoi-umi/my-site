@@ -1,16 +1,23 @@
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
 
 import { request, extend, clone } from '../helpers/utils'
+
+export type ApiMethod<T, U extends ApiMethodConfigType = ApiMethodConfigType> = {
+  [P in keyof T]: U
+}
 type BeforeRequest = (request: AxiosRequestConfig) => any;
 type AfterResponse<T = any> = (data: T, response?: AxiosResponse<T>) => any;
 export type RequestByConfigOption<T> = {
   beforeRequest?: BeforeRequest;
   afterResponse?: AfterResponse<T>;
 } & AxiosRequestConfig;
-export class ApiModel<T = ApiMethodConfigType> {
+
+// 推断类型
+export type ApiMethodInferType<Req, Res> = {}
+export class ApiModel<T> {
   protected beforeRequest: BeforeRequest;
   protected afterResponse: AfterResponse;
-  constructor (protected apiConfig: ApiConfigModel<T>, opt?: {
+  constructor (protected apiConfig: ApiConfigModel<ApiMethod<T>>, opt?: {
     beforeRequest?: BeforeRequest;
     afterResponse?: AfterResponse;
   }) {
@@ -28,7 +35,8 @@ export class ApiModel<T = ApiMethodConfigType> {
       }
     }
     return api as (U & {
-      [P in keyof T]: (data?) => Promise<any>
+      [P in keyof T]: (data?: T[P] extends ApiMethodInferType<infer Req, any> ? Req : any)
+      => Promise<T[P] extends ApiMethodInferType<any, infer Res> ? Res : any>
     })
   }
 
