@@ -56,9 +56,10 @@ class MyButtonsView extends Vue<MyButtonsProp & MyBase> {
   protected renderBtn (btn: MyButtonsModel, group?: boolean) {
     if (group) return <DropdownItem name={btn.name}>{btn.text}</DropdownItem>
     return <Button
+      key={btn.name + btn.text}
       type={btn.type || this.type as any}
       on-click={() => this.clickHandler(btn)}
-      disabled={btn.disabled && btn.disabled()}
+      disabled={btn.enable ? !btn.enable() : false}
     >{btn.text}</Button>
   }
 

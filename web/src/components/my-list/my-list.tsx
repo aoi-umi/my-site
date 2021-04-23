@@ -85,7 +85,14 @@ class MyListProp<QueryArgs = any> {
   @Prop()
   dynamicCompOptions?: Partial<DynamicCompProp>
 
-  @Prop()
+  @Prop({
+    default: () => {
+      return {
+        align: 'center',
+        minWidth: 120
+      }
+    }
+  })
   defaultColumn?: ColType;
 
   @Prop()
@@ -154,7 +161,7 @@ class MyListProp<QueryArgs = any> {
   @Prop({
     // default: true
   })
-  draggable?:boolean
+  draggable?: boolean
 
   @Prop({})
   buttonConfigs?: MyButtonsModel[];
@@ -166,7 +173,7 @@ class MyListProp<QueryArgs = any> {
   }
 })
 class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> & MyBase> {
-  $refs: { table:iView.Table, page: iView.Page & { currentPage: number } };
+  $refs: { table: iView.Table, page: iView.Page & { currentPage: number } };
   stylePrefix = clsPrefix;
 
   private cols?: ColType[] = [];
@@ -214,7 +221,7 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
         render: () => {
           return (
             <div>
-              <Icon class='drag-btn' type='md-menu' size={24}/>
+              <Icon class='drag-btn' type='md-menu' size={24} />
             </div>
           )
         }
@@ -239,8 +246,6 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
         return {
           key: ele.name,
           title: ele.text || ele.name,
-          align: 'center',
-          minWidth: 120,
           width: ele.width,
           render: (h, params) => {
             let data = this.result.data[params.index]

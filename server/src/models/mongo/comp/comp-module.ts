@@ -36,6 +36,9 @@ export class CompModule extends Base {
       trim: true,
     })
     text: string;
+
+    @prop()
+    disabled: boolean
     
     @prop({
       trim: true,

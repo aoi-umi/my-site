@@ -30,6 +30,7 @@ export default class CompDetailPage extends Base {
   private data = null
   private moduleList: DeepPartial<CompModuleType>[] = []
 
+  private addEnable = true
   init () {
     this.moduleList = [{
       name: 'test22',
@@ -37,11 +38,19 @@ export default class CompDetailPage extends Base {
         name: 'add',
         click: (btn) => {
           this.click(btn)
+        },
+        enable: () => {
+          return this.addEnable
         }
       }, {
         name: 'update',
         click: (btn) => {
           this.click(btn)
+        }
+      }, {
+        name: 'test',
+        click: (btn) => {
+          this.addEnable = !this.addEnable
         }
       }],
       itemProp: {

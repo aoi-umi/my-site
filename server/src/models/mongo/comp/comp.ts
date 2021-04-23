@@ -27,6 +27,9 @@ export class Comp extends Base {
     @prop({
       required: true,
       trim: true,
+      index: {
+        unique: true
+      }
     })
     name: string;
     

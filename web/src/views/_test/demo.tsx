@@ -108,7 +108,7 @@ export default class App extends Base {
       <div>
         <MyButtons value={[
           { name: 'test', text: '测试', type: 'text',
-            disabled: () => {
+            enable: () => {
               return this.btnDisabled
             } },
           {

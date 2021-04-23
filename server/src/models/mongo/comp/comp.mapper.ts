@@ -54,13 +54,13 @@ export class CompMapper {
 
   static async detailQuery(data, opt: DetailQueryOptType) {
     let main = await this.findDetail(data, opt);
-    let moduleList = await CompModuleModel.find({ compId: main._id }).sort({
+    let moduleList = await CompModuleModel.find({ compId: main._id, disabled: { $ne: true } }).sort({
       sort: 1
     });
-    let itemList = await CompItemModel.find({ compId: main._id }).sort({
+    let itemList = await CompItemModel.find({ compId: main._id, disabled: { $ne: true } }).sort({
       sort: 1
     });
-    let buttonList = await CompButtonModel.find({ compId: main._id }).sort({
+    let buttonList = await CompButtonModel.find({ compId: main._id, disabled: { $ne: true } }).sort({
       sort: 1
     });
     let moduleListDoc = moduleList.map(ele => {

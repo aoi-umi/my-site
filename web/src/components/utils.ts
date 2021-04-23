@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import copy from 'copy-to-clipboard'
 import AsyncValidator, { ValidateOption } from 'async-validator'
+import * as decorator from './decorator'
 
 export function convClass<prop, partial extends boolean = false> (t) {
   type P = (partial extends false ? prop : Partial<prop>);
@@ -14,17 +15,7 @@ export type convType<prop, partial extends boolean = false> = {
   new(props: (partial extends false ? prop : Partial<prop>) & VueComponentOptions<Partial<prop>>): any
 }
 
-export function getCompOpts (target) {
-  const Ctor = typeof target === 'function'
-    ? target
-    : target.constructor
-  const decorators = Ctor.__decorators__
-  const options: any = {}
-  if (decorators) {
-    decorators.forEach(function (fn) { return fn(options) })
-  }
-  return options
-}
+export const getCompOpts = decorator.getCompOpts
 
 export function getInstCompName (inst) {
   if (inst.componentOptions) { return inst.componentOptions.Ctor.options.name }

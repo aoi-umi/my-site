@@ -1,11 +1,11 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
 import { testApi } from '@/api'
 import { convert, OperateModel } from '@/helpers'
 
 import { Input, Button, Checkbox, Row, Col, Select, Form, FormItem, InputNumber, Tabs, TabPane, Divider } from '@/components/iview'
 
-import { Prop } from '@/components/decorator'
+import { Prop, Vue, Component } from '@/components/decorator'
 import { MyList, IMyList } from '@/components/my-list'
 import { routerConfig } from '@/router'
 import { IMyLoad, MyLoad } from '@/components/my-load'
@@ -56,9 +56,9 @@ export class CompMgtDetailProp {
 
 @Component({
   extends: Base,
-  mixins: [getCompOpts(CompMgtDetailProp)]
+  props: CompMgtDetailProp
 })
-export default class CompMgtDetailView extends Vue<Base & CompMgtDetailProp> {
+export class CompMgtDetail extends Vue<CompMgtDetailProp, Base> {
   stylePrefix = 'comp-mgt-detail-'
   $refs: {
     loadView: IMyLoad, formVaild: iView.Form,
@@ -282,6 +282,11 @@ export default class CompMgtDetailView extends Vue<Base & CompMgtDetailProp> {
     required: true,
     editable: true
   }, {
+    name: 'disabled',
+    text: '禁用',
+    type: dynamicCompType.多选框,
+    editable: true
+  }, {
     name: 'viewType',
     text: '类型',
     editable: true,
@@ -412,6 +417,11 @@ export default class CompMgtDetailView extends Vue<Base & CompMgtDetailProp> {
     name: 'text',
     text: '显示',
     required: true,
+    editable: true
+  }, {
+    name: 'disabled',
+    text: '禁用',
+    type: dynamicCompType.多选框,
     editable: true
   }, {
     name: 'group',
@@ -644,9 +654,14 @@ export default class CompMgtDetailView extends Vue<Base & CompMgtDetailProp> {
       data={data}
       compConfig={{
         main: {},
-        moduleList: [{ ...m, itemList: this.itemList, buttonList: this.buttonList }]
+        moduleList: [{
+          ...m,
+          itemList: this.itemList.filter(ele => !ele.disabled),
+          buttonList: this.buttonList.filter(ele => !ele.disabled)
+        }]
       }} />
   }
 }
 
-export const CompMgtDetail = convClass<CompMgtDetailProp>(CompMgtDetailView)
+export default CompMgtDetail
+

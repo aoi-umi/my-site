@@ -44,6 +44,9 @@ export class CompItem extends Base {
   text: string;
 
   @prop()
+  disabled: boolean
+
+  @prop()
   editable: boolean
 
   @prop()
@@ -65,9 +68,6 @@ export class CompItem extends Base {
 
   @prop()
   required: boolean
-
-  @prop()
-  disabled: boolean
 
   @prop()
   queryMode: string

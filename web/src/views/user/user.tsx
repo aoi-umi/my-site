@@ -161,13 +161,10 @@ export default class UserInfo extends Base {
         const user = this.storeUser.user
         let req: any = {}
         let logOut = false
-        function isUpdate (newVal, oldVal) {
-          return newVal && newVal != oldVal
-        }
         const detail = this.detail
         const updateKey = ['nickname', 'profile', 'avatar']
         updateKey.forEach(key => {
-          if (isUpdate(this.updateDetail[key], detail[key])) { req[key] = this.updateDetail[key] }
+          req[key] = this.updateDetail[key]
         })
         if (this.updateDetail.newPwd) {
           logOut = true
