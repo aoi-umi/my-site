@@ -39,10 +39,16 @@ export default class ImgMgt extends Base {
     }
     private async del () {
       const waterFall = this.$refs.waterFall
-      const selectedList = waterFall.itemList.filter(ele => ele.selected)
-      const idList = selectedList.map(ele => ele.data.data._id)
+      const idList = []
+      let idxList = []
+      waterFall.itemList.forEach((ele, idx) => {
+        if (ele.selected) {
+          idxList.push(idx)
+          idList.push(ele.data.data._id)
+        }
+      })
       await testApi.myImgDel({ idList })
-      waterFall.removeItem(selectedList.map(ele => ele.index))
+      waterFall.removeItem(idxList)
       this.cancel()
     }
     render () {
