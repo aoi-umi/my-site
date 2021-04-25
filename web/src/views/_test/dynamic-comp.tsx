@@ -77,7 +77,9 @@ export default class DynamicCompDemo extends Vue<DynamicCompDemoProp, Base> {
         动态Select: {
           name: 'dyn-select',
           type: 'select',
-          actOptions: (val) => {
+          actOptions: async (val) => {
+            console.log(new Date(), '模拟调用接口')
+            await this.$utils.wait(1000)
             return this.$utils.obj2arr({
               a: 'a',
               ab: 'ab',

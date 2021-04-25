@@ -285,17 +285,19 @@ export class DynamicComp extends Vue<DynamicCompProp, MyBase> {
 
     if (config.type === dynamicCompType.选择器) {
       let isFn = typeof config.actOptions === 'function'
-      let method: any = !isFn ? null : (query) => {
+      let method: any = !isFn ? null : this.debounce((query) => {
         this.setSelectOption({
           query
         })
-      }
+      })
       return (
         <Select
           clearable transfer filterable
           v-model={data[config.name]} placeholder={config.remark}
           loading={this.loading} disabled={!this.actuallyEditable}
-          on={event} on-on-query-change={method}
+          on={event} on-on-query-change={method} nativeOn-click={ () => {
+            if (method && !this.remoteSelectOptions.length) { method(data[config.name]) }
+          }}
         >
           {this.renderOption(this.selectOptions)}
         </Select>
@@ -381,6 +383,7 @@ export class DynamicComp extends Vue<DynamicCompProp, MyBase> {
     this.loading = true
     let value
     try {
+      this.remoteSelectOptions = []
       value = await (config.actOptions as any)(query)
     } finally {
       this.remoteSelectOptions = value || []
