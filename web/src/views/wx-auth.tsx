@@ -11,7 +11,7 @@ import { Utils } from '@/components/utils'
 import { MyQrcode } from '@/components/my-qrcode'
 
 import { Base } from './base'
-import { SignUpView } from './user/user-sign'
+import { SignUp } from './user/user-sign'
 import './wx-auth.less'
 
 type WxUserInfo = {
@@ -236,7 +236,7 @@ export default class WxAuth extends Base {
               ? <Spin fix />
               : this.account
                 ? <Button loading={this.signInLoading} on-click={() => { this.signInByCode() }}>登录</Button>
-                : <SignUpView account={this.wxUserInfo.nickname} by={myEnum.userBy.微信授权} byVal={this.val} />
+                : <SignUp account={this.wxUserInfo.nickname} by={myEnum.userBy.微信授权} byVal={this.val} />
             }
           </div>
         </div>

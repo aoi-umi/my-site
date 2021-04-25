@@ -241,7 +241,7 @@ class SignUpProp extends SignProp {
   extends: Base,
   props: SignUpProp
 })
-class SignUp extends Vue<SignUpProp, Base> {
+export class SignUp extends Vue<SignUpProp, Base> {
     stylePrefix = 'user-sign-up-';
     private innerDetail: SignUpDataType = this.getDetailData();
     private getDetailData () {

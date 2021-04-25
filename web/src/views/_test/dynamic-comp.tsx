@@ -119,7 +119,7 @@ export default class DynamicCompDemo extends Vue<DynamicCompDemoProp, Base> {
 
   dynamicConfig ({ config, name, value, data }) {
     if (name === 'dyn-input') {
-      if (data.input === 'disabled') return { editable: false }
+      if (data.input === 'no-edit') return { editable: false }
       if (data.input === 'required') return { required: true }
       if (dynamicCompType[data.input]) return { type: dynamicCompType[data.input] }
     }
@@ -138,7 +138,7 @@ export default class DynamicCompDemo extends Vue<DynamicCompDemoProp, Base> {
     this.itemList.forEach(ele => {
       data[ele.name] = null
     })
-    data['input'] = 'disabled'
+    data['input'] = 'no-edit'
     data['select'] = 'option1'
     if (d) {
       data = {

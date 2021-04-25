@@ -75,7 +75,7 @@ export interface IContentMgtBase {
 @Component({
   extends: Base
 })
-export class ContentMgtBase extends Vue<IContentMgtBase, Base> {
+export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
   delShow = false;
   delIds = [];
   delRemark = '';

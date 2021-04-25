@@ -15,7 +15,7 @@ import { ContentMgtBase, ContentDataType, IContentMgtBase } from './content-mgt-
 import './article.less'
 
 @Component
-export class ArticleMgtBase extends Vue<{}, ContentMgtBase> implements IContentMgtBase {
+export class ArticleMgtBase extends ContentMgtBase implements IContentMgtBase {
     contentMgtType = myEnum.contentMgtType.文章;
 
     async auditFn (detail, pass) {
