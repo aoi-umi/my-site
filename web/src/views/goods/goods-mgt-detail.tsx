@@ -6,7 +6,7 @@ import { routerConfig } from '@/router'
 import * as helpers from '@/helpers'
 import { Form, FormItem, Input, Row, Col, Button, Divider, RadioGroup, Radio, DatePicker, Table, Select, Option, Checkbox } from '@/components/iview'
 import { MyLoad } from '@/components/my-load'
-import { MyUpload, FileDataType, IMyUpload, FileType } from '@/components/my-upload'
+import { MyUpload, FileDataType, FileType } from '@/components/my-upload'
 
 import { Base } from '../base'
 import { GoodsDetailMainView } from './goods-detail'
@@ -49,7 +49,7 @@ export type SkuType = {
 @Component
 export default class GoodsMgtDetail extends Base {
   stylePrefix = 'goods-mgt-'
-  $refs: { formVaild: iView.Form, imgs: IMyUpload };
+  $refs: { formVaild: iView.Form, imgs: MyUpload };
   private innerDetail: DetailType = this.getDetailData();
   private oldDetail: DetailType = helpers.clone(this.innerDetail);
   private preview = false;

@@ -1,15 +1,15 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 import axios, { AxiosRequestConfig } from 'axios'
 import { VueCropper } from 'vue-cropper'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 
 import { Upload, Modal, Icon, Progress, Button } from '../iview'
-import { Utils, convClass, getCompOpts } from '../utils'
+import { Utils } from '../utils'
 import { MyImg } from '../my-img'
-import { MyImgViewer, IMyImgViewer } from '../my-img-viewer'
+import { MyImgViewer } from '../my-img-viewer'
 import { MyBase } from '../my-base'
-import { MyVideo, IMyVideo } from '../my-video'
+import { MyVideo } from '../my-video'
 
 import * as style from '../style'
 
@@ -113,10 +113,10 @@ class MyUploadProp {
 }
 @Component({
   extends: MyBase,
-  mixins: [getCompOpts(MyUploadProp)],
+  props: MyUploadProp,
   VueCropper
 })
-class MyUpload extends Vue<MyUploadProp & MyBase> {
+export class MyUpload extends Vue<MyUploadProp, MyBase> {
   stylePrefix = 'my-upload-';
 
   fileList: FileType[] = [];
@@ -133,7 +133,7 @@ class MyUpload extends Vue<MyUploadProp & MyBase> {
     }
   }
 
-  $refs: { upload: iView.Upload & { fileList: FileType[] }, cropper: any, imgViewer: IMyImgViewer };
+  $refs: { upload: iView.Upload & { fileList: FileType[] }, cropper: any, imgViewer: MyImgViewer };
 
   defaultList = [];
 
@@ -381,7 +381,7 @@ class MyUpload extends Vue<MyUploadProp & MyBase> {
                   {isImg && <Icon type='md-eye' nativeOn-click={() => { this.handleView(item) }} />}
                   <Icon type='md-trash' nativeOn-click={() => { this.handleRemove(item) }} />
                   {isVideo && this.showVideoCrop && <Icon type='md-crop' nativeOn-click={() => {
-                    const ref: IMyVideo = this.$refs[itemRefName]
+                    const ref: MyVideo = this.$refs[itemRefName]
                     let data = null
                     if (ref) { data = ref.capture() }
                     this.$emit('video-crop', data, item)
@@ -464,6 +464,3 @@ class MyUpload extends Vue<MyUploadProp & MyBase> {
   }
 }
 
-const MyUploadView = convClass<MyUploadProp>(MyUpload)
-export default MyUploadView
-export interface IMyUpload extends MyUpload { }

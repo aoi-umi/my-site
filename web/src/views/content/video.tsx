@@ -6,7 +6,7 @@ import { myEnum, authority, dev } from '@/config'
 import { convert } from '@/helpers'
 import { convClass, getCompOpts } from '@/components/utils'
 import { Card, Input } from '@/components/iview'
-import { MyList, IMyList } from '@/components/my-list'
+import { MyList } from '@/components/my-list'
 
 import { Base } from '../base'
 import { ListBase, ListBaseProp } from '../comps/list-base'
@@ -20,7 +20,7 @@ class VideoProp extends ListBaseProp { }
   extends: ListBase
 })
 export default class Video extends Vue<VideoProp & ListBase> {
-    $refs: { list: IMyList<any> };
+    $refs: { list: MyList<any> };
 
     anyKey = '';
 
@@ -66,7 +66,7 @@ export default class Video extends Vue<VideoProp & ListBase> {
               return rs
             }}
 
-            on-query={(model, noClear, list: IMyList<any>) => {
+            on-query={(model, noClear, list: MyList<any>) => {
               const q = {
                 ...model.query,
                 anyKey: this.anyKey,

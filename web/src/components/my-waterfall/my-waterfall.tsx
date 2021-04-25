@@ -1,11 +1,11 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 
-import { convClass, Utils, getCompOpts } from '../utils'
+import { Utils } from '../utils'
 import { MyBase } from '../my-base'
 import { Checkbox } from '../iview'
-import { MyImgViewer, IMyImgViewer } from '../my-img-viewer'
+import { MyImgViewer } from '../my-img-viewer'
 
 export type MyWaterfallDataType = {
   src: string;
@@ -79,12 +79,12 @@ class MyWaterfallProp {
 }
 @Component({
   extends: MyBase,
-  mixins: [getCompOpts(MyWaterfallProp)]
+  props: MyWaterfallProp
 })
-class MyWaterfall extends Vue<MyWaterfallProp & MyBase> {
+export class MyWaterfall extends Vue<MyWaterfallProp, MyBase> {
   stylePrefix = 'my-waterfall-';
 
-  $refs: { root: HTMLDivElement; imgViewer: IMyImgViewer };
+  $refs: { root: HTMLDivElement; imgViewer: MyImgViewer };
 
   currVal: any[] = [];
   selectedVal: any[] = [];
@@ -328,7 +328,3 @@ class MyWaterfall extends Vue<MyWaterfallProp & MyBase> {
     )
   }
 }
-
-const MyWaterfallView = convClass<MyWaterfallProp>(MyWaterfall)
-export default MyWaterfallView
-export interface IMyWaterfallView extends MyWaterfall { };

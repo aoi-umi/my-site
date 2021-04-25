@@ -10,7 +10,7 @@ import { Carousel, CarouselItem, Row, Col, Divider, Input, Button, Card, Modal, 
 import { MyTag, TagType } from '@/components/my-tag'
 import { MyLoad } from '@/components/my-load'
 import { MyImg } from '@/components/my-img'
-import { MyImgViewer, IMyImgViewer } from '@/components/my-img-viewer'
+import { MyImgViewer } from '@/components/my-img-viewer'
 import { MyNumber } from '@/components/my-number'
 
 import { Base } from '../base'
@@ -60,7 +60,7 @@ class GoodsDetailMainProp {
 })
 class GoodsDetailMain extends Vue<GoodsDetailMainProp & Base> {
   stylePrefix = 'goods-';
-  $refs: { imgViewer: IMyImgViewer, pay: Pay };
+  $refs: { imgViewer: MyImgViewer, pay: Pay };
 
   specTag: { name: string, value: TagType[] }[] = [];
   @Watch('data')

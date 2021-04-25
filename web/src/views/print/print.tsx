@@ -4,7 +4,7 @@ import {
   Button, Input, Row, Col, Collapse, Panel, Divider,
   Form, FormItem, Spin
 } from '@/components/iview'
-import { IMyLoad, MyLoad } from '@/components/my-load'
+import {  MyLoad } from '@/components/my-load'
 import { testApi } from '@/api'
 import { OperateModel } from '@/helpers'
 import { routerConfig } from '@/router'
@@ -40,7 +40,7 @@ type PrintDataType = {
 @Component
 export default class Print extends Base {
   stylePrefix = 'print-'
-  $refs: { loadView: IMyLoad, formVaild: iView.Form };
+  $refs: { loadView: MyLoad, formVaild: iView.Form };
   hiprintTemplate: any
   itemGroups: ItemGroup[] = []
   testData: any = ''

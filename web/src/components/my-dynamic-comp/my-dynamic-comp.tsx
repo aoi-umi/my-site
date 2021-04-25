@@ -1,7 +1,7 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { convClass, getCompOpts, Utils } from '@/components/utils'
-import { Prop } from '@/components/decorator'
+import { Utils } from '@/components/utils'
+import { Component, Vue, Prop } from '@/components/decorator'
 import { myEnum } from '@/config'
 const { dynamicCompType, dynamicCompNumQueryType, dynamicCompStringQueryType } = myEnum
 
@@ -113,9 +113,9 @@ export class DynamicCompProp {
 
 @Component({
   extends: MyBase,
-  mixins: [getCompOpts(DynamicCompProp)]
+  props: DynamicCompProp
 })
-class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
+export class DynamicComp extends Vue<DynamicCompProp, MyBase> {
   stylePrefix = 'my-dynamic-comp-';
 
   created () {
@@ -389,4 +389,3 @@ class DynamicCompModel extends Vue<DynamicCompProp & MyBase> {
   }
 }
 
-export const DynamicComp = convClass<DynamicCompProp>(DynamicCompModel)

@@ -4,7 +4,7 @@ import { testApi } from '@/api'
 import { myEnum, dev } from '@/config'
 import { routerConfig } from '@/router'
 import { FormItem, Button, Divider, Affix, Card } from '@/components/iview'
-import { MyEditor, IMyEditor } from '@/components/my-editor'
+import { MyEditor } from '@/components/my-editor'
 
 import { ContentDetailType, ContentDataType, ContentMgtDetail, ContentMgtDetailView, ContentLogListView } from './content-mgt-base'
 import { ArticleMgtBase } from './article-mgt'
@@ -21,7 +21,7 @@ export type DetailType = ContentDetailType<DetailDataType>;
 @Component
 export default class ArticleMgtDetail extends ArticleMgtBase {
   stylePrefix = 'article-mgt-';
-  $refs: { detailView: ContentMgtDetail, editor: IMyEditor };
+  $refs: { detailView: ContentMgtDetail, editor: MyEditor };
 
   private innerDetail: DetailType = this.getDetailData();
   protected getDetailData () {
@@ -36,7 +36,7 @@ export default class ArticleMgtDetail extends ArticleMgtBase {
   private getRules () {
     return {
       content: [
-        { required: true,  }
+        { required: true }
       ]
     }
   }

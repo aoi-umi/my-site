@@ -7,7 +7,7 @@ import { routerConfig } from '@/router'
 import { LocalStore } from '@/store'
 import { convClass, getCompOpts } from '@/components/utils'
 import { Button, Avatar, Poptip, Spin } from '@/components/iview'
-import { MyImgViewer, IMyImgViewer } from '@/components/my-img-viewer'
+import { MyImgViewer } from '@/components/my-img-viewer'
 
 import { Base } from '../base'
 import { DetailDataType } from '../user/user-mgt'
@@ -58,7 +58,7 @@ class UserPoptip extends Vue<UserPoptipProp & Base> {
   private userDetail: DetailDataType = {};
   avatarUrl = '';
 
-  $refs: { imgViewer: IMyImgViewer };
+  $refs: { imgViewer: MyImgViewer };
 
   created () {
     this.init(this.user)

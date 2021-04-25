@@ -5,7 +5,7 @@ import { routerConfig } from '@/router'
 import { convert } from '@/helpers'
 import { Card, Button } from '@/components/iview'
 import { convClass, getCompOpts } from '@/components/utils'
-import { MyList, IMyList } from '@/components/my-list'
+import { MyList } from '@/components/my-list'
 import { MyTag, TagType } from '@/components/my-tag'
 
 import { ListBase, IListBase, ListBaseProp } from '../comps/list-base'
@@ -46,7 +46,7 @@ class VideoMgtProp extends ListBaseProp { }
   mixins: [getCompOpts(VideoMgtProp)]
 })
 export default class VideoMgt extends Vue<VideoMgtProp & VideoMgtBase> implements IListBase {
-    $refs: { list: IMyList<any> };
+    $refs: { list: MyList<any> };
 
     protected created () {
       this.statusList = convert.ViewModel.enumToTagArray(myEnum.videoStatus)
@@ -147,7 +147,7 @@ export default class VideoMgt extends Vue<VideoMgtProp & VideoMgtBase> implement
               return rs
             }}
 
-            on-query={(model, noClear, list: IMyList<any>) => {
+            on-query={(model, noClear, list: MyList<any>) => {
               const q = {
                 ...model.query,
                 status: this.statusList.filter(ele => ele.checked).map(ele => ele.key).join(','),

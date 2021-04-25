@@ -8,7 +8,7 @@ import { RadioGroup, Radio, Button, Modal, Spin } from '@/components/iview'
 import { Base } from '../base'
 
 import './pay.less'
-import { MyQrcode, IMyQrcode } from '@/components/my-qrcode'
+import { MyQrcode } from '@/components/my-qrcode'
 import { testSocket } from '@/api'
 import { routerConfig } from '@/router'
 
@@ -35,7 +35,7 @@ class PayProp {
 export class Pay extends Vue<PayProp & Base> {
   stylePrefix = 'comp-pay-';
 
-  $refs: { qrcode: IMyQrcode; }
+  $refs: { qrcode: MyQrcode; }
   isShow = false;
 
   private typeList: { key: string; value: any, checked?: boolean }[] = [];

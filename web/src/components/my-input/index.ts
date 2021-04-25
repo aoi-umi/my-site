@@ -1,1 +1,1 @@
-export { default as MyInput } from './my-input'
+export * from './my-input'

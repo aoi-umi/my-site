@@ -7,13 +7,13 @@ import { dev, myEnum, authority } from '@/config'
 import { routerConfig } from '@/router'
 import { testApi, testSocket } from '@/api'
 import { Modal, Input, Button, Card, Row, Col, Checkbox, Tabs, TabPane } from '@/components/iview'
-import { MyList, IMyList, Const as MyListConst } from '@/components/my-list'
+import { MyList, Const as MyListConst } from '@/components/my-list'
 import { TagType, MyTag } from '@/components/my-tag'
 import { Base } from './base'
 
 @Component
 export class AssetMgtLog extends Base {
-    $refs: { list: IMyList<any> };
+    $refs: { list: MyList<any> };
     protected created () {
       this.statusList = convert.ViewModel.enumToTagArray(myEnum.assetLogStatus)
     }
@@ -136,7 +136,7 @@ export class AssetMgtLog extends Base {
 
 @Component
 export class AssetMgtNotify extends Base {
-    $refs: { list: IMyList<any> };
+    $refs: { list: MyList<any> };
     protected created () {
     }
 

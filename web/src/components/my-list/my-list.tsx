@@ -1,14 +1,14 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 import Sortable from 'sortablejs'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 import { DynamicCompConfigType, DynamicComp, DynamicCompProp } from '../my-dynamic-comp'
 
 import {
   Table, Page, Row, Col,
   Input, Button, Divider, Card, Icon, Spin
 } from '../iview'
-import { Utils, getCompOpts, convClass } from '../utils'
+import { Utils } from '../utils'
 import { MyBase } from '../my-base'
 import * as style from '../style'
 import { MyListModel, MyListResult } from './model'
@@ -168,11 +168,11 @@ class MyListProp<QueryArgs = any> {
 }
 @Component({
   extends: MyBase,
-  mixins: [getCompOpts(MyListProp)],
+  props: MyListProp,
   components: {
   }
 })
-class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> & MyBase> {
+export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListProp<QueryArgs>, MyBase> {
   $refs: { table: iView.Table, page: iView.Page & { currentPage: number } };
   stylePrefix = clsPrefix;
 
@@ -633,7 +633,3 @@ class MyList<QueryArgs extends QueryArgsType> extends Vue<MyListProp<QueryArgs> 
     )
   }
 }
-
-export interface IMyList<T extends QueryArgsType = any> extends MyList<T> { }
-const MyListView = convClass<MyListProp>(MyList)
-export default MyListView

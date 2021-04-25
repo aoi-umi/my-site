@@ -1,6 +1,6 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
+import { Prop, Component, Vue } from '@/components/decorator'
 import { Button, Row, Col, Modal } from '../iview'
 import { convClass, getCompOpts } from '../utils'
 import { MyBase } from '../my-base'
@@ -30,9 +30,9 @@ class MyConfirmProp {
 }
 @Component({
   extends: MyBase,
-  mixins: [getCompOpts(MyConfirmProp)]
+  props: MyConfirmProp
 })
-class MyConfirm extends Vue<MyConfirmProp & MyBase> {
+export class MyConfirm extends Vue<MyConfirmProp, MyBase> {
   stylePrefix = 'my-confirm-';
 
   private get innerBtnList () {
@@ -91,9 +91,6 @@ class MyConfirm extends Vue<MyConfirmProp & MyBase> {
   }
 }
 
-const MyConfirmView = convClass<MyConfirmProp>(MyConfirm)
-export default MyConfirmView
-
 export class MyConfirmModalProp {
   @Prop()
   title?: string;
@@ -104,9 +101,9 @@ export class MyConfirmModalProp {
 
 @Component({
   extends: MyBase,
-  mixins: [getCompOpts(MyConfirmModalProp)]
+  props: MyConfirmModalProp
 })
-export class MyConfirmModal extends Vue<MyConfirmModalProp & MyBase> {
+export class MyConfirmModal extends Vue<MyConfirmModalProp, MyBase> {
   show = false
   toggle (show?: boolean) {
     this.show = typeof show === 'boolean' ? show : !this.show
@@ -114,7 +111,7 @@ export class MyConfirmModal extends Vue<MyConfirmModalProp & MyBase> {
   render () {
     return (
       <Modal v-model={this.show} footer-hide>
-        <MyConfirmView
+        <MyConfirm
           props={this.$props}
           loading={true}
           cancel={() => {
@@ -130,7 +127,7 @@ export class MyConfirmModal extends Vue<MyConfirmModalProp & MyBase> {
             }
           }}>
           {this.$slots.default}
-        </MyConfirmView>
+        </MyConfirm>
       </Modal>
     )
   }

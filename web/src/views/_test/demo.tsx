@@ -5,12 +5,12 @@ import { VideoJsPlayer } from 'video.js'
 import { Prop } from '@/components/decorator'
 import { testSocket, testApi } from '@/api'
 import { Input, Card, Button, Checkbox } from '@/components/iview'
-import { MyList, IMyList } from '@/components/my-list'
-import { MyUpload, IMyUpload } from '@/components/my-upload'
-import { MyVideo, IMyVideo } from '@/components/my-video'
+import { MyList } from '@/components/my-list'
+import { MyUpload } from '@/components/my-upload'
+import { MyVideo } from '@/components/my-video'
 import { MyEditor } from '@/components/my-editor'
 import { convClass, getCompOpts } from '@/components/utils'
-import { MyQrcode, IMyQrcode } from '@/components/my-qrcode'
+import { MyQrcode } from '@/components/my-qrcode'
 
 import { Base } from '../base'
 import './demo.less'
@@ -28,8 +28,8 @@ export default class App extends Base {
   }
 
   $refs: {
-    board: HTMLElement; list: IMyList<any>; echart: HTMLDivElement; canvas: HTMLDivElement;
-    upload: IMyUpload; video: IMyVideo; videoCover: any;
+    board: HTMLElement; list: MyList<any>; echart: HTMLDivElement; canvas: HTMLDivElement;
+    upload: MyUpload; video: MyVideo; videoCover: any;
   };
   richText = '';
   chart: echarts.ECharts;

@@ -4,7 +4,7 @@ import { Prop } from '@/components/decorator'
 import { testApi } from '@/api'
 import { convert } from '@/helpers'
 import { convClass, getCompOpts } from '@/components/utils'
-import { MyList, IMyList, ResultType } from '@/components/my-list'
+import { MyList, ResultType } from '@/components/my-list'
 import { MyEditor } from '@/components/my-editor'
 import { Divider, Button, Avatar, Modal, Icon, Time } from '@/components/iview'
 import { MyConfirm } from '@/components/my-confirm'
@@ -33,7 +33,7 @@ class CommentProp {
 export class Comment extends Vue<CommentProp & Base> {
     stylePrefix = 'comment-';
 
-    $refs: { list: IMyList<any>, replyList: IMyList<any> };
+    $refs: { list: MyList<any>, replyList: MyList<any> };
     mounted () {
       this.query()
       this.$refs.replyList.model.setPage({ size: 3 })

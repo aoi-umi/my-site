@@ -1,8 +1,7 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 
-import { convClass, getCompOpts } from '../utils'
 import { Option, Select, Input } from '../iview'
 import { MyBase } from '../my-base'
 
@@ -15,9 +14,9 @@ export class MyInputBaseProp {
 }
 @Component({
   extends: MyBase,
-  mixins: [getCompOpts(MyInputBaseProp)]
+  props: MyInputBaseProp
 })
-export class MyInputBase extends Vue<MyInputBaseProp & MyBase> {
+export class MyInputBase extends Vue<MyInputBaseProp, MyBase> {
   protected currentValue = this.value || '';
   protected disableEmitChange = false;
 
@@ -81,9 +80,9 @@ class MyInputProp extends MyInputBaseProp {
 }
 @Component({
   extends: MyInputBase,
-  mixins: [getCompOpts(MyInputProp)]
+  props: MyInputProp
 })
-class MyInput extends Vue<MyInputProp & MyInputBase> {
+class MyInput extends Vue<MyInputProp, MyInputBase> {
   $refs: { select: any, input: any };
 
   get inputIcon () {
@@ -179,6 +178,3 @@ class MyInput extends Vue<MyInputProp & MyInputBase> {
     )
   }
 }
-
-const MyInputView = convClass<MyInputProp>(MyInput)
-export default MyInputView

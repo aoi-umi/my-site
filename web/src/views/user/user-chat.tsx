@@ -2,14 +2,14 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 
 import { convClass } from '@/components/utils'
 import { Card, Split, Input, Button, Time, Icon } from '@/components/iview'
-import { IMyLoad, MyLoad } from '@/components/my-load'
+import { MyLoad } from '@/components/my-load'
 import { randStr } from '@/helpers'
 import { testApi, testSocket } from '@/api'
 import { Base } from '../base'
 import { DetailDataType as UserDetailDataType } from './user-mgt'
 import { UserAvatarView } from '../comps/user-avatar'
 import { myEnum } from '@/config'
-import { MyList, IMyList, ResultType } from '@/components/my-list'
+import { MyList, ResultType } from '@/components/my-list'
 import { routerConfig } from '@/router'
 
 import './user.less'
@@ -62,7 +62,7 @@ class ChatDetail extends Base {
     }
 
     $refs: {
-        loadView: IMyLoad,
+        loadView: MyLoad,
         chat: HTMLElement,
         input: HTMLElement
     };
@@ -212,7 +212,7 @@ export default ChatDetailView
 @Component
 export class ChatList extends Base {
     stylePrefix = 'user-chat-list-';
-    $refs: { list: IMyList };
+    $refs: { list: MyList };
 
     query () {
       this.$refs.list.handleQuery({ resetPage: true })
@@ -256,7 +256,7 @@ export class ChatList extends Base {
           ref='list'
           type='custom'
           hideSearchBox
-          on-query={(t, noClear, list: IMyList) => {
+          on-query={(t, noClear, list: MyList) => {
             list.query()
           }}
 

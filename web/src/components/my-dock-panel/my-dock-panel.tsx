@@ -1,19 +1,21 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 import { VNode } from 'vue'
 
-import { Prop } from '@/components/decorator'
+import { Prop, Component, Vue } from '@/components/decorator'
 import { Button, Row, Col, Modal } from '../iview'
-import { convClass, getCompOpts, getInstCompName } from '../utils'
+import { getInstCompName } from '../utils'
 import { MyBase } from '../my-base'
 
 class MyDockPanelProp {
 }
+
+const MyDockPanelName = 'MyDockPanel'
 @Component({
-  name: 'MyDockPanel',
+  name: MyDockPanelName,
   extends: MyBase,
-  mixins: [getCompOpts(MyDockPanelProp)]
+  props: MyDockPanelProp
 })
-class MyDockPanelModel extends Vue<MyDockPanelProp & MyBase> {
+export class MyDockPanel extends Vue<MyDockPanelProp, MyBase> {
   stylePrefix = 'my-dock-panel-';
 
   getDock (ele) {
@@ -29,7 +31,7 @@ class MyDockPanelModel extends Vue<MyDockPanelProp & MyBase> {
 
   get items () {
     return this.$slots.default.filter(ele => {
-      return getInstCompName(ele) === 'MyDockPanelItem'
+      return getInstCompName(ele) === MyDockPanelItemName
     })
   }
 
@@ -57,8 +59,6 @@ class MyDockPanelModel extends Vue<MyDockPanelProp & MyBase> {
   }
 }
 
-export const MyDockPanel = convClass<MyDockPanelProp>(MyDockPanelModel)
-
 class MyDockPanelItemProp {
   @Prop()
   dock?: 'top' | 'bottom' | 'left' | 'right'
@@ -75,15 +75,17 @@ class MyDockPanelItemProp {
   @Prop()
   minHeight?: string;
 }
+
+const MyDockPanelItemName = 'MyDockPanelItem'
 @Component({
-  name: 'MyDockPanelItem',
+  name: MyDockPanelItemName,
   extends: MyBase,
-  mixins: [getCompOpts(MyDockPanelItemProp)]
+  props: MyDockPanelItemProp
 })
-class MyDockPanelItemModel extends Vue<MyDockPanelItemProp & MyBase> {
+export class MyDockPanelItem extends Vue<MyDockPanelItemProp, MyBase> {
   stylePrefix = 'my-dock-panel-item-';
   render () {
-    let dockPanel: MyDockPanelModel = this.$utils.findComponentUpward(this, 'MyDockPanel')
+    let dockPanel: MyDockPanel = this.$utils.findComponentUpward(this, MyDockPanelName)
     let { direction, dock } = dockPanel.getDock(this.$vnode)
     let { width, height, minWidth, minHeight } = this
 
@@ -99,5 +101,3 @@ class MyDockPanelItemModel extends Vue<MyDockPanelItemProp & MyBase> {
     )
   }
 }
-
-export const MyDockPanelItem = convClass<MyDockPanelItemProp>(MyDockPanelItemModel)

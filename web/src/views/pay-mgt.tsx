@@ -7,7 +7,7 @@ import { routerConfig } from '@/router'
 import { convert } from '@/helpers'
 import { convClass, getCompOpts } from '@/components/utils'
 import { Modal, Input, Form, FormItem, Button, Checkbox, RadioGroup, Radio, InputNumber, DatePicker, Row, Col } from '@/components/iview'
-import { MyList, IMyList, Const as MyListConst } from '@/components/my-list'
+import { MyList, Const as MyListConst } from '@/components/my-list'
 import { TagType, MyTag } from '@/components/my-tag'
 import { Base } from './base'
 import { UserAvatarView } from './comps/user-avatar'
@@ -62,10 +62,10 @@ class PayMgtDetail extends Vue<PayMgtDetailProp & Base> {
 
     private rules = {
       title: [
-        { required: true,  }
+        { required: true }
       ],
       content: [
-        { required: true,  }
+        { required: true }
       ]
     };
     $refs: { formVaild: iView.Form };
@@ -133,7 +133,7 @@ export default class Pay extends Base {
     detailShow = false;
     delShow = false;
     detail: any;
-    $refs: { list: IMyList<any> };
+    $refs: { list: MyList<any> };
 
     protected created () {
       this.statusList = convert.ViewModel.enumToTagArray(myEnum.payStatus)

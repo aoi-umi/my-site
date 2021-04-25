@@ -39,7 +39,7 @@ export const Component = (function (options) {
   return pd.Component(options)
 }) as any as typeof MyComponent
 export interface VueConstructor {
-  new <Props = {}, Extend = {}>(props: Props & VueComponentOptions<Partial<Props>>): vue.default & Props & Extend
+  new <Props = {}, Mix = {}>(props: Props & VueComponentOptions<Partial<Props>>): vue.default & Props & Mix
   props: { [key: string]: { default: any } }
 }
 

@@ -1,8 +1,7 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 
-import { convClass, getCompOpts } from '../utils'
 import { Icon } from '../iview'
 import { MyBase } from '../my-base'
 
@@ -21,9 +20,9 @@ class MyImgProp {
 }
 @Component({
   extends: MyBase,
-  mixins: [getCompOpts(MyImgProp)]
+  props: MyImgProp
 })
-class MyImg extends Vue<MyImgProp & MyBase> {
+export class MyImg extends Vue<MyImgProp, MyBase> {
   @Watch('src')
   private watchSrc (newVal) {
     this.isLoadSuccess = !!newVal
@@ -56,5 +55,3 @@ class MyImg extends Vue<MyImgProp & MyBase> {
   }
 }
 
-const MyImgView = convClass<MyImgProp>(MyImg)
-export default MyImgView

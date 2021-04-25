@@ -1,14 +1,14 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 
 import { Button, Divider, Modal } from '@/components/iview'
-import { MyWaterfall, IMyWaterfallView } from '@/components/my-waterfall'
+import { MyWaterfall } from '@/components/my-waterfall'
 import { MyConfirm } from '@/components/my-confirm'
 import { testApi } from '@/api'
 
 import { Base } from './base'
 @Component
 export default class ImgMgt extends Base {
-    $refs: { root: HTMLDivElement; waterFall: IMyWaterfallView };
+    $refs: { root: HTMLDivElement; waterFall: MyWaterfall };
     stylePrefix = 'img-mgt';
     imgsArr = [];
 

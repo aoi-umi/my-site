@@ -6,7 +6,7 @@ import { myEnum, authority, dev } from '@/config'
 import { convert } from '@/helpers'
 import { convClass, getCompOpts } from '@/components/utils'
 import { Modal, Form, FormItem, Button, RadioGroup, Radio, Input, DatePicker } from '@/components/iview'
-import { MyList, IMyList, Const as MyListConst } from '@/components/my-list'
+import { MyList, Const as MyListConst } from '@/components/my-list'
 
 import { AuthorityTransferView, IAuthorityTransfer } from '../system/authority'
 import { IRoleTransfer, RoleTransferView } from '../system/role'
@@ -158,7 +158,7 @@ export default class UserMgt extends Base {
     detailShow = false;
     delShow = false;
     detail: any;
-    $refs: { list: IMyList<any> };
+    $refs: { list: MyList<any> };
 
     editType;
     mounted () {

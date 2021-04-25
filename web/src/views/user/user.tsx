@@ -4,8 +4,8 @@ import { dev, myEnum } from '@/config'
 import { testApi } from '@/api'
 import { convClass, getCompOpts } from '@/components/utils'
 import { Modal, Input, Form, FormItem, Button, TabPane, Tabs } from '@/components/iview'
-import { MyUpload, IMyUpload, FileDataType } from '@/components/my-upload'
-import { MyLoad, IMyLoad } from '@/components/my-load'
+import { MyUpload, FileDataType } from '@/components/my-upload'
+import { MyLoad } from '@/components/my-load'
 import { LoginUser } from '@/model/user'
 
 import { UserAvatarView } from '../comps/user-avatar'
@@ -78,7 +78,7 @@ export default class UserInfo extends Base {
     }
 
     $refs: {
-        formVaild: iView.Form, loadView: IMyLoad, upload: IMyUpload,
+        formVaild: iView.Form, loadView: MyLoad, upload: MyUpload,
         followerList: FollowList, followingList: FollowList,
         articleList: Article, videoList: Video, chatList: ChatList, favouriteList: FavouriteList,
     };

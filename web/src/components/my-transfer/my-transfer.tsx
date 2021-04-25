@@ -1,8 +1,7 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 
-import { convClass, getCompOpts } from '../utils'
 import { Button, Transfer } from '../iview'
 import { MyBase } from '../my-base'
 
@@ -22,9 +21,9 @@ class MyTransferProp {
 }
 @Component({
   extends: MyBase,
-  mixins: [getCompOpts(MyTransferProp)]
+  props: MyTransferProp
 })
-class MyTransfer extends Vue<MyTransferProp & MyBase> {
+export class MyTransfer extends Vue<MyTransferProp, MyBase> {
     stylePrefix = 'my-transfer-';
 
     @Watch('selectedData')
@@ -90,7 +89,3 @@ class MyTransfer extends Vue<MyTransferProp & MyBase> {
       )
     }
 }
-
-export interface IMyTransfer extends MyTransfer { }
-const MyTransferView = convClass<MyTransferProp>(MyTransfer)
-export default MyTransferView

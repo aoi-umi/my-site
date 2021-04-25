@@ -1,8 +1,7 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 
-import { convClass, getCompOpts } from '../utils'
 import { Spin, Button, Card } from '../iview'
 import { MyBase } from '../my-base'
 import { cls } from '../style'
@@ -36,9 +35,9 @@ class MyLoadProp {
 }
 @Component({
   extends: MyBase,
-  mixins: [getCompOpts(MyLoadProp)]
+  props: MyLoadProp
 })
-class MyLoad extends Vue<MyLoadProp & MyBase> {
+export class MyLoad extends Vue<MyLoadProp, MyBase> {
   stylePrefix = 'my-load-';
 
   loading = false;
@@ -92,7 +91,3 @@ class MyLoad extends Vue<MyLoadProp & MyBase> {
     )
   }
 }
-
-const MyLoadView = convClass<MyLoadProp>(MyLoad)
-export default MyLoadView
-export interface IMyLoad extends MyLoad { };

@@ -6,7 +6,7 @@ import { myEnum, authority, dev } from '@/config'
 import { convert } from '@/helpers'
 import { convClass, getCompOpts } from '@/components/utils'
 import { Card, Input } from '@/components/iview'
-import { MyList, IMyList } from '@/components/my-list'
+import { MyList } from '@/components/my-list'
 
 import { ListBase, ListBaseProp } from '../comps/list-base'
 import { Base } from '../base'
@@ -18,7 +18,7 @@ import './article.less'
 class ArticleProp extends ListBaseProp { }
 @Component
 export default class Article extends ListBase {
-    $refs: { list: IMyList<any> };
+    $refs: { list: MyList<any> };
 
     anyKey = '';
 
@@ -64,7 +64,7 @@ export default class Article extends ListBase {
               return rs
             }}
 
-            on-query={(model, noClear, list: IMyList<any>) => {
+            on-query={(model, noClear, list: MyList<any>) => {
               const q = {
                 ...model.query, anyKey: this.anyKey,
                 ...convert.Test.listModelToQuery(model)

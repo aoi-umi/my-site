@@ -6,7 +6,7 @@ import { myEnum, dev } from '@/config'
 import { routerConfig } from '@/router'
 import { convClass, getCompOpts } from '@/components/utils'
 import { Input, Card } from '@/components/iview'
-import { MyList, IMyList, ResultType } from '@/components/my-list'
+import { MyList, ResultType } from '@/components/my-list'
 
 import { UserAvatarView } from '../comps/user-avatar'
 import { FollowButtonView } from '../comps/follow-button'
@@ -35,7 +35,7 @@ export class FollowList extends Vue<FollowListProp & Base> {
     stylePrefix = 'user-follow-';
 
     $refs: {
-        list: IMyList<any>,
+        list: MyList<any>,
     };
     anyKey = '';
 

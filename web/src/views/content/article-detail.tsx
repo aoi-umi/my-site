@@ -7,7 +7,7 @@ import { Prop } from '@/components/decorator'
 import { testApi } from '@/api'
 import { myEnum, dev } from '@/config'
 import { Divider, Affix, Card } from '@/components/iview'
-import { MyLoad, IMyLoad } from '@/components/my-load'
+import { MyLoad } from '@/components/my-load'
 import { convClass, getCompOpts } from '@/components/utils'
 
 import { UserAvatarView } from '../comps/user-avatar'
@@ -32,7 +32,7 @@ marked.setOptions({
 })
 @Component
 export default class ArticleDetail extends Base {
-    $refs: { loadView: IMyLoad, comment: Comment };
+    $refs: { loadView: MyLoad, comment: Comment };
 
     render () {
       return (

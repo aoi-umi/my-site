@@ -6,7 +6,7 @@ import { testApi } from '@/api'
 import { convert } from '@/helpers'
 import { convClass, getCompOpts } from '@/components/utils'
 import { Tag, Modal, Input, Row, Col, Form, FormItem, Button } from '@/components/iview'
-import { MyList, IMyList, Const as MyListConst, OnSortChangeOptions, MyListModel } from '@/components/my-list'
+import { MyList, Const as MyListConst, OnSortChangeOptions, MyListModel } from '@/components/my-list'
 import { MyTagModel, MyTag } from '@/components/my-tag'
 import { MyConfirm } from '@/components/my-confirm'
 import { Base } from './base'
@@ -133,7 +133,7 @@ const BookmarkDetailView = convClass<BookmarkDetailProp>(BookmarkDetail)
 export default class Bookmark extends Base {
   detailShow = false;
   detail: any;
-  $refs: { list: IMyList<any> };
+  $refs: { list: MyList<any> };
 
   mounted () {
     this.query()

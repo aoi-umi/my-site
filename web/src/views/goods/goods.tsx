@@ -3,7 +3,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import { convert } from '@/helpers'
 import { testApi } from '@/api'
 import { Modal, Input, Col, Card, Row, Divider } from '@/components/iview'
-import { MyList, IMyList, Const as MyListConst, ResultType } from '@/components/my-list'
+import { MyList, Const as MyListConst, ResultType } from '@/components/my-list'
 import { MyImg } from '@/components/my-img'
 
 import { Base } from '../base'
@@ -15,7 +15,7 @@ import { routerConfig } from '@/router'
 @Component
 export default class Goods extends Base {
     stylePrefix = 'goods-';
-    $refs: { list: IMyList<any> };
+    $refs: { list: MyList<any> };
 
     mounted () {
       this.query()

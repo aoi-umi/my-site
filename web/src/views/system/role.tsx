@@ -6,9 +6,9 @@ import { myEnum, authority } from '@/config'
 import { convert } from '@/helpers'
 import { convClass, getCompOpts } from '@/components/utils'
 import { Modal, Input, Form, FormItem, Button, Checkbox, Switch } from '@/components/iview'
-import { MyList, IMyList, Const as MyListConst } from '@/components/my-list'
+import { MyList, Const as MyListConst } from '@/components/my-list'
 import { MyConfirm } from '@/components/my-confirm'
-import { IMyTransfer, MyTransfer } from '@/components/my-transfer'
+import { MyTransfer } from '@/components/my-transfer'
 import { TagType, MyTag } from '@/components/my-tag'
 
 import { AuthorityTagView, AuthorityDetail } from '../comps/authority-tag'
@@ -125,7 +125,7 @@ export default class Role extends Base {
   detailShow = false;
   delShow = false;
   detail: any;
-  $refs: { list: IMyList<any> };
+  $refs: { list: MyList<any> };
 
   protected created () {
     this.statusList = convert.ViewModel.enumToTagArray(myEnum.roleStatus)
@@ -344,7 +344,7 @@ class RoleTransfer extends Vue<RoleTransferProp> {
     this.insideSelectedData = newVal ? newVal.map(ele => this.dataConverter(ele)) : []
   }
 
-  $refs: { transfer: IMyTransfer };
+  $refs: { transfer: MyTransfer };
   private insideSelectedData = [];
 
   getChangeData (key?: string) {

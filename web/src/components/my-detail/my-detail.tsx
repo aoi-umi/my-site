@@ -1,11 +1,8 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
+import { Prop, Component, Vue } from '@/components/decorator'
 import { DynamicCompConfigType, DynamicComp, DynamicCompProp } from '../my-dynamic-comp'
-import {
-  Table, Page, Row, Col,
-  Input, Button, Divider, Card, Icon, Spin
-} from '../iview'
+import { Row, Col } from '../iview'
 import { MyBase } from '../my-base'
 import { getCompOpts, convClass, Utils } from '../utils'
 import { MyButtonsModel, MyButtons } from '../my-buttons'
@@ -29,9 +26,9 @@ class MyDetailProp {
 
 @Component({
   extends: MyBase,
-  mixins: [getCompOpts(MyDetailProp)]
+  props: MyDetailProp
 })
-export class MyDetailView extends Vue<MyDetailProp & MyBase> {
+export class MyDetail extends Vue<MyDetailProp, MyBase> {
   stylePrefix = 'my-detail-'
 
   valid () {
@@ -92,5 +89,3 @@ export class MyDetailView extends Vue<MyDetailProp & MyBase> {
     )
   }
 }
-
-export const MyDetail = convClass<MyDetailProp>(MyDetailView)

@@ -6,7 +6,7 @@ import { routerConfig } from '@/router'
 import { convert } from '@/helpers'
 import { Card, Button } from '@/components/iview'
 import { convClass, getCompOpts } from '@/components/utils'
-import { MyList, IMyList } from '@/components/my-list'
+import { MyList } from '@/components/my-list'
 import { MyTag, TagType } from '@/components/my-tag'
 
 import { ListBase, IListBase, ListBaseProp } from '../comps/list-base'
@@ -50,7 +50,7 @@ class ArticleMgtProp extends ListBaseProp {
 })
 export default class ArticleMgt extends Vue<ArticleMgtProp & ArticleMgtBase> implements IListBase {
     stylePrefix = 'article-mgt-';
-    $refs: { list: IMyList<any> };
+    $refs: { list: MyList<any> };
 
     protected created () {
       this.statusList = convert.ViewModel.enumToTagArray(myEnum.articleStatus)
@@ -151,7 +151,7 @@ export default class ArticleMgt extends Vue<ArticleMgtProp & ArticleMgtBase> imp
               return rs
             }}
 
-            on-query={(model, noClear, list: IMyList<any>) => {
+            on-query={(model, noClear, list: MyList<any>) => {
               const q = {
                 ...model.query,
                 status: this.statusList.filter(ele => ele.checked).map(ele => ele.key).join(','),

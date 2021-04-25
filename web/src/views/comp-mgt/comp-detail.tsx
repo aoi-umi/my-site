@@ -5,7 +5,7 @@ import { myEnum } from '@/config'
 const { dynamicCompViewType } = myEnum
 import { MyDetail } from '@/components/my-detail'
 import { MyList } from '@/components/my-list'
-import { MyLoad, IMyLoad } from '@/components/my-load'
+import { MyLoad } from '@/components/my-load'
 import { getCompOpts, convClass, Utils, MyGroupType } from '@/components/utils'
 import { Prop } from '@/components/decorator'
 import { Divider, Tabs, TabPane } from '@/components/iview'
@@ -16,7 +16,7 @@ import { CompModuleType } from './comp-mgt-detail'
 @Component
 export default class CompDetailPage extends Base {
   $refs: {
-    loadView: IMyLoad
+    loadView: MyLoad
   };
 
   private _id = ''

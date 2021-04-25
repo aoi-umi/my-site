@@ -8,8 +8,8 @@ import { convClass, getCompOpts } from '@/components/utils'
 import { Form, FormItem, Button, Modal, Input, Divider, Checkbox, DatePicker, Affix, Card } from '@/components/iview'
 import { MyConfirm } from '@/components/my-confirm'
 import { MyList } from '@/components/my-list'
-import { MyUpload, IMyUpload, FileDataType } from '@/components/my-upload'
-import { IMyLoad, MyLoad } from '@/components/my-load'
+import { MyUpload, FileDataType } from '@/components/my-upload'
+import { MyLoad } from '@/components/my-load'
 
 import { UserAvatarView } from '../comps/user-avatar'
 import { Base } from '../base'
@@ -303,7 +303,7 @@ class ContentMgtDetailProp {
   mixins: [getCompOpts(ContentMgtDetailProp)]
 })
 export class ContentMgtDetail extends Vue<ContentMgtDetailProp & Base> {
-  $refs: { formVaild: iView.Form, cover: IMyUpload, loadView: IMyLoad };
+  $refs: { formVaild: iView.Form, cover: MyUpload, loadView: MyLoad };
 
   @Watch('$route')
   route (to, from) {
@@ -316,7 +316,7 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp & Base> {
   private getCommonRules () {
     return {
       title: [
-        { required: true,  }
+        { required: true }
       ],
       setPublishAt: [{
         validator: (rule, value, callback) => {
@@ -326,8 +326,8 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp & Base> {
           } else {
             callback()
           }
-        },
-        
+        }
+
       }]
     }
   }

@@ -6,7 +6,7 @@ import { dev, myEnum, authority } from '@/config'
 import { testApi } from '@/api'
 import { routerConfig } from '@/router'
 import { Modal } from '@/components/iview'
-import { MyList, IMyList, Const as MyListConst } from '@/components/my-list'
+import { MyList, Const as MyListConst } from '@/components/my-list'
 import { TagType, MyTag } from '@/components/my-tag'
 import { MyConfirm } from '@/components/my-confirm'
 
@@ -15,7 +15,7 @@ import { Base } from '../base'
 @Component
 export default class GoodsMgt extends Base {
     stylePrefix = 'goods-mgt-';
-    $refs: { list: IMyList<any> };
+    $refs: { list: MyList<any> };
 
     delShow = false;
     statusList: TagType[] = [];

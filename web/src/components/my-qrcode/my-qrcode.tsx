@@ -1,10 +1,9 @@
 
-import { Component, Vue } from 'vue-property-decorator'
+import { } from 'vue-property-decorator'
 import * as QRCode from 'qrcode'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 
-import { getCompOpts, convClass } from '../utils'
 import { MyBase } from '../my-base'
 import { Spin } from '../iview'
 
@@ -20,9 +19,9 @@ class MyQrcodeProp {
 }
 @Component({
   extends: MyBase,
-  mixins: [getCompOpts(MyQrcodeProp)]
+  props: MyQrcodeProp
 })
-class MyQrcode extends Vue<MyQrcodeProp & MyBase> {
+export class MyQrcode extends Vue<MyQrcodeProp, MyBase> {
   stylePrefix = 'my-qrcode-';
   $refs: { qrCanvas: HTMLDivElement; }
 
@@ -58,7 +57,3 @@ class MyQrcode extends Vue<MyQrcodeProp & MyBase> {
     )
   }
 }
-
-const MyQrcodeView = convClass<MyQrcodeProp>(MyQrcode)
-export default MyQrcodeView
-export interface IMyQrcode extends MyQrcode { };

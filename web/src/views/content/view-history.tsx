@@ -2,7 +2,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 
 import { testApi } from '@/api'
 import { convert } from '@/helpers'
-import { MyList, IMyList } from '@/components/my-list'
+import { MyList } from '@/components/my-list'
 import { ListBase } from '../comps/list-base'
 import { Card, Input } from '@/components/iview'
 import { VideoListItemView } from './video'
@@ -15,7 +15,7 @@ import { ContentMixItemView } from './content-mix'
 })
 export default class ViewHistory extends Vue<ListBase> {
     stylePrefix = 'view-history-';
-    $refs: { list: IMyList<any> };
+    $refs: { list: MyList<any> };
 
     anyKey = '';
     query () {
@@ -51,7 +51,7 @@ export default class ViewHistory extends Vue<ListBase> {
               return rs
             }}
 
-            on-query={(model, noClear, list: IMyList<any>) => {
+            on-query={(model, noClear, list: MyList<any>) => {
               const q = {
                 ...model.query,
                 anyKey: this.anyKey,

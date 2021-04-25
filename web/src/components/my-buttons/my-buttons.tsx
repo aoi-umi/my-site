@@ -1,6 +1,6 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
+import { Prop, Component, Vue } from '@/components/decorator'
 
 import { convClass, getCompOpts } from '../utils'
 import { Icon, Button, Dropdown, DropdownMenu, DropdownItem } from '../iview'
@@ -16,9 +16,9 @@ class MyButtonsProp {
 }
 @Component({
   extends: MyBase,
-  mixins: [getCompOpts(MyButtonsProp)]
+  props: MyButtonsProp
 })
-class MyButtonsView extends Vue<MyButtonsProp & MyBase> {
+export class MyButtons extends Vue<MyButtonsProp, MyBase> {
   stylePrefix = 'my-buttons-'
   @Watch('value', {
     immediate: true,
@@ -77,4 +77,3 @@ class MyButtonsView extends Vue<MyButtonsProp & MyBase> {
   }
 }
 
-export const MyButtons = convClass<MyButtonsProp>(MyButtonsView)

@@ -3,7 +3,7 @@ import { Component } from 'vue-property-decorator'
 import { testApi } from '@/api'
 import { convClass } from '@/components/utils'
 import { Input } from '@/components/iview'
-import { MyList, IMyList, ResultType } from '@/components/my-list'
+import { MyList, ResultType } from '@/components/my-list'
 
 import { Base } from '../base'
 import { ContentMixItemView } from '../content/content-mix'
@@ -14,7 +14,7 @@ import { ContentMixItemView } from '../content/content-mix'
 @Component
 export class FavouriteList extends Base {
     $refs: {
-        list: IMyList<any>,
+        list: MyList<any>,
     };
     anyKey = '';
     query () {

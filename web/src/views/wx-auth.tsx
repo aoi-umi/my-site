@@ -7,7 +7,7 @@ import { routerConfig } from '@/router'
 import * as helpers from '@/helpers'
 import { Spin, Avatar, Button, Card } from '@/components/iview'
 import { Utils } from '@/components/utils'
-import { MyQrcode, IMyQrcode } from '@/components/my-qrcode'
+import { MyQrcode } from '@/components/my-qrcode'
 
 import { Base } from './base'
 import { SignUpView } from './user/user-sign'
@@ -27,7 +27,7 @@ type WxUserInfo = {
 @Component
 export default class WxAuth extends Base {
     stylePrefix = 'wx-auth-';
-    $refs: { qrcode: IMyQrcode, qrcodeBind: IMyQrcode };
+    $refs: { qrcode: MyQrcode, qrcodeBind: MyQrcode };
     mounted () {
       this.auth()
       this.$refs.qrcodeBind.drawQrcode(location.href)

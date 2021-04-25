@@ -6,8 +6,8 @@ import { myEnum, authority } from '@/config'
 import { convert } from '@/helpers'
 import { convClass, getCompOpts } from '@/components/utils'
 import { Modal, Input, Form, FormItem, Button, Checkbox, Switch, Transfer } from '@/components/iview'
-import { MyList, IMyList, Const as MyListConst } from '@/components/my-list'
-import { MyTransfer, IMyTransfer } from '@/components/my-transfer'
+import { MyList, Const as MyListConst } from '@/components/my-list'
+import { MyTransfer } from '@/components/my-transfer'
 import { MyConfirm } from '@/components/my-confirm'
 import { MyTag, TagType } from '@/components/my-tag'
 import { Base } from '../base'
@@ -114,7 +114,7 @@ export default class Authority extends Base {
     detailShow = false;
     delShow = false;
     detail: any;
-    $refs: { list: IMyList<any> };
+    $refs: { list: MyList<any> };
 
     protected created () {
       this.statusList = convert.ViewModel.enumToTagArray(myEnum.authorityStatus)
@@ -317,7 +317,7 @@ class AuthorityTransfer extends Vue<AuthorityTransferProp> {
     this.insideSelectedData = newVal ? newVal.map(ele => this.dataConverter(ele)) : []
   }
 
-    $refs: { transfer: IMyTransfer };
+    $refs: { transfer: MyTransfer };
     private insideSelectedData = [];
 
     getChangeData (key?: string) {

@@ -5,8 +5,8 @@ import { testApi, testSocket } from '@/api'
 import { myEnum, dev } from '@/config'
 import { convClass, getCompOpts } from '@/components/utils'
 import { Divider, Spin, Affix, Card } from '@/components/iview'
-import { MyLoad, IMyLoad } from '@/components/my-load'
-import { MyVideo, IMyVideo } from '@/components/my-video'
+import { MyLoad } from '@/components/my-load'
+import { MyVideo } from '@/components/my-video'
 import { FileType, FileDataType } from '@/components/my-upload'
 
 import { UserAvatarView } from '../comps/user-avatar'
@@ -20,7 +20,7 @@ import { ContentOperateView } from './content'
 @Component
 export default class VideoDetail extends Base {
     stylePrefix = 'video-';
-    $refs: { loadView: IMyLoad, comment: Comment };
+    $refs: { loadView: MyLoad, comment: Comment };
 
     render () {
       return (
@@ -70,7 +70,7 @@ class VideoDetailMainProp {
 class VideoDetailMain extends Vue<VideoDetailMainProp & Base> {
     stylePrefix = 'video-';
 
-    $refs: { video: IMyVideo };
+    $refs: { video: MyVideo };
 
     videoId: string;
 

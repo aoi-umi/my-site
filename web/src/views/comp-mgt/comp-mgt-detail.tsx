@@ -6,14 +6,14 @@ import { convert, OperateModel } from '@/helpers'
 import { Input, Button, Checkbox, Row, Col, Select, Form, FormItem, InputNumber, Tabs, TabPane, Divider } from '@/components/iview'
 
 import { Prop, Vue, Component } from '@/components/decorator'
-import { MyList, IMyList } from '@/components/my-list'
+import { MyList } from '@/components/my-list'
 import { routerConfig } from '@/router'
-import { IMyLoad, MyLoad } from '@/components/my-load'
+import { MyLoad } from '@/components/my-load'
 import { DynamicCompConfigType, DynamicCompSelectOptionsType, DynamicCompPropType, DynamicCompConfigFnType } from '@/components/my-dynamic-comp'
 import { myEnum } from '@/config'
 const { dynamicCompType, dynamicSqlCalcType, dynamicCompViewType } = myEnum
 import { convClass, getCompOpts, Utils } from '@/components/utils'
-import { MyDetail, MyDetailView } from '@/components/my-detail'
+import { MyDetail } from '@/components/my-detail'
 import { MyButtonsModel } from '@/components/my-buttons'
 
 import { Base } from '../base'
@@ -61,8 +61,8 @@ export class CompMgtDetailProp {
 export class CompMgtDetail extends Vue<CompMgtDetailProp, Base> {
   stylePrefix = 'comp-mgt-detail-'
   $refs: {
-    loadView: IMyLoad, formVaild: iView.Form,
-    main: MyDetailView, module: IMyList, config: IMyList
+    loadView: MyLoad, formVaild: iView.Form,
+    main: MyDetail, module: MyList, config: MyList
   };
 
   private op: OperateModel = null

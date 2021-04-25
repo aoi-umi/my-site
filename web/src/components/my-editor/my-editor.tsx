@@ -1,4 +1,4 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 import { quillEditor } from 'vue-quill-editor'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
@@ -6,9 +6,8 @@ import 'quill/dist/quill.bubble.css'
 
 import marked from 'marked'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 import { Input, RadioGroup, Radio, Row, Col } from '../iview'
-import { convClass, getCompOpts } from '../utils'
 import { MyInputBase, MyInputBaseProp } from '../my-input/my-input'
 
 const ContentType = {
@@ -51,10 +50,10 @@ class MyEditorProp extends MyInputBaseProp {
 }
 @Component({
   extends: MyInputBase,
-  mixins: [getCompOpts(MyEditorProp)],
+  props: MyEditorProp,
   quillEditor
 })
-class MyEditor extends Vue<MyEditorProp & MyInputBase> {
+export class MyEditor extends Vue<MyEditorProp, MyInputBase> {
     stylePrefix = 'my-editor-';
 
     $refs: { quillEditor: any };
@@ -222,7 +221,3 @@ class MyEditor extends Vue<MyEditorProp & MyInputBase> {
       )
     }
 }
-
-export interface IMyEditor extends MyEditor { }
-const MyEditorView = convClass<MyEditorProp>(MyEditor)
-export default MyEditorView
