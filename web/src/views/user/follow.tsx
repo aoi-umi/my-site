@@ -1,15 +1,14 @@
-import { Component, Vue } from 'vue-property-decorator'
+import { } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 import { testApi } from '@/api'
 import { myEnum, dev } from '@/config'
 import { routerConfig } from '@/router'
-import { convClass, getCompOpts } from '@/components/utils'
 import { Input, Card } from '@/components/iview'
 import { MyList, ResultType } from '@/components/my-list'
 
-import { UserAvatarView } from '../comps/user-avatar'
-import { FollowButtonView } from '../comps/follow-button'
+import { UserAvatar } from '../comps/user-avatar'
+import { FollowButton } from '../comps/follow-button'
 import { Base } from '../base'
 
 /**
@@ -29,9 +28,9 @@ class FollowListProp {
 
 @Component({
   extends: Base,
-  mixins: [getCompOpts(FollowListProp)]
+  props: FollowListProp
 })
-export class FollowList extends Vue<FollowListProp & Base> {
+export class FollowList extends Vue<FollowListProp, Base> {
     stylePrefix = 'user-follow-';
 
     $refs: {
@@ -64,10 +63,10 @@ export class FollowList extends Vue<FollowListProp & Base> {
             })
           }}>
             <div class={this.getStyleName('content')}>
-              <UserAvatarView user={user} />
+              <UserAvatar user={user} />
               <span class={this.getStyleName('profile')}>{user.profile || dev.defaultProfile}</span>
               <div class='flex-stretch' />
-              <FollowButtonView user={user} />
+              <FollowButton user={user} />
             </div>
           </Card>
         )
@@ -102,4 +101,3 @@ export class FollowList extends Vue<FollowListProp & Base> {
     }
 }
 
-export const FollowListView = convClass<FollowListProp>(FollowList)

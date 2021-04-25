@@ -1,13 +1,13 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { convClass } from '@/components/utils'
+import { Component, Vue, Prop } from '@/components/decorator'
 import { Card, Split, Input, Button, Time, Icon } from '@/components/iview'
 import { MyLoad } from '@/components/my-load'
 import { randStr } from '@/helpers'
 import { testApi, testSocket } from '@/api'
 import { Base } from '../base'
 import { DetailDataType as UserDetailDataType } from './user-mgt'
-import { UserAvatarView } from '../comps/user-avatar'
+import { UserAvatar } from '../comps/user-avatar'
 import { myEnum } from '@/config'
 import { MyList, ResultType } from '@/components/my-list'
 import { routerConfig } from '@/router'
@@ -141,7 +141,7 @@ class ChatDetail extends Base {
               return (
                 <Card>
                   <div slot='title'>
-                    <UserAvatarView user={this.detail} />
+                    <UserAvatar user={this.detail} />
                   </div>
                   <Split v-model={this.split} mode='vertical' class={this.getStyleName('main')}>
                     <div ref='chat' slot='top' class={this.getStyleName('msg-box')} on-scroll={(e) => {
@@ -206,9 +206,6 @@ class ChatDetail extends Base {
     }
 }
 
-const ChatDetailView = convClass(ChatDetail)
-export default ChatDetailView
-
 @Component
 export class ChatList extends Base {
     stylePrefix = 'user-chat-list-';
@@ -238,7 +235,7 @@ export class ChatList extends Base {
             this.toChat(user._id)
           }}>
             <div class={this.getStyleName('item-first-row')}>
-              <UserAvatarView user={user} />
+              <UserAvatar user={user} />
               <div class='flex-stretch' />
               <Time class='not-important' time={ele.createdAt} />
             </div>
@@ -269,5 +266,3 @@ export class ChatList extends Base {
       )
     }
 }
-
-export const ChatListView = convClass(ChatList)

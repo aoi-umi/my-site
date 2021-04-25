@@ -1,10 +1,11 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
+import { Component, Vue } from '@/components/decorator'
 import { myEnum } from '@/config'
 import { Tabs, TabPane, Modal, Input } from '@/components/iview'
 
-import ArticleMgt, { ArticleMgtView } from './article-mgt'
-import VideoMgt, { VideoMgtView } from './video-mgt'
+import ArticleMgt from './article-mgt'
+import VideoMgt from './video-mgt'
 
 @Component
 export default class ContentMgt extends Vue {
@@ -57,10 +58,10 @@ export default class ContentMgt extends Vue {
             })
           }}>
             <TabPane name={myEnum.contentMgtType.文章} label='文章管理'>
-              <ArticleMgtView ref='articleMgt' notQueryOnMounted notQueryOnRoute notQueryToRoute />
+              <ArticleMgt ref='articleMgt' notQueryOnMounted notQueryOnRoute notQueryToRoute />
             </TabPane>
             <TabPane name={myEnum.contentMgtType.视频} label='视频管理'>
-              <VideoMgtView ref='videoMgt' notQueryOnMounted notQueryOnRoute notQueryToRoute />
+              <VideoMgt ref='videoMgt' notQueryOnMounted notQueryOnRoute notQueryToRoute />
             </TabPane>
           </Tabs>
         </div>

@@ -1,10 +1,9 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 import { testApi } from '@/api'
 import errConfig, { getErrorCfgByCode } from '@/config/error'
 import { myEnum } from '@/config'
-import { convClass, getCompOpts } from '@/components/utils'
 import { mathjs } from '@/helpers'
 import { Carousel, CarouselItem, Row, Col, Divider, Input, Button, Card, Modal, RadioGroup, Radio } from '@/components/iview'
 import { MyTag, TagType } from '@/components/my-tag'
@@ -14,7 +13,7 @@ import { MyImgViewer } from '@/components/my-img-viewer'
 import { MyNumber } from '@/components/my-number'
 
 import { Base } from '../base'
-import { PayView, Pay } from '../comps/pay'
+import { Pay } from '../comps/pay'
 import { DetailType, SkuType } from './goods-mgt-detail'
 
 import './goods.less'
@@ -36,7 +35,7 @@ export default class GoodsDetail extends Base {
         <MyLoad
           loadFn={this.loadDetailData}
           renderFn={(detail: DetailType) => {
-            return <GoodsDetailMainView data={detail} />
+            return <GoodsDetailMain data={detail} />
           }}
           errMsgFn={(e) => {
             if (getErrorCfgByCode(e.code)) { return '商品不存在或已删除' }
@@ -56,9 +55,9 @@ class GoodsDetailMainProp {
 }
 @Component({
   extends: Base,
-  mixins: [getCompOpts(GoodsDetailMainProp)]
+  props: GoodsDetailMainProp
 })
-class GoodsDetailMain extends Vue<GoodsDetailMainProp & Base> {
+export class GoodsDetailMain extends Vue<GoodsDetailMainProp, Base> {
   stylePrefix = 'goods-';
   $refs: { imgViewer: MyImgViewer, pay: Pay };
 
@@ -172,12 +171,12 @@ class GoodsDetailMain extends Vue<GoodsDetailMainProp & Base> {
     const multi = spu.imgUrls.length > 1
     return (
       <div>
-        <PayView ref='pay' payFn={async () => {
+        <Pay ref='pay' payFn={async () => {
           return this.buy()
         }}>
           <p>{this.buyInfo.name}</p>
           <p>支付金额: {this.totalPrice.toFixed(2)}</p>
-        </PayView>
+        </Pay>
         <h2>{spu.name}</h2>
         <MyImgViewer ref='imgViewer' src={spu.imgUrls} idx={this.showIdx} />
         <Row gutter={20}>
@@ -241,4 +240,3 @@ class GoodsDetailMain extends Vue<GoodsDetailMainProp & Base> {
   }
 }
 
-export const GoodsDetailMainView = convClass<GoodsDetailMainProp>(GoodsDetailMain)

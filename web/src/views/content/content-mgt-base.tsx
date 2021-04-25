@@ -1,17 +1,16 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 import { testApi } from '@/api'
 import { myEnum, dev } from '@/config'
 import { routerConfig } from '@/router'
-import { convClass, getCompOpts } from '@/components/utils'
 import { Form, FormItem, Button, Modal, Input, Divider, Checkbox, DatePicker, Affix, Card } from '@/components/iview'
 import { MyConfirm } from '@/components/my-confirm'
 import { MyList } from '@/components/my-list'
 import { MyUpload, FileDataType } from '@/components/my-upload'
 import { MyLoad } from '@/components/my-load'
 
-import { UserAvatarView } from '../comps/user-avatar'
+import { UserAvatar } from '../comps/user-avatar'
 import { Base } from '../base'
 export class ContentDetailType<T extends ContentDataType = ContentDataType> {
   detail: T;
@@ -76,7 +75,7 @@ export interface IContentMgtBase {
 @Component({
   extends: Base
 })
-export class ContentMgtBase extends Vue<IContentMgtBase & Base> {
+export class ContentMgtBase extends Vue<IContentMgtBase, Base> {
   delShow = false;
   delIds = [];
   delRemark = '';
@@ -300,9 +299,9 @@ class ContentMgtDetailProp {
 }
 @Component({
   extends: Base,
-  mixins: [getCompOpts(ContentMgtDetailProp)]
+  props: ContentMgtDetailProp
 })
-export class ContentMgtDetail extends Vue<ContentMgtDetailProp & Base> {
+export class ContentMgtDetail extends Vue<ContentMgtDetailProp, Base> {
   $refs: { formVaild: iView.Form, cover: MyUpload, loadView: MyLoad };
 
   @Watch('$route')
@@ -399,7 +398,7 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp & Base> {
   protected renderHeader (detail: ContentDataType) {
     return (
       <div>
-        <UserAvatarView user={detail.user} />
+        <UserAvatar user={detail.user} />
         {[
           '状态: ' + detail.statusText,
           '创建于: ' + this.$utils.dateFormat(detail.createdAt),
@@ -414,7 +413,7 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp & Base> {
   protected renderLog () {
     const { log } = this.innerDetail
     return (
-      <ContentLogListView log={log} />
+      <ContentLogList log={log} />
     )
   }
 
@@ -485,8 +484,6 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp & Base> {
   }
 }
 
-export const ContentMgtDetailView = convClass<ContentMgtDetailProp>(ContentMgtDetail)
-
 class ContentLogListProp {
   @Prop({
     default: () => []
@@ -495,9 +492,9 @@ class ContentLogListProp {
 }
 @Component({
   extends: Base,
-  mixins: [getCompOpts(ContentLogListProp)]
+  props: ContentLogListProp
 })
-export class ContentLogList extends Vue<ContentLogListProp & Base> {
+export class ContentLogList extends Vue<ContentLogListProp, Base> {
   render () {
     const log = this.log
     return (
@@ -512,7 +509,7 @@ export class ContentLogList extends Vue<ContentLogListProp & Base> {
                 title: '操作人',
                 key: 'user',
                 render: (h, params) => {
-                  return <UserAvatarView style={{ margin: '5px' }} user={params.row.user} />
+                  return <UserAvatar style={{ margin: '5px' }} user={params.row.user} />
                 }
               }, {
                 title: '源状态',
@@ -539,4 +536,3 @@ export class ContentLogList extends Vue<ContentLogListProp & Base> {
   }
 }
 
-export const ContentLogListView = convClass<ContentLogListProp>(ContentLogList)

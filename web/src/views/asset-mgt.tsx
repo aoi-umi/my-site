@@ -1,6 +1,6 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 
 import { convert } from '@/helpers'
 import { dev, myEnum, authority } from '@/config'

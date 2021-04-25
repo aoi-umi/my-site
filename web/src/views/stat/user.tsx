@@ -1,6 +1,7 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 import * as echarts from 'echarts'
 
+import { Component, Vue, Prop } from '@/components/decorator'
 import { testSocket, testApi } from '@/api'
 import { Divider } from '@/components/iview'
 

@@ -1,9 +1,11 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import _Vue from 'vue'
+import { Watch } from 'vue-property-decorator'
 import VueDND from 'awe-dnd'
 
+import { Component, Vue } from './decorator'
 import { Utils } from './utils'
 
-Vue.use(VueDND)
+_Vue.use(VueDND)
 @Component
 export class MyBase extends Vue {
     protected stylePrefix = 'base-';

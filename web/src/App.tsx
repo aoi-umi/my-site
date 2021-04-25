@@ -1,5 +1,6 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
+import { Component, Vue, Prop } from '@/components/decorator'
 import { routerConfig, MyRouteConfig } from '@/router'
 import {
   Icon, Content, Layout, Header, Button, Modal, BackTop, Spin
@@ -9,17 +10,17 @@ import { LocalStore } from '@/store'
 
 import { testApi, testSocket } from './api'
 import { dev, env } from './config'
-import { SignIn, SignInModel } from './views/user/user-sign'
+import { SignIn } from './views/user/user-sign'
 import { Base } from './views/base'
-import { UserAvatarView } from './views/comps/user-avatar'
-import { SideMenuView, SideMenu, MenuConfig } from './views/comps/side-menu'
+import { UserAvatar } from './views/comps/user-avatar'
+import { SideMenu, MenuConfig } from './views/comps/side-menu'
 import './App.less'
 
 @Component
 export default class App extends Base {
   theme = 'light' as any;
   title = '';
-  $refs: { sideMenu: SideMenu, signIn: SignInModel };
+  $refs: { sideMenu: SideMenu, signIn: SignIn };
 
   async logPV () {
     testApi.statPVSave({ path: this.$route.path })
@@ -221,7 +222,7 @@ export default class App extends Base {
           <div class='layout-header-right button-group-normal' style='position: relative;'>
             {this.getingUserInfo && <Spin fix />}
             {this.storeUser.user.isLogin
-              ? <UserAvatarView user={this.storeUser.user} self tipsPlacement='bottom' />
+              ? <UserAvatar user={this.storeUser.user} self tipsPlacement='bottom' />
               : [
                 <Button type='primary' on-click={() => {
                   this.storeSetting.setSetting({
@@ -235,7 +236,7 @@ export default class App extends Base {
             }
           </div>
         </Header>
-        <SideMenuView ref='sideMenu' menuCfg={this.menuCfg} activeName={this.activeName}>
+        <SideMenu ref='sideMenu' menuCfg={this.menuCfg} activeName={this.activeName}>
           <Content class='main-content'>
             {
               this.getingUserInfo ? <Spin fix />
@@ -247,7 +248,7 @@ export default class App extends Base {
             }
           </Content>
           <BackTop bottom={100} right={10} />
-        </SideMenuView>
+        </SideMenu>
       </Layout>
     )
   }

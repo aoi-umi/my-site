@@ -1,10 +1,11 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
+import { Component, Vue, Prop } from '@/components/decorator'
 import {
   Button, Input, Row, Col, Collapse, Panel, Divider,
   Form, FormItem, Spin
 } from '@/components/iview'
-import {  MyLoad } from '@/components/my-load'
+import { MyLoad } from '@/components/my-load'
 import { testApi } from '@/api'
 import { OperateModel } from '@/helpers'
 import { routerConfig } from '@/router'

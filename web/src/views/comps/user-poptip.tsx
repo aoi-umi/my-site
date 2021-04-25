@@ -1,17 +1,16 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 import { testApi, testSocket } from '@/api'
 import { dev, myEnum, authority } from '@/config'
 import { routerConfig } from '@/router'
 import { LocalStore } from '@/store'
-import { convClass, getCompOpts } from '@/components/utils'
 import { Button, Avatar, Poptip, Spin } from '@/components/iview'
 import { MyImgViewer } from '@/components/my-img-viewer'
 
 import { Base } from '../base'
 import { DetailDataType } from '../user/user-mgt'
-import { FollowButtonView } from './follow-button'
+import { FollowButton } from './follow-button'
 
 import './user-poptip.less'
 
@@ -50,9 +49,9 @@ class UserPoptipProp {
 }
 @Component({
   extends: Base,
-  mixins: [getCompOpts(UserPoptipProp)]
+  props: UserPoptipProp
 })
-class UserPoptip extends Vue<UserPoptipProp & Base> {
+export class UserPoptip extends Vue<UserPoptipProp, Base> {
   stylePrefix = 'comp-user-poptip-';
 
   private userDetail: DetailDataType = {};
@@ -164,7 +163,7 @@ class UserPoptip extends Vue<UserPoptipProp & Base> {
                     query: { _id: this.user._id }
                   })
                 }}>主页</Button>
-                {!loadFail && notSelf && <FollowButtonView user={this.userDetail} />}
+                {!loadFail && notSelf && <FollowButton user={this.userDetail} />}
                 {notSelf && <Button on-click={() => {
                   this.$router.push({
                     path: routerConfig.userChat.path,
@@ -180,5 +179,3 @@ class UserPoptip extends Vue<UserPoptipProp & Base> {
     )
   }
 }
-
-export const UserPoptipView = convClass<UserPoptipProp>(UserPoptip)

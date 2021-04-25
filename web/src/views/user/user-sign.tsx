@@ -1,19 +1,18 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 import * as helpers from '@/helpers'
 import { dev, myEnum } from '@/config'
 import { routerConfig } from '@/router'
 import { testApi, testSocket } from '@/api'
 import { LocalStore } from '@/store'
-import { convClass, getCompOpts } from '@/components/utils'
 import { Input, Form, FormItem, Button, Checkbox, Spin, Icon, AutoComplete, Option } from '@/components/iview'
 import { MyLoad } from '@/components/my-load'
 import { LoginUser } from '@/model/user'
 
 import { Base } from '../base'
 import { DetailDataType as UserDetailDataType } from './user-mgt'
-import { UserUnbind, UserUnbindView } from './user'
+import { UserUnbind } from './user'
 import { LocalStoreUser } from './model'
 
 import './user.less'
@@ -38,9 +37,9 @@ class SignInProp extends SignProp {
 }
 @Component({
   extends: Base,
-  mixins: [getCompOpts(SignInProp)]
+  props: SignInProp
 })
-export class SignInModel extends Vue<Base & SignInProp> {
+export class SignIn extends Vue<SignInProp, Base> {
     stylePrefix = 'user-sign-in-';
     private innerDetail: SignInDataType = this.getDetailData();
     private getDetailData () {
@@ -52,10 +51,10 @@ export class SignInModel extends Vue<Base & SignInProp> {
 
     private rules = {
       account: [
-        { required: true,  }
+        { required: true }
       ],
       password: [
-        { required: true,  }
+        { required: true }
       ]
     };
 
@@ -169,7 +168,7 @@ export class SignInModel extends Vue<Base & SignInProp> {
             <FormItem>
               <Button type='primary' long on-click={this.handleSignIn} loading={this.loading}>登录</Button>
             </FormItem>
-            <ThirdPartyLoginView on-item-click={() => {
+            <ThirdPartyLogin on-item-click={() => {
               this.$emit('3rd-party-login-click')
             }} />
           </Form>
@@ -177,8 +176,6 @@ export class SignInModel extends Vue<Base & SignInProp> {
       )
     }
 }
-
-export const SignIn = convClass<SignInProp>(SignInModel)
 
 class ThirdPartyLoginProp {
     @Prop()
@@ -189,16 +186,16 @@ class ThirdPartyLoginProp {
 }
 @Component({
   extends: Base,
-  mixins: [getCompOpts(ThirdPartyLoginProp)]
+  props: ThirdPartyLoginProp
 })
-class ThirdPartyLogin extends Vue<ThirdPartyLoginProp & Base> {
+export class ThirdPartyLogin extends Vue<ThirdPartyLoginProp, Base> {
     stylePrefix = 'third-party-login-';
 
     $refs: { userUnbind: UserUnbind }
     render () {
       return (
         <div class={this.getStyleName('root', this.bind && 'bind')}>
-          {this.bind && <UserUnbindView ref='userUnbind' on-success={(type) => {
+          {this.bind && <UserUnbind ref='userUnbind' on-success={(type) => {
             this.user.bind[type] = false
           }} />}
           {[{
@@ -229,8 +226,6 @@ class ThirdPartyLogin extends Vue<ThirdPartyLoginProp & Base> {
     }
 }
 
-export const ThirdPartyLoginView = convClass<ThirdPartyLoginProp>(ThirdPartyLogin)
-
 type SignUpDataType = {
     account: string;
     nickname: string;
@@ -244,9 +239,9 @@ class SignUpProp extends SignProp {
 }
 @Component({
   extends: Base,
-  mixins: [getCompOpts(SignUpProp)]
+  props: SignUpProp
 })
-class SignUp extends Vue<SignUpProp & Base> {
+class SignUp extends Vue<SignUpProp, Base> {
     stylePrefix = 'user-sign-up-';
     private innerDetail: SignUpDataType = this.getDetailData();
     private getDetailData () {
@@ -260,7 +255,7 @@ class SignUp extends Vue<SignUpProp & Base> {
 
     private rules = {
       account: [
-        { required: true,  },
+        { required: true },
         {
           asyncValidator: async (rule, value) => {
             const rs = await testApi.userAccountExists({ val: value })
@@ -270,13 +265,13 @@ class SignUp extends Vue<SignUpProp & Base> {
         }
       ],
       nickname: [
-        { required: true,  }
+        { required: true }
       ],
       password: [
-        { required: true,  }
+        { required: true }
       ],
       passwordRepeat: [{
-        required: true, 
+        required: true
       }, {
         validator: (rule, value, callback) => {
           if (value !== this.innerDetail.password) {
@@ -284,8 +279,8 @@ class SignUp extends Vue<SignUpProp & Base> {
           } else {
             callback()
           }
-        },
-        
+        }
+
       }]
     };
 
@@ -368,4 +363,3 @@ class SignUp extends Vue<SignUpProp & Base> {
     }
 }
 
-export const SignUpView = convClass<SignUpProp>(SignUp)

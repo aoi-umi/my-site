@@ -1,18 +1,17 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 import { testApi } from '@/api'
 import { myEnum, authority } from '@/config'
 import { convert } from '@/helpers'
-import { convClass, getCompOpts } from '@/components/utils'
 import { Modal, Input, Form, FormItem, Button, Checkbox, Switch } from '@/components/iview'
 import { MyList, Const as MyListConst } from '@/components/my-list'
 import { MyConfirm } from '@/components/my-confirm'
 import { MyTransfer } from '@/components/my-transfer'
 import { TagType, MyTag } from '@/components/my-tag'
 
-import { AuthorityTagView, AuthorityDetail } from '../comps/authority-tag'
-import { AuthorityTransferView, IAuthorityTransfer } from './authority'
+import { AuthorityTag, AuthorityDetail } from '../comps/authority-tag'
+import { AuthorityTransfer } from './authority'
 import { Base } from '../base'
 
 export type DetailDataType = {
@@ -31,9 +30,9 @@ class RoleDetailProp {
 }
 @Component({
   extends: Base,
-  mixins: [getCompOpts(RoleDetailProp)]
+  props: RoleDetailProp
 })
-class RoleDetail extends Vue<RoleDetailProp & Base> {
+class RoleDetail extends Vue<RoleDetailProp, Base> {
   @Watch('detail')
   updateDetail (newVal) {
     const data = newVal || this.getDetailData()
@@ -62,7 +61,7 @@ class RoleDetail extends Vue<RoleDetailProp & Base> {
       { required: true }
     ]
   };
-  $refs: { formVaild: iView.Form, authTransfer: IAuthorityTransfer };
+  $refs: { formVaild: iView.Form, authTransfer: AuthorityTransfer };
 
   private saving = false;
   private async handleSave () {
@@ -105,7 +104,7 @@ class RoleDetail extends Vue<RoleDetailProp & Base> {
             <Input v-model={detail.code} />
           </FormItem>
           <FormItem label='权限'>
-            <AuthorityTransferView ref='authTransfer' selectedData={detail.authorityList} />
+            <AuthorityTransfer ref='authTransfer' selectedData={detail.authorityList} />
           </FormItem>
           <FormItem>
             <Button type='primary' on-click={() => {
@@ -117,8 +116,6 @@ class RoleDetail extends Vue<RoleDetailProp & Base> {
     )
   }
 }
-
-const RoleDetailView = convClass<RoleDetailProp>(RoleDetail)
 
 @Component
 export default class Role extends Base {
@@ -199,7 +196,7 @@ export default class Role extends Base {
       width: 30,
       render: (h, params) => {
         const authorityList = params.row.authorityList
-        return <AuthorityTagView value={authorityList} />
+        return <AuthorityTag value={authorityList} />
       }
     }, {
       title: '名字',
@@ -251,7 +248,7 @@ export default class Role extends Base {
     return (
       <div>
         <Modal v-model={this.detailShow} footer-hide mask-closable={false}>
-          <RoleDetailView detail={this.detail} on-save-success={() => {
+          <RoleDetail detail={this.detail} on-save-success={() => {
             this.detailShow = false
             this.$refs.list.query()
           }} />
@@ -336,9 +333,9 @@ class RoleTransferProp {
   selectedData: DetailDataType[];
 }
 @Component({
-  mixins: [getCompOpts(RoleTransferProp)]
+  props: RoleTransferProp
 })
-class RoleTransfer extends Vue<RoleTransferProp> {
+export class RoleTransfer extends Vue<RoleTransferProp> {
   @Watch('selectedData')
   private updateSelectedData (newVal: DetailDataType[]) {
     this.insideSelectedData = newVal ? newVal.map(ele => this.dataConverter(ele)) : []
@@ -379,6 +376,3 @@ class RoleTransfer extends Vue<RoleTransferProp> {
     )
   }
 }
-
-export interface IRoleTransfer extends RoleTransfer { }
-export const RoleTransferView = convClass<RoleTransferProp>(RoleTransfer)

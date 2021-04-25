@@ -2,7 +2,6 @@ import { Watch } from 'vue-property-decorator'
 
 import { Prop, Component, Vue } from '@/components/decorator'
 
-import { convClass, getCompOpts } from '../utils'
 import { Icon, Button, Dropdown, DropdownMenu, DropdownItem } from '../iview'
 import { MyBase } from '../my-base'
 import { MyButtonsModel, MyButtonsGroup } from './model'

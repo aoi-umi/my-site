@@ -1,6 +1,7 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 import * as parseJson from 'parse-json'
 
+import { Component, Vue, Prop } from '@/components/decorator'
 import { Card, Row, Col, Form, Button, Input, ButtonGroup } from '@/components/iview'
 import { routerConfig } from '@/router'
 import { convert } from '@/helpers'

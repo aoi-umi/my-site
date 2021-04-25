@@ -1,8 +1,7 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 import { myEnum } from '@/config'
-import { convClass, getCompOpts } from '@/components/utils'
 import { RadioGroup, Radio, Button, Modal, Spin } from '@/components/iview'
 
 import { Base } from '../base'
@@ -30,9 +29,9 @@ class PayProp {
 }
 @Component({
   extends: Base,
-  mixins: [getCompOpts(PayProp)]
+  props: PayProp
 })
-export class Pay extends Vue<PayProp & Base> {
+export class Pay extends Vue<PayProp, Base> {
   stylePrefix = 'comp-pay-';
 
   $refs: { qrcode: MyQrcode; }
@@ -124,5 +123,3 @@ export class Pay extends Vue<PayProp & Base> {
     )
   }
 }
-
-export const PayView = convClass<PayProp>(Pay)

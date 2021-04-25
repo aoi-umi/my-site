@@ -1,16 +1,17 @@
 
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
+import { Component, Vue, Prop } from '@/components/decorator'
 import { Input, Card, Button, Checkbox, Row, Col, Select, Form, FormItem, Divider, Tabs, TabPane } from '@/components/iview'
 
 import { testApi } from '@/api'
 import { myEnum } from '@/config'
 
 import { Base } from '../base'
-import DynamicCompDemoModel, { DynamicCompDemo } from './dynamic-comp'
-@Component({})
+import DynamicCompDemo from './dynamic-comp'
+@Component
 export default class App extends Base {
-  $refs: { dynamicComp: DynamicCompDemoModel }
+  $refs: { dynamicComp: DynamicCompDemo }
   created () {
     this.init()
   }

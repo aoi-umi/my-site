@@ -1,16 +1,17 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
+import { Component, Vue, Prop } from '@/components/decorator'
 import { testApi } from '@/api'
 import { myEnum, dev } from '@/config'
 import { routerConfig } from '@/router'
 import { FormItem, Button, Divider, Input, Icon, Affix, Card } from '@/components/iview'
-import { MyUpload,  FileDataType, FileType } from '@/components/my-upload'
+import { MyUpload, FileDataType, FileType } from '@/components/my-upload'
 
 import { VideoMgtBase } from './video-mgt'
-import { ContentDetailType, ContentDataType, ContentMgtDetail, ContentMgtDetailView, ContentLogListView } from './content-mgt-base'
+import { ContentDetailType, ContentDataType, ContentMgtDetail, ContentLogList } from './content-mgt-base'
+import { VideoDetailMain } from './video-detail'
 
 import './video.less'
-import { VideoDetailMainView } from './video-detail'
 
 export type DetailDataType = ContentDataType & {
   videoIdList: string[];
@@ -89,7 +90,7 @@ export default class VideoMgtDetail extends VideoMgtBase {
   private renderLog () {
     const { log } = this.innerDetail
     return (
-      <ContentLogListView log={log} />
+      <ContentLogList log={log} />
     )
   }
 
@@ -97,7 +98,7 @@ export default class VideoMgtDetail extends VideoMgtBase {
     const { detail } = this.innerDetail
     return (
       <div>
-        <VideoDetailMainView data={detail} />
+        <VideoDetailMain data={detail} />
         {this.renderDetailOpBox(detail)}
         {this.renderLog()}
         {this.renderDelConfirm()}
@@ -109,7 +110,7 @@ export default class VideoMgtDetail extends VideoMgtBase {
   render () {
     const videoSize = 20
     return (
-      <ContentMgtDetailView ref='detailView'
+      <ContentMgtDetail ref='detailView'
         preview={this.preview}
         loadDetailData={this.loadDetailData}
         getRules={this.getRules}
@@ -147,7 +148,7 @@ export default class VideoMgtDetail extends VideoMgtBase {
           >
           </MyUpload>
         </FormItem>
-      </ContentMgtDetailView>
+      </ContentMgtDetail>
     )
   }
 }

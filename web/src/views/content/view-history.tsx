@@ -1,19 +1,18 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
+import { Component, Vue } from '@/components/decorator'
 import { testApi } from '@/api'
 import { convert } from '@/helpers'
 import { MyList } from '@/components/my-list'
-import { ListBase } from '../comps/list-base'
 import { Card, Input } from '@/components/iview'
-import { VideoListItemView } from './video'
-import { myEnum } from '@/config'
-import { ArticleListItemView } from './article'
-import { ContentMixItemView } from './content-mix'
+
+import { ListBase } from '../comps/list-base'
+import { ContentMixItem } from './content-mix'
 
 @Component({
   extends: ListBase
 })
-export default class ViewHistory extends Vue<ListBase> {
+export default class ViewHistory extends Vue<{}, ListBase> {
     stylePrefix = 'view-history-';
     $refs: { list: MyList<any> };
 
@@ -42,7 +41,7 @@ export default class ViewHistory extends Vue<ListBase> {
             type='custom'
             customRenderFn={(rs) => {
               return rs.data.map(ele => {
-                return <ContentMixItemView value={ele} />
+                return <ContentMixItem value={ele} />
               })
             }}
 

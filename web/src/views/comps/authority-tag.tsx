@@ -1,7 +1,6 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
-import { convClass, getCompOpts } from '@/components/utils'
+import { Component, Vue, Prop } from '@/components/decorator'
 import { MyTagBase, MyTagBaseProp } from '@/components/my-tag/my-tag'
 import { myEnum } from '@/config'
 
@@ -18,9 +17,9 @@ class AuthorityTagProp extends MyTagBaseProp {
 }
 @Component({
   extends: MyTagBase,
-  mixins: [getCompOpts(AuthorityTagProp)]
+  props: AuthorityTagProp
 })
-class AuthorityTag extends Vue<AuthorityTagProp & MyTagBase<AuthorityDetail>> {
+export class AuthorityTag extends Vue<AuthorityTagProp, MyTagBase<AuthorityDetail>> {
   private convert (ele: AuthorityDetail) {
     let color = ''
     let tag = ele.code
@@ -40,6 +39,3 @@ class AuthorityTag extends Vue<AuthorityTagProp & MyTagBase<AuthorityDetail>> {
     return this.renderTag(this.tagList.map(ele => this.convert(ele)))
   }
 }
-
-export const AuthorityTagView = convClass<AuthorityTagProp>(AuthorityTag)
-export interface IAuthorityTagView extends AuthorityTag { };

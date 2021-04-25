@@ -1,17 +1,16 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 import { testApi } from '@/api'
 import { convert } from '@/helpers'
-import { convClass, getCompOpts } from '@/components/utils'
 import { MyList, ResultType } from '@/components/my-list'
 import { MyEditor } from '@/components/my-editor'
 import { Divider, Button, Avatar, Modal, Icon, Time } from '@/components/iview'
 import { MyConfirm } from '@/components/my-confirm'
 import { dev, myEnum } from '@/config'
 import { Base } from '../base'
-import { UserAvatarView } from '../comps/user-avatar'
-import { UserPoptipView } from '../comps/user-poptip'
+import { UserAvatar } from '../comps/user-avatar'
+import { UserPoptip } from '../comps/user-poptip'
 
 import './comment.less'
 
@@ -28,9 +27,9 @@ class CommentProp {
 
 @Component({
   extends: Base,
-  mixins: [getCompOpts(CommentProp)]
+  props: CommentProp
 })
-export class Comment extends Vue<CommentProp & Base> {
+export class Comment extends Vue<CommentProp, Base> {
     stylePrefix = 'comment-';
 
     $refs: { list: MyList<any>, replyList: MyList<any> };
@@ -163,16 +162,16 @@ export class Comment extends Vue<CommentProp & Base> {
       return (
         <div class={this.getStyleName(!reply ? 'main' : 'reply')} key={ele._id}>
           <div class={this.getStyleName('content-root')}>
-            {ele.user && <UserAvatarView user={ele.user} isAuthor={ele.user._id === this.ownUserId} />}
+            {ele.user && <UserAvatar user={ele.user} isAuthor={ele.user._id === this.ownUserId} />}
             <span class={this.getStyleName('floor')}>
                         #{ele.floor}
             </span>
             <div class={this.getStyleName('content')}>
               {ele.quoteUser &&
                             <div><span>回复</span>
-                              <UserPoptipView user={ele.quoteUser}>
+                              <UserPoptip user={ele.quoteUser}>
                                 <b><a>{ele.quoteUser.nickname}</a></b>
-                              </UserPoptipView>
+                              </UserPoptip>
                               <b>{ele.quoteUser._id === this.ownUserId && '(作者)'}:</b>
                             </div>
               }
@@ -306,4 +305,3 @@ export class Comment extends Vue<CommentProp & Base> {
     }
 }
 
-export const CommentView = convClass<CommentProp>(Comment)

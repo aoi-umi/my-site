@@ -1,11 +1,11 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 import { myEnum, authority, dev } from '@/config'
-import { getCompOpts, convClass } from '@/components/utils'
 import { Card } from '@/components/iview'
-import { ArticleListItemView } from './article'
-import { VideoListItemView } from './video'
+
+import { ArticleListItem } from './article'
+import { VideoListItem } from './video'
 
 class ContentMixItemProp {
     @Prop({
@@ -14,15 +14,13 @@ class ContentMixItemProp {
     value: any;
 }
 @Component({
-  mixins: [getCompOpts(ContentMixItemProp)]
+  props: ContentMixItemProp
 })
-class ContentMixItem extends Vue<ContentMixItemProp> {
+export class ContentMixItem extends Vue<ContentMixItemProp> {
   render () {
     const ele = this.value
-    if (ele.contentType === myEnum.contentType.文章) { return <ArticleListItemView value={ele} /> }
-    if (ele.contentType === myEnum.contentType.视频) { return <VideoListItemView value={ele} /> }
+    if (ele.contentType === myEnum.contentType.文章) { return <ArticleListItem value={ele} /> }
+    if (ele.contentType === myEnum.contentType.视频) { return <VideoListItem value={ele} /> }
     return <Card>错误的类型</Card>
   }
 }
-
-export const ContentMixItemView = convClass<ContentMixItemProp>(ContentMixItem)

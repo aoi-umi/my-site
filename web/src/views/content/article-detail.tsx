@@ -1,20 +1,19 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 import marked from 'marked'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/github.css'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 import { testApi } from '@/api'
 import { myEnum, dev } from '@/config'
 import { Divider, Affix, Card } from '@/components/iview'
 import { MyLoad } from '@/components/my-load'
-import { convClass, getCompOpts } from '@/components/utils'
 
-import { UserAvatarView } from '../comps/user-avatar'
+import { UserAvatar } from '../comps/user-avatar'
 import { Base } from '../base'
 import { DetailType, DetailDataType } from './article-mgt-detail'
-import { CommentView, Comment } from './comment'
-import { ContentOperateView } from './content'
+import { Comment } from './comment'
+import { ContentOperate } from './content'
 
 marked.setOptions({
   renderer: new marked.Renderer(),
@@ -47,10 +46,10 @@ export default class ArticleDetail extends Base {
             const { detail } = t
             return (
               <div>
-                <ArticleDetailMainView data={detail} />
+                <ArticleDetailMain data={detail} />
                 <Affix offset-bottom={40}>
                   <Card>
-                    <ContentOperateView data={detail} contentType={myEnum.contentType.文章} voteType={myEnum.voteType.文章} on-operate-click={(type) => {
+                    <ContentOperate data={detail} contentType={myEnum.contentType.文章} voteType={myEnum.voteType.文章} on-operate-click={(type) => {
                       if (type === myEnum.contentOperateType.评论) {
                         const el = this.$refs.comment.$el as HTMLElement
                         window.scrollTo(0, el.offsetTop)
@@ -61,7 +60,7 @@ export default class ArticleDetail extends Base {
                   </Card>
                 </Affix>
                 <Divider size='small' />
-                <CommentView ref='comment' ownerId={detail._id} ownUserId={detail.userId} type={myEnum.contentType.文章} />
+                <Comment ref='comment' ownerId={detail._id} ownUserId={detail.userId} type={myEnum.contentType.文章} />
               </div>
             )
           }} />
@@ -77,9 +76,9 @@ class ArticleDetailMainProp {
 }
 @Component({
   extends: Base,
-  mixins: [getCompOpts(ArticleDetailMainProp)]
+  props: ArticleDetailMainProp
 })
-class ArticleDetailMain extends Vue<ArticleDetailMainProp & Base> {
+export class ArticleDetailMain extends Vue<ArticleDetailMainProp, Base> {
     stylePrefix = 'article-';
     content = '';
     created () {
@@ -93,7 +92,7 @@ class ArticleDetailMain extends Vue<ArticleDetailMainProp & Base> {
     renderHeader (detail: DetailDataType) {
       return (
         <div>
-          <UserAvatarView user={detail.user} />
+          <UserAvatar user={detail.user} />
           {[
             '发布于: ' + this.$utils.dateFormat(detail.publishAt)
           ].map(ele => {
@@ -119,4 +118,3 @@ class ArticleDetailMain extends Vue<ArticleDetailMainProp & Base> {
     }
 }
 
-export const ArticleDetailMainView = convClass<ArticleDetailMainProp>(ArticleDetailMain)

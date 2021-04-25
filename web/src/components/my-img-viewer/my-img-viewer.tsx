@@ -3,7 +3,6 @@ import Hammer from 'hammerjs'
 
 import { Component, Vue, Prop } from '@/components/decorator'
 
-import { convClass, getCompOpts } from '../utils'
 import { Carousel, CarouselItem, Icon, Button } from '../iview'
 import { MyImg } from '../my-img'
 import { MyBase } from '../my-base'

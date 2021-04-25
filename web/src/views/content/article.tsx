@@ -1,17 +1,16 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 import { testApi } from '@/api'
 import { myEnum, authority, dev } from '@/config'
 import { convert } from '@/helpers'
-import { convClass, getCompOpts } from '@/components/utils'
 import { Card, Input } from '@/components/iview'
 import { MyList } from '@/components/my-list'
 
 import { ListBase, ListBaseProp } from '../comps/list-base'
 import { Base } from '../base'
 import { DetailDataType } from './article-mgt-detail'
-import { ContentListItemView } from './content'
+import { ContentListItem } from './content'
 
 import './article.less'
 
@@ -54,7 +53,7 @@ export default class Article extends ListBase {
             customRenderFn={(rs) => {
               return rs.data.map(ele => {
                 return (
-                  <ArticleListItemView value={ele} />
+                  <ArticleListItem value={ele} />
                 )
               })
             }}
@@ -84,9 +83,6 @@ export default class Article extends ListBase {
       )
     }
 }
-
-export const ArticleView = convClass<ArticleProp>(Article)
-
 class ArticleListItemProp {
     @Prop({
       required: true
@@ -104,12 +100,12 @@ class ArticleListItemProp {
 
 @Component({
   extends: Base,
-  mixins: [getCompOpts(ArticleListItemProp)]
+  props: ArticleListItemProp
 })
-class ArticleListItem extends Vue<ArticleListItemProp & Base> {
+export class ArticleListItem extends Vue<ArticleListItemProp, Base> {
   render () {
     return (
-      <ContentListItemView
+      <ContentListItem
         value={this.value}
         selectable={this.selectable}
         mgt={this.mgt}
@@ -119,9 +115,8 @@ class ArticleListItem extends Vue<ArticleListItemProp & Base> {
         }}
       >
         {this.$slots.default}
-      </ContentListItemView>
+      </ContentListItem>
     )
   }
 }
 
-export const ArticleListItemView = convClass<ArticleListItemProp>(ArticleListItem)

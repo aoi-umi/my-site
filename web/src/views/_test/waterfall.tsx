@@ -1,5 +1,6 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
+import { Component, Vue, Prop } from '@/components/decorator'
 import { Button } from '@/components/iview'
 import { MyWaterfall } from '@/components/my-waterfall'
 

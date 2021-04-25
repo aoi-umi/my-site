@@ -4,7 +4,7 @@ import { Prop, Component, Vue } from '@/components/decorator'
 import { DynamicCompConfigType, DynamicComp, DynamicCompProp } from '../my-dynamic-comp'
 import { Row, Col } from '../iview'
 import { MyBase } from '../my-base'
-import { getCompOpts, convClass, Utils } from '../utils'
+import { Utils } from '../utils'
 import { MyButtonsModel, MyButtons } from '../my-buttons'
 
 export type MyDetailDynamicCompConfigType = DynamicCompConfigType & {

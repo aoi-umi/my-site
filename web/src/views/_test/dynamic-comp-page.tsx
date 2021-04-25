@@ -1,9 +1,10 @@
 
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
+import { Component } from '@/components/decorator'
 import { myEnum } from '@/config'
 const { dynamicCompViewType } = myEnum
-import { getCompOpts, convClass, Utils } from '@/components/utils'
+import { Utils } from '@/components/utils'
 import { Base } from '@/views/base'
 import { MyLoad } from '@/components/my-load'
 import { testApi } from '@/api'
@@ -11,14 +12,14 @@ import { MyButtonsModel } from '@/components/my-buttons'
 import { DynamicCompEventType } from '@/components/my-dynamic-comp'
 import { Button } from '@/components/iview'
 
-import { CompDetail, CompDetailType, CompDetailView } from '../comp-mgt/comp-detail'
+import { CompDetail, CompDetailType } from '../comp-mgt/comp-detail'
 import { CompModuleType } from '../comp-mgt/comp-mgt-detail'
 
 @Component
 export default class CompDetailPage extends Base {
   $refs: {
     loadView: MyLoad,
-    comp: CompDetailView
+    comp: CompDetail
   };
 
   created () {

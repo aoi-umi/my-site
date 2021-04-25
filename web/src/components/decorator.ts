@@ -1,4 +1,5 @@
 import * as pd from 'vue-property-decorator'
+import { VueClass } from 'vue-class-component/lib/declarations'
 import { PropOptions } from 'vue'
 import { Constructor } from 'vue/types/options'
 import * as vue from 'vue'
@@ -26,6 +27,7 @@ export const Prop = pd.Prop as typeof MyProp
 declare function MyComponent<V extends vue.default>(options:
   (vue.ComponentOptions<V> | { props?: Function })
   & ThisType<V>): <VC>(target: VC) => VC;
+declare function MyComponent<VC extends vue.default>(target: Function): any;
 export const Component = (function (options) {
   if (options) {
     let props = options.props
@@ -39,8 +41,8 @@ export const Component = (function (options) {
   return pd.Component(options)
 }) as any as typeof MyComponent
 export interface VueConstructor {
-  new <Props = {}, Mix = {}>(props: Props & VueComponentOptions<Partial<Props>>): vue.default & Props & Mix
-  props: { [key: string]: { default: any } }
+  new <Props = {}, Mix = {}>(props?: Props & VueComponentOptions<Partial<Props>>): vue.default & Props & Mix
+  props?: { [key: string]: { default: any } }
 }
 
 export const Vue: VueConstructor = vue.default as any

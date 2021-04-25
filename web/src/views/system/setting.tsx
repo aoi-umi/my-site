@@ -1,5 +1,5 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
 
+import { Component } from '@/components/decorator'
 import { testApi } from '@/api'
 import { MyLoad } from '@/components/my-load'
 import { Form, FormItem, Input, RadioGroup, Radio, DatePicker, Button } from '@/components/iview'

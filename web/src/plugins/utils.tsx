@@ -2,7 +2,7 @@ import Vue from 'vue'
 import 'jquery'
 import moment, { Dayjs } from 'dayjs'
 
-import { MyConfirmModalView, MyConfirmModal, MyConfirmModalProp } from '@/components/my-confirm'
+import { MyConfirmModal, MyConfirmModalProp } from '@/components/my-confirm'
 import { CompModuleType } from '@/views/comp-mgt/comp-mgt-detail'
 
 import { dev, myEnum } from '@/config'
@@ -36,7 +36,7 @@ class Utils {
     opt = {
       ...opt
     }
-    let inst = this.getComp<MyConfirmModal>(MyConfirmModalView, {
+    let inst = this.getComp<MyConfirmModal>(MyConfirmModal, {
       props: {
         title: opt.title || '提示',
         confirm: opt.confirm

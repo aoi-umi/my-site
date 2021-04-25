@@ -1,15 +1,14 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 import * as echarts from 'echarts'
 import { VideoJsPlayer } from 'video.js'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 import { testSocket, testApi } from '@/api'
 import { Input, Card, Button, Checkbox } from '@/components/iview'
 import { MyList } from '@/components/my-list'
 import { MyUpload } from '@/components/my-upload'
 import { MyVideo } from '@/components/my-video'
 import { MyEditor } from '@/components/my-editor'
-import { convClass, getCompOpts } from '@/components/utils'
 import { MyQrcode } from '@/components/my-qrcode'
 
 import { Base } from '../base'
@@ -107,24 +106,27 @@ export default class App extends Base {
     return (
       <div>
         <MyButtons value={[
-          { name: 'test', text: '测试', type: 'text',
+          {
+            name: 'test', text: '测试', type: 'text',
             enable: () => {
               return this.btnDisabled
-            } },
+            }
+          },
           {
             name: 'testGroup1', text: '测试组1', group: '测试组',
             click: (btn) => {
               this.$Message.info(`点击了${btn.name}`)
             }
           },
-          { name: 'testGroup2', text: '测试组2', group: '测试组',
+          {
+            name: 'testGroup2', text: '测试组2', group: '测试组',
             click: (btn) => {
               this.btnDisabled = !this.btnDisabled
             }
           }
         ]} />
-        <TsxView />
-        <TsxView2 test='传参属性1' />
+        <Tsx />
+        <Tsx2 test='传参属性1' />
         <MyQrcode text='qrcode' showText />
         <div class={this.getStyleName('box1')}>
           {this.renderVideo()}
@@ -287,7 +289,7 @@ class PropClass {
 }
 
 @Component({
-  mixins: [getCompOpts(PropClass)]
+  props: PropClass
 })
 class Tsx extends Vue<PropClass> {
   testFn () {
@@ -297,7 +299,6 @@ class Tsx extends Vue<PropClass> {
     return <div>{this.testFn()},{this.test},1111111111</div>
   }
 }
-const TsxView = convClass<PropClass>(Tsx)
 
 class PropClass2 {
   @Prop({
@@ -319,9 +320,9 @@ class PropClass2 {
 
 @Component({
   extends: Tsx,
-  mixins: [getCompOpts(PropClass2)]
+  props: PropClass2
 })
-class Tsx2 extends Vue<PropClass2 & Tsx> {
+class Tsx2 extends Vue<PropClass2, Tsx> {
   protected render () {
     return (
       <div>
@@ -331,4 +332,3 @@ class Tsx2 extends Vue<PropClass2 & Tsx> {
     )
   }
 }
-const TsxView2 = convClass<PropClass2>(Tsx2)

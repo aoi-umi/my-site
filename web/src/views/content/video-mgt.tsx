@@ -1,16 +1,16 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
+
+import { Component, Vue } from '@/components/decorator'
 import { testApi } from '@/api'
 import { myEnum, authority, dev } from '@/config'
 import { routerConfig } from '@/router'
 import { convert } from '@/helpers'
-import { Card, Button } from '@/components/iview'
-import { convClass, getCompOpts } from '@/components/utils'
 import { MyList } from '@/components/my-list'
 import { MyTag, TagType } from '@/components/my-tag'
 
 import { ListBase, IListBase, ListBaseProp } from '../comps/list-base'
 import { DetailDataType } from './article-mgt-detail'
-import { VideoListItemView } from './video'
+import { VideoListItem } from './video'
 import { ContentMgtBase, ContentDataType, IContentMgtBase } from './content-mgt-base'
 
 @Component
@@ -43,9 +43,9 @@ export class VideoMgtBase extends ContentMgtBase implements IContentMgtBase {
 class VideoMgtProp extends ListBaseProp { }
 @Component({
   extends: VideoMgtBase,
-  mixins: [getCompOpts(VideoMgtProp)]
+  props: VideoMgtProp
 })
-export default class VideoMgt extends Vue<VideoMgtProp & VideoMgtBase> implements IListBase {
+export default class VideoMgt extends Vue<VideoMgtProp, VideoMgtBase> implements IListBase {
     $refs: { list: MyList<any> };
 
     protected created () {
@@ -130,14 +130,14 @@ export default class VideoMgt extends Vue<VideoMgtProp & VideoMgtBase> implement
               return rs.data.map((ele: DetailDataType) => {
                 ele._disabled = !ele.canDel
                 return (
-                  <VideoListItemView value={ele} mgt
+                  <VideoListItem value={ele} mgt
                     selectable={!!this.multiOperateBtnList.length}
                     on-selected-change={(val) => {
                       ele._checked = val
                       this.$refs.list.selectedRows = rs.data.filter(ele => ele._checked)
                     }}>
                     {this.renderListOpBox(ele)}
-                  </VideoListItemView>
+                  </VideoListItem>
                 )
               })
             }}
@@ -181,4 +181,3 @@ export default class VideoMgt extends Vue<VideoMgtProp & VideoMgtBase> implement
     }
 }
 
-export const VideoMgtView = convClass<VideoMgtProp>(VideoMgt)

@@ -12,7 +12,7 @@ import { MyLoad } from '@/components/my-load'
 import { DynamicCompConfigType, DynamicCompSelectOptionsType, DynamicCompPropType, DynamicCompConfigFnType } from '@/components/my-dynamic-comp'
 import { myEnum } from '@/config'
 const { dynamicCompType, dynamicSqlCalcType, dynamicCompViewType } = myEnum
-import { convClass, getCompOpts, Utils } from '@/components/utils'
+import { Utils } from '@/components/utils'
 import { MyDetail } from '@/components/my-detail'
 import { MyButtonsModel } from '@/components/my-buttons'
 

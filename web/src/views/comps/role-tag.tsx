@@ -1,27 +1,26 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 import { myEnum } from '@/config'
-import { convClass, getCompOpts } from '@/components/utils'
 import { MyTagBase } from '@/components/my-tag/my-tag'
 import { Tooltip } from '@/components/iview'
 import { DetailDataType } from '../system/role'
-import { AuthorityTagView } from './authority-tag'
+import { AuthorityTag } from './authority-tag'
 
 class RoleTagProp {
-    @Prop({
-      default: []
-    })
-    value: DetailDataType[];
+  @Prop({
+    default: []
+  })
+  value: DetailDataType[];
 
-    @Prop()
-    hideCode?: boolean;
+  @Prop()
+  hideCode?: boolean;
 }
 @Component({
   extends: MyTagBase,
-  mixins: [getCompOpts(RoleTagProp)]
+  props: RoleTagProp
 })
-class RoleTag extends Vue<RoleTagProp & MyTagBase<DetailDataType>> {
+export class RoleTag extends Vue<RoleTagProp, MyTagBase<DetailDataType>> {
   render () {
     return (
       <div>
@@ -36,7 +35,7 @@ class RoleTag extends Vue<RoleTagProp & MyTagBase<DetailDataType>> {
           return (
             <Tooltip theme='light' max-width='250' disabled={!ele.authorityList || !ele.authorityList.length}>
               <div slot='content' >
-                <AuthorityTagView value={ele.authorityList} />
+                <AuthorityTag value={ele.authorityList} />
               </div>
               {
                 this.renderTag({
@@ -52,6 +51,3 @@ class RoleTag extends Vue<RoleTagProp & MyTagBase<DetailDataType>> {
     )
   }
 }
-
-export const RoleTagView = convClass<RoleTagProp>(RoleTag)
-export interface IRoleTagView extends RoleTag { };

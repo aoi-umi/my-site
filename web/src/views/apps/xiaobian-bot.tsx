@@ -1,4 +1,6 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
+
+import { Component, Vue, Prop } from '@/components/decorator'
 import { Card, Row, Col, Form, FormItem, Input, Button } from '@/components/iview'
 import { routerConfig } from '@/router'
 

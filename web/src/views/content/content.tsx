@@ -1,15 +1,15 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 import { myEnum, dev } from '@/config'
 import { testApi } from '@/api'
 import { routerConfig } from '@/router'
 import { Icon, Card, Row, Col, Checkbox, Time, Divider, Dropdown, DropdownMenu, DropdownItem } from '@/components/iview'
-import { convClass, getCompOpts, Utils } from '@/components/utils'
+import { Utils } from '@/components/utils'
 import { MyTag } from '@/components/my-tag'
 
 import { Base } from '../base'
-import { UserAvatarView } from '../comps/user-avatar'
+import { UserAvatar } from '../comps/user-avatar'
 import { ContentDataType } from './content-mgt-base'
 
 import './content.less'
@@ -44,9 +44,9 @@ class ContentOperateProp {
 }
 @Component({
   extends: Base,
-  mixins: [getCompOpts(ContentOperateProp)]
+  props: ContentOperateProp
 })
-class ContentOperate extends Vue<ContentOperateProp & Base> {
+export class ContentOperate extends Vue<ContentOperateProp, Base> {
     stylePrefix = 'content-op-'
 
     private handleVote (detail, value) {
@@ -208,8 +208,6 @@ class ContentOperate extends Vue<ContentOperateProp & Base> {
     }
 }
 
-export const ContentOperateView = convClass<ContentOperateProp>(ContentOperate)
-
 class ContentListItemProp {
     @Prop({
       required: true
@@ -232,9 +230,9 @@ class ContentListItemProp {
 
 @Component({
   extends: Base,
-  mixins: [getCompOpts(ContentListItemProp)]
+  props: ContentListItemProp
 })
-class ContentListItem extends Vue<ContentListItemProp & Base> {
+export class ContentListItem extends Vue<ContentListItemProp, Base> {
     stylePrefix = 'content-';
 
     private cfgs = {
@@ -283,7 +281,7 @@ class ContentListItem extends Vue<ContentListItemProp & Base> {
                   }} />}
                 </Col>
                 <Col class={this.getStyleName('user-col')} span={24}>
-                  <UserAvatarView user={ele.user} />
+                  <UserAvatar user={ele.user} />
                   {ele.publishAt && <span class='not-important' style={{ marginLeft: '5px' }}>发布于 <Time time={new Date(ele.publishAt)} /></span>}
                 </Col>
               </Row>
@@ -293,13 +291,13 @@ class ContentListItem extends Vue<ContentListItemProp & Base> {
                   {!min && <p class={this.getStyleName('profile')}>{ele.profile || this.cfg.profile}</p>}
                 </Col>
                 {this.mgt && <p class='not-important'>创建于 <Time time={new Date(ele.createdAt)} /></p>}
-                {this.mgt && <ContentOperateView data={ele} contentType={this.contentType} voteType={this.cfg.voteType} mgt />}
+                {this.mgt && <ContentOperate data={ele} contentType={this.contentType} voteType={this.cfg.voteType} mgt />}
               </Row>
               <Divider size='small' />
             </div>
             <div style='display:flex;'>
               {this.$slots.default || (!this.mgt
-                ? <ContentOperateView data={ele} contentType={this.contentType} voteType={this.cfg.voteType} stretch toDetail={() => {
+                ? <ContentOperate data={ele} contentType={this.contentType} voteType={this.cfg.voteType} stretch toDetail={() => {
                   this.toDetail(ele)
                 }} getShareUrl={() => {
                   return this.getDetailUrl(ele)
@@ -311,5 +309,3 @@ class ContentListItem extends Vue<ContentListItemProp & Base> {
       )
     }
 }
-
-export const ContentListItemView = convClass<ContentListItemProp>(ContentListItem)

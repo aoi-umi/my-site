@@ -1,46 +1,45 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
-import { getCompOpts } from '@/components/utils'
+import { Component, Vue, Prop } from '@/components/decorator'
 
 import { Base } from '../base'
 
 export interface IListBase {
-    queryOpt?: any;
-    notQueryOnMounted?: boolean;
-    notQueryOnRoute?: boolean;
-    notQueryToRoute?: boolean;
-    query: () => any;
+  queryOpt?: any;
+  notQueryOnMounted?: boolean;
+  notQueryOnRoute?: boolean;
+  notQueryToRoute?: boolean;
+  query: () => any;
 }
 
 export class ListBaseProp {
-    @Prop()
-    queryOpt?: any;
+  @Prop()
+  queryOpt?: any;
 
-    @Prop()
-    notQueryOnMounted?: boolean;
+  @Prop()
+  notQueryOnMounted?: boolean;
 
-    @Prop()
-    notQueryOnRoute?: boolean;
+  @Prop()
+  notQueryOnRoute?: boolean;
 
-    @Prop()
-    notQueryToRoute?: boolean;
+  @Prop()
+  notQueryToRoute?: boolean;
 }
 @Component({
   extends: Base,
-  mixins: [getCompOpts(ListBaseProp)]
+  props: ListBaseProp
 })
-export class ListBase extends Vue<ListBaseProp & Base> implements IListBase {
+export class ListBase extends Vue<ListBaseProp, Base> implements IListBase {
   mounted () {
     if (!this.notQueryOnMounted) { this.query() }
   }
 
-    @Watch('$route')
+  @Watch('$route')
   route (to, from) {
     if (!this.notQueryOnRoute) { this.query() }
   }
 
-    query () {
-      throw new Error('please override query')
-    }
+  query () {
+    throw new Error('please override query')
+  }
 }

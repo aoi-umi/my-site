@@ -1,26 +1,26 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
+import { Component, Vue } from '@/components/decorator'
 import { dev, myEnum } from '@/config'
 import { testApi } from '@/api'
-import { convClass, getCompOpts } from '@/components/utils'
 import { Modal, Input, Form, FormItem, Button, TabPane, Tabs } from '@/components/iview'
 import { MyUpload, FileDataType } from '@/components/my-upload'
 import { MyLoad } from '@/components/my-load'
 import { LoginUser } from '@/model/user'
 
-import { UserAvatarView } from '../comps/user-avatar'
-import { FollowButtonView } from '../comps/follow-button'
-import { AuthorityTagView } from '../comps/authority-tag'
-import { RoleTagView } from '../comps/role-tag'
+import { UserAvatar } from '../comps/user-avatar'
+import { FollowButton } from '../comps/follow-button'
+import { AuthorityTag } from '../comps/authority-tag'
+import { RoleTag } from '../comps/role-tag'
 
 import { Base } from '../base'
-import Article, { ArticleView } from '../content/article'
-import Video, { VideoView } from '../content/video'
+import Article from '../content/article'
+import Video from '../content/video'
 import { DetailDataType as UserDetailDataType } from './user-mgt'
-import { ChatList, ChatListView } from './user-chat'
-import { ThirdPartyLoginView } from './user-sign'
-import { FavouriteList, FavouriteListView } from './favourite'
-import { FollowList, FollowListView } from './follow'
+import { ChatList } from './user-chat'
+import { ThirdPartyLogin } from './user-sign'
+import { FavouriteList } from './favourite'
+import { FollowList } from './follow'
 
 import './user.less'
 
@@ -298,12 +298,12 @@ export default class UserInfo extends Base {
       return (
         <div>
           <div class={this.getStyleName('main')}>
-            <UserAvatarView user={detail} size='large' noTips showAccount class={this.getStyleName('avatar')} />
+            <UserAvatar user={detail} size='large' noTips showAccount class={this.getStyleName('avatar')} />
             {detail.self && <a on-click={() => {
               this.toggleUpdate(true)
             }} class={this.getStyleName('edit')}>修改</a>}
             <div class='flex-stretch'></div>
-            {!detail.self && <FollowButtonView class={this.getStyleName('follow')} user={detail} />}
+            {!detail.self && <FollowButton class={this.getStyleName('follow')} user={detail} />}
           </div>
           <Tabs animated={false} v-model={this.tab} class={this.getStyleName('tab')} on-on-click={(name: string) => {
             this.$router.push({
@@ -320,32 +320,32 @@ export default class UserInfo extends Base {
             <TabPane name={myEnum.userTab.视频} label={() => {
               return <div>视频: {detail.video}</div>
             }}>
-              <VideoView ref='videoList' queryOpt={{ userId: detail._id }} notQueryOnRoute notQueryToRoute notQueryOnMounted />
+              <Video ref='videoList' queryOpt={{ userId: detail._id }} notQueryOnRoute notQueryToRoute notQueryOnMounted />
             </TabPane>
             <TabPane name={myEnum.userTab.文章} label={() => {
               return <div>文章: {detail.article}</div>
             }}>
-              <ArticleView ref='articleList' queryOpt={{ userId: detail._id }} notQueryOnRoute notQueryToRoute notQueryOnMounted />
+              <Article ref='articleList' queryOpt={{ userId: detail._id }} notQueryOnRoute notQueryToRoute notQueryOnMounted />
             </TabPane>
             <TabPane name={myEnum.userTab.粉丝} label={() => {
               return <div>粉丝: {detail.follower}</div>
             }}>
-              <FollowListView ref='followerList' userId={this.detail._id} followType={myEnum.followQueryType.粉丝} />
+              <FollowList ref='followerList' userId={this.detail._id} followType={myEnum.followQueryType.粉丝} />
             </TabPane>
             <TabPane name={myEnum.userTab.关注} label={() => {
               return <div>关注: {detail.following}</div>
             }}>
-              <FollowListView ref='followingList' userId={this.detail._id} followType={myEnum.followQueryType.关注} />
+              <FollowList ref='followingList' userId={this.detail._id} followType={myEnum.followQueryType.关注} />
             </TabPane>
             {detail.self && <TabPane name={myEnum.userTab.收藏} label={() => {
               return <div>收藏</div>
             }}>
-              <FavouriteListView ref='favouriteList' />
+              <FavouriteList ref='favouriteList' />
             </TabPane>}
             {detail.self && <TabPane name={myEnum.userTab.私信} label={() => {
               return <div>私信</div>
             }}>
-              <ChatListView ref='chatList' />
+              <ChatList ref='chatList' />
             </TabPane>}
           </Tabs>
         </div>
@@ -356,7 +356,7 @@ export default class UserInfo extends Base {
       const detail = this.detail
       return (detail.self
         ? <div>
-          <UserUnbindView ref='userUnbind' on-success={(type) => {
+          <UserUnbind ref='userUnbind' on-success={(type) => {
             detail.bind[type] = false
           }} />
           <Form class='form-no-error' label-width={80}>
@@ -367,19 +367,19 @@ export default class UserInfo extends Base {
               {detail.profile || dev.defaultProfile}
             </FormItem>
             <FormItem label='角色'>
-              <RoleTagView value={detail.roleList} hideCode />
+              <RoleTag value={detail.roleList} hideCode />
             </FormItem>
             <FormItem label='权限'>
-              <AuthorityTagView value={detail.authorityList} hideCode />
+              <AuthorityTag value={detail.authorityList} hideCode />
             </FormItem>
             <FormItem label='可用权限'>
-              <AuthorityTagView value={Object.values(detail.auth)} hideCode />
+              <AuthorityTag value={Object.values(detail.auth)} hideCode />
             </FormItem>
             <FormItem label='注册时间'>
               {this.$utils.dateFormat(detail.createdAt)}
             </FormItem>
             <FormItem label='绑定'>
-              <ThirdPartyLoginView bind user={detail} />
+              <ThirdPartyLogin bind user={detail} />
             </FormItem>
           </Form>
         </div>
@@ -399,9 +399,9 @@ class UserUnbindProp {
 }
 @Component({
   extends: Base,
-  mixins: [getCompOpts(UserUnbindProp)]
+  props: UserUnbindProp
 })
-export class UserUnbind extends Vue<UserUnbindProp & Base> {
+export class UserUnbind extends Vue<UserUnbindProp, Base> {
     $refs: { unbind: iView.Form, };
     isShow = false;
     saving = false;
@@ -476,5 +476,3 @@ export class UserUnbind extends Vue<UserUnbindProp & Base> {
       )
     }
 }
-
-export const UserUnbindView = convClass<UserUnbindProp>(UserUnbind)

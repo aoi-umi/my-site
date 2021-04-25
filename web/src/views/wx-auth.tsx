@@ -1,5 +1,6 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
+import { Component, Vue } from '@/components/decorator'
 import { testApi, testSocket } from '@/api'
 import { myEnum, dev, env } from '@/config'
 import { LocalStore } from '@/store'

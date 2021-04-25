@@ -1,14 +1,15 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
+import { Component, Vue, Prop } from '@/components/decorator'
 import { testApi } from '@/api'
 import { myEnum, dev } from '@/config'
 import { routerConfig } from '@/router'
 import { FormItem, Button, Divider, Affix, Card } from '@/components/iview'
 import { MyEditor } from '@/components/my-editor'
 
-import { ContentDetailType, ContentDataType, ContentMgtDetail, ContentMgtDetailView, ContentLogListView } from './content-mgt-base'
+import { ContentDetailType, ContentDataType, ContentMgtDetail, ContentLogList } from './content-mgt-base'
 import { ArticleMgtBase } from './article-mgt'
-import { ArticleDetailMainView } from './article-detail'
+import { ArticleDetailMain } from './article-detail'
 
 import './article.less'
 
@@ -70,7 +71,7 @@ export default class ArticleMgtDetail extends ArticleMgtBase {
   private renderLog () {
     const { log } = this.innerDetail
     return (
-      <ContentLogListView log={log} />
+      <ContentLogList log={log} />
     )
   }
 
@@ -78,7 +79,7 @@ export default class ArticleMgtDetail extends ArticleMgtBase {
     const { detail } = this.innerDetail
     return (
       <div>
-        <ArticleDetailMainView data={detail} />
+        <ArticleDetailMain data={detail} />
         {this.renderDetailOpBox(detail)}
         {this.renderLog()}
         {this.renderDelConfirm()}
@@ -113,7 +114,7 @@ export default class ArticleMgtDetail extends ArticleMgtBase {
   protected render () {
     const { detail } = this.innerDetail
     return (
-      <ContentMgtDetailView ref='detailView'
+      <ContentMgtDetail ref='detailView'
         preview={this.preview}
         loadDetailData={this.loadDetailData}
         getRules={this.getRules}
@@ -132,7 +133,7 @@ export default class ArticleMgtDetail extends ArticleMgtBase {
               this.fileChangeHandler(file)
             }} />
         </FormItem>
-      </ContentMgtDetailView>
+      </ContentMgtDetail>
     )
   }
 }

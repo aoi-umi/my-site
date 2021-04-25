@@ -1,12 +1,11 @@
-import { Component } from 'vue-property-decorator'
 
+import { Component } from '@/components/decorator'
 import { testApi } from '@/api'
-import { convClass } from '@/components/utils'
 import { Input } from '@/components/iview'
 import { MyList, ResultType } from '@/components/my-list'
 
 import { Base } from '../base'
-import { ContentMixItemView } from '../content/content-mix'
+import { ContentMixItem } from '../content/content-mix'
 
 /**
  * 收藏
@@ -57,9 +56,8 @@ export class FavouriteList extends Base {
 
     private renderFn (rs: ResultType) {
       return rs.data.map(ele => {
-        return <ContentMixItemView value={ele} />
+        return <ContentMixItem value={ele} />
       })
     }
 }
 
-export const FavouriteListView = convClass(FavouriteList)

@@ -1,6 +1,7 @@
 
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
+import { Component, Vue, Prop } from '@/components/decorator'
 import { MyDockPanel, MyDockPanelItem } from '@/components/my-dock-panel'
 import { Base } from '../base'
 

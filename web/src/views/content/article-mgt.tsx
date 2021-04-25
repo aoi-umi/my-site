@@ -1,22 +1,21 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
+import { Component, Vue } from '@/components/decorator'
 import { testApi } from '@/api'
 import { myEnum, authority, dev } from '@/config'
 import { routerConfig } from '@/router'
 import { convert } from '@/helpers'
-import { Card, Button } from '@/components/iview'
-import { convClass, getCompOpts } from '@/components/utils'
 import { MyList } from '@/components/my-list'
 import { MyTag, TagType } from '@/components/my-tag'
 
 import { ListBase, IListBase, ListBaseProp } from '../comps/list-base'
 import { DetailDataType } from './article-mgt-detail'
-import { ArticleListItemView } from './article'
+import { ArticleListItem } from './article'
 import { ContentMgtBase, ContentDataType, IContentMgtBase } from './content-mgt-base'
 import './article.less'
 
 @Component
-export class ArticleMgtBase extends ContentMgtBase implements IContentMgtBase {
+export class ArticleMgtBase extends Vue<{}, ContentMgtBase> implements IContentMgtBase {
     contentMgtType = myEnum.contentMgtType.文章;
 
     async auditFn (detail, pass) {
@@ -46,9 +45,9 @@ class ArticleMgtProp extends ListBaseProp {
 }
 @Component({
   extends: ArticleMgtBase,
-  mixins: [getCompOpts(ArticleMgtProp)]
+  props: ArticleMgtProp
 })
-export default class ArticleMgt extends Vue<ArticleMgtProp & ArticleMgtBase> implements IListBase {
+export default class ArticleMgt extends Vue<ArticleMgtProp, ArticleMgtBase> implements IListBase {
     stylePrefix = 'article-mgt-';
     $refs: { list: MyList<any> };
 
@@ -134,14 +133,14 @@ export default class ArticleMgt extends Vue<ArticleMgtProp & ArticleMgtBase> imp
               return rs.data.map((ele: DetailDataType) => {
                 ele._disabled = !ele.canDel
                 return (
-                  <ArticleListItemView value={ele} mgt
+                  <ArticleListItem value={ele} mgt
                     selectable={!!this.multiOperateBtnList.length}
                     on-selected-change={(val) => {
                       ele._checked = val
                       this.$refs.list.selectedRows = rs.data.filter(ele => ele._checked)
                     }}>
                     {this.renderListOpBox(ele)}
-                  </ArticleListItemView>
+                  </ArticleListItem>
                 )
               })
             }}
@@ -185,4 +184,3 @@ export default class ArticleMgt extends Vue<ArticleMgtProp & ArticleMgtBase> imp
     }
 }
 
-export const ArticleMgtView = convClass<ArticleMgtProp>(ArticleMgt)

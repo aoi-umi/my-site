@@ -1,16 +1,14 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 import {
   Menu, MenuItem,
   Icon, Content, Sider, Layout, Submenu, Tooltip, Poptip
 } from '@/components/iview'
-import { convClass, getCompOpts } from '@/components/utils'
 import * as style from '@/components/style'
 
 import { Base } from '../base'
 import './side-menu.less'
-import cfg from '@/router/cfg'
 
 export type MenuConfig = {
     name?: string;
@@ -39,9 +37,9 @@ class SideMenuProp {
 }
 @Component({
   extends: Base,
-  mixins: [getCompOpts(SideMenuProp)]
+  props: SideMenuProp
 })
-export class SideMenu extends Vue<SideMenuProp & Base> {
+export class SideMenu extends Vue<SideMenuProp, Base> {
     stylePrefix = 'comp-side-menu-';
     $refs: { sider: any, menu: iView.Menu };
     isCollapsed = true;
@@ -214,5 +212,3 @@ export class SideMenu extends Vue<SideMenuProp & Base> {
       )
     }
 }
-
-export const SideMenuView = convClass<SideMenuProp>(SideMenu)

@@ -1,6 +1,7 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
 
+import { Component, Vue } from '@/components/decorator'
 import SettingStore from '@/store/setting'
 import LoginUserStore from '@/store/login-user'
 import { dev, error } from '@/config'

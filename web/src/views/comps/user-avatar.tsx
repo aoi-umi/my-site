@@ -1,10 +1,9 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
-import { convClass, getCompOpts } from '@/components/utils'
+import { Component, Vue, Prop } from '@/components/decorator'
 import { Avatar, Badge } from '@/components/iview'
 import { Base } from '../base'
-import { UserPoptipView } from './user-poptip'
+import { UserPoptip } from './user-poptip'
 
 import './user-avatar.less'
 
@@ -43,9 +42,9 @@ class UserAvatarProp {
 }
 @Component({
   extends: Base,
-  mixins: [getCompOpts(UserAvatarProp)]
+  props: UserAvatarProp
 })
-class UserAvatar extends Vue<UserAvatarProp & Base> {
+export class UserAvatar extends Vue<UserAvatarProp, Base> {
   stylePrefix = 'comp-user-avatar-';
 
   avatarUrl = '';
@@ -69,7 +68,7 @@ class UserAvatar extends Vue<UserAvatarProp & Base> {
   render () {
     return (
       <div class={this.getStyleName('root')}>
-        <UserPoptipView
+        <UserPoptip
           user={this.user}
           tipsPlacement={this.tipsPlacement}
           noTips={this.noTips}
@@ -83,11 +82,10 @@ class UserAvatar extends Vue<UserAvatarProp & Base> {
               src={this.avatarUrl}
             />
           </Badge>
-        </UserPoptipView>
+        </UserPoptip>
         <span class={this.getStyleName('text').concat('not-important')}>{this.user.nickname}{this.showAccount && `(${this.user.account})`}{this.isAuthor && `(发布者)`}</span>
       </div>
     )
   }
 }
 
-export const UserAvatarView = convClass<UserAvatarProp>(UserAvatar)

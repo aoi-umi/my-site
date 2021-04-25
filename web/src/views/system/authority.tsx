@@ -1,10 +1,9 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 import { testApi } from '@/api'
 import { myEnum, authority } from '@/config'
 import { convert } from '@/helpers'
-import { convClass, getCompOpts } from '@/components/utils'
 import { Modal, Input, Form, FormItem, Button, Checkbox, Switch, Transfer } from '@/components/iview'
 import { MyList, Const as MyListConst } from '@/components/my-list'
 import { MyTransfer } from '@/components/my-transfer'
@@ -27,9 +26,9 @@ class AuthorityDetailProp {
 }
 @Component({
   extends: Base,
-  mixins: [getCompOpts(AuthorityDetailProp)]
+  props: AuthorityDetailProp
 })
-class AuthorityDetail extends Vue<AuthorityDetailProp & Base> {
+export class AuthorityDetail extends Vue<AuthorityDetailProp, Base> {
     @Watch('detail')
   updateDetail (newVal) {
     const data = newVal || this.getDetailData()
@@ -106,8 +105,6 @@ class AuthorityDetail extends Vue<AuthorityDetailProp & Base> {
       )
     }
 }
-
-const AuthorityDetailView = convClass<AuthorityDetailProp>(AuthorityDetail)
 
 @Component
 export default class Authority extends Base {
@@ -232,7 +229,7 @@ export default class Authority extends Base {
       return (
         <div>
           <Modal v-model={this.detailShow} footer-hide mask-closable={false}>
-            <AuthorityDetailView detail={this.detail} on-save-success={() => {
+            <AuthorityDetail detail={this.detail} on-save-success={() => {
               this.detailShow = false
               this.$refs.list.query()
             }} />
@@ -309,9 +306,9 @@ class AuthorityTransferProp {
     selectedData: DetailDataType[];
 }
 @Component({
-  mixins: [getCompOpts(AuthorityTransferProp)]
+  props: AuthorityTransferProp
 })
-class AuthorityTransfer extends Vue<AuthorityTransferProp> {
+export class AuthorityTransfer extends Vue<AuthorityTransferProp> {
     @Watch('selectedData')
   private updateSelectedData (newVal: DetailDataType[]) {
     this.insideSelectedData = newVal ? newVal.map(ele => this.dataConverter(ele)) : []
@@ -352,6 +349,3 @@ class AuthorityTransfer extends Vue<AuthorityTransferProp> {
       )
     }
 }
-
-export interface IAuthorityTransfer extends AuthorityTransfer { }
-export const AuthorityTransferView = convClass<AuthorityTransferProp>(AuthorityTransfer)

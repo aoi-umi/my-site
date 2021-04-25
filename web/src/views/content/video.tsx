@@ -1,17 +1,16 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 import { testApi } from '@/api'
 import { myEnum, authority, dev } from '@/config'
 import { convert } from '@/helpers'
-import { convClass, getCompOpts } from '@/components/utils'
 import { Card, Input } from '@/components/iview'
 import { MyList } from '@/components/my-list'
 
 import { Base } from '../base'
 import { ListBase, ListBaseProp } from '../comps/list-base'
 import { DetailDataType } from './article-mgt-detail'
-import { ContentListItemView } from './content'
+import { ContentListItem } from './content'
 
 import './video.less'
 
@@ -19,7 +18,7 @@ class VideoProp extends ListBaseProp { }
 @Component({
   extends: ListBase
 })
-export default class Video extends Vue<VideoProp & ListBase> {
+export default class Video extends Vue<VideoProp, ListBase> {
     $refs: { list: MyList<any> };
 
     anyKey = '';
@@ -56,7 +55,7 @@ export default class Video extends Vue<VideoProp & ListBase> {
             customRenderFn={(rs) => {
               return rs.data.map(ele => {
                 return (
-                  <VideoListItemView value={ele} />
+                  <VideoListItem value={ele} />
                 )
               })
             }}
@@ -88,8 +87,6 @@ export default class Video extends Vue<VideoProp & ListBase> {
     }
 }
 
-export const VideoView = convClass<VideoProp>(Video)
-
 class VideoListItemProp {
     @Prop({
       required: true
@@ -106,12 +103,12 @@ class VideoListItemProp {
 }
 @Component({
   extends: Base,
-  mixins: [getCompOpts(VideoListItemProp)]
+  props: VideoListItemProp
 })
-class VideoListItem extends Vue<VideoListItemProp & Base> {
+export class VideoListItem extends Vue<VideoListItemProp, Base> {
   render () {
     return (
-      <ContentListItemView
+      <ContentListItem
         value={this.value}
         selectable={this.selectable}
         mgt={this.mgt}
@@ -121,9 +118,8 @@ class VideoListItem extends Vue<VideoListItemProp & Base> {
         }}
       >
         {this.$slots.default}
-      </ContentListItemView>
+      </ContentListItem>
     )
   }
 }
 
-export const VideoListItemView = convClass<VideoListItemProp>(VideoListItem)

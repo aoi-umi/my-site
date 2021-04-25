@@ -1,9 +1,11 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
+
+import { Component, Vue, Prop } from '@/components/decorator'
 import { routerConfig, MyRouteConfig } from '@/router'
 import { Breadcrumb, BreadcrumbItem } from '@/components/iview'
 import { Base } from '../base'
 
-@Component({})
+@Component
 export default class App extends Base {
   list = [];
   created () {

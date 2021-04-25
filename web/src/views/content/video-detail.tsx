@@ -1,21 +1,20 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 import { testApi, testSocket } from '@/api'
 import { myEnum, dev } from '@/config'
-import { convClass, getCompOpts } from '@/components/utils'
 import { Divider, Spin, Affix, Card } from '@/components/iview'
 import { MyLoad } from '@/components/my-load'
 import { MyVideo } from '@/components/my-video'
 import { FileType, FileDataType } from '@/components/my-upload'
 
-import { UserAvatarView } from '../comps/user-avatar'
+import { UserAvatar } from '../comps/user-avatar'
 import { Base } from '../base'
 import { DetailType, DetailDataType } from './video-mgt-detail'
-import { CommentView, Comment } from './comment'
+import { Comment } from './comment'
+import { ContentOperate } from './content'
 
 import './video.less'
-import { ContentOperateView } from './content'
 
 @Component
 export default class VideoDetail extends Base {
@@ -35,11 +34,11 @@ export default class VideoDetail extends Base {
             const { detail } = t
             return (
               <div>
-                <VideoDetailMainView data={detail} />
+                <VideoDetailMain data={detail} />
                 <Divider size='small' />
                 <Affix offset-bottom={40}>
                   <Card>
-                    <ContentOperateView data={detail} contentType={myEnum.contentType.视频} voteType={myEnum.voteType.视频} on-operate-click={(type) => {
+                    <ContentOperate data={detail} contentType={myEnum.contentType.视频} voteType={myEnum.voteType.视频} on-operate-click={(type) => {
                       if (type === myEnum.contentOperateType.评论) {
                         const el = this.$refs.comment.$el as HTMLElement
                         window.scrollTo(0, el.offsetTop)
@@ -49,7 +48,7 @@ export default class VideoDetail extends Base {
                     }} />
                   </Card>
                 </Affix>
-                <CommentView ref='comment' ownerId={detail._id} ownUserId={detail.userId} type={myEnum.contentType.视频} />
+                <Comment ref='comment' ownerId={detail._id} ownUserId={detail.userId} type={myEnum.contentType.视频} />
               </div>
             )
           }} />
@@ -65,9 +64,9 @@ class VideoDetailMainProp {
 }
 @Component({
   extends: Base,
-  mixins: [getCompOpts(VideoDetailMainProp)]
+  props: VideoDetailMainProp
 })
-class VideoDetailMain extends Vue<VideoDetailMainProp & Base> {
+export class VideoDetailMain extends Vue<VideoDetailMainProp, Base> {
     stylePrefix = 'video-';
 
     $refs: { video: MyVideo };
@@ -108,7 +107,7 @@ class VideoDetailMain extends Vue<VideoDetailMainProp & Base> {
     renderHeader (detail: DetailDataType) {
       return (
         <div>
-          <UserAvatarView user={detail.user} />
+          <UserAvatar user={detail.user} />
           {[
             '发布于: ' + this.$utils.dateFormat(detail.publishAt)
           ].map(ele => {
@@ -153,4 +152,3 @@ class VideoDetailMain extends Vue<VideoDetailMainProp & Base> {
     }
 }
 
-export const VideoDetailMainView = convClass<VideoDetailMainProp>(VideoDetailMain)

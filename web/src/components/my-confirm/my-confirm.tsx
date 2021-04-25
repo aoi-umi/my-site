@@ -2,7 +2,6 @@ import { Watch } from 'vue-property-decorator'
 
 import { Prop, Component, Vue } from '@/components/decorator'
 import { Button, Row, Col, Modal } from '../iview'
-import { convClass, getCompOpts } from '../utils'
 import { MyBase } from '../my-base'
 
 type BtnType = {
@@ -133,4 +132,3 @@ export class MyConfirmModal extends Vue<MyConfirmModalProp, MyBase> {
   }
 }
 
-export const MyConfirmModalView = convClass<MyConfirmProp>(MyConfirmModal)

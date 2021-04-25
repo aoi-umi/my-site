@@ -1,13 +1,13 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
+import { Component, Vue, Prop } from '@/components/decorator'
 import { testApi } from '@/api'
 import { myEnum } from '@/config'
 const { dynamicCompViewType } = myEnum
 import { MyDetail } from '@/components/my-detail'
 import { MyList } from '@/components/my-list'
 import { MyLoad } from '@/components/my-load'
-import { getCompOpts, convClass, Utils, MyGroupType } from '@/components/utils'
-import { Prop } from '@/components/decorator'
+import { Utils, MyGroupType } from '@/components/utils'
 import { Divider, Tabs, TabPane } from '@/components/iview'
 
 import { Base } from '../base'
@@ -72,9 +72,9 @@ export class CompDetailProp {
 
 @Component({
   extends: Base,
-  mixins: [getCompOpts(CompDetailProp)]
+  props: CompDetailProp
 })
-export class CompDetailView extends Vue<Base & CompDetailProp> {
+export class CompDetail extends Vue<CompDetailProp, Base> {
   @Watch('compConfig', { immediate: true })
   private watchCompConfig () {
     this.setDetail(this.compConfig)
@@ -167,5 +167,3 @@ export class CompDetailView extends Vue<Base & CompDetailProp> {
     return Utils.valid(this.data, rules, opt)
   }
 }
-
-export const CompDetail = convClass<CompDetailProp>(CompDetailView)

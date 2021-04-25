@@ -1,5 +1,6 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
+import { Component, Vue, Prop } from '@/components/decorator'
 import { dev, myEnum, authority } from '@/config'
 import { testApi } from '@/api'
 import { routerConfig } from '@/router'
@@ -9,7 +10,7 @@ import { MyLoad } from '@/components/my-load'
 import { MyUpload, FileDataType, FileType } from '@/components/my-upload'
 
 import { Base } from '../base'
-import { GoodsDetailMainView } from './goods-detail'
+import { GoodsDetailMain } from './goods-detail'
 
 import './goods.less'
 
@@ -165,7 +166,7 @@ export default class GoodsMgtDetail extends Base {
           loadFn={this.loadDetailData}
           renderFn={(detail: DetailType) => {
             if (!this.preview) { return this.renderEdit() }
-            return <GoodsDetailMainView data={detail} />
+            return <GoodsDetailMain data={detail} />
           }}
         />
       </div>

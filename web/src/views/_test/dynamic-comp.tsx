@@ -1,14 +1,13 @@
 
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
 import { Button, Checkbox } from '@/components/iview'
 
+import { Component, Vue, Prop } from '@/components/decorator'
 import { MyList } from '@/components/my-list'
 import { DynamicComp, DynamicCompConfigType } from '@/components/my-dynamic-comp'
 import { myEnum } from '@/config'
 const { dynamicCompType, dynamicSqlCalcType } = myEnum
-import { getCompOpts, convClass } from '@/components/utils'
-import { Prop } from '@/components/decorator'
 import { MyDetail } from '@/components/my-detail'
 import { Base } from '@/views/base'
 import CompMgtDetailView, { CompMgtDetail } from '../comp-mgt/comp-mgt-detail'
@@ -25,9 +24,9 @@ export class DynamicCompDemoProp {
 }
 @Component({
   extends: Base,
-  mixins: [getCompOpts(DynamicCompDemoProp)]
+  props: DynamicCompDemoProp
 })
-export default class App extends Vue<DynamicCompDemoProp & Base> {
+export default class DynamicCompDemo extends Vue<DynamicCompDemoProp, Base> {
   $refs: { comp: CompMgtDetailView }
   itemList: DynamicCompConfigType[] = []
   data = {}
@@ -223,5 +222,3 @@ export default class App extends Vue<DynamicCompDemoProp & Base> {
     )
   }
 }
-
-export const DynamicCompDemo = convClass<DynamicCompDemoProp>(App)

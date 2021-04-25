@@ -1,14 +1,12 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
-import { Prop } from '@/components/decorator'
+import { Component, Vue, Prop } from '@/components/decorator'
 
 import { testApi } from '@/api'
 import { convert } from '@/helpers'
-import { convClass, getCompOpts } from '@/components/utils'
 import { Tag, Modal, Input, Row, Col, Form, FormItem, Button } from '@/components/iview'
 import { MyList, Const as MyListConst, OnSortChangeOptions, MyListModel } from '@/components/my-list'
 import { MyTagModel, MyTag } from '@/components/my-tag'
-import { MyConfirm } from '@/components/my-confirm'
 import { Base } from './base'
 
 type DetailDataType = {
@@ -24,9 +22,9 @@ class BookmarkDetailProp {
 }
 @Component({
   extends: Base,
-  mixins: [getCompOpts(BookmarkDetailProp)]
+  props: BookmarkDetailProp
 })
-class BookmarkDetail extends Vue<BookmarkDetailProp & Base> {
+class BookmarkDetail extends Vue<BookmarkDetailProp, Base> {
   tag = '';
   tagModel = new MyTagModel();
 
@@ -127,8 +125,6 @@ class BookmarkDetail extends Vue<BookmarkDetailProp & Base> {
   }
 }
 
-const BookmarkDetailView = convClass<BookmarkDetailProp>(BookmarkDetail)
-
 @Component
 export default class Bookmark extends Base {
   detailShow = false;
@@ -170,7 +166,7 @@ export default class Bookmark extends Base {
     return (
       <div>
         <Modal v-model={this.detailShow} footer-hide mask-closable={false}>
-          <BookmarkDetailView detail={this.detail} on-save-success={() => {
+          <BookmarkDetail detail={this.detail} on-save-success={() => {
             this.detailShow = false
             this.$refs.list.query()
           }} />

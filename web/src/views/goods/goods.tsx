@@ -1,5 +1,6 @@
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Watch } from 'vue-property-decorator'
 
+import { Component, Vue, Prop } from '@/components/decorator'
 import { convert } from '@/helpers'
 import { testApi } from '@/api'
 import { Modal, Input, Col, Card, Row, Divider } from '@/components/iview'
