@@ -32,9 +32,12 @@ export const Component = (function (options) {
   if (options) {
     let props = options.props
     if (typeof props === 'function') {
+      let mixins = options.mixins || []
+      mixins.push(getCompOpts(props))
       options = {
         ...options,
-        props: getCompOpts(props).props
+        mixins,
+        props: null
       }
     }
   }
