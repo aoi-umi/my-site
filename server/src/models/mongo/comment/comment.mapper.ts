@@ -16,11 +16,11 @@ import { VoteModel, VoteMapper, VoteInstanceType } from '../vote';
 import { CommentModel, CommentDocType, CommentInstanceType } from './comment';
 
 type CommentResetOption = {
-    imgHost?: string;
-    user?: LoginUser
-    authorId?: Types.ObjectId;
-    userList?: UserDocType[];
-    voteList?: VoteInstanceType[];
+  imgHost?: string;
+  user?: LoginUser
+  authorId?: Types.ObjectId;
+  userList?: UserDocType[];
+  voteList?: VoteInstanceType[];
 };
 export class CommentMapper {
   static async create(data: ValidSchema.CommentSubmit, type, user: LoginUser) {
@@ -46,8 +46,8 @@ export class CommentMapper {
   }
 
   static async query(data: ValidSchema.CommentQuery, opt: {
-        resetOpt?: CommentResetOption,
-    }) {
+    resetOpt?: CommentResetOption,
+  }) {
     let match: any;
     let getReply = true;
     if (data.topId) {
@@ -131,10 +131,10 @@ export class CommentMapper {
 
   //获取子级评论
   static async childQuery(opt: {
-        replyTopId: any,
-        rows?: number,
-        resetOpt?: CommentResetOption,
-    }) {
+    replyTopId: any,
+    rows?: number,
+    resetOpt?: CommentResetOption,
+  }) {
     let topId = opt.replyTopId instanceof Array ? { $in: opt.replyTopId.map(ele => Types.ObjectId(ele)) } : Types.ObjectId(opt.replyTopId);
     let match = { _id: topId };
     let pipeline: any[] = [
@@ -165,10 +165,10 @@ export class CommentMapper {
   }
 
   static async findOwner(opt: {
-        ownerId,
-        type,
-        mgt?: boolean
-    }) {
+    ownerId,
+    type,
+    mgt?: boolean
+  }) {
     let owner: ContentBaseInstanceType;
     let match: any = { _id: opt.ownerId };
     if (opt.type == myEnum.contentType.文章) {
@@ -194,10 +194,10 @@ export class CommentMapper {
       }
       let rs = {
         canDel: detail.canDel
-                    && (user.equalsId(detail.userId)
-                        || Auth.contains(user, config.auth.commentMgtDel)
-                        // || (opt.authorId && opt.authorId.equals(user._id))
-                    ),
+          && (user.equalsId(detail.userId)
+            || Auth.contains(user, config.auth.commentMgtDel)
+            // || (opt.authorId && opt.authorId.equals(user._id))
+          ),
       };
       detail.canDel = rs.canDel;
     }
@@ -208,6 +208,7 @@ export class CommentMapper {
     if (detail.user) {
       UserMapper.resetDetail(detail.user, { imgHost: opt.imgHost });
     }
+    detail.isDel = false;
     if (detail.status !== myEnum.commentStatus.正常) {
       detail.isDel = true;
       delete detail.comment;

@@ -35,7 +35,7 @@ export default class CompMgt extends Base {
       </div>
     ), {
       title: '确认删除?',
-      confirm: async () => {
+      ok: async () => {
         await testApi.compMgtDel({ idList: delIds })
         this.query()
       }

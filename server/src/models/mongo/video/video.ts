@@ -37,7 +37,7 @@ export class Video extends ContentBase {
 
     @prop()
     get canUpdate() {
-      return [myEnum.videoStatus.草稿, myEnum.videoStatus.审核不通过].includes(this.status);
+      return [myEnum.videoStatus.草稿, myEnum.videoStatus.审核不通过, myEnum.videoStatus.审核通过].includes(this.status);
     }
 
     @prop()

@@ -38,8 +38,8 @@ class Utils {
     }
     let inst = this.getComp<MyConfirmModal>(MyConfirmModal, {
       props: {
-        title: opt.title || '提示',
-        confirm: opt.confirm
+        ...opt,
+        title: opt.title || '提示'
       },
       render () {
         return <div>{typeof message === 'function' ? message() : message}</div>

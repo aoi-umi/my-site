@@ -13,7 +13,13 @@ import { pagination, IPagination } from '../_plugins/pagination';
 export type CommentInstanceType = InstanceType<Comment>;
 export type CommentModelType = ModelType<Comment, typeof Comment>;
 export type CommentDocType = DocType<CommentInstanceType>;
-@setSchema()
+@setSchema({
+  schemaOptions: {
+    toJSON: {
+      virtuals: true
+    }
+  }
+})
 @setPlugin(pagination)
 export class Comment extends Base implements IVoteOwner {
     /**

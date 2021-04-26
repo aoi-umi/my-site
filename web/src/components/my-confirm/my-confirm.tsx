@@ -3,6 +3,7 @@ import { Watch } from 'vue-property-decorator'
 import { Prop, Component, Vue } from '@/components/decorator'
 import { Button, Row, Col, Modal } from '../iview'
 import { MyBase } from '../my-base'
+import { Utils } from '../utils'
 
 type BtnType = {
   text: string;
@@ -95,10 +96,13 @@ export class MyConfirmModalProp {
   title?: string;
 
   @Prop()
-  confirm?: () => void | Promise<void>;
+  ok?: () => any | Promise<any>;
 
   @Prop()
-  cancel?: () => void
+  afterOk?: (arg?: any) => any;
+
+  @Prop()
+  cancel?: () => any
 }
 
 @Component({
@@ -111,10 +115,11 @@ export class MyConfirmModal extends Vue<MyConfirmModalProp, MyBase> {
     this.show = typeof show === 'boolean' ? show : !this.show
   }
   render () {
+    let { ok, cancel, ...props } = this.$props
     return (
       <Modal v-model={this.show} footer-hide>
         <MyConfirm
-          props={this.$props}
+          props={props}
           loading={true}
           cancel={() => {
             this.cancel && this.cancel()
@@ -122,7 +127,7 @@ export class MyConfirmModal extends Vue<MyConfirmModalProp, MyBase> {
           }}
           ok={async () => {
             try {
-              this.confirm && await this.confirm()
+              this.ok && await this.ok()
               this.toggle(false)
             } catch (e) {
               this.$Message.error(e.message)
