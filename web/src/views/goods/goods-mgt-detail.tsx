@@ -51,8 +51,8 @@ export type SkuType = {
 export default class GoodsMgtDetail extends Base {
   stylePrefix = 'goods-mgt-'
   $refs: { formVaild: iView.Form, imgs: MyUpload };
-  private innerDetail: DetailType = this.getDetailData();
-  private oldDetail: DetailType = helpers.clone(this.innerDetail);
+  private innerDetail: DetailType = null
+  private oldDetail: DetailType = null
   private preview = false;
   private skuStatusList = myEnum.goodsSkuStatus.toArray().map(e => e.value);
   protected getDetailData () {

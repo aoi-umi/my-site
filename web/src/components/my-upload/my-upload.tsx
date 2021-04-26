@@ -114,23 +114,41 @@ class MyUploadProp {
 @Component({
   extends: MyBase,
   props: MyUploadProp,
-  VueCropper
+  components: { VueCropper },
+  model: {
+    prop: 'value',
+    event: 'change'
+  }
 })
 export class MyUpload extends Vue<MyUploadProp, MyBase> {
   stylePrefix = 'my-upload-';
 
   fileList: FileType[] = [];
 
-  @Watch('value')
-  private watchValue (newVal: any[]) {
-    if (newVal) {
-      let fileList = this.maxCount > 0 && newVal.length > this.maxCount
-        ? newVal.slice(0, this.maxCount)
-        : newVal
+  protected disableEmitChange = false;
+  @Watch('value', { immediate: true })
+  private watchValue (val: any[]) {
+    if (this.fileList === val) {
+      this.disableEmitChange = true
+      return
+    }
+    if (val) {
+      let fileList = this.maxCount > 0 && val.length > this.maxCount
+        ? val.slice(0, this.maxCount)
+        : val
       this.setFile(fileList, { willUpload: false })
     } else {
       this.fileList = []
     }
+  }
+
+  @Watch('fileList', { immediate: true })
+  private watchFileList () {
+    if (this.disableEmitChange) {
+      this.disableEmitChange = false
+      return
+    }
+    this.$emit('change', this.fileList)
   }
 
   $refs: { upload: iView.Upload & { fileList: FileType[] }, cropper: any, imgViewer: MyImgViewer };
@@ -162,7 +180,6 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
   }
 
   protected created () {
-    this.watchValue(this.value)
     if (this.cropperOptions) {
       this.cropper = {
         ...this.cropper,
@@ -204,6 +221,7 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
         try {
           const formData = new FormData()
           const uploadFile = Utils.base64ToFile(file.data, file.file.name)
+          formData.append('fileName', file.file.name)
           formData.append('file', uploadFile)
           file.percentage = 0
           const rs = await axios.request({

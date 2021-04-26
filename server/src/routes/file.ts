@@ -29,13 +29,17 @@ const upload: MyRequestHandler = async (opt) => {
 const download: MyRequestHandler = async (opt, ctx) => {
   let option = <{ fileType: string }>opt.reqOption;
 
+
   let data = paramsValid(opt.reqData, ValidSchema.FileGet);
   let rawFile: GridFSInstance<any>;
   if (data.isRaw) {
     rawFile = await FileModel.rawFindOne({ _id: data._id });
   } else {
     let fileList = await FileMapper.findWithRaw({ _id: data._id, fileType: option.fileType });
-    rawFile = fileList[0]?.rawFile;
+    let f = fileList[0];
+    if (f && !f.file.isUserDel) {
+      rawFile = f.rawFile;
+    }
   }
   opt.noSend = true;
   if (!rawFile) {

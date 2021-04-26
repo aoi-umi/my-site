@@ -273,7 +273,8 @@ export class MyWaterfall extends Vue<MyWaterfallProp, MyBase> {
   }
 
   removeItem (idxList: number[]) {
-    for (let i = this.currVal.length - 1; i > 0; i--) {
+    idxList.sort((a, b) => b - a)
+    for (let i = this.currVal.length - 1; i >= 0; i--) {
       if (idxList.includes(i)) {
         this.currVal.splice(i, 1)
       }
