@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import copy from 'copy-to-clipboard'
 import AsyncValidator, { ValidateOption } from 'async-validator'
-import * as decorator from './decorator'
+
+import * as decorator from '../decorator'
+import { UtilsTsx } from './tsx'
 
 export function convClass<prop, partial extends boolean = false> (t) {
   type P = (partial extends false ? prop : Partial<prop>);
@@ -22,8 +24,8 @@ export function getInstCompName (inst) {
 }
 
 const vm = Vue.prototype
-export class Utils {
-  static base64ToFile = (dataUrl: string, filename: string) => {
+const _Utils = {
+  base64ToFile (dataUrl: string, filename: string) {
     const arr = dataUrl.split(',')
     const mime = arr[0].match(/:(.*?);/)[1]
     const bstr = atob(arr[1])
@@ -33,20 +35,20 @@ export class Utils {
       u8arr[n] = bstr.charCodeAt(n)
     }
     return new File([u8arr], filename, { type: mime })
-  }
+  },
 
-  static getStyleName (stylePrefix: string, ...args: string[]) {
+  getStyleName (stylePrefix: string, ...args: string[]) {
     return args.filter(ele => !!ele).map(ele => stylePrefix + ele)
-  }
+  },
 
-  static dateParse (date) {
+  dateParse (date) {
     if (typeof date == 'string') { date = date.replace(/-/g, '/') }
     if (!isNaN(date) && !isNaN(parseInt(date))) { date = parseInt(date) }
     if (!(date instanceof Date)) { date = new Date(date) }
     return date
-  }
+  },
 
-  static getDateDiff (date1, date2) {
+  getDateDiff (date1, date2) {
     date1 = this.dateParse(date1)
     date2 = this.dateParse(date2)
 
@@ -68,13 +70,13 @@ export class Utils {
     let diff = (days ? days + ' ' : '') + ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2) + ':' + ('0' + seconds).slice(-2)
     if (isMinus) { diff = '-' + diff }
     return diff
-  }
+  },
 
-  static copy2Clipboard (txt) {
+  copy2Clipboard (txt) {
     copy(txt)
-  }
+  },
 
-  static isScrollEnd (elm?: HTMLElement | Window) {
+  isScrollEnd (elm?: HTMLElement | Window) {
     let scrollTop, clientHeight, scrollHeight
     if (!elm || elm instanceof Window || [document.body].includes(elm)) {
       scrollTop = document.documentElement.scrollTop || document.body.scrollTop
@@ -90,14 +92,14 @@ export class Utils {
     // console.log([document.body.scrollTop, document.body.clientHeight, document.body.scrollHeight].join(','));
     // console.log([scrollTop, clientHeight, scrollHeight].join(','));
     return (scrollTop + clientHeight >= scrollHeight)
-  }
+  },
 
-  static isWxClient () {
+  isWxClient () {
     return /MicroMessenger/i.test(navigator.userAgent)
-  }
+  },
 
   // 转换为中划线
-  static stringToHyphen (str) {
+  stringToHyphen (str) {
     str = str.replace(/^[A-Z]+/, function () {
       return arguments[0].toLowerCase()
     })
@@ -107,17 +109,17 @@ export class Utils {
     })
     str = str.toLowerCase()
     return str
-  }
+  },
 
-  static getObjByDynCfg (cfgs) {
+  getObjByDynCfg (cfgs) {
     let obj: any = {}
     cfgs?.forEach(ele => {
       obj[ele.name] = null
     })
     return obj
-  }
+  },
 
-  static getValidRulesByDynCfg (cfgs) {
+  getValidRulesByDynCfg (cfgs) {
     let obj = {}
     cfgs?.forEach(ele => {
       if (ele.required) {
@@ -128,9 +130,9 @@ export class Utils {
       }
     })
     return obj
-  }
+  },
 
-  static valid (data, rules, opt?: ValidateOption & { showMsg?: boolean }) {
+  valid (data, rules, opt?: ValidateOption & { showMsg?: boolean }) {
     opt = {
       firstFields: true,
       first: true,
@@ -155,17 +157,17 @@ export class Utils {
       }
       resolve(result)
     })
-  }
+  },
 
-  static wait (ms?) {
+  wait (ms?) {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve()
       }, ms || 0)
     })
-  }
+  },
 
-  static group<T, U extends { name: string }> (list: T[], groupFn: (v: T) => U) {
+  group<T, U extends { name: string }> (list: T[], groupFn: (v: T) => U) {
     let obj: MyGroupType<T, U>[] = []
     for (let v of list) {
       let g = groupFn(v)
@@ -183,6 +185,8 @@ export class Utils {
     return obj
   }
 }
+
+export const Utils = { ..._Utils, ...UtilsTsx }
 
 type GroupDefaultType = { name: string, text?: string }
 export type MyGroupType<T, U extends GroupDefaultType = GroupDefaultType> = {

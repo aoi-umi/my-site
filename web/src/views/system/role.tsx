@@ -120,7 +120,6 @@ class RoleDetail extends Vue<RoleDetailProp, Base> {
 @Component
 export default class Role extends Base {
   detailShow = false;
-  delShow = false;
   detail: any;
   $refs: { list: MyList<any> };
 
@@ -152,12 +151,16 @@ export default class Role extends Base {
 
   delIds = [];
   statusList: TagType[] = [];
+  delConfirm () {
+    this.$utils.confirm(`将要删除${this.delIds.length}项`, {
+      ok: this.delClick
+    })
+  }
   async delClick () {
     await this.operateHandler('删除', async () => {
       await testApi.roleDel({ idList: this.delIds })
       this.delIds = []
-      this.delShow = false
-      this.$refs.list.query()
+      this.$refs.list.refresh()
     })
   }
   private async updateStatus (detail: DetailDataType) {
@@ -176,7 +179,7 @@ export default class Role extends Base {
         text: '批量删除',
         onClick: (selection) => {
           this.delIds = selection.map(ele => ele._id)
-          this.delShow = true
+          this.delConfirm()
         }
       })
     }
@@ -234,7 +237,7 @@ export default class Role extends Base {
             {this.storeUser.user.hasAuth(authority.roleDel) &&
               <a on-click={() => {
                 this.delIds = [detail._id]
-                this.delShow = true
+                this.delConfirm()
               }}>删除</a>
             }
           </div>
@@ -252,17 +255,6 @@ export default class Role extends Base {
             this.detailShow = false
             this.$refs.list.query()
           }} />
-        </Modal>
-        <Modal v-model={this.delShow} footer-hide>
-          <MyConfirm title='确认删除?' loading={true}
-            cancel={() => {
-              this.delShow = false
-            }}
-            ok={async () => {
-              await this.delClick()
-            }}>
-            {`将要删除${this.delIds.length}项`}
-          </MyConfirm>
         </Modal>
         <MyList
           ref='list'

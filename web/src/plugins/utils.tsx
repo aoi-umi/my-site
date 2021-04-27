@@ -3,6 +3,7 @@ import 'jquery'
 import moment, { Dayjs } from 'dayjs'
 
 import { MyConfirmModal, MyConfirmModalProp } from '@/components/my-confirm'
+import { Utils as CompUtils } from '@/components/utils'
 import { CompModuleType } from '@/views/comp-mgt/comp-mgt-detail'
 
 import { dev, myEnum } from '@/config'
@@ -10,33 +11,11 @@ import { assist } from './def'
 
 const vm = Vue.prototype as Vue
 class Utils {
-  getComp<T> (name: any, compOpt?): T {
-    let comp = typeof name === 'string' ? Vue.component(name) : name
-    if (!comp) {
-      let msg = `不存在组件[${name}]`
-      vm.$Message.error(msg)
-      throw new Error(msg)
-    }
-    compOpt = {
-      ...compOpt
-    }
-    let inst: any = new Vue({
-      render (h) {
-        return (<comp ref='comp' props={compOpt.props}>{compOpt.render && compOpt.render(h)}</comp>)
-      }
-    })
-    // let inst: any = new comp({
-    //   propsData: compOpt.props
-    // })
-    inst.$mount()
-    document.body.appendChild(inst.$el)
-    return inst.$refs.comp
-  }
-  async confirm (message, opt?: MyConfirmModalProp) {
+  confirm (message, opt?: MyConfirmModalProp) {
     opt = {
       ...opt
     }
-    let inst = this.getComp<MyConfirmModal>(MyConfirmModal, {
+    let inst = CompUtils.getComp<MyConfirmModal>(MyConfirmModal, {
       props: {
         ...opt,
         title: opt.title || '提示'

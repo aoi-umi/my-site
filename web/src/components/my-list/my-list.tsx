@@ -345,6 +345,10 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
     this.result.data = data
   }
 
+  refresh () {
+    this.handleQuery({ resetPage: true })
+  }
+
   handleQuery (opt?: {
     noClear?: boolean;
     resetPage?: boolean;
@@ -360,7 +364,7 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
 
   private handlePress (e) {
     if (e.charCode == 13) {
-      this.handleQuery({ resetPage: true })
+      this.refresh()
     }
   }
 

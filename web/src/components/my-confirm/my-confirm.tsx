@@ -115,23 +115,24 @@ export class MyConfirmModal extends Vue<MyConfirmModalProp, MyBase> {
     this.show = typeof show === 'boolean' ? show : !this.show
   }
   render () {
-    let { ok, cancel, ...props } = this.$props
     return (
       <Modal v-model={this.show} footer-hide>
         <MyConfirm
-          props={props}
-          loading={true}
-          cancel={() => {
-            this.cancel && this.cancel()
-            this.toggle(false)
-          }}
-          ok={async () => {
-            try {
-              this.ok && await this.ok()
+          props={{
+            ...this.$props,
+            loading: true,
+            cancel: () => {
+              this.cancel && this.cancel()
               this.toggle(false)
-            } catch (e) {
-              this.$Message.error(e.message)
-            } finally {
+            },
+            ok: async () => {
+              try {
+                this.ok && await this.ok()
+                this.toggle(false)
+              } catch (e) {
+                this.$Message.error(e.message)
+              } finally {
+              }
             }
           }}>
           {this.$slots.default}
