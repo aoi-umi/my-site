@@ -2,7 +2,6 @@ import Vue from 'vue'
 import 'jquery'
 import moment, { Dayjs } from 'dayjs'
 
-import { MyConfirmModal, MyConfirmModalProp } from '@/components/my-confirm'
 import { Utils as CompUtils } from '@/components/utils'
 import { CompModuleType } from '@/views/comp-mgt/comp-mgt-detail'
 
@@ -11,31 +10,6 @@ import { assist } from './def'
 
 const vm = Vue.prototype as Vue
 class Utils {
-  confirm (message, opt?: MyConfirmModalProp) {
-    opt = {
-      ...opt
-    }
-    let inst = CompUtils.getComp<MyConfirmModal>(MyConfirmModal, {
-      props: {
-        ...opt,
-        title: opt.title || '提示'
-      },
-      render () {
-        return <div>{typeof message === 'function' ? message() : message}</div>
-      }
-    })
-    inst.toggle(true)
-  }
-
-  async wait (ms: number = 0) {
-    let promise = new Promise((resolve) => {
-      setTimeout(() => {
-        resolve()
-      }, ms)
-    })
-    return promise
-  }
-
   private scripts: { [key: string]: { url: string, promise: Promise<any> } } = {};
   async loadScript (list: string[]) {
     return Promise.all(list.map(ele => {
@@ -118,14 +92,14 @@ class Utils {
 }
 declare module 'vue/types/vue' {
   interface Vue {
-    $utils: Utils;
+    $utils: Utils & typeof CompUtils;
     $moment: typeof moment
     $enum: typeof myEnum
   }
 }
 export default {
   install: function (Vue, options) {
-    Vue.prototype.$utils = new Utils()
+    Vue.prototype.$utils = { ...new Utils(), ...CompUtils }
     Vue.prototype.$moment = moment
     Vue.prototype.$enum = myEnum
   }

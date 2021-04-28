@@ -1,6 +1,6 @@
 import { Watch } from 'vue-property-decorator'
 
-import { Component, Vue, Prop } from '@/components/decorator'
+import { Component, Vue, Prop, Confirm } from '@/components/decorator'
 
 import { testApi } from '@/api'
 import { convert } from '@/helpers'
@@ -148,18 +148,14 @@ export default class Bookmark extends Base {
     this.$refs.list.query(query)
   }
 
-  delHandler (delIds: any[]) {
-    this.$utils.confirm((
-      <div>
-      将要删除{delIds.length}项
-      </div>
-    ), {
-      title: '确认删除?',
-      ok: async () => {
-        await testApi.bookmarkDel({ idList: delIds })
-        this.query()
-      }
-    })
+  delIds = []
+  @Confirm(function (this: Bookmark) {
+    return `将要删除${this.delIds.length}项`
+  }, { title: '确认删除?' })
+  async delHandler () {
+    await testApi.bookmarkDel({ idList: this.delIds })
+    this.delIds = []
+    this.query()
   }
 
   protected render () {
@@ -221,7 +217,8 @@ export default class Bookmark extends Base {
                     this.detailShow = true
                   }}>编辑</a>
                   <a on-click={() => {
-                    this.delHandler([params.row._id])
+                    this.delIds = [params.row._id]
+                    this.delHandler()
                   }}>删除</a>
                 </div>
               )
@@ -255,7 +252,8 @@ export default class Bookmark extends Base {
           multiOperateBtnList={[{
             text: '批量删除',
             onClick: (selection) => {
-              this.delHandler(selection.map(ele => ele._id))
+              this.delIds = selection.map(ele => ele._id)
+              this.delHandler()
             }
           }]}
         ></MyList>

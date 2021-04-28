@@ -1,4 +1,6 @@
 import Vue from 'vue'
+
+import { MyConfirmModal, MyConfirmModalProp } from '../my-confirm'
 const vm = Vue.prototype as Vue
 
 export const UtilsTsx = {
@@ -23,5 +25,20 @@ export const UtilsTsx = {
     inst.$mount()
     document.body.appendChild(inst.$el)
     return inst.$refs.comp
+  },
+  confirm (message: any | (()=> any), opt?: MyConfirmModalProp) {
+    opt = {
+      ...opt
+    }
+    let inst = UtilsTsx.getComp<MyConfirmModal>(MyConfirmModal, {
+      props: {
+        ...opt,
+        title: opt.title || '提示'
+      },
+      render () {
+        return <div>{typeof message === 'function' ? message() : message}</div>
+      }
+    })
+    inst.toggle(true)
   }
 }

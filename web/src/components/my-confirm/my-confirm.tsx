@@ -97,12 +97,6 @@ export class MyConfirmModalProp {
 
   @Prop()
   ok?: () => any | Promise<any>;
-
-  @Prop()
-  afterOk?: (arg?: any) => any;
-
-  @Prop()
-  cancel?: () => any
 }
 
 @Component({
@@ -122,7 +116,6 @@ export class MyConfirmModal extends Vue<MyConfirmModalProp, MyBase> {
             ...this.$props,
             loading: true,
             cancel: () => {
-              this.cancel && this.cancel()
               this.toggle(false)
             },
             ok: async () => {

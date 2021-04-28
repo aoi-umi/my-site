@@ -4,6 +4,16 @@ import { PropOptions } from 'vue'
 import { Constructor } from 'vue/types/options'
 import * as vue from 'vue'
 
+import { MyConfirmModalProp } from './my-confirm'
+import { Utils } from './utils'
+
+export interface VueConstructor {
+  new <Props = {}, Mix = {}>(props?: Props & VueComponentOptions<Partial<Props>>): vue.default & Props & Mix
+  props?: { [key: string]: { default: any } }
+}
+
+export const Vue: VueConstructor = vue.default as any
+
 export function getCompOpts (target) {
   const Ctor = typeof target === 'function'
     ? target
@@ -43,9 +53,20 @@ export const Component = (function (options) {
   }
   return pd.Component(options)
 }) as any as typeof MyComponent
-export interface VueConstructor {
-  new <Props = {}, Mix = {}>(props?: Props & VueComponentOptions<Partial<Props>>): vue.default & Props & Mix
-  props?: { [key: string]: { default: any } }
-}
 
-export const Vue: VueConstructor = vue.default as any
+export const Confirm = function <T extends vue.default> (message: string | ((this: T) => any), opt?: { title?: string }) {
+  return (target: T, key, descriptor: TypedPropertyDescriptor<any>) => {
+    const value = descriptor.value
+    descriptor.value = function (...args) {
+      return Utils.confirm(() => {
+        return typeof message === 'function' ? message.apply(this) : message
+      }, {
+        ...opt,
+        ok: () => {
+          return value.apply(this, args)
+        }
+      })
+    }
+    return descriptor
+  }
+}

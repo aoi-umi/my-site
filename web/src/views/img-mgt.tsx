@@ -57,8 +57,7 @@ export default class ImgMgt extends Base {
             this.selectable = true
           } else {
             this.$utils.confirm(`确认删除?`, {
-              ok: this.del,
-              cancel: this.cancel
+              ok: this.del
             })
           }
         }}>删除</Button>
