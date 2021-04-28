@@ -278,9 +278,6 @@ export default class UserMgt extends Base {
           }}
           hideQueryBtn={{ add: true }}
 
-          defaultColumn={{
-            minWidth: 120
-          }}
           columns={this.getColumns()}
 
           queryFn={async (data) => {

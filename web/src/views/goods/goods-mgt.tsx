@@ -79,10 +79,6 @@ export default class GoodsMgt extends Base {
             }
           }}
 
-          defaultColumn={{
-            minWidth: 120
-          }}
-
           columns={[{
             key: '_selection',
             type: 'selection',

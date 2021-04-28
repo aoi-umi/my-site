@@ -85,14 +85,7 @@ class MyListProp<QueryArgs = any> {
   @Prop()
   dynamicCompOptions?: Partial<DynamicCompProp>
 
-  @Prop({
-    default: () => {
-      return {
-        align: 'center',
-        minWidth: 120
-      }
-    }
-  })
+  @Prop({})
   defaultColumn?: ColType;
 
   @Prop()
@@ -257,6 +250,8 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
     }
     if (this.columns) { this.cols.push(...this.columns) }
     let defaultColumn = {
+      align: 'center',
+      minWidth: 120,
       ...this.defaultColumn
     }
     this.cols.forEach(ele => {

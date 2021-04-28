@@ -325,9 +325,6 @@ export default class Pay extends Base {
           }}
           customQueryNode={<MyTag v-model={this.statusList} />}
 
-          defaultColumn={{
-            minWidth: 80
-          }}
           columns={this.getColumns()}
 
           queryFn={async (data) => {
