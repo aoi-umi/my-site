@@ -9,8 +9,8 @@ import { dev, myEnum } from '@/config'
 import { assist } from './def'
 
 const vm = Vue.prototype as Vue
-class Utils {
-  private scripts: { [key: string]: { url: string, promise: Promise<any> } } = {};
+const Utils = {
+  scripts: {} as { [key: string]: { url: string, promise: Promise<any> } },
   async loadScript (list: string[]) {
     return Promise.all(list.map(ele => {
       let resolve, reject
@@ -31,11 +31,11 @@ class Utils {
       }
       return promise
     }))
-  }
+  },
 
   isPressEnter (e: KeyboardEvent) {
     return e && (e.charCode || e.keyCode) === 13
-  }
+  },
 
   obj2arr (o: Object) {
     return Object.entries(o).map(ele => {
@@ -44,15 +44,15 @@ class Utils {
         value: ele[1]
       }
     })
-  }
+  },
 
   findComponentUpward (context, componentName, componentNames?) {
     return assist.findComponentUpward(context, componentName, componentNames)
-  }
+  },
 
   findComponentDownward (context, componentName) {
     return assist.findComponentDownward(context, componentName)
-  }
+  },
 
   dateFormat (date, fmt = dev.dateFormat) {
     let format = {
@@ -60,7 +60,7 @@ class Utils {
       datetime: 'YYYY-MM-DD HH:mm:ss'
     }[fmt] || fmt
     return !date ? '' : moment(date).format(format)
-  }
+  },
 
   dynamicCompMergeModule (mod: Partial<CompModuleType>[], mod2: DeepPartial<CompModuleType>[]) {
     return mod.map(m => {
@@ -92,14 +92,14 @@ class Utils {
 }
 declare module 'vue/types/vue' {
   interface Vue {
-    $utils: Utils & typeof CompUtils;
+    $utils: typeof Utils & typeof CompUtils;
     $moment: typeof moment
     $enum: typeof myEnum
   }
 }
 export default {
   install: function (Vue, options) {
-    Vue.prototype.$utils = { ...new Utils(), ...CompUtils }
+    Vue.prototype.$utils = { ...Utils, ...CompUtils }
     Vue.prototype.$moment = moment
     Vue.prototype.$enum = myEnum
   }
