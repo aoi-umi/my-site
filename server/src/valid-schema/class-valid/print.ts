@@ -5,7 +5,9 @@ import { ListBase, DetailQueryBase, DelBase } from './base';
 import { arrayTransform, objectIdTransform } from './util';
 
 export class PrintQuery extends ListBase {
-    name: string;
+  name: string;
+  text: string;
+  idList: string[];
 }
 
 export class PrintDetailQuery extends DetailQueryBase {
@@ -14,9 +16,9 @@ export class PrintDetailQuery extends DetailQueryBase {
 export class PrintDel extends DelBase {
 }
 
-export class PrintGetDataOpt  {
-    @IsDefined()
-    type: string;
+export class PrintGetDataOpt {
+  @IsDefined()
+  type: string;
 
-    data: any;
+  data: any;
 }

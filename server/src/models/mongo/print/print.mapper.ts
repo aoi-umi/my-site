@@ -2,34 +2,57 @@ import { LoginUser } from '@/models/login-user';
 import * as ValidSchema from '@/valid-schema/class-valid';
 import { escapeRegExp } from '@/_system/common';
 import { error } from '@/_system/common';
+import { UserModel } from '../user';
 import { BaseMapper } from '../_base';
 
 import { PrintInstanceType, PrintModel, } from './print';
 export class PrintMapper {
-  static async query(data: ValidSchema.PrintQuery, opt: {
+  static getQueryCond(data: ValidSchema.PrintQuery, opt: {
     user: LoginUser
   }) {
-    let query: any = {}, $and = [];
+    let query = BaseMapper.getLikeCond(data, ['name', 'text']);
 
-    let cond = BaseMapper.getLikeCond(data, ['name', 'text']);
-    query = {
-      ...cond
-    };
+    if (data.idList)
+      query.idList = query.idList;
+
     let $or = [{ userId: null }, ];
     if (opt.user.isLogin) {
       $or.push({ userId: opt.user._id });
     }
+    let $and = [];
     $and.push({
       $or
     });
     if ($and.length)
       query.$and = $and;
+    return query;
+  }
+
+  static async query(data: ValidSchema.PrintQuery, opt: {
+    user: LoginUser
+  }) {
+    let query = this.getQueryCond(data, opt);
     let rs = await PrintModel.findAndCountAll({
       ...BaseMapper.getListOptions(data),
       conditions: query,
       projection: { data: 0 },
     });
     return rs;
+  }
+
+  static async export(data: ValidSchema.PrintQuery, opt: {
+    user: LoginUser
+  }) {
+
+    let query = this.getQueryCond(data, opt);
+    let rsData = await PrintModel.find(query);
+    let user = await UserModel.find({ _id: rsData.filter(ele => ele.userId).map(ele => ele.userId) });
+    return rsData.map(ele => {
+      let obj = ele.toJSON();
+      let u = user.find(u => u._id.equals(ele.userId));
+      obj.user = u?.account || '';
+      return obj;
+    });
   }
 
   static async detailQuery(data: ValidSchema.PrintDetailQuery, opt: {

@@ -11,6 +11,7 @@ import * as zlib from 'zlib';
 import * as uuid from 'uuid';
 import * as  SqlString from 'sequelize/lib/sql-string';
 import * as config from '@/config';
+import * as moment from 'dayjs';
 
 
 //#region 前后通用
@@ -152,6 +153,15 @@ export let clone = function <T>(obj: T): T {
   return JSON.parse(JSON.stringify(obj));
 };
 
+export let dateFormat = (date?, format?) => {
+  if (!format)
+    format = 'datetime';
+  let f = {
+    date: 'YYYY-MM-DD',
+    datetime: 'YYYY-MM-DD HH:mm:ss'
+  }[format] || format;
+  return moment(date || new Date()).format(f);
+};
 
 /**
  * enumerable装饰器

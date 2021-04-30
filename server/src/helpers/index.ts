@@ -43,6 +43,7 @@ export let myRequestHandler = async function (fn: (opt?: MyRequestHandlerOpt) =>
       return result;
     //result = {fileBuff, filename}
     if (opt.sendAsFile) {
+      let fileRs = result as ResFileType;
       // let filename = result.filename || '未命名';
       // let userAgent = (ctx.headers['user-agent'] || '').toLowerCase();
       // ctx.setHeader('Content-Type', 'application/octet-stream');
@@ -53,9 +54,14 @@ export let myRequestHandler = async function (fn: (opt?: MyRequestHandlerOpt) =>
       // }
       // ctx.setHeader('Content-Disposition', disposition);
       // ctx.end(result.fileBuff);
-      
-      ctx.attachment(result.filename || '未命名');
-      ctx.body = result.data;
+
+      let filename = fileRs.filename || '未命名';
+      if (fileRs.timeSuffix)
+        filename += common.dateFormat(fileRs.timeSuffix === true ? '' : fileRs.timeSuffix, 'YYYY-MM-DD_HH_mm_ss');
+      if (fileRs.ext)
+        filename += `.${fileRs.ext}`;
+      ctx.attachment(filename);
+      ctx.body = fileRs.data;
     } else {
       if (!opt.originRes) {
         result = {

@@ -30,16 +30,15 @@ export const mgtDel: MyRequestHandler = async (opt) => {
 
 export const mgtExport: MyRequestHandler = async (opt) => {
   let reqData = opt.reqData;
-  let cond: any = {};
-  if (reqData.idList)
-    cond.idList = reqData.idList;
-  let data = await PrintModel.find(cond);
+  let data = await PrintMapper.export(reqData, { user: opt.myData.user });
+
   opt.sendAsFile = true;
   return {
-    filename: '打印模板.json',
+    filename: '打印模板',
+    ext: 'json',
+    timeSuffix: true,
     data: {
       printTemp: data
     }
-  };
-
+  } as ResFileType;
 };
