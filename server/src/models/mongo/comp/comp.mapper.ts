@@ -20,10 +20,8 @@ export class CompMapper {
   }) {
     let query: any = {}, $and = [];
 
-    ['name', 'text'].forEach(key => {
-      if (data[key])
-        query[key] = new RegExp(escapeRegExp(data[key]), 'i');
-    });
+    query = BaseMapper.getLikeCond(data, ['name', 'text']);
+    
     let $or = [{ userId: null }, ];
     if (opt.user.isLogin) {
       $or.push({ userId: opt.user._id });

@@ -98,6 +98,7 @@ router.get('/print/mgt/query', UserAuthMid.normal(), MyRequestHandlerMid.convert
 router.get('/print/mgt/detailQuery', UserAuthMid.normal(), MyRequestHandlerMid.convert(printTemp.mgtDetailQuery));
 router.post('/print/mgt/save', UserAuthMid.normal(), MyRequestHandlerMid.convert(printTemp.mgtSave));
 router.post('/print/mgt/del', UserAuthMid.normal(), MyRequestHandlerMid.convert(printTemp.mgtDel));
+router.get('/print/mgt/export', UserAuthMid.normal(), MyRequestHandlerMid.convert(printTemp.mgtExport));
 
 import * as print from './print';
 router.get('/print/getData', UserAuthMid.normal(), MyRequestHandlerMid.convert(print.getData));

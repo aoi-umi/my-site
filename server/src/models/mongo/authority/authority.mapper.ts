@@ -19,8 +19,6 @@ export class AuthorityMapper {
   static async query(data: ValidSchema.AuthorityQuery) {
     let query: any = {};
     if (data.anyKey) {
-      delete data.name;
-      delete data.code;
       let anykey = new RegExp(escapeRegExp(data.anyKey), 'i');
       query.$or = [
         { code: anykey },
@@ -28,10 +26,11 @@ export class AuthorityMapper {
       ];
     }
 
-    if (data.name)
-      query.name = new RegExp(escapeRegExp(data.name), 'i');
-    if (data.code)
-      query.code = new RegExp(escapeRegExp(data.code), 'i');
+    query = {
+      ...query,
+      ...BaseMapper.getLikeCond(data, ['name', 'code'])
+    };
+    
     if (data.status)
       query.status = { $in: data.status.split(',') };
 

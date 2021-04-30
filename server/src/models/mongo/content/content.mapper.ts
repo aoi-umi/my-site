@@ -64,8 +64,10 @@ export class ContentMapper {
       match.userId = data.userId;
     }
 
-    if (data.title)
-      match.title = new RegExp(escapeRegExp(data.title), 'i');
+    match = {
+      ...match,
+      ...BaseMapper.getLikeCond(data, ['title'])
+    };
 
     if (data.status)
       match.status = { $in: data.status.split(',').map(ele => parseInt(ele)) };

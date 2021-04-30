@@ -7,12 +7,14 @@ import { BaseMapper } from '../_base';
 import { PrintInstanceType, PrintModel, } from './print';
 export class PrintMapper {
   static async query(data: ValidSchema.PrintQuery, opt: {
-        user: LoginUser
-    }) {
+    user: LoginUser
+  }) {
     let query: any = {}, $and = [];
 
-    if (data.name)
-      query.name = new RegExp(escapeRegExp(data.name), 'i');
+    let cond = BaseMapper.getLikeCond(data, ['name', 'text']);
+    query = {
+      ...cond
+    };
     let $or = [{ userId: null }, ];
     if (opt.user.isLogin) {
       $or.push({ userId: opt.user._id });
@@ -31,15 +33,15 @@ export class PrintMapper {
   }
 
   static async detailQuery(data: ValidSchema.PrintDetailQuery, opt: {
-        user: LoginUser
-    }) {
+    user: LoginUser
+  }) {
     let rs = await PrintModel.findById(data._id);
     return rs;
   }
 
   static async save(data: any, opt: {
-        user: LoginUser
-    }) {
+    user: LoginUser
+  }) {
     let detail: PrintInstanceType;
     if (!data._id) {
       delete data._id;
@@ -52,8 +54,7 @@ export class PrintMapper {
       if (detail.userId && !opt.user.equalsId(detail.userId))
         throw new Error('无权限修改');
       let update: any = {};
-      ['name', 'data'].forEach(key => {
-        console.log(key);
+      ['name', 'text', 'data'].forEach(key => {
         update[key] = data[key];
       });
       await detail.update(update);
@@ -83,9 +84,9 @@ export class PrintMapper {
 type ArrayOrSelf<T> = Array<T> | T
 type PromiseOrSelf<T> = Promise<T> | T
 type PrintDataType = {
-    label?: string;
-    template: any;
-    data: any[];
+  label?: string;
+  template: any;
+  data: any[];
 };
 type GetPrintDataType = (data) => PromiseOrSelf<ArrayOrSelf<PrintDataType>>
 const printLogic: { [key: string]: GetPrintDataType } = {};

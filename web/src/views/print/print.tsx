@@ -30,6 +30,7 @@ type Item = {
 type DetailDataType = {
   _id?: string;
   name?: string;
+  text?: string;
   data?: any
 };
 
@@ -329,6 +330,8 @@ export default class Print extends Base {
                 <Form ref='formVaild' label-position='top' props={{ model: detail }} rules={this.rules}>
                   <FormItem label='模板名称' prop='name'>
                     <Input v-model={detail.name} />
+                  </FormItem><FormItem label='模板显示' prop='name'>
+                    <Input v-model={detail.text} />
                   </FormItem>
                   <FormItem label='测试数据' prop='testData'>
                     <Input type='textarea' v-model={this.testData} rows={4} />

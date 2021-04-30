@@ -24,4 +24,13 @@ export class BaseMapper {
     }
     return and;
   }
+
+  static getLikeCond(data, keyList: string[]) {
+    let query: any = {};
+    keyList.forEach(key => {
+      if (data[key])
+        query[key] = new RegExp(escapeRegExp(data[key]), 'i');
+    });
+    return query;
+  }
 }

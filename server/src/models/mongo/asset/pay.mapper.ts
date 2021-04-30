@@ -50,10 +50,11 @@ export class PayMapper {
       match.createdAt = createdAt;
 
     let match2: any = {};
-    if (data.orderNo)
-      match2['assetLog.orderNo'] = new RegExp(escapeRegExp(data.orderNo), 'i');
-    if (data.outOrderNo)
-      match2['assetLog.outOrderNo'] = new RegExp(escapeRegExp(data.outOrderNo), 'i');
+    let cond = BaseMapper.getLikeCond(data, ['orderNo', 'outOrderNo']);
+    if (cond.orderNo)
+      match2['assetLog.orderNo'] = cond.orderNo;
+    if (cond.outOrderNo)
+      match2['assetLog.outOrderNo'] = cond.outOrderNo;
 
     let rs = await PayModel.aggregatePaginate<{
             user: any,

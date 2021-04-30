@@ -29,8 +29,16 @@ export class Print extends Base {
     @prop({
       required: true,
       trim: true,
+      index: {
+        unique: true
+      }
     })
     name: string;
+    
+    @prop({
+      trim: true,
+    })
+    text: string;
 
     @prop({
       trim: true,

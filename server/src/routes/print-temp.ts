@@ -27,3 +27,19 @@ export const mgtDel: MyRequestHandler = async (opt) => {
   if (!rs.n)
     throw error('', config.error.NO_MATCH_DATA);
 };
+
+export const mgtExport: MyRequestHandler = async (opt) => {
+  let reqData = opt.reqData;
+  let cond: any = {};
+  if (reqData.idList)
+    cond.idList = reqData.idList;
+  let data = await PrintModel.find(cond);
+  opt.sendAsFile = true;
+  return {
+    filename: '打印模板.json',
+    data: {
+      printTemp: data
+    }
+  };
+
+};

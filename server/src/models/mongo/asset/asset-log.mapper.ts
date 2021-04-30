@@ -6,10 +6,10 @@ import { AssetLogModel } from './asset-log';
 
 export class AssetLogMapper {
   static lookupPipeline(opt?: {
-        assetLogIdKey?: string;
-        asName?: string;
-        match?: object;
-    }) {
+    assetLogIdKey?: string;
+    asName?: string;
+    match?: object;
+  }) {
     opt = {
       ...opt
     };
@@ -33,11 +33,8 @@ export class AssetLogMapper {
   }
 
   static async query(data: ValidSchema.AssetLogQuery) {
-    let match: any = {};
-    if (data.orderNo)
-      match.orderNo = new RegExp(escapeRegExp(data.orderNo), 'i');
-    if (data.outOrderNo)
-      match.outOrderNo = new RegExp(escapeRegExp(data.outOrderNo), 'i');
+    let match: any = BaseMapper.getLikeCond(data, ['orderNo', 'outOrderNo']);
+    
     if (data.status)
       match.status = { $in: data.status.split(',') };
 

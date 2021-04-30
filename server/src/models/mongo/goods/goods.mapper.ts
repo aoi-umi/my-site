@@ -132,10 +132,8 @@ export class GoodsMapper {
         resetOpt: SpuResetType,
     }) {
     let { user } = opt;
-    let match: any = {};
+    let match: any = BaseMapper.getLikeCond(data, ['name']);
     let and = [];
-    if (data.name)
-      match.name = new RegExp(escapeRegExp(data.name), 'i');
     if (data.anyKey) {
       let anykey = new RegExp(escapeRegExp(data.anyKey), 'i');
       and = [...and, {

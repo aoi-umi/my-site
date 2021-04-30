@@ -4,6 +4,7 @@ import { MongooseDocument, Error } from 'mongoose';
 import { ClassType } from 'class-transformer/ClassTransformer';
 import { plainToClass } from 'class-transformer';
 import { configure, getLogger } from 'log4js';
+import * as send from 'koa-send';
 
 import { MyRequestHandlerOpt } from '@/middleware';
 import * as common from '@/_system/common';
@@ -42,16 +43,19 @@ export let myRequestHandler = async function (fn: (opt?: MyRequestHandlerOpt) =>
       return result;
     //result = {fileBuff, filename}
     if (opt.sendAsFile) {
-      let filename = result.filename || '未命名';
-      let userAgent = (ctx.headers['user-agent'] || '').toLowerCase();
-      ctx.setHeader('Content-Type', 'application/octet-stream');
-      let encodeName = encodeURIComponent(filename);
-      let disposition = 'attachment; filename=' + encodeName;
-      if (userAgent.indexOf('firefox') >= 0) {
-        disposition = `attachment; filename*="utf8''${encodeName}"`;
-      }
-      ctx.setHeader('Content-Disposition', disposition);
-      ctx.end(result.fileBuff);
+      // let filename = result.filename || '未命名';
+      // let userAgent = (ctx.headers['user-agent'] || '').toLowerCase();
+      // ctx.setHeader('Content-Type', 'application/octet-stream');
+      // let encodeName = encodeURIComponent(filename);
+      // let disposition = 'attachment; filename=' + encodeName;
+      // if (userAgent.indexOf('firefox') >= 0) {
+      //   disposition = `attachment; filename*="utf8''${encodeName}"`;
+      // }
+      // ctx.setHeader('Content-Disposition', disposition);
+      // ctx.end(result.fileBuff);
+      
+      ctx.attachment(result.filename || '未命名');
+      ctx.body = result.data;
     } else {
       if (!opt.originRes) {
         result = {

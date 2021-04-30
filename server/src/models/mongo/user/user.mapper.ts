@@ -51,17 +51,12 @@ export class UserMapper {
   }
 
   static async query(data: ValidSchema.UserMgtQuery, opt: UserResetOption) {
-    let query: any = {};
+    let query: any = BaseMapper.getLikeCond(data, ['nickname', 'account']);
     let noTotal = false;
     if (data._id) {
       query._id = Types.ObjectId(data._id);
       noTotal = true;
     }
-
-    if (data.nickname)
-      query.nickname = new RegExp(escapeRegExp(data.nickname), 'i');
-    if (data.account)
-      query.account = new RegExp(escapeRegExp(data.account), 'i');
 
     let query2: any = {};
     let and2 = [];

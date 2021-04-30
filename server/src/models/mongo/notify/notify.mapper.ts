@@ -47,11 +47,7 @@ export class NotifyMapper {
   }
 
   static async query(data: ValidSchema.AssetNotifyQuery) {
-    let match: any = {};
-    if (data.orderNo)
-      match.orderNo = new RegExp(escapeRegExp(data.orderNo), 'i');
-    if (data.outOrderNo)
-      match.outOrderNo = new RegExp(escapeRegExp(data.outOrderNo), 'i');
+    let match: any = BaseMapper.getLikeCond(data, ['orderNo', 'outOrderNo']);
     let rs = await NotifyModel.aggregatePaginate<{
             assetLog?: any
         }>([

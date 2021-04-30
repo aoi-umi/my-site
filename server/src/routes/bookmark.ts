@@ -10,7 +10,7 @@ import { BaseMapper } from '@/models/mongo/_base';
 
 export let query: MyRequestHandler = async (opt) => {
   let data = paramsValid(opt.reqData, ValidSchema.BookmarkQuery);
-  let query: any = {};
+  let query: any = BaseMapper.getLikeCond(data, ['name', 'url']);
   if (data.anyKey) {
     let anykey = new RegExp(escapeRegExp(data.anyKey), 'i');
     query.$or = [
@@ -19,11 +19,6 @@ export let query: MyRequestHandler = async (opt) => {
       { tagList: anykey }
     ];
   }
-
-  if (data.name)
-    query.name = new RegExp(escapeRegExp(data.name), 'i');
-  if (data.url)
-    query.url = new RegExp(escapeRegExp(data.url), 'i');
 
   let { rows, total } = await BookmarkModel.findAndCountAll({
     conditions: query,

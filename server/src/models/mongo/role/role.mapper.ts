@@ -20,17 +20,13 @@ export class RoleMapper {
   }
 
   static async query(data: ValidSchema.RoleQuery) {
-    let query: any = {};
+    let query: any = BaseMapper.getLikeCond(data, ['name', 'code']);
     let noTotal = false;
     if (data._id) {
       query._id = Types.ObjectId(data._id);
       noTotal = true;
     }
 
-    if (data.name)
-      query.name = new RegExp(escapeRegExp(data.name), 'i');
-    if (data.code)
-      query.code = new RegExp(escapeRegExp(data.code), 'i');
     if (data.status) {
       query.status = { $in: data.status.split(',').map(ele => parseInt(ele)) };
     }
