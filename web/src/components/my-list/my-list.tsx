@@ -122,7 +122,7 @@ class MyListProp<QueryArgs = any> {
   hideSearchBox?: boolean;
 
   @Prop()
-  hidePage?: boolean;
+  showPage?: boolean;
 
   @Prop({
     default: true
@@ -158,6 +158,9 @@ class MyListProp<QueryArgs = any> {
 
   @Prop({})
   buttonConfigs?: MyButtonsModel[];
+
+  @Prop({})
+  filter?: boolean | ((key: string) => boolean)
 }
 @Component({
   extends: MyBase,
@@ -436,6 +439,8 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
   };
   loadedLastPage = false;
 
+  filterKey = ''
+
   private get bottomBarClass () {
     const cls = this.getStyleName('bottom-bar')
     if (this.multiOperateBtnList.length && this.selectedRows.length) {
@@ -469,7 +474,7 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
   }
 
   private renderPage (position: string) {
-    if (!this.infiniteScroll && !this.hidePage && this.result.total !== 0 && (['both', position].includes(this.pagePosition))) {
+    if (!this.infiniteScroll && (this.showPage ?? !!this.queryFn) && this.result.total !== 0 && (['both', position].includes(this.pagePosition))) {
       return (
         <Page
           ref='page'
@@ -493,6 +498,17 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
           }} />)
     }
   }
+
+  private get filterData () {
+    let filter = null
+    if (this.filterKey && this.filter) {
+      filter = typeof this.filter === 'function' ? this.filter : (ele) => {
+        return Object.values(ele).some(v => String(v).toLowerCase().includes(this.filterKey))
+      }
+    }
+    return filter ? this.result.data.filter(filter) : this.result.data
+  }
+
   protected render () {
     const hideQueryBtn = this.hideQueryBtn || {}
     if (this.$refs.page && this.$refs.page.currentPage !== this.model.page.index) {
@@ -563,6 +579,7 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
         <div class={this.getStyleName('content')}>
           {this.$slots.default}
           {this.renderBtns()}
+          {this.filter && <Input v-model={this.filterKey} placeholder='过滤' clearable style='margin-bottom:5px' />}
           {this.renderPage('top')}
           {this.type == 'table'
             ? <Table
@@ -578,7 +595,7 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
                 return !ele.hide
               })}
 
-              data={this.result.data} no-data-text={this.result.msg}
+              data={this.filterData} no-data-text={this.result.msg}
               on-on-selection-change={this.selectionChangeHandler}
               on-on-sort-change={(opt: OnSortChangeOptions) => {
                 const sortMap = {

@@ -127,7 +127,6 @@ export class CompDetail extends Vue<CompDetailProp, Base> {
     if (m.viewType === dynamicCompViewType.列表) {
       return <MyList
         hideSearchBox
-        hidePage
         data={this.data[m.name]}
         itemConfigs={m.itemList}
         buttonConfigs={m.buttonList}

@@ -4,13 +4,12 @@ module.exports = {
     "vue"
   ],
   // "extends": "eslint:recommended",
-  parser: "typescript-eslint-parser",
+  parser: '@typescript-eslint/parser',
   plugins: [
-    "typescript",
-    // 'plugin:prettier/recommended'
+    '@typescript-eslint'
   ],
   parserOptions: {
-    ecmaVersion: 7,
+    ecmaVersion: 11,
     sourceType: "module",
   },
   rules: {

@@ -504,7 +504,6 @@ export class ContentLogList extends Vue<ContentLogListProp, Base> {
             <Divider size='small' />
             <MyList
               hideSearchBox
-              hidePage
               columns={[{
                 title: '操作人',
                 key: 'user',

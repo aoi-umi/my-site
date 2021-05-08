@@ -371,7 +371,6 @@ export class CompMgtDetail extends Vue<CompMgtDetailProp, Base> {
           }]}
           data={this.moduleList}
           hideSearchBox
-          hidePage
           buttonConfigs={this.moduleBtns}
         >
           模块
@@ -512,7 +511,6 @@ export class CompMgtDetail extends Vue<CompMgtDetailProp, Base> {
         data={this.buttonList}
         buttonConfigs={this.buttonBtns}
         hideSearchBox
-        hidePage
         itemConfigs={this.buttonConfig}
         columns={[{
           key: 'op',
@@ -560,7 +558,7 @@ export class CompMgtDetail extends Vue<CompMgtDetailProp, Base> {
             data={this.itemList}
             buttonConfigs={this.configBtns}
             hideSearchBox
-            hidePage
+            filter
           >
           </MyList>
         </Col>
