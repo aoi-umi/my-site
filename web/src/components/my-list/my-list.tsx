@@ -192,9 +192,11 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
           handle: '.drag-btn',
           onEnd: ({ newIndex, oldIndex }) => {
             let data = this.result.data
+            let newIdx = data.findIndex(ele => ele === this.filterData[newIndex])
+            let oldIdx = data.findIndex(ele => ele === this.filterData[oldIndex])
             this.result.data = []
             this.$nextTick(() => {
-              data.splice(newIndex, 0, ...data.splice(oldIndex, 1))
+              data.splice(newIdx, 0, ...data.splice(oldIdx, 1))
               this.result.data = data
             })
           }
