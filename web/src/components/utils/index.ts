@@ -2,26 +2,9 @@ import Vue from 'vue'
 import copy from 'copy-to-clipboard'
 import AsyncValidator, { ValidateOption } from 'async-validator'
 
-import * as decorator from '../decorator'
 import { UtilsTsx } from './tsx'
 
-export function convClass<prop, partial extends boolean = false> (t) {
-  type P = (partial extends false ? prop : Partial<prop>);
-  return t as {
-    new(props: P & VueComponentOptions<Partial<prop>>): any
-    props: { [key in keyof prop]: { default: any } }
-  }
-}
-
-export type convType<prop, partial extends boolean = false> = {
-  new(props: (partial extends false ? prop : Partial<prop>) & VueComponentOptions<Partial<prop>>): any
-}
-
-export const getCompOpts = decorator.getCompOpts
-
-export function getInstCompName (inst) {
-  if (inst.componentOptions) { return inst.componentOptions.Ctor.options.name }
-}
+export * from './utils'
 
 const vm = Vue.prototype
 const _Utils = {

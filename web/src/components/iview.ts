@@ -1,5 +1,5 @@
 const iview = require('@/plugins/def').iView
-import { convClass } from './utils'
+import { convClass } from './utils/utils'
 
 import './iview.less'
 

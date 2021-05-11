@@ -3,7 +3,6 @@ import { Watch } from 'vue-property-decorator'
 import { Prop, Component, Vue } from '@/components/decorator'
 import { Button, Row, Col, Modal } from '../iview'
 import { MyBase } from '../my-base'
-import { Utils } from '../utils'
 
 type BtnType = {
   text: string;
