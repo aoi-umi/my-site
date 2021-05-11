@@ -607,7 +607,7 @@ export class CompMgtDetail extends Vue<CompMgtDetailProp, Base> {
         </FormItem>
 
         <FormItem label='计算'>
-          <Select v-model={this.selectConfig.calcType}>
+          <Select v-model={this.selectConfig.calcType} transfer>
             {this.renderOptionByObj(dynamicSqlCalcType)}
           </Select>
         </FormItem>
@@ -618,7 +618,7 @@ export class CompMgtDetail extends Vue<CompMgtDetailProp, Base> {
         {[dynamicCompType.选择器].includes(this.selectConfig.type) &&
           <div>
             <FormItem label='取值类型'>
-              <Select v-model={this.selectConfig.optionType}>
+              <Select v-model={this.selectConfig.optionType} transfer>
                 {this.renderOptionByObj(DynamicCompSelectOptionsType)}
               </Select>
             </FormItem>
