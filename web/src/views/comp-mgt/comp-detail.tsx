@@ -150,7 +150,7 @@ export class CompDetail extends Vue<CompDetailProp, Base> {
   async valid (opt?) {
     let rules = {}
     this.compConfig.moduleList.map(m => {
-      let rule = Utils.getValidRulesByDynCfg(m.itemList)
+      let rule = Utils.getValidRulesByDynCfg(m.itemList, m.text)
       rules[m.name] = m.viewType === dynamicCompViewType.列表 ? {
         type: 'array',
         defaultField: {
@@ -162,7 +162,6 @@ export class CompDetail extends Vue<CompDetailProp, Base> {
         fields: rule
       }
     })
-    console.log(this.data, rules)
     return Utils.valid(this.data, rules, opt)
   }
 }

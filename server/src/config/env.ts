@@ -23,6 +23,7 @@ let isDev = !processEnv.NODE_ENV || processEnv.NODE_ENV === 'development';
 // console.log(processEnv);
 let logPath = processEnv.pm_out_log_path || path.resolve(__dirname, '../../logs/out.log');
 export default {
+  isDev,
   name,
   port: processEnv.Port || 8000,
   version: '0.0.1',

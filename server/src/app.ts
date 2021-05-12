@@ -15,7 +15,10 @@ import * as db from '@/_system/dbMongo';
 import * as dbSeq from '@/_system/dbSequelize';
 
 debug('my-application');
-
+if (config.env.isDev) {
+  const easyMonitor = require('easy-monitor');
+  easyMonitor(config.env.name);
+}
 
 const app = new Koa();
 

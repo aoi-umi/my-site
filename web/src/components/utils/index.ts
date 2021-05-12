@@ -102,13 +102,13 @@ const _Utils = {
     return obj
   },
 
-  getValidRulesByDynCfg (cfgs) {
+  getValidRulesByDynCfg (cfgs, moduleText?) {
     let obj = {}
     cfgs?.forEach(ele => {
       if (ele.required) {
         obj[ele.name] = {
           required: true,
-          message: `请填写[${ele.text}]`
+          message: `${moduleText ? `[${moduleText}]` : ''}请填写[${ele.text}]`
         }
       }
     })
