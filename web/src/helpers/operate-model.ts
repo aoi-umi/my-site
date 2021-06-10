@@ -3,34 +3,36 @@ const vm = Vue.prototype as Vue
 export type OperateOption = {
   prefix?: string
   fn: (args?) => any
-  beforeValid?: () => any;
-  onSuccessClose?: () => any;
-  validate?: () => Promise<boolean> | void,
+  beforeValid?: () => any
+  onSuccessClose?: () => any
+  validate?: () => Promise<boolean> | void
   noValidMessage?: boolean
-  noDefaultHandler?: boolean;
-  noSuccessHandler?: boolean;
-  noErrorHandler?: boolean;
+  noDefaultHandler?: boolean
+  noSuccessHandler?: boolean
+  noErrorHandler?: boolean
   defaultErrHandler?: (e: Error & { code?: string }) => boolean | void
 }
 export class OperateModel {
   loading = false
   protected opt: OperateOption
-  constructor (opt: OperateOption) {
+  constructor(opt: OperateOption) {
     this.opt = opt
   }
 
-  async run (args?) {
+  async run(args?) {
     if (this.loading) return
 
     this.loading = true
     let opt = this.opt
     let operate = opt.prefix || ''
     try {
-      opt.beforeValid && await opt.beforeValid()
+      opt.beforeValid && (await opt.beforeValid())
       if (opt.validate) {
         let valid = await opt.validate()
         if (!valid) {
-          if (!this.opt.noValidMessage) { vm.$Message.error('参数有误') }
+          if (!this.opt.noValidMessage) {
+            vm.$Message.error('参数有误')
+          }
           return
         }
       }
@@ -38,7 +40,7 @@ export class OperateModel {
       if (!opt.noDefaultHandler && !opt.noSuccessHandler) {
         vm.$Message.success({
           content: operate + '成功',
-          onClose: opt.onSuccessClose
+          onClose: opt.onSuccessClose,
         })
       }
     } catch (e) {
@@ -48,7 +50,9 @@ export class OperateModel {
           vm.$Message.error(operate + '出错:' + e.message)
         }
       }
-      if (!e.code) { console.error(e) }
+      if (!e.code) {
+        console.error(e)
+      }
     } finally {
       this.loading = false
     }

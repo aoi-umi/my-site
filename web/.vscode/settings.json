@@ -1,5 +1,6 @@
 {
   "typescript.tsdk": "node_modules\\typescript\\lib",
+  "editor.formatOnSave": false,
   "editor.codeActionsOnSave": {
     "source.fixAll": false,
     "source.fixAll.eslint": true
@@ -8,9 +9,9 @@
 
   "eslint.codeActionsOnSave.mode": "all",
   "eslint.options": {
-    "extensions": [".tsx"]
+    "extensions": [".tsx", ".ts"]
   },
-  "eslint.validate": ["typescript", "typescriptreact"],
+  "eslint.validate": ["javascript", "typescript", "typescriptreact"],
   "editor.tabSize": 2,
   "files.exclude": {
     "**/.git": true,
