@@ -31,90 +31,92 @@ marked.setOptions({
 })
 @Component
 export default class ArticleDetail extends Base {
-    $refs: { loadView: MyLoad, comment: Comment };
+  $refs: { loadView: MyLoad, comment: Comment };
 
-    render () {
-      return (
-        <MyLoad
-          ref='loadView'
-          loadFn={async () => {
-            const query = this.$route.query
-            const rs = await testApi.articleDetailQuery({ _id: query._id })
-            return rs
-          }}
-          renderFn={(t: DetailType) => {
-            const { detail } = t
-            return (
-              <div>
-                <ArticleDetailMain data={detail} />
-                <Affix offset-bottom={40}>
-                  <Card>
-                    <ContentOperate data={detail} contentType={myEnum.contentType.文章} voteType={myEnum.voteType.文章} on-operate-click={(type) => {
-                      if (type === myEnum.contentOperateType.评论) {
-                        const el = this.$refs.comment.$el as HTMLElement
-                        window.scrollTo(0, el.offsetTop)
-                      }
-                    }} getShareUrl={() => {
-                      return location.href
-                    }} />
-                  </Card>
-                </Affix>
-                <Divider size='small' />
-                <Comment ref='comment' ownerId={detail._id} ownUserId={detail.userId} type={myEnum.contentType.文章} />
-              </div>
-            )
-          }} />
-      )
-    }
+  render() {
+    return (
+      <MyLoad
+        ref='loadView'
+        loadFn={async () => {
+          const query = this.$route.query
+          const rs = await testApi.articleDetailQuery({ _id: query._id })
+          return rs
+        }}
+        renderFn={(t: DetailType) => {
+          const { detail } = t
+          return (
+            <div>
+              <ArticleDetailMain data={detail} />
+              <Affix offset-bottom={40}>
+                <Card>
+                  <ContentOperate data={detail} contentType={myEnum.contentType.文章} voteType={myEnum.voteType.文章} on-operate-click={(type) => {
+                    if (type === myEnum.contentOperateType.评论) {
+                      const el = this.$refs.comment.$el as HTMLElement
+                      window.scrollTo(0, el.offsetTop)
+                    }
+                  }} getShareUrl={() => {
+                    return location.href
+                  }} />
+                </Card>
+              </Affix>
+              <Divider size='small' />
+              <Comment ref='comment' ownerId={detail._id} ownUserId={detail.userId} type={myEnum.contentType.文章} />
+            </div>
+          )
+        }} />
+    )
+  }
 }
 
 class ArticleDetailMainProp {
-    @Prop({
-      required: true
-    })
-    data: DetailDataType;
+  @Prop({
+    required: true
+  })
+  data: DetailDataType;
 }
 @Component({
   extends: Base,
   props: ArticleDetailMainProp
 })
 export class ArticleDetailMain extends Vue<ArticleDetailMainProp, Base> {
-    stylePrefix = 'article-';
-    content = '';
-    created () {
-      const detail = this.data
-      this.content = detail.content
-      if (detail.contentType === myEnum.articleContentType.Markdown) {
-        this.content = marked(detail.content)
-      }
+  stylePrefix = 'article-';
+  content = '';
+  created() {
+    const detail = this.data
+    this.content = detail.content
+    if (detail.contentType === myEnum.articleContentType.Markdown) {
+      this.content = marked(detail.content)
     }
+  }
 
-    renderHeader (detail: DetailDataType) {
-      return (
-        <div>
-          <UserAvatar user={detail.user} />
-          {[
-            '发布于: ' + this.$utils.dateFormat(detail.publishAt)
-          ].map(ele => {
-            return (<span class='not-important' style={{ marginLeft: '5px' }}>{ele}</span>)
-          })}
+  renderHeader(detail: DetailDataType) {
+    return (
+      <div>
+        <UserAvatar user={detail.user} />
+        {[
+          '发布于: ' + this.$utils.dateFormat(detail.publishAt)
+        ].map(ele => {
+          return (<span class='not-important' style={{ marginLeft: '5px' }}>{ele}</span>)
+        })}
+      </div>
+    )
+  }
+
+  render() {
+    const detail = this.data
+    return (
+      <div>
+        <h1>{detail.title}</h1>
+        <br />
+        {this.renderHeader(detail)}
+        <br />
+        <div class="not-important">简介: {detail.profile}</div>
+        <br />
+        <div class='ql-snow'>
+          <div class='ql-editor' domPropsInnerHTML={this.content} />
         </div>
-      )
-    }
-
-    render () {
-      const detail = this.data
-      return (
-        <div>
-          <h1>{detail.title}</h1>
-          <br />
-          {this.renderHeader(detail)}
-          <br />
-          <div class='ql-snow'>
-            <div class='ql-editor' domPropsInnerHTML={this.content} />
-          </div>
-        </div >
-      )
-    }
+      </div >
+    )
+  }
 }
 

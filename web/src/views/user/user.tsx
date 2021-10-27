@@ -354,12 +354,13 @@ export default class UserInfo extends Base {
 
     renderUserDetail () {
       const detail = this.detail
+      let labelWidth = 80
       return (detail.self
         ? <div>
           <UserUnbind ref='userUnbind' on-success={(type) => {
             detail.bind[type] = false
           }} />
-          <Form class='form-no-error' label-width={80}>
+          <Form class='form-no-error' label-width={labelWidth}>
             <FormItem label='状态'>
               {detail.statusText}
             </FormItem>
@@ -383,7 +384,7 @@ export default class UserInfo extends Base {
             </FormItem>
           </Form>
         </div>
-        : <Form class='form-no-error' label-width={60}>
+        : <Form class='form-no-error' label-width={labelWidth}>
           <FormItem label='简介'>
             {detail.profile || dev.defaultProfile}
           </FormItem>

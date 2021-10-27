@@ -23,6 +23,10 @@ class UserAvatarProp {
   @Prop()
   showAccount?: boolean;
 
+  // default text
+  @Prop()
+  type?: string;
+
   @Prop()
   size?: iView.Avatar['size'];
 
@@ -49,23 +53,37 @@ export class UserAvatar extends Vue<UserAvatarProp, Base> {
 
   avatarUrl = '';
 
-  created () {
+  created() {
     this.init(this.user)
   }
 
-  private init (user: User) {
+  private init(user: User) {
     this.avatarUrl = (user && user.avatarUrl) || ''
   }
 
   @Watch('user')
-  watchUser (newVal, oldVal) {
+  watchUser(newVal, oldVal) {
     this.init(newVal)
   }
 
-  get count () {
+  get count() {
     return 0
   }
-  render () {
+  render() {
+    if (this.type === 'text') {
+      return (
+        <div class={this.getStyleName('root')}>
+          <UserPoptip
+            user={this.user}
+            tipsPlacement={this.tipsPlacement}
+            noTips={this.noTips}
+            self={this.self}
+          >
+            <span class={['not-important']}>PO: {this.user.nickname}</span>
+          </UserPoptip>
+        </div>
+      )
+    }
     return (
       <div class={this.getStyleName('root')}>
         <UserPoptip
