@@ -387,9 +387,6 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
                     type: item.originFileType,
                     src: item.url || item.data
                   }],
-                  danmaku: {
-                    hide: true
-                  }
                 }} />}
                 <div class={[...this.getStyleName('item-cover')]} style={{ lineHeight: coverHeight }}>
                   {isImg && item.originData && <Icon type='md-create' nativeOn-click={() => { this.handleEdit(item) }} />}

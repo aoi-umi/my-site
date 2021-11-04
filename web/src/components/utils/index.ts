@@ -8,7 +8,7 @@ export * from './utils'
 
 const vm = Vue.prototype
 const _Utils = {
-  base64ToFile (dataUrl: string, filename: string) {
+  base64ToFile(dataUrl: string, filename: string) {
     const arr = dataUrl.split(',')
     const mime = arr[0].match(/:(.*?);/)[1]
     const bstr = atob(arr[1])
@@ -20,18 +20,18 @@ const _Utils = {
     return new File([u8arr], filename, { type: mime })
   },
 
-  getStyleName (stylePrefix: string, ...args: string[]) {
+  getStyleName(stylePrefix: string, ...args: string[]) {
     return args.filter(ele => !!ele).map(ele => stylePrefix + ele)
   },
 
-  dateParse (date) {
+  dateParse(date) {
     if (typeof date == 'string') { date = date.replace(/-/g, '/') }
     if (!isNaN(date) && !isNaN(parseInt(date))) { date = parseInt(date) }
     if (!(date instanceof Date)) { date = new Date(date) }
     return date
   },
 
-  getDateDiff (date1, date2) {
+  getDateDiff(date1, date2) {
     date1 = this.dateParse(date1)
     date2 = this.dateParse(date2)
 
@@ -55,11 +55,11 @@ const _Utils = {
     return diff
   },
 
-  copy2Clipboard (txt) {
+  copy2Clipboard(txt) {
     copy(txt)
   },
 
-  isScrollEnd (elm?: HTMLElement | Window) {
+  isScrollEnd(elm?: HTMLElement | Window) {
     let scrollTop, clientHeight, scrollHeight
     if (!elm || elm instanceof Window || [document.body].includes(elm)) {
       scrollTop = document.documentElement.scrollTop || document.body.scrollTop
@@ -77,12 +77,12 @@ const _Utils = {
     return (scrollTop + clientHeight >= scrollHeight)
   },
 
-  isWxClient () {
+  isWxClient() {
     return /MicroMessenger/i.test(navigator.userAgent)
   },
 
   // 转换为中划线
-  stringToHyphen (str) {
+  stringToHyphen(str) {
     str = str.replace(/^[A-Z]+/, function () {
       return arguments[0].toLowerCase()
     })
@@ -94,7 +94,7 @@ const _Utils = {
     return str
   },
 
-  getObjByDynCfg (cfgs) {
+  getObjByDynCfg(cfgs) {
     let obj: any = {}
     cfgs?.forEach(ele => {
       obj[ele.name] = null
@@ -102,7 +102,7 @@ const _Utils = {
     return obj
   },
 
-  getValidRulesByDynCfg (cfgs, moduleText?) {
+  getValidRulesByDynCfg(cfgs, moduleText?) {
     let obj = {}
     cfgs?.forEach(ele => {
       if (ele.required) {
@@ -115,7 +115,7 @@ const _Utils = {
     return obj
   },
 
-  valid (data, rules, opt?: ValidateOption & { showMsg?: boolean }) {
+  valid(data, rules, opt?: ValidateOption & { showMsg?: boolean }) {
     opt = {
       firstFields: true,
       first: true,
@@ -142,7 +142,7 @@ const _Utils = {
     })
   },
 
-  wait (ms?) {
+  wait(ms?) {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve()
@@ -150,7 +150,7 @@ const _Utils = {
     })
   },
 
-  group<T, U extends { name: string }> (list: T[], groupFn: (v: T) => U) {
+  group<T, U extends { name: string }>(list: T[], groupFn: (v: T) => U) {
     let obj: MyGroupType<T, U>[] = []
     for (let v of list) {
       let g = groupFn(v)
@@ -166,6 +166,24 @@ const _Utils = {
       o.child.push(v)
     }
     return obj
+  },
+
+  // 防抖
+  debounce(fn: Function, delay = 500) {
+    let timer = null
+    return function () {
+      if (timer) {
+        clearTimeout(timer)
+        timer = setTimeout(fn, delay)
+      } else {
+        timer = setTimeout(fn, delay)
+      }
+    }
+  },
+
+  round(x: number, n?: number) {
+    let y = !n ? 1 : 10 ** n;
+    return Math.round(x * y) / y;
   }
 }
 

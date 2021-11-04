@@ -139,6 +139,7 @@ export class VideoDetailMain extends Vue<VideoDetailMainProp, Base> {
               }),
               poster: detail.coverUrl,
               danmaku: {
+                enable: true,
                 sendFn: async (data) => {
                   const rs = await this.operateHandler('发送弹幕', async () => {
                     data.videoId = this.videoId
