@@ -249,7 +249,6 @@ export class FileMapper {
       contentType,
       modifiedDate,
       noModified,
-      streamOpt
     };
   }
 
