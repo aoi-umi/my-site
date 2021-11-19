@@ -161,14 +161,14 @@ export class MyVideo extends Vue<MyVideoProp, MyBase> {
         }, {
           title: '内容',
           key: 'msg',
-          minWidth: 80,
+          minWidth: 75,
           render: (h, params) => {
             return <span class={this.getStyleName('danmaku-box-msg')} title={params.row.msg}>{params.row.msg}</span>
           }
         }, {
           title: '发送时间',
           key: 'createdAt',
-          minWidth: 90,
+          minWidth: 100,
           sortable: true,
           render: (h, params) => {
             return <span>{this.$utils.dateFormat(params.row.createdAt)}</span>

@@ -110,11 +110,11 @@ export class ArticleDetailMain extends Vue<ArticleDetailMainProp, Base> {
         <br />
         {this.renderHeader(detail)}
         <br />
-        <div class="not-important">简介: {detail.profile}</div>
-        <br />
         <div class='ql-snow'>
           <div class='ql-editor' domPropsInnerHTML={this.content} />
         </div>
+        <br />
+        <div class="not-important">简介: {detail.profile}</div>
       </div >
     )
   }

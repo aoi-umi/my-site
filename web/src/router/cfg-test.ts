@@ -30,6 +30,10 @@ export default {
       path: `dynamicSql`,
       text: '动态数据',
       component: () => import('../views/_test/dynamic-sql')
+    }, {
+      path: `live`,
+      text: '直播',
+      component: () => import('../views/_test/live')
     }]
   }
 }

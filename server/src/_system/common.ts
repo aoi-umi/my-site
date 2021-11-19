@@ -1,6 +1,3 @@
-/**
- * Created by umi on 2017-5-29.
- */
 import * as fs from 'fs';
 import * as path from 'path';
 import axios, { AxiosRequestConfig } from 'axios';
@@ -592,3 +589,18 @@ export const sqlEscape = exports.escape = (val, timezone, dialect) => {
 //.prototype.constructor
 //[] instanceof Array
 //[].constructor == Array
+
+
+export function mkdirs(dir: string) {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+}
+
+export async function writeFile(filename: string, data: string | NodeJS.ArrayBufferView) {
+  let p = filename.split(path.sep);
+  let name = p.pop();
+  let dir = p.join(path.sep);
+  mkdirs(dir);
+  fs.writeFileSync(filename, data);
+}

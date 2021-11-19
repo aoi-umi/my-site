@@ -29,34 +29,34 @@ const upload: MyRequestHandler = async (opt) => {
 const download: MyRequestHandler = async (opt, ctx) => {
   let option = <{ fileType: string }>opt.reqOption;
 
-
   let data = paramsValid(opt.reqData, ValidSchema.FileGet);
-  let rawFile: GridFSInstance<any>;
-  if (data.isRaw) {
-    rawFile = await FileModel.rawFindOne({ _id: data._id });
-  } else {
-    let fileList = await FileMapper.findWithRaw({ _id: data._id, fileType: option.fileType });
-    let f = fileList[0];
-    if (f && !f.file.isUserDel) {
-      rawFile = f.rawFile;
-    }
+
+  let reqRange = ctx.headers.range as string;
+  let range;
+  if (reqRange) {
+    let pos = reqRange.replace(/bytes=/, '').split('-');
+    let start = parseInt(pos[0], 10);
+    let end = pos[1] ? parseInt(pos[1], 10) : 0;
+    range = {
+      start,
+      end
+    };
   }
+  let ifModifiedSince = ctx.request.get('if-modified-since');
+  let rs = await FileMapper.download(data, {
+    fileType: option.fileType,
+    range,
+    ifModifiedSince
+  });
   opt.noSend = true;
-  if (!rawFile) {
+  if (!rs) {
     ctx.status = 404;
     return;
   }
   //分片下载
-  let range = ctx.headers.range as string;
-  let downloadOpt: any = {
-    returnStream: true,
-  };
-  if (range) {
-    let pos = range.replace(/bytes=/, '').split('-');
-
-    let total = rawFile.length;
-    let start = parseInt(pos[0], 10);
-    let end = pos[1] ? parseInt(pos[1], 10) : total - 1;
+  if (rs.range) {
+    let total = rs.length;
+    let { start, end } = rs.range;
     let chunksize = (end - start) + 1;
 
     ctx.status = 206;
@@ -64,28 +64,19 @@ const download: MyRequestHandler = async (opt, ctx) => {
       'Content-Range': `bytes ${start}-${end}/${total}`,
       'Accept-Ranges': 'bytes',
       'Content-Length': chunksize.toString(),
-      'Content-Type': rawFile.contentType,
+      'Content-Type': rs.contentType,
     });
-    downloadOpt.streamOpt = {
-      start,
-      end: end + 1
-      //不加1会提示 ERR_CONTENT_LENGTH_MISMATCH
-    };
-    let rs = await new FileModel({ fileId: rawFile._id }).download(downloadOpt);
     ctx.body = rs.stream;
   } else {
-    let ifModifiedSince = ctx.request.get('if-modified-since');
-    downloadOpt.ifModifiedSince = ifModifiedSince;
-    let rs = await new FileModel({ fileId: rawFile._id }).download(downloadOpt);
     if (rs.noModified) {
       ctx.status = 304;
       return;
     }
     ctx.set({
-      'Content-Type': rs.raw.contentType,
-      'Content-Length': rs.raw.length.toString(),
+      'Content-Type': rs.contentType,
+      'Content-Length': rs.length.toString(),
       'Content-Disposition': 'inline',
-      'Last-Modified': (rs.raw.uploadDate || new Date()).toUTCString()
+      'Last-Modified': (rs.modifiedDate || new Date()).toUTCString()
     });
     ctx.body = rs.stream;
   }

@@ -125,8 +125,6 @@ export class VideoDetailMain extends Vue<VideoDetailMainProp, Base> {
         <br />
         {this.renderHeader(detail)}
         <br />
-        <div class="not-important">简介: {detail.profile}</div>
-        <br />
         <div class={this.getStyleName('video-box')}>
           <MyVideo
             ref='video'
@@ -150,6 +148,8 @@ export class VideoDetailMain extends Vue<VideoDetailMainProp, Base> {
               }
             }} />
         </div>
+        <br />
+        <div class="not-important">简介: {detail.profile}</div>
       </div>
     )
   }

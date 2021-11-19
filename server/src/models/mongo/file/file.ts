@@ -3,36 +3,39 @@ import { GridFSFile, GridFSModel, setSchema, prop, setMethod, getGridFSModel, se
 
 import { pagination, IPagination } from '../_plugins/pagination';
 
-type FileInstanceType = InstanceType<File>;
+export type FileInstanceType = InstanceType<File>;
 @setSchema()
 @setPlugin(pagination)
 class File extends GridFSFile {
-    @prop()
-    nickname: string;
+  @prop()
+  nickname: string;
 
-    @prop()
-    account: string;
+  @prop()
+  account: string;
 
-    @prop({
-      type: SchemaTypes.ObjectId
-    })
-    userId: Types.ObjectId;
+  @prop({
+    type: SchemaTypes.ObjectId
+  })
+  userId: Types.ObjectId;
 
-    @prop()
-    isUserDel: boolean;
+  @prop()
+  isUserDel: boolean;
 
-    @prop()
-    fileType: string;
+  @prop()
+  fileType: string;
 
-    @setMethod
-    toOutObject() {
-      return {
-        filename: this.filename,
-        fileId: this._id.toString(),
-        rawFileId: this.fileId.toString(),
-        url: '',
-      };
-    }
+  @prop()
+  storageDisk: boolean;
+
+  @setMethod
+  toOutObject() {
+    return {
+      filename: this.filename,
+      fileId: this._id.toString(),
+      rawFileId: this.fileId.toString(),
+      url: '',
+    };
+  }
 }
 
 export const FileModel = getGridFSModel<File, typeof File & IPagination<File>>({

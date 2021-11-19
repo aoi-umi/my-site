@@ -4,15 +4,16 @@ import { MongoOpt } from '@/_system/dbMongo';
 import { SequelizeOpt } from '@/_system/dbSequelize';
 
 let processEnv = process.env as {
-    NODE_ENV: string;
-    Port?: string;
-    RedisUri?: string;
-    MongoUri?: string;
-    Host?: string;
-    MQUri?: string;
-    MysqlUri?: string;
-    //pm2
-    pm_out_log_path?: string;
+  NODE_ENV: string;
+  Port?: string;
+  RedisUri?: string;
+  MongoUri?: string;
+  Host?: string;
+  MQUri?: string;
+  MysqlUri?: string;
+  FilePath?: string;
+  //pm2
+  pm_out_log_path?: string;
 };
 const urlPrefix = '/devMgt';
 const envDir = path.resolve(__dirname, '../../env');
@@ -29,6 +30,7 @@ export default {
   version: '0.0.1',
   cachePrefix: name,
   host: 'http://144.202.99.178',
+  filePath: processEnv.FilePath ?? path.resolve('./.dev/file'),
   redis: {
     uri: processEnv.RedisUri || 'redis://localhost',
   },
@@ -56,7 +58,7 @@ export default {
     name,
     appenders: isDev ?
       { type: 'stdout' } :
-      { type: 'dateFile', filename: logPath + `.${processEnv.NODE_ENV}`, daysToKeep: 90 }
+      { type: 'dateFile', filename: logPath + `.${processEnv.NODE_ENV || 'dev'}`, daysToKeep: 90 }
   },
   imgPrefix: `${urlPrefix}/img`,
   videoPrefix: `${urlPrefix}/video`,
