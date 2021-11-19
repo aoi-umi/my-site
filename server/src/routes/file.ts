@@ -59,6 +59,8 @@ const download: MyRequestHandler = async (opt, ctx) => {
     let { start, end } = rs.range;
     let chunksize = (end - start) + 1;
 
+    console.log(start, end, total, chunksize);
+    console.log(rs.streamOpt);
     ctx.status = 206;
     ctx.set({
       'Content-Range': `bytes ${start}-${end}/${total}`,

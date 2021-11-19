@@ -55,12 +55,24 @@ export class FileMapper {
 
   static async findWithRaw(cond) {
     let fileList = await FileModel.find(cond);
-    let rawFileList = fileList.length ? await FileModel.rawFind({ _id: { $in: fileList.map(ele => ele.fileId) } }) : [];
+    let rawFileList = [];
+    let rawDiskFileList = [];
+    if (fileList.length) {
+      rawFileList = await FileModel.rawFind({ _id: { $in: fileList.map(ele => ele.fileId) } });
+      rawDiskFileList = await FileRawModel.find({ _id: { $in: fileList.map(ele => ele.fileId) } });
+    }
     return fileList.map(file => {
       let rawFile = rawFileList.find(raw => raw._id.equals(file.fileId));
+      if (!rawFile) {
+        rawFile = rawDiskFileList.find(raw => raw._id.equals(file.fileId));
+      }
       return {
         file,
-        rawFile
+        rawFile: {
+          contentType: rawFile.contentType,
+          _id: rawFile._id,
+          length: rawFile.length
+        }
       };
     });
   }
@@ -179,22 +191,30 @@ export class FileMapper {
     let stream: NodeJS.ReadableStream;
     let contentType: string;
     let modifiedDate: Date;
+    let streamOpt;
+    const setRange = (rangeOpt: { length }) => {
+      let { length } = rangeOpt;
+      if (opt.range) {
+        range = {
+          start: opt.range.start,
+          end: opt.range.end || (length - 1)
+        };
+        streamOpt = {
+          start: range.start,
+          end: range.end + 1
+        };
+      }
+    };
     if (rawFile) {
       length = rawFile.length;
       contentType = rawFile.contentType;
       modifiedDate = rawFile.uploadDate;
+      setRange({ length });
       let downloadOpt: any = {
         returnStream: true,
       };
-      if (opt.range) {
-        range = {
-          start: opt.range.start,
-          end: opt.range.end || length
-        };
-        downloadOpt.streamOpt = {
-          start: range.start,
-          end: range.end + 1
-        };
+      if (range) {
+        downloadOpt.streamOpt = streamOpt;
       } else if (ifModifiedSince) {
         downloadOpt.ifModifiedSince = ifModifiedSince;
       }
@@ -211,7 +231,14 @@ export class FileMapper {
 
         noModified = ifModifiedSince
           && parseInt(new Date(ifModifiedSince).getTime() / 1000 as any) == parseInt(modifiedDate.getTime() / 1000 as any);
-        stream = fs.createReadStream(filename);
+          
+        setRange({ length });
+        let rsOpt: any = {};
+        if (streamOpt) {
+          rsOpt.start = streamOpt.start;
+          rsOpt.end = streamOpt.end;
+        }
+        stream = fs.createReadStream(filename, rsOpt);
       }
     }
     if (!stream) return null;
@@ -221,7 +248,8 @@ export class FileMapper {
       range,
       contentType,
       modifiedDate,
-      noModified
+      noModified,
+      streamOpt
     };
   }
 
