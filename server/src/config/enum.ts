@@ -123,6 +123,10 @@ export const enumDefine = {
     图片: 'image',
     视频: 'video'
   },
+  fileStorgeType: {
+    硬盘: 'disk',
+    数据库: 'db'
+  },
   settingSignUpType: {
     开放: 0,
     限时开放: 1,

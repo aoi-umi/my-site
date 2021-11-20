@@ -3,10 +3,10 @@ import { setSchema, prop, setMethod, getModelForClass, InstanceType } from 'mong
 
 import { Base } from '../_base';
 
-export type FileRawInstance = InstanceType<FileRaw>  
+export type FileDiskInstance = InstanceType<FileDisk>  
 
 @setSchema()
-class FileRaw extends Base {
+class FileDisk extends Base {
   @prop()
   length: number
 
@@ -20,4 +20,4 @@ class FileRaw extends Base {
   filename: string;
 }
 
-export const FileRawModel = getModelForClass<FileRaw, typeof FileRaw>(FileRaw);
+export const FileDiskModel = getModelForClass<FileDisk, typeof FileDisk>(FileDisk);

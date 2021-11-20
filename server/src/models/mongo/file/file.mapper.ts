@@ -10,13 +10,24 @@ import * as ValidSchema from '@/valid-schema/class-valid';
 import { LoginUser } from '@/models/login-user';
 
 import { FileModel, FileInstanceType } from './file';
-import { FileRawInstance, FileRawModel } from './file-raw';
+import { FileDiskInstance, FileDiskModel } from './file-disk';
 import { BaseMapper } from '../_base';
 
 const Prefix = {
   [myEnum.fileType.图片]: config.env.imgPrefix,
   [myEnum.fileType.视频]: config.env.videoPrefix,
 };
+
+type RawFileType = {
+  type: string;
+  _id: Types.ObjectId;
+  length: number;
+  modifiedDate: Date;
+  filename: string;
+  md5: string;
+  contentType: string;
+  filepath?: string;
+}
 export class FileMapper {
   static getUrl(_id, fileType: string, opt?: {
     host?: string;
@@ -53,26 +64,50 @@ export class FileMapper {
     return this.getUrl(_id, myEnum.fileType.视频, { host });
   }
 
+  private static async findRaw(cond) {
+    let rawFileList = await FileModel.rawFind(cond);
+    let rawDiskFileList = await FileDiskModel.find(cond);
+    let rs: RawFileType[] = [];
+    rawDiskFileList?.forEach(ele => {
+      let filename = this.getDiskFilePath(ele.md5);
+      if (fs.existsSync(filename)) {
+        let stat = fs.statSync(filename);
+        rs.push({
+          type: myEnum.fileStorgeType.硬盘,
+          _id: ele._id,
+          length: ele.length,
+          contentType: ele.contentType,
+          filename: ele.filename,
+          md5: ele.md5,
+          modifiedDate: stat.mtime,
+          filepath: filename,
+        });
+      }
+    });
+    rawFileList?.forEach(ele => {
+      rs.push({
+        type: myEnum.fileStorgeType.数据库,
+        _id: ele._id,
+        length: ele.length,
+        contentType: ele.contentType,
+        filename: ele.filename,
+        md5: ele.md5,
+        modifiedDate: ele.uploadDate,
+      });
+    });
+    return rs;
+  }
   static async findWithRaw(cond) {
     let fileList = await FileModel.find(cond);
-    let rawFileList = [];
-    let rawDiskFileList = [];
+    let rawFileList: RawFileType[] = [];
     if (fileList.length) {
-      rawFileList = await FileModel.rawFind({ _id: { $in: fileList.map(ele => ele.fileId) } });
-      rawDiskFileList = await FileRawModel.find({ _id: { $in: fileList.map(ele => ele.fileId) } });
+      rawFileList = await this.findRaw({ _id: { $in: fileList.map(ele => ele.fileId) } });
     }
     return fileList.map(file => {
       let rawFile = rawFileList.find(raw => raw._id.equals(file.fileId));
-      if (!rawFile) {
-        rawFile = rawDiskFileList.find(raw => raw._id.equals(file.fileId));
-      }
       return {
         file,
-        rawFile: {
-          contentType: rawFile.contentType,
-          _id: rawFile._id,
-          length: rawFile.length
-        }
+        rawFile
       };
     });
   }
@@ -93,9 +128,9 @@ export class FileMapper {
     if (!fs.existsSync(filename)) {
       await common.writeFile(filename, data);
     }
-    let fr = await FileRawModel.findOne({ md5 });
+    let fr = await FileDiskModel.findOne({ md5 });
     if (!fr) {
-      fr = await FileRawModel.create({
+      fr = await FileDiskModel.create({
         md5,
         filename: md5,
         length,
@@ -167,33 +202,29 @@ export class FileMapper {
     },
     ifModifiedSince?: string
   }) {
-    let rawFile: GridFSInstance<any>;
-    let diskRawFile: FileRawInstance;
-    let fileModel: FileInstanceType;
+    let rawFile: RawFileType;
     let range: { start: number, end: number };
     let { ifModifiedSince } = opt;
 
     let rawId;
-    let length = 0;
     let noModified = false;
     if (data.isRaw) {
       rawId = data._id;
-      rawFile = await FileModel.rawFindOne({ _id: data._id });
     } else {
-      fileModel = await FileModel.findOne({ _id: data._id, fileType: opt.fileType });
+      let fileModel = await FileModel.findOne({ _id: data._id, fileType: opt.fileType });
       if (fileModel)
         rawId = fileModel.fileId;
     }
-    rawFile = await FileModel.rawFindOne({ _id: rawId });
-    if (!rawFile)
-      diskRawFile = await FileRawModel.findOne({ _id: rawId });
+    if (rawId) {
+      let list = await this.findRaw({ _id: rawId });
+      rawFile = list[0];
+    }
+    if (!rawFile) return;
 
     let stream: NodeJS.ReadableStream;
-    let contentType: string;
-    let modifiedDate: Date;
     let streamOpt;
-    const setRange = (rangeOpt: { length }) => {
-      let { length } = rangeOpt;
+    const setRange = () => {
+      let { length } = rawFile;
       if (opt.range) {
         range = {
           start: opt.range.start,
@@ -205,11 +236,8 @@ export class FileMapper {
         };
       }
     };
-    if (rawFile) {
-      length = rawFile.length;
-      contentType = rawFile.contentType;
-      modifiedDate = rawFile.uploadDate;
-      setRange({ length });
+    if (rawFile.type === myEnum.fileStorgeType.数据库) {
+      setRange();
       let downloadOpt: any = {
         returnStream: true,
       };
@@ -221,33 +249,29 @@ export class FileMapper {
       let rs = await new FileModel({ fileId: rawFile._id }).download(downloadOpt);
       stream = rs.stream;
       noModified = rs.noModified;
-    } else if (diskRawFile) {
-      let filename = this.getDiskFilePath(diskRawFile.md5);
-      if (fs.existsSync(filename)) {
-        let stat = fs.statSync(filename);
-        length = diskRawFile.length;
-        contentType = diskRawFile.contentType;
-        modifiedDate = stat.mtime;
+    } else if (rawFile.type === myEnum.fileStorgeType.硬盘) {
+      let {
+        modifiedDate,
+        filepath: filename
+      } = rawFile;
+      setRange();
+      noModified = ifModifiedSince
+        && parseInt(new Date(ifModifiedSince).getTime() / 1000 as any) == parseInt(modifiedDate.getTime() / 1000 as any);
 
-        noModified = ifModifiedSince
-          && parseInt(new Date(ifModifiedSince).getTime() / 1000 as any) == parseInt(modifiedDate.getTime() / 1000 as any);
-          
-        setRange({ length });
-        let rsOpt: any = {};
-        if (streamOpt) {
-          rsOpt.start = streamOpt.start;
-          rsOpt.end = streamOpt.end;
-        }
-        stream = fs.createReadStream(filename, rsOpt);
+      let rsOpt: any = {};
+      if (streamOpt) {
+        rsOpt.start = streamOpt.start;
+        rsOpt.end = streamOpt.end;
       }
+      stream = fs.createReadStream(filename, rsOpt);
     }
-    if (!stream) return null;
+    if (!stream) return;
     return {
+      length: rawFile.length,
+      contentType: rawFile.contentType,
+      modifiedDate: rawFile.modifiedDate,
       stream,
-      length,
       range,
-      contentType,
-      modifiedDate,
       noModified,
     };
   }

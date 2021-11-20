@@ -15,14 +15,14 @@ import { BaseMapper } from '../_base';
 import { FileMapper, FileModel } from '../file';
 
 type VideoResetOption = ContentResetOption & {
-    videoHost?: string;
+  videoHost?: string;
 }
 type VideoQueryOption = ContentQueryOption<VideoResetOption>;
 export class VideoMapper {
 
   static async query(data: ValidSchema.VideoQuery, opt: {
-        noTotal?: boolean,
-    } & VideoQueryOption) {
+    noTotal?: boolean,
+  } & VideoQueryOption) {
     function setMatch(match) {
       let userId = opt.userId;
       if (opt.normal) {
@@ -84,22 +84,22 @@ export class VideoMapper {
     });
     let detail = rs.detail;
     let fileList = await FileMapper.findWithRaw({ _id: detail.videoIdList });
-    detail.videoList = detail.videoIdList.map(ele => {
-      let file = fileList.find(f => f.file._id.equals(ele));
+    detail.videoList = detail.videoIdList.map(videoId => {
+      let file = fileList.find(f => f.file._id.equals(videoId));
       let rawFile = file.rawFile;
-      let meg = {
+      let merge = {
         contentType: '',
       };
       if (rawFile) {
-        for (let key in meg) {
+        for (let key in merge) {
           if (rawFile[key])
-            meg[key] = rawFile[key];
+            merge[key] = rawFile[key];
         }
       }
       return {
-        _id: ele,
-        url: FileMapper.getVideoUrl(ele, opt.resetOpt.videoHost),
-        ...meg,
+        _id: videoId,
+        url: FileMapper.getVideoUrl(videoId, opt.resetOpt.videoHost),
+        ...merge,
       };
     });
     //获取文件类型
@@ -136,7 +136,7 @@ export class VideoMapper {
       passCond: () => toStatus === myEnum.videoStatus.审核通过,
       delCond: (detail) => {
         return detail.status === myEnum.videoStatus.审核通过
-                    && toStatus === myEnum.videoStatus.已删除;
+          && toStatus === myEnum.videoStatus.已删除;
       },
       updateCountInUser: async (changeNum, dbUser, session) => {
         await dbUser.update({ video: dbUser.video + changeNum }, { session });
