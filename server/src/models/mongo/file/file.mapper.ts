@@ -97,6 +97,7 @@ export class FileMapper {
     });
     return rs;
   }
+
   static async findWithRaw(cond) {
     let fileList = await FileModel.find(cond);
     let rawFileList: RawFileType[] = [];

@@ -36,3 +36,6 @@ pm2.*
 .dev
 env
 logs
+
+**/config/*
+!**/config/default.*

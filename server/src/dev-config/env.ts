@@ -1,96 +1,59 @@
-
-import * as path from 'path';
-
 import * as config from 'config';
-
-console.log(config);
 import { MongoOpt } from '@/_system/dbMongo';
 import { SequelizeOpt } from '@/_system/dbSequelize';
 
-let processEnv = process.env as {
-  NODE_ENV: string;
-  Port?: string;
-  RedisUri?: string;
-  MongoUri?: string;
-  Host?: string;
-  MQUri?: string;
-  MysqlUri?: string;
-  FilePath?: string;
-  //pm2
-  pm_out_log_path?: string;
-};
-const urlPrefix = '/devMgt';
-const envDir = path.resolve(__dirname, '../../env');
-let host = processEnv.Host || 'http://localhost';
-let hostWithPrefix = host + urlPrefix;
-let name = 'devMgt';
-let isDev = !processEnv.NODE_ENV || processEnv.NODE_ENV === 'development';
-// console.log(processEnv);
-let logPath = processEnv.pm_out_log_path || path.resolve(__dirname, '../../logs/out.log');
-export default {
-  isDev,
-  name,
-  port: processEnv.Port || 8000,
-  version: '0.0.1',
-  cachePrefix: name,
-  host: 'http://144.202.99.178',
-  filePath: processEnv.FilePath ?? path.resolve('./.dev/file'),
+export type ConfigType = {
+  isDev: boolean,
+  name: string,
+  port: number,
+  version: string,
+  cachePrefix: string,
+  host: string,
+  filePath: string,
   redis: {
-    uri: processEnv.RedisUri || 'redis://localhost',
+    uri: string,
   },
-  mongoose: {
-    uri: processEnv.MongoUri || 'mongodb://localhost',
-    options: {
-      useNewUrlParser: true,
-      // autoReconnect: true,
-      useFindAndModify: false,
-      dbName: 'devMgt',
-      useCreateIndex: true,
-      useUnifiedTopology: true
-    }
-  } as MongoOpt,
-  sequelize: {
-    uri: processEnv.MysqlUri || 'mysql://test:test@localhost/test',
-  } as SequelizeOpt,
+  mongoose: MongoOpt,
+  sequelize: SequelizeOpt,
   mq: {
-    exchange: name,
-    mqUri: processEnv.MQUri || 'amqp://localhost'
+    exchange: string,
+    mqUri: string
   },
   api: {},
-  urlPrefix,
+  urlPrefix: string,
   logger: {
     name,
-    appenders: isDev ?
-      { type: 'stdout' } :
-      { type: 'dateFile', filename: logPath + `.${processEnv.NODE_ENV || 'dev'}`, daysToKeep: 90 }
-  },
-  imgPrefix: `${urlPrefix}/img`,
-  videoPrefix: `${urlPrefix}/video`,
+    appenders: any,
+  }
+  imgPrefix: string,
+  videoPrefix: string,
   ali: {
-    sandbox: true,
-    appId: '2016100100641227',
-    payNotifyUrl: hostWithPrefix + '/alipay/notify',
-    refundNotifyUrl: hostWithPrefix + '/alipay/refund/notify',
-    rsaPublicPath: path.join(envDir, '/alipay/pub.txt'),
-    rsaPrivatePath: path.join(envDir, '/alipay/pri.txt'),
+    sandbox: boolean,
+    appId: string,
+    payNotifyUrl: string,
+    refundNotifyUrl: string,
+    rsaPublicPath: string,
+    rsaPrivatePath: string,
   },
   wx: {
-    sandbox: true,
-    payNotifyUrl: hostWithPrefix + '/wxpay/notify',
-    mch_id: '',
+    sandbox: boolean,
+    payNotifyUrl: string,
+    mch_id: string,
     pay: {
-      key: '',
-      certPath: path.join(envDir, 'wxpay/apiclient_cert.p12'),
+      key: string,
+      certPath: string,
     },
     app: {
-      appId: '',
+      appId: string,
     },
   },
   //公众平台
   wxOffiaCcount: {
-    // appId: 'wxa72874334956e5c9',
-    // appSecret: '1cd084d2b490f012ac01abcae879f748',
-    appId: 'wx4f6293a9fba42e66',
-    appSecret: 'c76edd3e2a23d34c6003451ea69c46cd',
+    appId: string,
+    appSecret: string,
   }
-};
+}
+
+export type ConfigTypeOption = DeepPartial<ConfigType>
+
+export default config as config.IConfig & ConfigType;

@@ -10,7 +10,8 @@
         },
         "typeRoots": [
             "./node_modules/@types",
-            "./src/typings"
+            "./src/typings",
+            "./config"
         ],
         "sourceMap": true,
         //"noImplicitAny": false,
