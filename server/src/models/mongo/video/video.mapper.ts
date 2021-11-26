@@ -1,7 +1,7 @@
 import { Types } from 'mongoose';
 
-import * as config from '@/config';
-import { myEnum } from '@/config';
+import * as config from '@/dev-config';
+import { myEnum } from '@/dev-config';
 import * as ValidSchema from '@/valid-schema/class-valid';
 import { error, escapeRegExp } from '@/_system/common';
 import { Auth } from '@/_system/auth';

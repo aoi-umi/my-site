@@ -2,7 +2,7 @@
 import { transaction } from '@/_system/dbMongo';
 import { error } from '@/_system/common';
 import { Auth } from '@/_system/auth';
-import * as config from '@/config';
+import * as config from '@/dev-config';
 import { paramsValid } from '@/helpers';
 import * as ValidSchema from '@/valid-schema/class-valid';
 import { MyRequestHandler } from '@/middleware';

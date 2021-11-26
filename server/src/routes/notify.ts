@@ -1,5 +1,5 @@
 import { RequestHandler } from '@/typings/libs';
-import { myEnum } from '@/config';
+import { myEnum } from '@/dev-config';
 import { alipayInst, wxpayInst } from '@/3rd-party';
 import { NotifyMapper } from '@/models/mongo/notify';
 import { SendQueue } from '@/task';

@@ -4,7 +4,7 @@ import * as multer from '@koa/multer';
 
 import * as common from '@/_system/common';
 import { paramsValid } from '@/helpers';
-import { myEnum } from '@/config';
+import { myEnum } from '@/dev-config';
 import * as ValidSchema from '@/valid-schema/class-valid';
 import { FileMapper, FileModel } from '@/models/mongo/file';
 import { logger } from '@/helpers';

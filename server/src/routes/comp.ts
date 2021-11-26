@@ -2,7 +2,7 @@ import { paramsValid } from '@/helpers';
 import * as ValidSchema from '@/valid-schema/class-valid';
 import { MyRequestHandler } from '@/middleware';
 import { error } from '@/_system/common';
-import * as config from '@/config';
+import * as config from '@/dev-config';
 
 import { CompMapper, CompModel } from '@/models/mongo/comp';
 

@@ -4,7 +4,7 @@ import {
 } from 'mongoose-ts-ua';
 import * as moment from 'dayjs';
 
-import { myEnum, dev } from '@/config';
+import { myEnum, dev } from '@/dev-config';
 
 import { Base } from '../_base';
 import { pagination, IPagination } from '../_plugins/pagination';

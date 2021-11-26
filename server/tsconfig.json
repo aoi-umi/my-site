@@ -24,6 +24,9 @@
         "emitDecoratorMetadata": true,
         "strictPropertyInitialization": false,
         "moduleResolution": "node",
-        "skipLibCheck": true
-    }
+        "skipLibCheck": true,
+    },
+    "include": [
+      "src"
+    ]
 }

@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
 
-import { dev } from '@/config';
+import { dev } from '@/dev-config';
 import * as ValidSchema from '@/valid-schema/class-valid';
 
 import { LoginUser } from '../../login-user';

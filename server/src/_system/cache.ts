@@ -1,7 +1,7 @@
 import * as Redis from 'ioredis';
 import * as moment from 'dayjs';
 
-import * as config from '@/config';
+import * as config from '@/dev-config';
 import * as common from './common';
 
 function writeCacheErr(err) {

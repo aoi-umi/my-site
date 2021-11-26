@@ -1,6 +1,6 @@
 import { IsDefined, MinLength, IsIn } from 'class-validator';
 
-import { myEnum } from '@/config';
+import { myEnum } from '@/dev-config';
 import {
   ContentQuery, ContentDetailQuery,
   ContentSave, ContentDel, ContentMgtAudit

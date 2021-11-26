@@ -1,4 +1,4 @@
-import { myEnum } from '@/config';
+import { myEnum } from '@/dev-config';
 import * as ValidSchema from '@/valid-schema/class-valid';
 import { escapeRegExp } from '@/_system/common';
 

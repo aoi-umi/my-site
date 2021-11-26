@@ -3,8 +3,8 @@ import { plainToClass } from 'class-transformer';
 
 import { escapeRegExp } from '@/_system/common';
 import * as common from '@/_system/common';
-import { myEnum } from '@/config/enum';
-import * as config from '@/config';
+import { myEnum } from '@/dev-config/enum';
+import * as config from '@/dev-config';
 import * as ValidSchema from '@/valid-schema/class-valid';
 
 import { LoginUser } from '../../login-user';

@@ -1,7 +1,7 @@
 import { Transform, Type } from 'class-transformer';
 import { IsDefined, MinLength, MaxLength, IsIn } from 'class-validator';
 import { Types } from 'mongoose';
-import { myEnum } from '@/config';
+import { myEnum } from '@/dev-config';
 import { ListBase } from '../base';
 import { objectIdTransform } from '../util';
 

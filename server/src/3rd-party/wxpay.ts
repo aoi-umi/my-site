@@ -1,6 +1,6 @@
 import { wxpay } from '3rd-party-pay';
 
-import * as config from '@/config';
+import * as config from '@/dev-config';
 
 let wxConfig = config.env.wx;
 wxpay.WxPayStatic.config({

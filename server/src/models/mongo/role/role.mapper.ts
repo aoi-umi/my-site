@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
 
-import { myEnum } from '@/config';
+import { myEnum } from '@/dev-config';
 import { escapeRegExp } from '@/_system/common';
 import * as ValidSchema from '@/valid-schema/class-valid';
 

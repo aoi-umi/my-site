@@ -2,7 +2,7 @@ import { IsArray, IsDefined, ArrayMinSize, MinLength, IsIn } from 'class-validat
 import { Types } from 'mongoose';
 import { Type, Transform } from 'class-transformer';
 
-import { myEnum } from '@/config';
+import { myEnum } from '@/dev-config';
 
 import { arrayTransform } from '../util';
 import {

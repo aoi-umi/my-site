@@ -1,7 +1,7 @@
 
 import { paramsValid } from '@/helpers';
-import { myEnum } from '@/config';
-import * as config from '@/config';
+import { myEnum } from '@/dev-config';
+import * as config from '@/dev-config';
 import { Auth } from '@/_system/auth';
 import * as ValidSchema from '@/valid-schema/class-valid';
 import { mySocket } from '@/main';

@@ -6,7 +6,7 @@ import { Types, SchemaTypes } from 'mongoose';
 import * as Int32 from 'mongoose-int32';
 
 import { Base } from '../_base/base';
-import { myEnum } from '@/config';
+import { myEnum } from '@/dev-config';
 
 export type DanmakuInstanceType = InstanceType<Danmaku>;
 export type DanmakuDocType = DocType<DanmakuInstanceType>;

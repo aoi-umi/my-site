@@ -4,7 +4,7 @@ import {
 } from 'mongoose-ts-ua';
 
 import { Base } from '../_base';
-import { myEnum } from '@/config';
+import { myEnum } from '@/dev-config';
 
 export type StatUserInstanceType = InstanceType<StatUser>;
 export type StatUserModelType = ModelType<StatUser, typeof StatUser>;

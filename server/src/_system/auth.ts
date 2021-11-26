@@ -1,5 +1,5 @@
-import * as config from '@/config';
-import { AuthConfigType } from '@/config/authConfig';
+import * as config from '@/dev-config';
+import { AuthConfigType } from '@/dev-config/authConfig';
 
 import * as common from './common';
 

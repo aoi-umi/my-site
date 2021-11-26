@@ -1,8 +1,8 @@
 import { Types } from 'mongoose';
 import { ClientSession } from 'mongodb';
 
-import { myEnum } from '@/config';
-import * as config from '@/config';
+import { myEnum } from '@/dev-config';
+import * as config from '@/dev-config';
 import { error, escapeRegExp } from '@/_system/common';
 import { transaction } from '@/_system/dbMongo';
 import * as ValidSchema from '@/valid-schema/class-valid';

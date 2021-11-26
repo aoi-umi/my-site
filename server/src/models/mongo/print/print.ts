@@ -4,7 +4,7 @@ import {
 } from 'mongoose-ts-ua';
 import { Types, SchemaTypes } from 'mongoose';
 
-import { myEnum } from '@/config/enum';
+import { myEnum } from '@/dev-config/enum';
 
 import { Base } from '../_base';
 import { pagination, IPagination } from '../_plugins/pagination';

@@ -1,4 +1,4 @@
-import { dev, env } from '@/config';
+import { dev, env } from '@/dev-config';
 import * as common from '@/_system/common';
 import { cache } from '@/main';
 

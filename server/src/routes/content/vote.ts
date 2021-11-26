@@ -1,8 +1,8 @@
 
 import { transaction } from '@/_system/dbMongo';
 import { error } from '@/_system/common';
-import * as config from '@/config';
-import { myEnum } from '@/config';
+import * as config from '@/dev-config';
+import { myEnum } from '@/dev-config';
 import { paramsValid } from '@/helpers';
 import * as ValidSchema from '@/valid-schema/class-valid';
 import { MyRequestHandler } from '@/middleware';

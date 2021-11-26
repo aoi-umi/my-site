@@ -4,7 +4,7 @@ import {
 } from 'mongoose-ts-ua';
 import { Types, SchemaTypes } from 'mongoose';
 
-import { myEnum } from '@/config';
+import { myEnum } from '@/dev-config';
 
 import { Base } from '../_base';
 export type GoodsSpecGroupInstanceType = InstanceType<GoodsSpecGroup>;

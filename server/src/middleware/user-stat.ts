@@ -6,7 +6,7 @@ import * as common from '@/_system/common';
 import { logger } from '@/helpers';
 
 import { StatUserMapper } from '@/models/mongo/statistics';
-import { myEnum } from '@/config';
+import { myEnum } from '@/dev-config';
 
 export class UserStatMid {
   static async stat(ctx: Koa.Context & RouterContext, next) {

@@ -2,7 +2,7 @@ import { Context } from 'koa';
 import { RouterContext } from '@koa/router';
 import { plainToClass } from 'class-transformer';
 
-import * as config from '@/config';
+import * as config from '@/dev-config';
 import { AuthType } from '@/_system/auth';
 import { auth, cache } from '@/main';
 import { logger } from '@/helpers';

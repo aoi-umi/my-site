@@ -2,7 +2,7 @@ import { IsDefined, IsIn, IsNumber, IsDecimal, IsDate, Min, IsPositive } from 'c
 import { Type, Transform } from 'class-transformer';
 import { Types } from 'mongoose';
 
-import { myEnum } from '@/config';
+import { myEnum } from '@/dev-config';
 import { ListBase, DetailQueryBase } from './base';
 import { objectIdTransform } from './util';
 

@@ -2,7 +2,7 @@ import { IsArray, IsDefined, ArrayMinSize, MinLength, IsIn } from 'class-validat
 import { Type, Transform } from 'class-transformer';
 import { ListBase, DelBase, DetailQueryBase } from '../base';
 import { objectIdTransform } from '../util';
-import { myEnum } from '@/config';
+import { myEnum } from '@/dev-config';
 
 export class UserAccountExists {
     @IsDefined()

@@ -1,6 +1,6 @@
 import * as wxpay from '3rd-party-pay/dest/lib/wxpay';
 
-import { myEnum } from '@/config';
+import { myEnum } from '@/dev-config';
 import { logger } from '@/helpers';
 import * as common from '@/_system/common';
 import { transaction } from '@/_system/dbMongo';

@@ -1,6 +1,6 @@
 
 import { mq } from '@/main';
-import * as config from '@/config';
+import * as config from '@/dev-config';
 import * as ValidSchema from '@/valid-schema/class-valid';
 import { NotifyType } from '@/3rd-party';
 

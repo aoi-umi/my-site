@@ -6,7 +6,7 @@ import { Types, SchemaTypes } from 'mongoose';
 import * as Int32 from 'mongoose-int32';
 import * as mathjs from 'mathjs';
 
-import { myEnum } from '@/config';
+import { myEnum } from '@/dev-config';
 
 import { Base } from '../_base';
 import { pagination, IPagination } from '../_plugins/pagination';

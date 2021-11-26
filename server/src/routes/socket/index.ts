@@ -1,8 +1,8 @@
 import * as SocketIO from 'socket.io';
 import { Server } from 'http';
 
-import * as config from '@/config';
-import { myEnum } from '@/config';
+import * as config from '@/dev-config';
+import { myEnum } from '@/dev-config';
 import { MySocket } from '@/_system/socket';
 import { Cache } from '@/_system/cache';
 

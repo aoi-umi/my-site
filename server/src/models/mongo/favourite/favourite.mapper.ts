@@ -1,8 +1,8 @@
 import { Model, InstanceType } from 'mongoose-ts-ua';
 import { Types } from 'mongoose';
 
-import { myEnum } from '@/config';
-import * as config from '@/config';
+import { myEnum } from '@/dev-config';
+import * as config from '@/dev-config';
 import { error } from '@/_system/common';
 import * as ValidSchema from '@/valid-schema/class-valid';
 

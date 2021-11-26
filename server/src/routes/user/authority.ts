@@ -1,6 +1,6 @@
 
 import { paramsValid } from '@/helpers';
-import * as config from '@/config';
+import * as config from '@/dev-config';
 import { error } from '@/_system/common';
 import * as ValidSchema from '@/valid-schema/class-valid';
 import { MyRequestHandler } from '@/middleware';

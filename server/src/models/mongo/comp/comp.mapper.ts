@@ -2,7 +2,7 @@ import { LoginUser } from '@/models/login-user';
 import * as ValidSchema from '@/valid-schema/class-valid';
 import { error, escapeRegExp } from '@/_system/common';
 import { transaction } from '@/_system/dbMongo';
-import * as config from '@/config';
+import * as config from '@/dev-config';
 import { BaseMapper } from '../_base';
 
 import { CompInstanceType, CompModel, } from './comp';

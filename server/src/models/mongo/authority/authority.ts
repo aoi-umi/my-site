@@ -3,7 +3,7 @@ import {
   setSchema, prop, arrayProp, setPlugin
 } from 'mongoose-ts-ua';
 
-import { myEnum } from '@/config';
+import { myEnum } from '@/dev-config';
 
 import { Base } from '../_base';
 import { pagination, IPagination } from '../_plugins/pagination';

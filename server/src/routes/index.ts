@@ -1,6 +1,6 @@
 import * as Router from '@koa/router';
 import { UserAuthMid, FileMid, MyRequestHandlerMid, UserStatMid } from '@/middleware';
-import { auth, env } from '@/config';
+import { auth, env } from '@/dev-config';
 
 let router = new Router({
   prefix: env.urlPrefix

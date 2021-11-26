@@ -1,7 +1,7 @@
 import * as Router from '@koa/router';
 
 import { UserAuthMid, MyRequestHandlerMid } from '@/middleware';
-import { auth } from '@/config';
+import { auth } from '@/dev-config';
 
 let router = new Router();
 export default router;

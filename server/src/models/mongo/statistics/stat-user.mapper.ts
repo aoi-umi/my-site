@@ -1,7 +1,7 @@
 import * as moment from 'dayjs';
 
 import { StatUserModel } from '@/models/mongo/statistics';
-import { myEnum, dev } from '@/config';
+import { myEnum, dev } from '@/dev-config';
 export class StatUserMapper {
   static async create(data: {
     type: string;

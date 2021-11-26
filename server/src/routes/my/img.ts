@@ -3,7 +3,7 @@ import { paramsValid } from '@/helpers';
 import * as ValidSchema from '@/valid-schema/class-valid';
 import { MyRequestHandler } from '@/middleware/my-request-handler';
 import { FileMapper, FileModel } from '@/models/mongo/file';
-import { myEnum } from '@/config';
+import { myEnum } from '@/dev-config';
 
 
 export let query: MyRequestHandler = async (opt) => {

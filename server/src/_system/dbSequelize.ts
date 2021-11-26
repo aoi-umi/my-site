@@ -1,5 +1,5 @@
 import { Sequelize, Options, QueryTypes } from 'sequelize';
-import { myEnum } from '@/config';
+import { myEnum } from '@/dev-config';
 import * as common from '@/_system/common';
 
 

@@ -4,8 +4,8 @@ import * as fs from 'fs';
 import { GridFSInstance } from 'mongoose-ts-ua';
 
 import * as common from '@/_system/common';
-import * as config from '@/config';
-import { myEnum } from '@/config';
+import * as config from '@/dev-config';
+import { myEnum } from '@/dev-config';
 import * as ValidSchema from '@/valid-schema/class-valid';
 import { LoginUser } from '@/models/login-user';
 

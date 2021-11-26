@@ -8,7 +8,7 @@ import * as send from 'koa-send';
 
 import { MyRequestHandlerOpt } from '@/middleware';
 import * as common from '@/_system/common';
-import * as config from '@/config';
+import * as config from '@/dev-config';
 import * as ValidSchema from '@/valid-schema/class-valid';
 
 import { valid } from './class-valid';

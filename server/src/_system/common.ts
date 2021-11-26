@@ -7,7 +7,7 @@ import * as Q from 'q';
 import * as zlib from 'zlib';
 import * as uuid from 'uuid';
 import * as  SqlString from 'sequelize/lib/sql-string';
-import * as config from '@/config';
+import * as config from '@/dev-config';
 import * as moment from 'dayjs';
 
 

@@ -22,6 +22,7 @@
     "axios": "^0.18.1",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.10.0",
+    "config": "^3.3.6",
     "dayjs": "^1.8.16",
     "enum-ts": "^1.1.1",
     "http-errors": "~1.6.2",
@@ -47,6 +48,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@types/config": "0.0.40",
     "@types/ioredis": "^4.0.3",
     "@types/koa": "^2.11.3",
     "@types/koa-bodyparser": "^4.3.0",

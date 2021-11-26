@@ -1,7 +1,7 @@
 
 import { paramsValid } from '@/helpers';
 import { error, escapeRegExp } from '@/_system/common';
-import * as config from '@/config';
+import * as config from '@/dev-config';
 import * as ValidSchema from '@/valid-schema/class-valid';
 import { MyRequestHandler } from '@/middleware/my-request-handler';
 

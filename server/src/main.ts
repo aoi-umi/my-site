@@ -4,7 +4,7 @@ import { ConfirmChannel } from 'amqplib';
 import { Server } from 'http';
 import { MQ } from 'amqplib-delay';
 
-import * as config from '@/config';
+import * as config from '@/dev-config';
 import { MySocket } from '@/_system/socket';
 import { Auth } from '@/_system/auth';
 import { Cache } from '@/_system/cache';

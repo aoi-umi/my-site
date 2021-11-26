@@ -10,7 +10,7 @@ import 'reflect-metadata';
 
 import './moduleAlias';
 
-import * as config from '@/config';
+import * as config from '@/dev-config';
 import * as db from '@/_system/dbMongo';
 import * as dbSeq from '@/_system/dbSequelize';
 

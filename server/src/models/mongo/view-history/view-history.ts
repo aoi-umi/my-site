@@ -11,7 +11,7 @@ import {
 } from 'mongoose-ts-ua';
 import { Types, SchemaTypes } from 'mongoose';
 
-import { myEnum } from '@/config/enum';
+import { myEnum } from '@/dev-config/enum';
 
 import { ContentContactBase } from '../content/content-contact';
 import { IPagination, pagination } from '../_plugins/pagination';

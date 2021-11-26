@@ -3,8 +3,8 @@ import * as common from '@/_system/common';
 import { transaction } from '@/_system/dbMongo';
 import { MyRequestHandler } from '@/middleware';
 import { paramsValid, } from '@/helpers';
-import { myEnum } from '@/config';
-import * as config from '@/config';
+import { myEnum } from '@/dev-config';
+import * as config from '@/dev-config';
 import { cache } from '@/main';
 import * as ValidSchema from '@/valid-schema/class-valid';
 

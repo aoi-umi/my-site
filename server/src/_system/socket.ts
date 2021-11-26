@@ -1,7 +1,7 @@
 import { SocketOnConnect } from '@/typings/libs';
 import { SocketUser } from '@/models/socket-user';
-import { myEnum } from '@/config';
-import * as config from '@/config';
+import { myEnum } from '@/dev-config';
+import * as config from '@/dev-config';
 import { cache } from '@/main';
 
 export function tryFn(socket: Socket, fn: () => void) {

@@ -1,5 +1,9 @@
 
 import * as path from 'path';
+
+import * as config from 'config';
+
+console.log(config);
 import { MongoOpt } from '@/_system/dbMongo';
 import { SequelizeOpt } from '@/_system/dbSequelize';
 
