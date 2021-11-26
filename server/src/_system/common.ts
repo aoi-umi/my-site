@@ -254,10 +254,10 @@ export let error = function (msg, code?, option?: { remark?: string, format?: st
   if (error) {
     status = error.status;
     if (!msg) {
-      let filepath = `../config/lang/${opt.lang}`;
+      let filepath = `../dev-config/lang/${opt.lang}`;
       let resolvePath = path.resolve(`${__dirname}/${filepath}.js`);
       let isExist = fs.existsSync(resolvePath);
-      let lang = require(isExist ? filepath : '../config/lang/zh');
+      let lang = require(isExist ? filepath : '../dev-config/lang/zh');
       msg = lang.errorConfig[code];
       if (typeof opt.format == 'function')
         msg = opt.format(msg);

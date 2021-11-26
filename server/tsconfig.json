@@ -1,33 +1,36 @@
 {
-    "compilerOptions": {
-        "outDir": "./dest",
-        "rootDir": "./src",
-        "baseUrl": "./src",
-        "paths": {
-            "@/*": [
-                "./*"
-            ]
-        },
-        "typeRoots": [
-            "./node_modules/@types",
-            "./src/typings",
-            "./config"
-        ],
-        "sourceMap": true,
-        //"noImplicitAny": false,
-        //"strict": false,
-        "module": "commonjs",
-        "target": "es2019",
-        "lib": [
-            "es2020",
-        ],
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-        "strictPropertyInitialization": false,
-        "moduleResolution": "node",
-        "skipLibCheck": true,
+  "compilerOptions": {
+    "outDir": "./dest",
+    "rootDir": "./src",
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
     },
-    "include": [
-      "src"
-    ]
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/typings",
+      "./config"
+    ],
+    "sourceMap": true,
+    //"noImplicitAny": false,
+    //"strict": false,
+    "module": "commonjs",
+    "target": "es2019",
+    "lib": [
+      "es2020",
+    ],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strictPropertyInitialization": false,
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+  },
+  "include": [
+    "src"
+  ],
+  "ts-node": {
+    "transpileOnly": true
+  },
 }
