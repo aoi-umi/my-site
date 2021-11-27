@@ -25,7 +25,7 @@ export default class VideoMgtDetail extends VideoMgtBase {
   $refs: { detailView: ContentMgtDetail, upload: MyUpload };
 
   private innerDetail: DetailType = this.getDetailData();
-  protected getDetailData () {
+  protected getDetailData() {
     const data = this.getDefaultDetail<DetailDataType>()
     data.detail.videoIdList = []
     data.detail.status = myEnum.videoStatus.草稿
@@ -33,7 +33,7 @@ export default class VideoMgtDetail extends VideoMgtBase {
     return data
   }
 
-  private getRules () {
+  private getRules() {
     return {
       cover: {
         required: true
@@ -45,7 +45,7 @@ export default class VideoMgtDetail extends VideoMgtBase {
   }
 
   videoList: FileType[] = [];
-  private async loadDetailData () {
+  private async loadDetailData() {
     const query = this.$route.query
     let detail: DetailType
     if (query._id) {
@@ -64,7 +64,7 @@ export default class VideoMgtDetail extends VideoMgtBase {
     return detail
   }
 
-  private async beforeValidFn (detail: DetailDataType) {
+  private async beforeValidFn(detail: DetailDataType) {
     await this.operateHandler('上传视频', async () => {
       const upload = this.$refs.upload
       const err = await upload.upload()
@@ -75,10 +75,10 @@ export default class VideoMgtDetail extends VideoMgtBase {
       if (file && file.uploadRes) {
         detail.videoIdList = [file.uploadRes]
       }
-    }, { noSuccessHandler: true })
+    }, { noSuccessHandler: true, throwError: true })
   }
 
-  private async saveFn (detail: DetailDataType, submit) {
+  private async saveFn(detail: DetailDataType, submit) {
     const { user, ...restDetail } = detail
     const rs = await testApi.videoMgtSave({
       ...restDetail,
@@ -87,14 +87,14 @@ export default class VideoMgtDetail extends VideoMgtBase {
     return rs
   }
 
-  private renderLog () {
+  private renderLog() {
     const { log } = this.innerDetail
     return (
       <ContentLogList log={log} />
     )
   }
 
-  private renderPreview () {
+  private renderPreview() {
     const { detail } = this.innerDetail
     return (
       <div>
@@ -107,7 +107,7 @@ export default class VideoMgtDetail extends VideoMgtBase {
     )
   }
 
-  render () {
+  render() {
     const videoSize = 20
     return (
       <ContentMgtDetail ref='detailView'

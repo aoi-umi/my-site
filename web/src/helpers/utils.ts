@@ -1,8 +1,8 @@
 import axios, { AxiosRequestConfig } from 'axios'
 import { AnimeInstance } from 'animejs'
-import * as md from 'node-forge/lib/md.all'
+import SparkMD5 from 'spark-md5'
 
-export async function request (options: AxiosRequestConfig) {
+export async function request(options: AxiosRequestConfig) {
   if (!options.url) { throw new Error('url can not empty!') }
   let opt: AxiosRequestConfig = {
     headers: {
@@ -24,7 +24,7 @@ export async function request (options: AxiosRequestConfig) {
   return rs
 }
 
-export function extend (...args) {
+export function extend(...args) {
   const res = args[0] || {}
   for (let i = 1; i < args.length; i++) {
     const arg = args[i]
@@ -38,30 +38,24 @@ export function extend (...args) {
   return res
 }
 
-export function clone<T> (obj: T): T {
+export function clone<T>(obj: T): T {
   return JSON.parse(JSON.stringify(obj))
 }
 
-function getDeco (fn: (constructor) => any) {
-  return function <T extends { new (...args: any[]): {} }>(constructor: T) {
+function getDeco(fn: (constructor) => any) {
+  return function <T extends { new(...args: any[]): {} }>(constructor: T) {
     return fn(constructor)
   }
 }
 
-export function error (e, code?) {
+export function error(e, code?) {
   if (!(e instanceof Error)) { e = new Error(e) }
   if (code) { e.code = code }
   return e
 }
 
-export function randStr () {
+export function randStr() {
   return Math.random().toString(36).substr(2, 15)
-}
-
-export function md5 (str: string) {
-  const md5 = md.md5.create()
-  md5.update(str, 'utf8')
-  return md5.digest().toHex()
 }
 
 export const stringFormat = function (formatString: string, ...args) {
@@ -90,7 +84,7 @@ export const stopAnimation = (animations: AnimeInstance | AnimeInstance[]) => {
   else stop(animations)
 }
 
-export function defer<T = any> () {
+export function defer<T = any>() {
   let resolve: (value?: T | PromiseLike<T>) => void,
     reject: (reason?: any) => void
   const promise = new Promise<T>((reso, reje) => {

@@ -11,31 +11,31 @@ import { OperateOption, OperateModel } from '@/helpers'
 
 @Component
 export class Base extends MyBase {
-  get storeUser () {
+  get storeUser() {
     return getModule(LoginUserStore, this.$store)
   }
 
-  get storeSetting () {
+  get storeSetting() {
     return getModule(SettingStore, this.$store)
   }
 
   protected isSmall = false;
-  protected created () {
+  protected created() {
     this.handleResize()
   }
-  protected mounted () {
+  protected mounted() {
     window.addEventListener('resize', this.handleResize)
   }
 
-  protected beforeDestroy () {
+  protected beforeDestroy() {
     window.removeEventListener('resize', this.handleResize)
   }
 
-  private handleResize () {
+  private handleResize() {
     this.isSmall = document.body.clientWidth < 576
   }
 
-  getOpModel (opt: OperateOption) {
+  getOpModel(opt: OperateOption) {
     return new OperateModel({
       defaultErrHandler: (e) => {
         if (e.code == error.NO_LOGIN.code) {
@@ -52,13 +52,14 @@ export class Base extends MyBase {
     })
   }
 
-  async operateHandler (operate: string, fn: () => any, opt?: {
+  async operateHandler(operate: string, fn: () => any, opt?: {
     beforeValid?: () => any;
     onSuccessClose?: () => any;
     validate?: () => Promise<boolean> | void,
     noDefaultHandler?: boolean;
     noSuccessHandler?: boolean;
     noErrorHandler?: boolean;
+    throwError?: boolean;
   }) {
     const result = {
       success: true,
@@ -86,6 +87,8 @@ export class Base extends MyBase {
       }
       return result
     } catch (e) {
+      if (opt.throwError)
+        throw e;
       result.success = false
       result.msg = e.message
       result.err = e
@@ -105,18 +108,18 @@ export class Base extends MyBase {
     }
   }
 
-  protected toError (query: { code?: string; msg?: string }) {
+  protected toError(query: { code?: string; msg?: string }) {
     this.$router.push({
       path: routerConfig.error.path,
       query
     })
   }
 
-  protected setTitle (title: string) {
+  protected setTitle(title: string) {
     document.title = title
   }
 
-  protected renderOptionByObj (obj) {
+  protected renderOptionByObj(obj) {
     return this.$utils.obj2arr(obj).map(ele => {
       return (
         <i-option key={ele.key} value={ele.value}>

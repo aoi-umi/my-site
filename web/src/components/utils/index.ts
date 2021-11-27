@@ -1,13 +1,35 @@
 import Vue from 'vue'
 import copy from 'copy-to-clipboard'
 import AsyncValidator, { ValidateOption } from 'async-validator'
+import SparkMD5 from 'spark-md5'
 
 import { UtilsTsx } from './tsx'
 
 export * from './utils'
 
 const vm = Vue.prototype
+type Md5FileResult = {
+  hash: string,
+  chunkSize: number,
+  chunks: FileChunkResult[]
+};
+
+type FileChunkResult = {
+  data: ArrayBuffer,
+  start: number
+  end: number
+}
+
 const _Utils = {
+  async promise<T>(fn: (resolve, reject) => void) {
+    return new Promise<T>(async (res, rej) => {
+      try {
+        fn(res, rej);
+      } catch (e) {
+        rej(e)
+      }
+    })
+  },
   base64ToFile(dataUrl: string, filename: string) {
     const arr = dataUrl.split(',')
     const mime = arr[0].match(/:(.*?);/)[1]
@@ -184,6 +206,107 @@ const _Utils = {
   round(x: number, n?: number) {
     let y = !n ? 1 : 10 ** n;
     return Math.round(x * y) / y;
+  },
+
+  md5(data: string | any) {
+    console.log(data)
+    if (typeof data === 'string')
+      return SparkMD5.hash(data)
+    else
+      return SparkMD5.hashBinary(data)
+  },
+
+  async readFile(file: File, opt?: {
+    chunkSize?: number;
+    ranges?: { start?: number, end?: number }[]
+  }) {
+    return _Utils.promise<FileChunkResult[]>((resolve, reject) => {
+      opt = { ...opt }
+      let blobSlice = File.prototype.slice || File.prototype['mozSlice'] || File.prototype['webkitSlice'];
+
+      let fileReader = new FileReader();
+      let currRange = 0;
+      let ranges = opt.ranges;
+      if (ranges) {
+
+      } else if (opt.chunkSize) {
+        ranges = [];
+        let chunkSize = opt.chunkSize;
+        let chunks = Math.ceil(file.size / chunkSize);
+        let currentChunk = 0;
+        while (currentChunk < chunks) {
+          let start = currentChunk * chunkSize;
+          let end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
+          ranges.push({
+            start,
+            end
+          })
+          currentChunk++;
+        }
+      }
+
+      let buffs: {
+        data: ArrayBuffer,
+        start: number,
+        end: number
+      }[] = [];
+      let range
+      fileReader.onload = function (e) {
+        let buff = e.target.result as any
+        buffs.push({
+          data: buff,
+          start: range?.start,
+          end: range?.end
+        });
+        currRange++;
+        if (!ranges || currRange >= ranges.length) {
+          resolve(buffs);
+        } else {
+          loadNext();
+        }
+      }
+
+      fileReader.onerror = function (e) {
+        reject(e);
+      };
+      function loadNext() {
+        let start, end;
+        range = ranges?.[currRange]
+        if (range) {
+          start = range.start
+          end = range.end
+        }
+        fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
+      }
+
+      loadNext();
+    })
+  },
+
+  async md5File(file: File, chunkSize?: number) {
+    // Read in chunks of 2MB
+    chunkSize = chunkSize ?? 1024 * 1024 * 2;
+    let spark = new SparkMD5.ArrayBuffer();
+
+    let fileChunks = await _Utils.readFile(file, { chunkSize })
+
+    let result: Md5FileResult = {
+      hash: '',
+      chunkSize,
+      chunks: []
+    }
+
+    for (let chunk of fileChunks) {
+      result.chunks.push({
+        ...chunk,
+      })
+      spark.append(chunk.data);
+    }
+
+    let hash = spark.end()
+    result.hash = hash;
+    console.info('computed hash', hash);
+    return result
   }
 }
 

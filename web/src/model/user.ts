@@ -1,56 +1,57 @@
 import * as helpers from '@/helpers'
+import { Utils } from '@/components/utils'
 
 export type LoginUserType = UserInfo & LoginUser;
 export class LoginUser {
-    isLogin = false;
-    static create (data: UserInfo) {
-      const user = new LoginUser()
-      if (data) {
-        for (const key in data) {
-          user[key] = data[key]
-        }
-        user.isLogin = true
-      } else {
-
+  isLogin = false;
+  static create(data: UserInfo) {
+    const user = new LoginUser()
+    if (data) {
+      for (const key in data) {
+        user[key] = data[key]
       }
-      return user as LoginUserType
-    }
+      user.isLogin = true
+    } else {
 
-    hasAuth (this: LoginUserType, auth: string | string[]) {
-      if (auth) {
-        const authList = auth instanceof Array ? auth : [auth]
-        for (const ele of authList) {
-          if (!this.authority || !this.authority[ele]) { return false }
-        }
-      }
-      return true
     }
+    return user as LoginUserType
+  }
 
-    existsAuth (this: LoginUserType, auth: string | string[]) {
+  hasAuth(this: LoginUserType, auth: string | string[]) {
+    if (auth) {
       const authList = auth instanceof Array ? auth : [auth]
       for (const ele of authList) {
-        if (this.authority && this.authority[ele]) { return true }
+        if (!this.authority || !this.authority[ele]) { return false }
       }
-      return false
     }
+    return true
+  }
 
-    equalsId (this: LoginUserType, id: string) {
-      return this._id && this._id === id
+  existsAuth(this: LoginUserType, auth: string | string[]) {
+    const authList = auth instanceof Array ? auth : [auth]
+    for (const ele of authList) {
+      if (this.authority && this.authority[ele]) { return true }
     }
+    return false
+  }
 
-    static createToken (account, pwd, data) {
-      let token = account + helpers.md5(pwd) + JSON.stringify(data)
-      token = helpers.md5(token)
-      return token
-    }
+  equalsId(this: LoginUserType, id: string) {
+    return this._id && this._id === id
+  }
 
-    static createReqWithToken (account, pwd, data) {
-      data = {
-        ...data,
-        rand: helpers.randStr()
-      }
-      const token = LoginUser.createToken(account, pwd, data)
-      data.token = token
-      return data
+  static createToken(account, pwd, data) {
+    let token = account + Utils.md5(pwd) + JSON.stringify(data)
+    token = Utils.md5(token)
+    return token
+  }
+
+  static createReqWithToken(account, pwd, data) {
+    data = {
+      ...data,
+      rand: helpers.randStr()
     }
+    const token = LoginUser.createToken(account, pwd, data)
+    data.token = token
+    return data
+  }
 }

@@ -82,6 +82,10 @@ const download: MyRequestHandler = async (opt, ctx) => {
   }
 };
 
+export const uploadByChunks: MyRequestHandler = async (opt, ctx) => {
+  let option = <{ file: multer.File }>opt.reqOption;
+};
+
 export const imgUpload: MyRequestHandler = (opt, ctx) => {
   opt.reqOption = { fileType: myEnum.fileType.图片, file: ctx.file };
   return upload(opt);

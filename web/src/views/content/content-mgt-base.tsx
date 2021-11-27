@@ -15,7 +15,7 @@ import { Base } from '../base'
 export class ContentDetailType<T extends ContentDataType = ContentDataType> {
   detail: T;
   log?: any[];
-  static create<T extends ContentDataType> (): ContentDetailType<T> {
+  static create<T extends ContentDataType>(): ContentDetailType<T> {
     const data = {
       detail: {
         _id: '',
@@ -84,21 +84,21 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
   operateDetail: ContentDataType;
   protected preview = false;
 
-  protected getDefaultDetail<T extends ContentDataType = ContentDataType> () {
+  protected getDefaultDetail<T extends ContentDataType = ContentDataType>() {
     const data = ContentDetailType.create<T>()
     return data
   }
 
-  protected toggleNotPass (show: boolean) {
+  protected toggleNotPass(show: boolean) {
     this.notPassShow = show
     this.notPassRemark = ''
   }
 
-  protected auditSuccessHandler (detail) {
+  protected auditSuccessHandler(detail) {
     this.toList()
   }
 
-  protected async audit (detail: ContentDataType, pass: boolean) {
+  protected async audit(detail: ContentDataType, pass: boolean) {
     await this.operateHandler('审核', async () => {
       const rs = await this.auditFn(detail, pass)
       detail.status = rs.status
@@ -108,7 +108,7 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
     })
   }
 
-  protected toList () {
+  protected toList() {
     this.$router.push({
       path: routerConfig.contentMgt.path,
       query: {
@@ -117,7 +117,7 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
     })
   }
 
-  protected toDetail (_id?, opt?: {
+  protected toDetail(_id?, opt?: {
     preview?: boolean,
     repost?: boolean,
   }) {
@@ -130,7 +130,7 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
     })
   }
 
-  protected getOperate (detail: ContentDataType, opt?: { noPreview?: boolean; isDetail?: boolean; }) {
+  protected getOperate(detail: ContentDataType, opt?: { noPreview?: boolean; isDetail?: boolean; }) {
     opt = { ...opt }
     let operate: OpType[] = []
     if (this.canAudit(detail)) {
@@ -184,7 +184,7 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
     return operate
   }
 
-  protected renderListOpBox (detail: ContentDataType, opt?: { noPreview?: boolean; isDetail?: boolean; }) {
+  protected renderListOpBox(detail: ContentDataType, opt?: { noPreview?: boolean; isDetail?: boolean; }) {
     return (
       <div class={['content-mgt-item-op-box', 'button-group-normal']}>
         {
@@ -200,7 +200,7 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
     )
   }
 
-  protected renderDetailOpBox (detail: ContentDataType) {
+  protected renderDetailOpBox(detail: ContentDataType) {
     const operate = this.getOperate(detail, { noPreview: true, isDetail: true })
     return (operate.length &&
       <div>
@@ -220,7 +220,7 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
     )
   }
 
-  protected renderNotPassConfirm () {
+  protected renderNotPassConfirm() {
     return (
       <Modal v-model={this.notPassShow} footer-hide>
         <MyConfirm title='审核不通过' loading={true}
@@ -236,7 +236,7 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
     )
   }
 
-  protected renderDelConfirm () {
+  protected renderDelConfirm() {
     return (
       <Modal v-model={this.delShow} footer-hide>
         <MyConfirm title='确认删除?' loading={true}
@@ -253,10 +253,10 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
     )
   }
 
-  protected delSuccessHandler () {
+  protected delSuccessHandler() {
     this.toList()
   }
-  async delClick () {
+  async delClick() {
     await this.operateHandler('删除', async () => {
       await this.delFn()
       this.delIds = []
@@ -305,14 +305,14 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp, Base> {
   $refs: { formVaild: iView.Form, cover: MyUpload, loadView: MyLoad };
 
   @Watch('$route')
-  route (to, from) {
+  route(to, from) {
     this.$refs.loadView.loadData()
   }
 
   innerDetail: ContentDetailType = null;
 
   rules = {};
-  private getCommonRules () {
+  private getCommonRules() {
     return {
       title: [
         { required: true }
@@ -331,7 +331,7 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp, Base> {
     }
   }
 
-  private setRules () {
+  private setRules() {
     const rule = this.getRules ? this.getRules() : {}
     this.rules = {
       ...this.getCommonRules(),
@@ -340,7 +340,7 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp, Base> {
   }
 
   private coverList = [];
-  private async loadDetail () {
+  private async loadDetail() {
     const detailInfo = await this.loadDetailData()
     const detail = detailInfo.detail
     this.coverList = detail.coverUrl ? [{ url: detail.coverUrl, fileType: FileDataType.图片 }] : []
@@ -350,7 +350,7 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp, Base> {
     return detailInfo
   }
 
-  async uploadCover () {
+  async uploadCover() {
     const upload = this.$refs.cover
     const err = await upload.upload()
     if (err.length) {
@@ -361,14 +361,14 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp, Base> {
   }
 
   private saving = false;
-  private async handleSave (submit?: boolean) {
+  private async handleSave(submit?: boolean) {
     this.saving = true
     const { detail } = this.innerDetail
     let rs
     await this.operateHandler('保存', async () => {
       rs = await this.saveFn(detail, submit)
     }, {
-      validate: this.$refs.formVaild.validate,
+      validate: submit ? this.$refs.formVaild.validate : null,
       beforeValid: async () => {
         const file = await this.uploadCover()
         if (!file) { detail.cover = '' } else if (file.uploadRes) { detail.cover = file.uploadRes }
@@ -382,7 +382,7 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp, Base> {
     })
   }
 
-  protected render () {
+  protected render() {
     return (
       <MyLoad
         ref='loadView'
@@ -395,7 +395,7 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp, Base> {
     )
   }
 
-  protected renderHeader (detail: ContentDataType) {
+  protected renderHeader(detail: ContentDataType) {
     return (
       <div>
         <UserAvatar user={detail.user} />
@@ -410,14 +410,14 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp, Base> {
     )
   }
 
-  protected renderLog () {
+  protected renderLog() {
     const { log } = this.innerDetail
     return (
       <ContentLogList log={log} />
     )
   }
 
-  protected renderEdit () {
+  protected renderEdit() {
     const { detail } = this.innerDetail
     return (
       <div>
@@ -495,7 +495,7 @@ class ContentLogListProp {
   props: ContentLogListProp
 })
 export class ContentLogList extends Vue<ContentLogListProp, Base> {
-  render () {
+  render() {
     const log = this.log
     return (
       <div>

@@ -177,7 +177,7 @@ export class TestApi extends ApiModel<TestMethod> {
     return this.afterResponse(res) as FileUploadRes
   }
 
-  uploader (file, url) {
+  uploader (file, url, opt?) {
     const formData = new FormData()
     formData.append('file', file)
     let obj = {

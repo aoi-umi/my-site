@@ -1,13 +1,13 @@
 
 const { DynamicImportCdnPlugin } = require('webpack-dynamic-import-cdn-plugin')
 const path = require('path')
-function resolve (dir) {
+function resolve(dir) {
   return path.resolve(path.join(__dirname, dir))
 }
 
 let env = process.env
 let isProd = env.NODE_ENV === 'production'
-function getCdn (prefix, cfg, opt) {
+function getCdn(prefix, cfg, opt) {
   let rs = {}
   opt = { ...opt }
   for (let key in cfg) {
@@ -80,6 +80,10 @@ let cdnOpt = {
     jquery: {
       moduleName: 'jQuery',
       url: `/jquery@3.5.1/dist/jquery.min.js`
+    },
+    'spark-md5': {
+      moduleName: 'SparkMD5',
+      url: '/spark-md5@3.0.2/spark-md5.min.js'
     }
   }
 }
