@@ -36,6 +36,13 @@ export class MyVideo extends Vue<MyVideoProp, MyBase> {
     this.initPlayer()
   }
 
+  @Watch('options')
+  private watchOptions() {
+    if (this.options?.sources) {
+      this.danmakuPlayer.changeSrc(this.options.sources)
+    }
+  }
+
   private opt: DanmakuPlayerOptions = {};
   private danmakuList: DanmakuDataType[] = [];
   private initPlayer() {

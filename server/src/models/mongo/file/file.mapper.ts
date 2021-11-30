@@ -131,7 +131,7 @@ export class FileMapper {
   }) {
     let filename = this.getDiskFilePath(opt.filename);
     if (!fs.existsSync(filename) || opt.overwite) {
-      await common.writeFile(filename, opt.data);
+      await common.writeFile([{ data: opt.data }], filename);
     }
     return {
       fullFilename: filename
@@ -243,9 +243,9 @@ export class FileMapper {
     let existsChunks = [], requiredChunks = [];
     let filename = this.getDiskFilePath(opt.hash);
     let exists = fs.existsSync(filename);
+    let chunkFileDir = this.getDiskFilePath(this.chunksDir, opt.hash);
     if (!exists) {
       // 获取已有chunk
-      let chunkFileDir = this.getDiskFilePath(this.chunksDir, opt.hash);
       if (!fs.existsSync(chunkFileDir))
         fs.mkdirSync(chunkFileDir, { recursive: true });
       existsChunks = fs.readdirSync(chunkFileDir);
@@ -259,13 +259,12 @@ export class FileMapper {
       // 合并文件
       if (!requiredChunks.length) {
         let outFile = this.getDiskFilePath(this.chunksDir, opt.hash, opt.hash);
-        let ws = fs.createWriteStream(outFile);
-        for (let inFile of allChunks) {
-          let inFilePath = this.getDiskFilePath(this.chunksDir, opt.hash, inFile.toString());
-          let rs = fs.createReadStream(inFilePath);
-          await common.writeFileByStream(rs, ws);
-        }
-        ws.close();
+        let sources = allChunks.map(inFile => {
+          return {
+            filePath: this.getDiskFilePath(this.chunksDir, opt.hash, inFile.toString())
+          };
+        });
+        await common.writeFile(sources, outFile);
         let md5 = await common.md5File(outFile);
         if (opt.hash === md5) {
           fs.renameSync(outFile, filename);
@@ -277,6 +276,7 @@ export class FileMapper {
     // 保存到db
     let fileObj;
     if (fs.existsSync(filename)) {
+      common.delDir(chunkFileDir);
       let stat = fs.statSync(filename);
       let fileContentType = opt.contentType.split('/')[0];
       let fileType = {

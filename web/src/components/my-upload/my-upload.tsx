@@ -164,7 +164,13 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
     this.$emit('change', this.fileList)
   }
 
-  $refs: { upload: iView.Upload & { fileList: FileType[] }, cropper: any, imgViewer: MyImgViewer };
+  $refs: {
+    upload: iView.Upload & {
+      fileList: FileType[],
+      handleClick: () => any
+    },
+    cropper: any, imgViewer: MyImgViewer
+  };
 
   defaultList = [];
 
@@ -212,7 +218,7 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
   }
 
   private handleSelectFile(file: FileType) {
-    this.$refs.upload['handleClick']()
+    this.$refs.upload.handleClick()
     this.selectedIndex = this.fileList.indexOf(file)
   }
 

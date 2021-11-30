@@ -247,13 +247,13 @@ export let md5File = function (filePath: string, option?: { encoding: string }) 
   };
   opt = extend(opt, option);
   let md5 = crypto.createHash('md5');
-  return promise((resolve, reject)=>{
+  return promise((resolve, reject) => {
     let stream = fs.createReadStream(filePath);
-    stream.on('data', function(chunk) {
+    stream.on('data', function (chunk) {
       md5.update(chunk);
     });
     stream.on('error', reject);
-    stream.on('end', function() {
+    stream.on('end', function () {
       let code = md5.digest(opt.encoding as any);
       resolve(code);
     });
@@ -623,15 +623,7 @@ export function mkdirs(dir: string) {
   }
 }
 
-export async function writeFile(filename: string, data: string | NodeJS.ArrayBufferView) {
-  let p = filename.split(path.sep);
-  let name = p.pop();
-  let dir = p.join(path.sep);
-  mkdirs(dir);
-  fs.writeFileSync(filename, data);
-}
-
-export async function writeFileByStream(input: fs.ReadStream, output: fs.WriteStream) {
+async function writeFileByStream(input: fs.ReadStream, output: fs.WriteStream) {
   return promise<void>((resolve, reject) => {
     input.pipe(output, { end: false });
     input.on('end', function () {
@@ -639,4 +631,43 @@ export async function writeFileByStream(input: fs.ReadStream, output: fs.WriteSt
     });
     input.on('error', reject);
   });
+}
+
+export async function writeFile(sources: {
+  data?: Buffer
+  filePath?: string
+}[], outputPath: string) {
+  let p = outputPath.split(path.sep);
+  p.pop();
+  let dir = p.join(path.sep);
+  mkdirs(dir);
+  let ws = fs.createWriteStream(outputPath);
+  let index = 0;
+  for (let source of sources) {
+    if (source.data) {
+      ws.write(source.data);
+    } else if (source.filePath) {
+      let rs = fs.createReadStream(source.filePath);
+      await writeFileByStream(rs, ws);
+    } else {
+      throw new Error(`unsupport, index: ${index}`);
+    }
+    index++;
+  }
+  ws.close();
+}
+
+export function delDir(path: string) {
+  if (!fs.existsSync(path))
+    return;
+  let files = fs.readdirSync(path);
+  files.forEach((file) => {
+    let currPath = path + '/' + file;
+    if (fs.statSync(currPath).isDirectory()) {
+      delDir(currPath);
+    } else {
+      fs.unlinkSync(currPath);
+    }
+  });
+  fs.rmdirSync(path);
 }

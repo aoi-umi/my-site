@@ -276,6 +276,12 @@ export class DanmakuPlayer {
     this.addDanmaku(list)
   }
 
+  changeSrc(src){
+    this.player.pause();
+    this.player.currentTime(0);
+    this.player.src(src)
+  }
+
   private resizeHandler() {
     const clientWidth = this.danmakuBoard.clientWidth
     if (this.videoWidth != clientWidth) {
