@@ -1,11 +1,10 @@
 .demo- {
-  &box1 {
+  &row {
     display: flex;
-    flex-flow: row wrap;
-    > * {
-      margin-right: 10px;
-      margin-bottom: 10px;
-    }
+  }
+  &col {
+    display: flex;
+    flex-direction: column;
   }
   &danmaku-main {
     .ivu-input,

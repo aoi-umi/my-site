@@ -82,8 +82,28 @@ const download: MyRequestHandler = async (opt, ctx) => {
   }
 };
 
+export const uploadCheck: MyRequestHandler = async (opt, ctx) => {
+  let { myData } = opt;
+  let data = paramsValid(opt.reqData, ValidSchema.FileUploadCheck);
+  let rs = await FileMapper.uploadCheck({
+    ...data,
+    user: myData.user,
+    imgHost: myData.imgHost
+  });
+  return rs;
+};
+
 export const uploadByChunks: MyRequestHandler = async (opt, ctx) => {
-  let option = <{ file: multer.File }>opt.reqOption;
+  let myData = opt.myData;
+  let user = myData.user;
+  let data = opt.reqData;
+  let rs = await FileMapper.uploadByChunks({
+    ...data,
+    user,
+    buffer: ctx.file.buffer,
+    imgHost: myData.imgHost
+  });
+  return rs;
 };
 
 export const imgUpload: MyRequestHandler = (opt, ctx) => {

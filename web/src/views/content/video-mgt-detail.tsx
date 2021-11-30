@@ -124,11 +124,15 @@ export default class VideoMgtDetail extends VideoMgtBase {
         <FormItem label='视频' prop='videoIdList'>
           <MyUpload ref='upload' width={videoSize * 16} height={videoSize * 9}
             headers={testApi.defaultHeaders}
-            uploadUrl={testApi.videoUploadUrl}
+            uploadUrl={testApi.fileUploadByChunksUrl}
+            uploadCheckUrl={testApi.fileUploadCheckUrl}
+            uploadByChunks
             maxSize={1024 * 500}
             format={['mp4']}
-            successHandler={(res, file) => {
-              const rs = testApi.uplodaHandler(res)
+            resHandler={(res) => {
+              return testApi.resHandler(res)
+            }}
+            successHandler={(rs, file) => {
               file.url = rs.url
               return rs.fileId
             }}

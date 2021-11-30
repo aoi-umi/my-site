@@ -283,6 +283,12 @@ let test: TestApiConfigType = {
     },
 
     // file
+    fileUploadByChunks: {
+      url: '/file/uploadByChunks'
+    },
+    fileUploadCheck: {
+      url: '/file/uploadCheck'
+    },
     imgUpload: {
       url: '/img/upload'
     },

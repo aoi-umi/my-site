@@ -5,7 +5,7 @@ import { VueCropper } from 'vue-cropper'
 import { Component, Vue, Prop } from '@/components/decorator'
 
 import { Upload, Modal, Icon, Progress, Button } from '../iview'
-import { Utils } from '../utils'
+import { Utils, Md5FileResult } from '../utils'
 import { MyImg } from '../my-img'
 import { MyImgViewer } from '../my-img-viewer'
 import { MyBase } from '../my-base'
@@ -36,6 +36,10 @@ export type FileType = {
   uploadRes?: any;
 };
 
+type UploadOption = {
+  file: FileType,
+}
+
 type CropperOption = {
   img?: any;
   autoCrop?: boolean;
@@ -53,6 +57,9 @@ type SetFileType = {
   originFileType?: string;
 };
 class MyUploadProp {
+  @Prop()
+  uploadCheckUrl?: string;
+
   @Prop()
   uploadUrl: string;
 
@@ -100,6 +107,9 @@ class MyUploadProp {
   uploadIconType?: number;
 
   @Prop()
+  resHandler?: (res: any) => any;
+
+  @Prop()
   successHandler?: (res: any, file: FileType) => any;
 
   @Prop()
@@ -110,6 +120,9 @@ class MyUploadProp {
 
   @Prop()
   showProgress?: boolean
+
+  @Prop()
+  uploadByChunks?: boolean
 }
 @Component({
   extends: MyBase,
@@ -127,7 +140,7 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
 
   protected disableEmitChange = false;
   @Watch('value', { immediate: true })
-  private watchValue (val: any[]) {
+  private watchValue(val: any[]) {
     if (this.fileList === val) {
       this.disableEmitChange = true
       return
@@ -143,7 +156,7 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
   }
 
   @Watch('fileList', { immediate: true })
-  private watchFileList () {
+  private watchFileList() {
     if (this.disableEmitChange) {
       this.disableEmitChange = false
       return
@@ -171,15 +184,15 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
     fixedNumber: [16, 9],
     outputType: 'png'
   };
-  private getFileCount () {
+  private getFileCount() {
     return this.fileList.length
   }
 
-  private getHideUpload () {
+  private getHideUpload() {
     return this.maxCount > 0 && this.getFileCount() >= this.maxCount
   }
 
-  protected created () {
+  protected created() {
     if (this.cropperOptions) {
       this.cropper = {
         ...this.cropper,
@@ -188,54 +201,49 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
     }
   }
 
-  protected mounted () {
+  protected mounted() {
   }
 
-  private handleEdit (file: FileType) {
+  private handleEdit(file: FileType) {
     this.editIndex = this.fileList.indexOf(file)
     this.file = file.file
     this.cropperShow = true
     this.cropper.img = file.originData
   }
 
-  private handleSelectFile (file: FileType) {
+  private handleSelectFile(file: FileType) {
     this.$refs.upload['handleClick']()
     this.selectedIndex = this.fileList.indexOf(file)
   }
 
-  private handleView (file: FileType) {
+  private handleView(file: FileType) {
     this.showUrl = file.url || file.data
     this.$refs.imgViewer.show()
   }
 
-  private handleRemove (file: FileType) {
+  private handleRemove(file: FileType) {
     this.fileList.splice(this.fileList.indexOf(file), 1)
   }
 
-  async upload () {
-    const errorList = []
+  private async request(opt: AxiosRequestConfig) {
     const headers = this.headers && this.headers()
+    const rs = await axios.request({
+      headers,
+      ...opt
+    })
+    let res = this.resHandler ? this.resHandler(rs.data) : rs.data;
+    return res;
+  }
+
+  async upload() {
+    const errorList = []
     for (let idx = 0; idx < this.fileList.length; idx++) {
       const file = this.fileList[idx]
       if (file.willUpload) {
         try {
-          const formData = new FormData()
-          const uploadFile = Utils.base64ToFile(file.data, file.file.name)
-          formData.append('fileName', file.file.name)
-          formData.append('file', uploadFile)
-          file.percentage = 0
-          const rs = await axios.request({
-            method: 'post',
-            url: this.uploadUrl,
-            data: formData,
-            headers,
-            onUploadProgress: (progress) => {
-              file.percentage = Math.round(
-                progress.loaded / progress.total * 100
-              )
-            }
-          })
-          file.uploadRes = this.successHandler && this.successHandler(rs.data, file)
+          let rs = await this.uploadToServer({ file });
+          if (!rs) throw new Error('fail')
+          file.uploadRes = this.successHandler ? this.successHandler(rs, file) : rs
           file.willUpload = false
         } catch (e) {
           errorList.push(`[文件${idx + 1}]:${e.message}`)
@@ -245,7 +253,95 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
     return errorList
   }
 
-  private checkFormat (file: File) {
+  private async uploadToServer(opt: UploadOption) {
+    let rs;
+    if (!this.uploadByChunks) {
+      rs = await this.uploadToServerNormal(opt)
+    } else {
+      let checkRs = await this.uploadCheck(opt)
+      rs = checkRs.checkResult.fileObj
+      if (!rs)
+        rs = await this.uploadToServerByChunks({
+          ...opt,
+          md5Result: checkRs.md5Result,
+          requiredChunks: checkRs.checkResult.requiredChunks
+        })
+    }
+    return rs
+  }
+
+  private async uploadCheck(opt: UploadOption & {
+    md5Result?: Md5FileResult
+  }) {
+    let { file, md5Result } = opt
+    if (!md5Result)
+      md5Result = await Utils.md5File(file.file);
+    const rs = await this.request({
+      method: 'post',
+      url: this.uploadCheckUrl,
+      data: {
+        hash: md5Result.hash,
+        fileSize: file.file.size,
+        contentType: file.file.type,
+        filename: file.file.name,
+        chunkSize: md5Result.chunkSize,
+      },
+    })
+    return {
+      md5Result,
+      checkResult: rs
+    }
+  }
+
+  private async uploadToServerNormal(opt: UploadOption) {
+    let { file } = opt
+    const formData = new FormData()
+    const uploadFile = Utils.base64ToFile(file.data, file.file.name)
+    formData.append('fileName', file.file.name)
+    formData.append('file', uploadFile)
+    file.percentage = 0
+    const rs = await this.request({
+      method: 'post',
+      url: this.uploadUrl,
+      data: formData,
+      onUploadProgress: (progress) => {
+        file.percentage = Math.round(
+          progress.loaded / progress.total * 100
+        )
+      }
+    })
+    return rs;
+  }
+
+  private async uploadToServerByChunks(opt: UploadOption & {
+    md5Result: Md5FileResult
+    requiredChunks: any[]
+  }) {
+    let { file, md5Result } = opt
+    file.percentage = 0
+    let requiredChunks = md5Result.chunks;
+    let successCount = md5Result.chunks.length - requiredChunks.length
+    for (let chunk of requiredChunks) {
+      const formData = new FormData()
+      formData.append('file', new Blob([chunk.data]))
+      formData.append('chunkIndex', chunk.index.toString())
+      formData.append('hash', md5Result.hash)
+      const rs = await this.request({
+        method: 'post',
+        url: this.uploadUrl,
+        data: formData,
+      })
+      successCount++;
+      file.percentage = Math.round(
+        successCount / md5Result.chunks.length * 100
+      )
+    }
+
+    let checkRs = await this.uploadCheck(opt);
+    return checkRs.checkResult.fileObj
+  }
+
+  private checkFormat(file: File) {
     // check format
     if (this.format.length) {
       const fileFormat = file.name.split('.').pop().toLocaleLowerCase()
@@ -258,14 +354,14 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
     return true
   }
 
-  private handleFormatError (file: File, fileList: FileType[]) {
+  private handleFormatError(file: File, fileList: FileType[]) {
     this.$Notice.warning({
       title: '文件格式不正确',
       desc: `文件 "${file.name}" 的格式不正确, 只能上传${this.format.join(',')}格式的文件`
     })
   }
 
-  private checkSize (file: File, checkData?: string) {
+  private checkSize(file: File, checkData?: string) {
     let size = file.size
     if (checkData) {
       checkData = checkData.split(',')[1]
@@ -283,14 +379,14 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
     return true
   }
 
-  private handleMaxSize (file: File, fileList: FileType[]) {
+  private handleMaxSize(file: File, fileList: FileType[]) {
     this.$Notice.warning({
       title: '文件大小超出限制',
       desc: `文件 "${file.name}" 大小超出限制(${(this.maxSize / 1024).toFixed(2)}M)`
     })
   }
 
-  private handleBeforeUpload (file: File) {
+  private handleBeforeUpload(file: File) {
     const rs = this.checkFormat(file)
     if (!rs) { return false }
     this.file = file
@@ -314,7 +410,7 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
     return false
   }
 
-  private getDefaultFileData () {
+  private getDefaultFileData() {
     return {
       status: 'finished',
       willUpload: true,
@@ -322,7 +418,7 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
     }
   }
 
-  setFile (data: SetFileType | SetFileType[], option?) {
+  setFile(data: SetFileType | SetFileType[], option?) {
     const list = data instanceof Array ? data : [data]
     this.fileList = list.map(ele => {
       return {
@@ -334,7 +430,7 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
     })
   }
 
-  private pushFile (data, originData?) {
+  private pushFile(data, originData?) {
     const file = {
       data: data,
       originData: originData || data,
@@ -354,7 +450,7 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
     this.cropperShow = false
   }
 
-  protected render () {
+  protected render() {
     const width = this.width + 'px'
     const height = this.height + 'px'
     let cropperSize = { width: '1024px', height: '576px' }
@@ -378,8 +474,8 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
                 this.shape == 'circle' ? style.cls.circle : '',
                 this.fileList.length > 1 ? 'move' : ''
               ]} style={{ width, height }}
-              v-dragging={{ item, list: this.fileList, group: 'upload-item' }}
-              key={idx}
+                v-dragging={{ item, list: this.fileList, group: 'upload-item' }}
+                key={idx}
               >
                 {isImg && <MyImg ref={itemRefName} class={this.getStyleName('item-cont')} src={item.url || item.data} />}
                 {isVideo && <MyVideo ref={itemRefName} class={this.getStyleName('item-cont')} options={{

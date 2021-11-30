@@ -8,7 +8,7 @@ import { UtilsTsx } from './tsx'
 export * from './utils'
 
 const vm = Vue.prototype
-type Md5FileResult = {
+export type Md5FileResult = {
   hash: string,
   chunkSize: number,
   chunks: FileChunkResult[]
@@ -16,6 +16,7 @@ type Md5FileResult = {
 
 type FileChunkResult = {
   data: ArrayBuffer,
+  index: number,
   start: number
   end: number
 }
@@ -239,24 +240,21 @@ const _Utils = {
           let end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
           ranges.push({
             start,
-            end
+            end,
           })
           currentChunk++;
         }
       }
 
-      let buffs: {
-        data: ArrayBuffer,
-        start: number,
-        end: number
-      }[] = [];
+      let buffs: FileChunkResult[] = [];
       let range
       fileReader.onload = function (e) {
         let buff = e.target.result as any
         buffs.push({
           data: buff,
           start: range?.start,
-          end: range?.end
+          end: range?.end,
+          index: currRange
         });
         currRange++;
         if (!ranges || currRange >= ranges.length) {

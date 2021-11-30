@@ -22,7 +22,7 @@ export default class App extends Base {
   public msg = '';
   public list: { test: string }[] = [];
   color = 'white';
-  public get valueLength () {
+  public get valueLength() {
     return this.value.length
   }
 
@@ -35,7 +35,7 @@ export default class App extends Base {
   chartAddData = '';
   player: VideoJsPlayer;
 
-  public created () {
+  public created() {
     this.setList()
     testSocket.bindDanmakuRecv(this.recvDanmaku)
     const query: any = this.$route.query
@@ -46,7 +46,7 @@ export default class App extends Base {
     }
   }
 
-  mounted () {
+  mounted() {
     this.$refs.list.query()
     this.chart = echarts.init(this.$refs.echart)
     this.setECharts()
@@ -56,7 +56,7 @@ export default class App extends Base {
     // });
   }
 
-  setECharts () {
+  setECharts() {
     const optionData: any = {
       xAxis: {
         type: 'category',
@@ -75,11 +75,11 @@ export default class App extends Base {
     this.chart.setOption(optionData)
   }
 
-  public handleClick () {
+  public handleClick() {
     this.setList()
   }
 
-  setList (start = 0, size = 10) {
+  setList(start = 0, size = 10) {
     this.list = new Array(size).fill('').map((e, i) => {
       return {
         test: i + start + 1 + ''
@@ -88,21 +88,24 @@ export default class App extends Base {
   }
 
   @Watch('value')
-  protected valueWatch (newV: any, oldV: any) {
+  protected valueWatch(newV: any, oldV: any) {
     this.msg = `new value：${newV}`
   }
 
-  recvDanmaku (data) {
+  recvDanmaku(data) {
     this.$refs.video.danmakuPlayer.danmakuPush(data)
   }
 
-  captureImage () {
+  captureImage() {
     return this.$refs.video.capture().data
   }
 
   fail = false;
   btnDisabled = false
-  protected render () {
+  upload = {
+    maxSize: 102400
+  }
+  protected render() {
     return (
       <div>
         <MyButtons value={[
@@ -128,24 +131,42 @@ export default class App extends Base {
         <Tsx />
         <Tsx2 test='传参属性1' />
         <MyQrcode text='qrcode' showText />
-        <div class={this.getStyleName('box1')}>
+        <div class={this.getStyleName('col')}>
           {this.renderVideo()}
-          {this.renderEditor()}
-          <div>
-            <MyUpload ref='upload' width={100} height={100}
+          <div class={this.getStyleName('row')}>
+            <MyUpload ref='upload' width={400} height={300}
               headers={testApi.defaultHeaders}
-              uploadUrl={testApi.videoUploadUrl} maxSize={10240} successHandler={(res, file) => {
-                testApi.uplodaHandler(res)
+              uploadUrl={testApi.fileUploadByChunksUrl}
+              uploadCheckUrl={testApi.fileUploadCheckUrl}
+              uploadByChunks
+              maxSize={this.upload.maxSize}
+              resHandler={(res) => {
+                return testApi.resHandler(res)
+              }}
+              successHandler={(rs, file) => {
+                file.url = rs.url
+                return rs.fileId
               }} />
-            <Button on-click={() => {
-              this.operateHandler('上传', async () => {
-                const err = await this.$refs.upload.upload()
-                if (err.length) {
-                  throw new Error(err.join(','))
-                }
-              })
-            }}>upload</Button>
+            <div>
+              <div class={this.getStyleName('row')}>
+                文件最大size
+                <Input v-model={this.upload.maxSize} />
+                k
+              </div>
+              <Button on-click={() => {
+                this.operateHandler('上传', async () => {
+                  const err = await this.$refs.upload.upload()
+                  if (err.length) {
+                    throw new Error(err.join(','))
+                  }
+                })
+              }}>upload</Button>
+            </div>
           </div>
+          <div>
+            {this.renderEditor()}
+          </div>
+
         </div>
 
         {this.renderList()}
@@ -155,7 +176,7 @@ export default class App extends Base {
 
   videoIdText = '';
   videoId = '5da80f96cb21fc0abc856e75';
-  renderVideo () {
+  renderVideo() {
     const danmakuList = []
     // test
     for (let i = 0; i < 10; i++) {
@@ -211,7 +232,7 @@ export default class App extends Base {
     )
   }
 
-  renderEditor () {
+  renderEditor() {
     return (
       <div style={{
         display: 'inline-block',
@@ -238,7 +259,7 @@ export default class App extends Base {
     )
   }
 
-  renderList () {
+  renderList() {
     return (
       <MyList ref='list' type='custom' infiniteScroll
         customQueryNode={
@@ -292,10 +313,10 @@ class PropClass {
   props: PropClass
 })
 class Tsx extends Vue<PropClass> {
-  testFn () {
+  testFn() {
     return this.cname
   }
-  protected render () {
+  protected render() {
     return <div>{this.testFn()},{this.test},1111111111</div>
   }
 }
@@ -323,7 +344,7 @@ class PropClass2 {
   props: PropClass2
 })
 class Tsx2 extends Vue<PropClass2, Tsx> {
-  protected render () {
+  protected render() {
     return (
       <div>
         <div>{this.testFn()},{this.test},222222</div>

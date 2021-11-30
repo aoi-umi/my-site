@@ -97,6 +97,8 @@ export type TestMethod = {
   goodsBuy,
 
   // file
+  fileUploadByChunks,
+  fileUploadCheck,
   imgUpload,
   imgGet,
   videoUpload,
@@ -158,6 +160,8 @@ export class TestApi extends ApiModel<TestMethod> {
         return res.data
       }
     })
+    this.fileUploadByChunksUrl = this.getRequestConfig(this.apiConfig.method.fileUploadByChunks).url
+    this.fileUploadCheckUrl = this.getRequestConfig(this.apiConfig.method.fileUploadCheck).url
     this.imgUploadUrl = this.getRequestConfig(this.apiConfig.method.imgUpload).url
     this.imgUrl = this.getRequestConfig(this.apiConfig.method.imgGet).url
     this.videoUploadUrl = this.getRequestConfig(this.apiConfig.method.videoUpload).url
@@ -171,10 +175,15 @@ export class TestApi extends ApiModel<TestMethod> {
     return headers
   }
   // #region file
+  fileUploadByChunksUrl = ''
+  fileUploadCheckUrl = ''
   imgUploadUrl = '';
   videoUploadUrl = '';
   uplodaHandler (res: Result) {
     return this.afterResponse(res) as FileUploadRes
+  }
+  resHandler (res: Result) {
+    return this.afterResponse(res)
   }
 
   uploader (file, url, opt?) {

@@ -28,6 +28,13 @@ type RawFileType = {
   contentType: string;
   filepath?: string;
 }
+
+type UploadOption = {
+  contentType: string,
+  filename: string,
+  user: LoginUser,
+  imgHost?: string,
+}
 export class FileMapper {
   static getUrl(_id, fileType: string, opt?: {
     host?: string;
@@ -113,52 +120,94 @@ export class FileMapper {
     });
   }
 
-  private static getDiskFilePath(filename) {
-    return path.resolve(config.env.filePath, filename);
+  private static getDiskFilePath(...args) {
+    return path.resolve(config.env.filePath, ...args);
   }
 
   private static async saveFileToDisk(opt: {
     data: Buffer,
-    contentType?: string
+    filename: string,
+    overwite?: boolean
+  }) {
+    let filename = this.getDiskFilePath(opt.filename);
+    if (!fs.existsSync(filename) || opt.overwite) {
+      await common.writeFile(filename, opt.data);
+    }
+    return {
+      fullFilename: filename
+    };
+  }
+
+  private static async saveFileToDiskDefault(opt: {
+    data: Buffer,
+    contentType: string
   }) {
     let { data, contentType } = opt;
     let md5 = common.md5(data);
-    let filename = this.getDiskFilePath(md5);
-
     let length = data.length;
-    if (!fs.existsSync(filename)) {
-      await common.writeFile(filename, data);
-    }
-    let fr = await FileDiskModel.findOne({ md5 });
-    if (!fr) {
-      fr = await FileDiskModel.create({
-        md5,
-        filename: md5,
-        length,
-        contentType
-      });
-    }
+    let saveRs = await this.saveFileToDisk({
+      filename: md5,
+      data
+    });
+    let fd = await this.findOrCreateDiskFileRow({
+      md5,
+      filename: md5,
+      length,
+      contentType
+    });
     return {
       md5,
-      filename,
-      fileId: fr._id
+      fullFilename: saveRs.fullFilename,
+      fileId: fd._id,
+      length
     };
+  }
+
+  static async findOrCreateDiskFileRow(opt: {
+    filename: string
+    contentType: string
+    length: number
+    md5: string
+  }) {
+    let fd = await FileDiskModel.findOne({ md5: opt.md5 });
+    if (!fd) {
+      fd = await FileDiskModel.create({
+        ...opt,
+      });
+    }
+    return fd;
   }
 
   static async upload(opt: {
     fileType: string,
-    contentType: string,
-    filename: string,
     buffer: Buffer,
-    user: Partial<{
-      _id: Types.ObjectId;
-      nickname: string;
-      account: string;
-    }>,
-    imgHost?: string,
-  }) {
-    let { user } = opt;
+  } & UploadOption) {
+    let fileContentType = opt.contentType.split('/')[0];
+    if (
+      (opt.fileType === myEnum.fileType.视频 && fileContentType !== 'video')
+      || opt.fileType === myEnum.fileType.图片 && fileContentType !== 'image'
+    )
+      throw common.error('错误的文件类型');
 
+    let fileObj = await this.saveFileToDiskDefault({
+      data: opt.buffer,
+      contentType: opt.contentType
+    });
+
+    let obj = await this.saveByUser({
+      ...opt,
+      length: fileObj.length,
+      md5: fileObj.md5
+    });
+    return obj;
+  }
+
+  static async saveByUser(opt: {
+    fileType: string,
+    md5: string,
+    length: number
+  } & UploadOption) {
+    let { user, contentType, md5, length } = opt;
     let fs = new FileModel({
       filename: opt.filename,
       fileType: opt.fileType
@@ -168,28 +217,96 @@ export class FileMapper {
       fs.nickname = user.nickname;
       fs.account = user.account;
     }
-    let fileContentType = opt.contentType.split('/')[0];
-    if (
-      (opt.fileType === myEnum.fileType.视频 && fileContentType !== 'video')
-      || opt.fileType === myEnum.fileType.图片 && fileContentType !== 'image'
-    )
-      throw common.error('错误的文件类型');
-
-    let fileObj = await this.saveFileToDisk({
-      data: opt.buffer,
-      contentType: opt.contentType
+    let fd = await this.findOrCreateDiskFileRow({
+      md5,
+      filename: md5,
+      length,
+      contentType
     });
-    fs.fileId = fileObj.fileId;
+    fs.fileId = fd._id;
     fs.storageDisk = true;
     await fs.save();
 
-    // await fs.upload({
-    //   buffer: opt.buffer,
-    //   contentType: opt.contentType,
-    // });
     let obj = fs.toOutObject();
     obj.url = FileMapper.getUrl(fs._id, opt.fileType, { host: opt.imgHost });
     return obj;
+  }
+
+  private static chunksDir = 'chunks';
+
+  static async uploadCheck(opt: {
+    hash: string,
+    fileSize: number,
+    chunkSize: number,
+  } & UploadOption) {
+    let { chunkSize } = opt;
+    let existsChunks = [], requiredChunks = [];
+    let filename = this.getDiskFilePath(opt.hash);
+    let exists = fs.existsSync(filename);
+    if (!exists) {
+      // 获取已有chunk
+      let chunkFileDir = this.getDiskFilePath(this.chunksDir, opt.hash);
+      if (!fs.existsSync(chunkFileDir))
+        fs.mkdirSync(chunkFileDir, { recursive: true });
+      existsChunks = fs.readdirSync(chunkFileDir);
+      // 按index，排除已存在的
+      let allChunks = new Array(Math.ceil(opt.fileSize / chunkSize))
+        .fill(0)
+        .map((ele, idx) => idx);
+      requiredChunks = allChunks.filter(ele => {
+        return !existsChunks.includes(ele.toString());
+      });
+      // 合并文件
+      if (!requiredChunks.length) {
+        let outFile = this.getDiskFilePath(this.chunksDir, opt.hash, opt.hash);
+        let ws = fs.createWriteStream(outFile);
+        for (let inFile of allChunks) {
+          let inFilePath = this.getDiskFilePath(this.chunksDir, opt.hash, inFile.toString());
+          let rs = fs.createReadStream(inFilePath);
+          await common.writeFileByStream(rs, ws);
+        }
+        ws.close();
+        let md5 = await common.md5File(outFile);
+        if (opt.hash === md5) {
+          fs.renameSync(outFile, filename);
+        } else {
+          throw new Error('hash not match');
+        }
+      }
+    }
+    // 保存到db
+    let fileObj;
+    if (fs.existsSync(filename)) {
+      let stat = fs.statSync(filename);
+      let fileContentType = opt.contentType.split('/')[0];
+      let fileType = {
+        'video': myEnum.fileType.视频,
+        'image': myEnum.fileType.图片,
+      }[fileContentType] || '';
+      fileObj = await this.saveByUser({
+        ...opt,
+        md5: opt.hash,
+        fileType,
+        length: stat.size
+      });
+    }
+    return {
+      chunkSize,
+      requiredChunks,
+      fileObj
+    };
+  }
+
+  static async uploadByChunks(opt: {
+    hash: string,
+    chunkIndex: string,
+    buffer: Buffer,
+  } & UploadOption) {
+    let prefix = '';//'chunk_';
+    await this.saveFileToDisk({
+      data: opt.buffer,
+      filename: path.join(this.chunksDir, opt.hash, prefix, opt.chunkIndex)
+    });
   }
 
   /**

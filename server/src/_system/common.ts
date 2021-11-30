@@ -19,7 +19,7 @@ import * as moment from 'dayjs';
  * @param nodeCallback false通过defer控制,true cb参数控制
  * @param args
  */
-export function promise<T>(fn: (...args) => Q.IWhenable<T>, caller?: any, nodeCallback?: boolean, args?: any[]): Q.Promise<T> {
+function _promise<T>(fn: (...args) => Q.IWhenable<T>, caller?: any, nodeCallback?: boolean, args?: any[]): Q.Promise<T> {
   return Q.fcall((): any => {
     let defer = Q.defer();
     if (!fn) {
@@ -38,6 +38,16 @@ export function promise<T>(fn: (...args) => Q.IWhenable<T>, caller?: any, nodeCa
     return defer.promise;
   });
 };
+
+export function promise<T>(executor: (resolve: (value: T | PromiseLike<T>) => void, reject: (reason?: any) => void) => void) {
+  return new Promise<T>((resolve, reject) => {
+    try {
+      executor(resolve, reject);
+    } catch (e) {
+      reject(e);
+    }
+  });
+}
 
 //示例
 // let fun = function (nodeCallback, def) {
@@ -69,7 +79,7 @@ export let promiseAll = function (list: Array<Q.Promise<any>>) {
     resultList: []
   };
   let d: Q.Deferred<any>;
-  promise((defer) => {
+  _promise((defer) => {
     d = defer;
     list.forEach((ele, idx) => {
       ele.then(t => {
@@ -89,7 +99,7 @@ export let promiseAll = function (list: Array<Q.Promise<any>>) {
 
 export let promisify = function (fun, caller?) {
   return function (...args): Q.Promise<any> {
-    return promise.apply(void 0, [fun, caller, true, args]);
+    return _promise.apply(void 0, [fun, caller, true, args]);
   };
 };
 
@@ -231,6 +241,25 @@ export let md5 = function (data: string | Buffer, option?: { encoding: string })
   return code;
 };
 
+export let md5File = function (filePath: string, option?: { encoding: string }) {
+  let opt = {
+    encoding: 'hex',
+  };
+  opt = extend(opt, option);
+  let md5 = crypto.createHash('md5');
+  return promise((resolve, reject)=>{
+    let stream = fs.createReadStream(filePath);
+    stream.on('data', function(chunk) {
+      md5.update(chunk);
+    });
+    stream.on('error', reject);
+    stream.on('end', function() {
+      let code = md5.digest(opt.encoding as any);
+      resolve(code);
+    });
+  });
+};
+
 //code: string || errorConfig
 export let error = function (msg, code?, option?: { remark?: string, format?: string; lang?: string }) {
   let opt = {
@@ -309,12 +338,12 @@ export type RequestServiceByConfigOption = {
   afterResponse?: Function;
   outLog?: any;
 } & RequestServiceOption;
-export let requestServiceByConfig = function (option: RequestServiceByConfigOption) {
+export let requestServiceByConfig = async function (option: RequestServiceByConfigOption) {
   let method = '';
   let url = '';
   let log = logModle();
   let startTime = new Date().getTime();
-  return promise(async function () {
+  try {
     let errStr = `service "${option.serviceName}"`;
     type Args = {
       host: string;
@@ -373,18 +402,18 @@ export let requestServiceByConfig = function (option: RequestServiceByConfigOpti
       data = await option.afterResponse(data, response);
     }
     return data;
-  }).fail(function (e) {
+  } catch (e) {
     log.result = false;
     log.res = e;
     console.log(`request ${log.method} error`);
     console.log(`url: ${url}`);
     throw e;
-  }).finally(() => {
+  } finally {
     option.outLog = log;
-  });
+  };
 };
 
-export let requestService = function (option: RequestServiceOption) {
+export let requestService = async function (option: RequestServiceOption) {
   let opt: RequestServiceOption = {
     method: 'POST',
   };
@@ -392,26 +421,24 @@ export let requestService = function (option: RequestServiceOption) {
   if (!opt.headers) opt.headers = {};
   opt.headers['x-requested-with'] = 'xmlhttprequest';
   //console.log(opt)
-  return promise(async function () {
-    let response = await axios.request(opt);
-    let data = response.data;
-    let encoding = response.headers['content-encoding'];
-    switch (encoding) {
-    case 'gzip':
-      data = await promisify(zlib.unzip)(data);
-      break;
-    default:
-      if (encoding)
-        throw error(`Not Accept Encoding:${encoding}`);
-    }
+  let response = await axios.request(opt);
+  let data = response.data;
+  let encoding = response.headers['content-encoding'];
+  switch (encoding) {
+  case 'gzip':
+    data = await promisify(zlib.unzip)(data);
+    break;
+  default:
+    if (encoding)
+      throw error(`Not Accept Encoding:${encoding}`);
+  }
 
-    if (!opt.raw && Buffer.isBuffer(data)) {
-      data = data.toString();
-      if (data && typeof data == 'string')
-        data = JSON.parse(data);
-    }
-    return { response, data };
-  });
+  if (!opt.raw && Buffer.isBuffer(data)) {
+    data = data.toString();
+    if (data && typeof data == 'string')
+      data = JSON.parse(data);
+  }
+  return { response, data };
 };
 
 export let getErrorConfigByCode = function (code) {
@@ -489,17 +516,16 @@ export let logModle = function () {
 // });
 
 export let streamToBuffer = function (stream: fs.ReadStream) {
-  return promise(function (defer: Q.Deferred<Buffer>) {
+  return promise(function (resolve, reject) {
     let buffers = [];
     stream.on('data', function (buffer) {
       buffers.push(buffer);
     });
     stream.on('end', function () {
       let buffer = Buffer.concat(buffers);
-      defer.resolve(buffer);
+      resolve(buffer);
     });
-    stream.on('error', defer.reject);
-    return defer.promise;
+    stream.on('error', reject);
   });
 };
 
@@ -603,4 +629,14 @@ export async function writeFile(filename: string, data: string | NodeJS.ArrayBuf
   let dir = p.join(path.sep);
   mkdirs(dir);
   fs.writeFileSync(filename, data);
+}
+
+export async function writeFileByStream(input: fs.ReadStream, output: fs.WriteStream) {
+  return promise<void>((resolve, reject) => {
+    input.pipe(output, { end: false });
+    input.on('end', function () {
+      resolve();
+    });
+    input.on('error', reject);
+  });
 }

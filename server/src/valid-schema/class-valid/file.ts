@@ -11,3 +11,22 @@ export class FileGet {
     @Type()
     isRaw?: boolean;
 }
+
+export class FileUploadCheck {
+    @IsDefined()
+    @Type()
+    fileSize: number;
+
+    @IsDefined()
+    hash: string;
+
+    @IsDefined()
+    filename: string;
+    
+    @IsDefined()
+    contentType: string;
+
+    @IsDefined()
+    @Type()
+    chunkSize: number;
+}
