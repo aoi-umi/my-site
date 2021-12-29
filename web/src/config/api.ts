@@ -369,6 +369,10 @@ let test: TestApiConfigType = {
     compDetailQuery: {
       url: '/comp/detailQuery',
       method: 'get'
+    },
+    liveInfo: {
+      url: '/live/info',
+      method: 'get'
     }
   }
 }

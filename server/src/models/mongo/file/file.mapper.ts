@@ -1,7 +1,6 @@
 import { Types } from 'mongoose';
 import * as path from 'path';
 import * as fs from 'fs';
-import { GridFSInstance } from 'mongoose-ts-ua';
 
 import * as common from '@/_system/common';
 import * as config from '@/dev-config';
@@ -12,6 +11,7 @@ import { LoginUser } from '@/models/login-user';
 import { FileModel, FileInstanceType } from './file';
 import { FileDiskInstance, FileDiskModel } from './file-disk';
 import { BaseMapper } from '../_base';
+import { UserDocType } from '../user';
 
 const Prefix = {
   [myEnum.fileType.图片]: config.env.imgPrefix,
@@ -32,7 +32,7 @@ type RawFileType = {
 type UploadOption = {
   contentType: string,
   filename: string,
-  user: LoginUser,
+  user: LoginUser | UserDocType,
   imgHost?: string,
 }
 export class FileMapper {

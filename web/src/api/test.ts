@@ -130,6 +130,8 @@ export type TestMethod = {
   compMgtDetailQuery,
   compMgtDel,
   compDetailQuery,
+
+  liveInfo
 }
 export type TestApiConfigType = ApiConfigModel<TestMethod>;
 

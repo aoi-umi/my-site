@@ -80,6 +80,12 @@ const cfg: ConfigType = {
   wxOffiaCcount: {
     appId: '',
     appSecret: '',
+  },
+  live: {
+    host: 'localhost',
+    httpPort: 8888,
+    path: '/live',
+    key: 'nodemedia2017privatekey'
   }
 };
 export default cfg;

@@ -124,3 +124,8 @@ router.post('/comp/mgt/del', UserAuthMid.normal(), MyRequestHandlerMid.convert(c
 
 router.get('/comp/detailQuery', UserAuthMid.normal(), MyRequestHandlerMid.convert(comp.detailQuery));
 //#endregion
+
+//#region live
+import * as live from './live';
+router.get('/live/info', UserAuthMid.normal([auth.login]), MyRequestHandlerMid.convert(live.info));
+//#endregion

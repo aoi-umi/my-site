@@ -51,6 +51,12 @@ export type ConfigType = {
   wxOffiaCcount: {
     appId: string,
     appSecret: string,
+  },
+  live: {
+    host: string,
+    httpPort: number,
+    path: string,
+    key: string,
   }
 }
 

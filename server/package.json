@@ -22,7 +22,7 @@
     "amqplib-delay": "0.0.1",
     "axios": "^0.18.1",
     "class-transformer": "^0.2.3",
-    "class-validator": "^0.10.0",
+    "class-validator": "^0.13.2",
     "config": "^3.3.6",
     "dayjs": "^1.8.16",
     "enum-ts": "^1.1.1",

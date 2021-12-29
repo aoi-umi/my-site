@@ -1,26 +1,57 @@
 import { Watch } from 'vue-property-decorator'
 
 import { Component, Vue, Prop } from '@/components/decorator'
-import { Button } from '@/components/iview'
+import { Button, Input } from '@/components/iview'
 import flvjs from 'flv.js'
+import { testSocket, testApi } from '@/api'
 
 import { Base } from '../base'
 import './demo.less'
+import { MyLoad } from '@/components/my-load'
 @Component
 export default class Live extends Base {
   $refs: { video: HTMLVideoElement }
   private flvPlayer: flvjs.Player = null;
+  private liveUrl = ''
+  private liveInfo: { rtmp: string, key: string }
 
   mounted() {
-    this.play('http://127.0.0.1:8888/live.flv');
   }
 
   render() {
     return (
-      <div style="width: 800px; height: 600px">
-        <section>
-          <video class="full-height full-width" ref="video" width="800"></video>
-        </section>
+      <div>
+        <MyLoad
+          ref='loadView'
+          loadFn={this.loadDetail}
+          afterLoad={() => {
+            this.play(this.liveUrl);
+          }}
+          renderFn={() => {
+            return this.renderDetail()
+          }} />
+      </div>
+    )
+  }
+
+  async loadDetail() {
+    let data = await testApi.liveInfo();
+    this.liveInfo = data;
+    this.liveUrl = data.pullUrl
+  }
+
+  renderDetail() {
+    return (
+      <div>
+        <span>rtmp服务器</span>
+        <Input v-model={this.liveInfo.rtmp} />
+        <span>rtmp串流码</span>
+        <Input v-model={this.liveInfo.key} />
+        <div style="width: 800px; height: 600px">
+          <section>
+            <video class="full-height full-width" ref="video" width="800"></video>
+          </section>
+        </div>
       </div>
     )
   }
