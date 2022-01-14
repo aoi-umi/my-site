@@ -111,3 +111,7 @@ export async function init(mongoOpt: MongoOpt) {
   await mongoose.connect(mongoOpt.uri, mongoOpt.options);
 }
 
+export async function close() {
+  await mongoose.disconnect();
+}
+
