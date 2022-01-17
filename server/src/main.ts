@@ -66,6 +66,7 @@ let register = function (app: Koa) {
         ip,
         imgHost: ctx.headers.host,
         videoHost: ctx.headers.host,
+        fileHost: ctx.headers.host,
       };
       await next();
       return ctx.body;

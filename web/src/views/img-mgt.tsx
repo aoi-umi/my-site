@@ -14,7 +14,7 @@ export default class ImgMgt extends Base {
 
   page = 1;
   rows = 10;
-  async getData () {
+  async getData() {
     const rs = await testApi.myImgQuery({ page: this.page, rows: this.rows })
     const finished = rs.total == ((this.page - 1) * this.rows + rs.rows.length)
     this.page++
@@ -28,13 +28,13 @@ export default class ImgMgt extends Base {
   }
 
   selectable = false;
-  private cancel () {
+  private cancel() {
     this.selectable = false
   }
-  private get deletable () {
+  private get deletable() {
     return this.$refs.waterFall && this.$refs.waterFall.itemList.filter(ele => ele.selected).length > 0
   }
-  private async del () {
+  private async del() {
     const waterFall = this.$refs.waterFall
     const idList = []
     let idxList = []
@@ -49,21 +49,23 @@ export default class ImgMgt extends Base {
     this.cancel()
   }
 
-  render () {
+  render() {
     return (
       <div class='button-group-normal'>
-        <Button type='error' disabled={this.selectable && !this.deletable} on-click={() => {
-          if (!this.selectable) {
+        {!this.selectable ?
+          <Button type='primary' on-click={() => {
             this.selectable = true
-          } else {
-            this.$utils.confirm(`确认删除?`, {
-              ok: this.del
-            })
-          }
-        }}>删除</Button>
-        {this.selectable && <Button on-click={() => {
-          this.cancel()
-        }}>取消</Button>}
+          }}>选择</Button> :
+          <div>
+            <Button disabled={!this.deletable} type='error' on-click={() => {
+              this.$utils.confirm(`确认删除?`, {
+                ok: this.del
+              })
+            }}>删除</Button>
+            <Button on-click={() => {
+              this.cancel()
+            }}>取消</Button>
+          </div>}
         <Divider />
         <MyWaterfall
           ref='waterFall'

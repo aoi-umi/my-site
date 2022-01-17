@@ -277,7 +277,7 @@ export class ContentListItem extends Vue<ContentListItemProp, Base> {
             {<img class={[...this.getStyleName('cover')]} v-lazy={ele.coverUrl} />}
             <h4 class={[...this.getStyleName('list-title'), 'flex-stretch']} title={ele.title}>{ele.title}</h4>
           </div>
-          <UserAvatar user={ele.user} type="text" />
+          PO: <UserAvatar user={ele.user} type="text" />
         </div>
       )
     }

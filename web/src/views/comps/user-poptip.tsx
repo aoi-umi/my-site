@@ -109,7 +109,7 @@ export class UserPoptip extends Vue<UserPoptipProp, Base> {
     const notSelf = this.user._id !== this.storeUser.user._id
     return (
       <div class={this.getStyleName('root')}>
-        <Poptip class='pointer' disabled={this.noTips} trigger='hover'
+        <Poptip class='pointer' disabled={this.noTips} trigger='hover' transfer
           placement={this.tipsPlacement} on-on-popper-show={() => {
             this.getUserDetail()
           }}

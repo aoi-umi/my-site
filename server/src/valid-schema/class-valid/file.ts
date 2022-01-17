@@ -2,6 +2,7 @@ import { IsDefined } from 'class-validator';
 import { Types } from 'mongoose';
 import { Transform, Type } from 'class-transformer';
 import { objectIdTransform } from './util';
+import { ListBase } from './base';
 
 export class FileGet {
     @IsDefined()
@@ -30,3 +31,5 @@ export class FileUploadCheck {
     @Type()
     chunkSize: number;
 }
+
+export class FileList extends ListBase {}

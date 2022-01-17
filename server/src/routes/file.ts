@@ -1,5 +1,3 @@
-import { RequestHandler, Request, Response } from 'express';
-import { GridFSInstance } from 'mongoose-ts-ua';
 import * as multer from '@koa/multer';
 
 import * as common from '@/_system/common';
@@ -112,7 +110,7 @@ export const imgUpload: MyRequestHandler = (opt, ctx) => {
 };
 
 export const imgGet: MyRequestHandler = (opt, ctx) => {
-  opt.reqOption = { fileType: myEnum.fileType.图片, file: ctx.file };
+  opt.reqOption = { fileType: myEnum.fileType.图片, };
   return download(opt, ctx);
 };
 
@@ -122,6 +120,24 @@ export const videoUpload: MyRequestHandler = (opt, ctx) => {
 };
 
 export const vedioGet: MyRequestHandler = (opt, ctx) => {
-  opt.reqOption = { fileType: myEnum.fileType.视频, file: ctx.file };
+  opt.reqOption = { fileType: myEnum.fileType.视频, };
+  return download(opt, ctx);
+};
+
+export const mgtQuery: MyRequestHandler = async (opt, ctx) => {
+  let { myData } = opt;
+  let { user } = myData;
+  let data = paramsValid(opt.reqData, ValidSchema.FileList);
+  let { rows, total } = await FileMapper.query({
+    ...data,
+  }, { user, host: opt.myData.fileHost, mgt: true });
+  return {
+    rows,
+    total,
+  };
+};
+
+export const mgtDownload: MyRequestHandler = (opt, ctx) => {
+  opt.reqOption = {};
   return download(opt, ctx);
 };

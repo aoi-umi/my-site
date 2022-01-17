@@ -23,5 +23,6 @@ export default {
 
   goodsMgtAudit: 'goodsMgtAudit',
   payMgtQuery: 'payMgtQuery',
-  payMgtOperate: 'payMgtOperate'
+  payMgtOperate: 'payMgtOperate',
+  fileMgtQuery: 'fileMgtQuery',
 }

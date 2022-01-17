@@ -54,6 +54,9 @@ router.get('/asset/logQuery', UserAuthMid.normal([auth.payMgtQuery]), MyRequestH
 
 //#region file 
 import * as file from './file';
+router.get('/file/mgt/query', UserAuthMid.normal([auth.fileMgtQuery]), MyRequestHandlerMid.convert(file.mgtQuery));
+router.get('/file/mgt/get', UserAuthMid.normal([auth.fileMgtQuery]), MyRequestHandlerMid.convert(file.mgtDownload));
+
 router.post('/file/uploadCheck', UserAuthMid.normal([]), MyRequestHandlerMid.convert(file.uploadCheck));
 router.post('/file/uploadByChunks', UserAuthMid.normal([auth.login]), FileMid.single, MyRequestHandlerMid.convert(file.uploadByChunks));
 

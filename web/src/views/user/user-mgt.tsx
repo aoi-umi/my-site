@@ -189,7 +189,11 @@ export default class UserMgt extends Base {
       title: '账号',
       key: 'account',
       render: (h, params) => {
-        return <UserAvatar style={{ margin: '5px' }} user={params.row} />
+        return (
+          <div style="display: flex">
+            <UserAvatar style={{ margin: '5px' }} user={params.row} />
+          </div>
+        )
       }
     }, {
       title: '角色',

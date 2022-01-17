@@ -8,10 +8,11 @@ import { myEnum } from '@/dev-config';
 import * as ValidSchema from '@/valid-schema/class-valid';
 import { LoginUser } from '@/models/login-user';
 
+import { BaseMapper } from '../_base';
+import { UserDocType, UserMapper } from '../user';
+
 import { FileModel, FileInstanceType } from './file';
 import { FileDiskInstance, FileDiskModel } from './file-disk';
-import { BaseMapper } from '../_base';
-import { UserDocType } from '../user';
 
 const Prefix = {
   [myEnum.fileType.图片]: config.env.imgPrefix,
@@ -313,7 +314,7 @@ export class FileMapper {
   目前有两种存储方式，一种存在数据库，一种存在disk
   */
   static async download(data: ValidSchema.FileGet, opt: {
-    fileType: string
+    fileType?: string
     range?: {
       start: number
       end: number
@@ -394,21 +395,29 @@ export class FileMapper {
     };
   }
 
-  static async query(data: ValidSchema.ListBase & { fileType?: string }, opt: { user: LoginUser, host?: string }) {
+  static async query(data: ValidSchema.ListBase & { fileType?: string },
+    opt: { user: LoginUser, host?: string; mgt?: boolean }
+  ) {
     let { user } = opt;
-    let cond: any = {
-      userId: user._id,
-      isUserDel: { $ne: true }
-    };
+    let cond: any = {};
+    if (!opt.mgt) {
+      cond = {
+        userId: user._id,
+        isUserDel: { $ne: true }
+      };
+    }
     if (data.fileType)
       cond.fileType = data.fileType;
-    let rs = await FileModel.findAndCountAll({
+    let pipeline = [
+      ...UserMapper.lookupPipeline(),
+      { $match: cond }
+    ];
+    let rs = await FileModel.aggregatePaginate(pipeline, {
       ...BaseMapper.getListOptions(data),
-      conditions: cond
     });
     let rows = rs.rows.map(ele => {
-      let obj = ele._doc as typeof ele._doc & { url?: string };
-      obj.url = this.getImgUrl(ele._id, opt.host);
+      let obj = ele as typeof ele & { url?: string };
+      obj.url = this.getUrl(ele._id, ele.fileType, { host: opt.host });
       return obj;
     });
     return {

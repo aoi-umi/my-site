@@ -90,6 +90,9 @@ export const authConfig = {
   settingSave: {
     code: 'settingSave'
   },
+  fileMgtQuery: {
+    code: 'fileMgtQuery'
+  }
 };
 
 export default authConfig;

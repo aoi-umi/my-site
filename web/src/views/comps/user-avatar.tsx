@@ -79,7 +79,7 @@ export class UserAvatar extends Vue<UserAvatarProp, Base> {
             noTips={this.noTips}
             self={this.self}
           >
-            <span class={['not-important']}>PO: {this.user.nickname}</span>
+            <span class={['not-important']}>{this.user.nickname}</span>
           </UserPoptip>
         </div>
       )

@@ -13,6 +13,7 @@ interface MyData {
     lang?: string;
     imgHost?: string;
     videoHost?: string;
+    fileHost?: string;
 }
 declare module 'koa' {
     interface DefaultContext {

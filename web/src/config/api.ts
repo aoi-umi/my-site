@@ -283,6 +283,14 @@ let test: TestApiConfigType = {
     },
 
     // file
+    fileMgtQuery: {
+      url: '/file/mgt/query',
+      method: 'get'
+    },
+    fileMgtDownload: {
+      url: '/file/mgt/download',
+      method: 'get'
+    },
     fileUploadByChunks: {
       url: '/file/uploadByChunks'
     },

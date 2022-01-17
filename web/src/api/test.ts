@@ -97,6 +97,8 @@ export type TestMethod = {
   goodsBuy,
 
   // file
+  fileMgtQuery,
+  fileMgtDownload,
   fileUploadByChunks,
   fileUploadCheck,
   imgUpload,

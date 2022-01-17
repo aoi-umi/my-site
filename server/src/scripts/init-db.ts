@@ -74,8 +74,11 @@ async function initAuthority() {
     settingSave: {
       name: '设置修改'
     },
-    fileMgt: {
-      name: '文件管理'
+    fileMgtQuery: {
+      name: '文件管理查询'
+    },
+    fileMgtDel: {
+      name: '文件管理删除'
     },
   };
 

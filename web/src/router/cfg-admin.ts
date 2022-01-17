@@ -50,5 +50,13 @@ export default {
       authority: [authority.login, authority.payMgtQuery]
     },
     component: () => import('../views/asset-mgt').then(t => t.AssetMgtNotify)
+  },
+  fileMgt: {
+    path: adminPath + '/fileMgt',
+    text: '文件管理',
+    meta: {
+      authority: [authority.fileMgtQuery]
+    },
+    component: () => import('../views/file-mgt')
   }
 }

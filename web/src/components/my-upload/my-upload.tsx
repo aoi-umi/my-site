@@ -14,9 +14,9 @@ import { MyVideo } from '../my-video'
 import * as style from '../style'
 
 export const FileDataType = {
-  未知: 0,
-  图片: 1,
-  视频: 2
+  未知: '',
+  图片: 'image',
+  视频: 'video'
 }
 
 export type FileType = {
@@ -52,16 +52,19 @@ type CropperOption = {
 
 type SetFileType = {
   data: string;
-  fileType: number;
+  fileType: string;
   file: File,
   originFileType?: string;
 };
 class MyUploadProp {
   @Prop()
+  readonly?: boolean;
+
+  @Prop()
   uploadCheckUrl?: string;
 
   @Prop()
-  uploadUrl: string;
+  uploadUrl?: string;
 
   @Prop({
     default: () => []
@@ -104,7 +107,7 @@ class MyUploadProp {
   @Prop({
     default: FileDataType.图片
   })
-  uploadIconType?: number;
+  uploadIconType?: string;
 
   @Prop()
   resHandler?: (res: any) => any;
@@ -490,7 +493,7 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
                     src: item.url || item.data
                   }],
                 }} />}
-                <div class={[...this.getStyleName('item-cover')]} style={{ lineHeight: coverHeight }}>
+                {!this.readonly && <div class={[...this.getStyleName('item-cover')]} style={{ lineHeight: coverHeight }}>
                   {isImg && item.originData && <Icon type='md-create' nativeOn-click={() => { this.handleEdit(item) }} />}
                   <Icon type='md-camera' nativeOn-click={() => {
                     this.handleSelectFile(item)
@@ -503,7 +506,7 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
                     if (ref) { data = ref.capture() }
                     this.$emit('video-crop', data, item)
                   }} />}
-                </div>
+                </div>}
               </div>
               {this.showProgress && <div class={this.getStyleName('progress')}>
                 <Progress

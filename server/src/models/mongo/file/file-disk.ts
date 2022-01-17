@@ -18,6 +18,9 @@ class FileDisk extends Base {
 
   @prop()
   filename: string;
+
+  @prop()
+  isDel: boolean;
 }
 
 export const FileDiskModel = getModelForClass<FileDisk, typeof FileDisk>(FileDisk);
