@@ -27,6 +27,7 @@ export type ConfigType = {
   }
   imgPrefix: string,
   videoPrefix: string,
+  rawFilePrefix: string,
   ali: {
     sandbox: boolean,
     appId: string,

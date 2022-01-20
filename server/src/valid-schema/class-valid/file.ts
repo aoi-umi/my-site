@@ -32,4 +32,7 @@ export class FileUploadCheck {
     chunkSize: number;
 }
 
-export class FileList extends ListBase {}
+export class FileList extends ListBase {
+  @Type()
+  hash: string
+}

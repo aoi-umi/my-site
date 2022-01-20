@@ -124,8 +124,8 @@ class Gesture extends Vue<{}, MyBase> {
       const hammer = new Hammer(this.$refs.root)
       hammer.get('pan').set({ direction: Hammer.DIRECTION_ALL })
       hammer.on('panmove panend', (event) => {
-        this.x = this.startX + event.deltaX
-        this.y = this.startY + event.deltaY
+        this.x = this.startX + event.deltaX / this.scale
+        this.y = this.startY + event.deltaY / this.scale
         if (event.type === 'panend') {
           this.updatePos()
         }

@@ -121,7 +121,8 @@ export const enumDefine = {
   },
   fileType: {
     图片: 'image',
-    视频: 'video'
+    视频: 'video',
+    RAW: 'raw',
   },
   fileStorgeType: {
     硬盘: 'disk',

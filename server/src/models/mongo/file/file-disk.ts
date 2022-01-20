@@ -1,11 +1,13 @@
 import { Types, SchemaTypes } from 'mongoose';
-import { setSchema, prop, setMethod, getModelForClass, InstanceType } from 'mongoose-ts-ua';
+import { setSchema, prop, setMethod, getModelForClass, InstanceType, setPlugin } from 'mongoose-ts-ua';
 
 import { Base } from '../_base';
+import { pagination, IPagination } from '../_plugins/pagination';
 
 export type FileDiskInstance = InstanceType<FileDisk>  
 
 @setSchema()
+@setPlugin(pagination)
 class FileDisk extends Base {
   @prop()
   length: number
@@ -23,4 +25,4 @@ class FileDisk extends Base {
   isDel: boolean;
 }
 
-export const FileDiskModel = getModelForClass<FileDisk, typeof FileDisk>(FileDisk);
+export const FileDiskModel = getModelForClass<FileDisk, typeof FileDisk & IPagination<FileDisk>>(FileDisk);

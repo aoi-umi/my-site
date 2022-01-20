@@ -17,6 +17,7 @@ import { FileDiskInstance, FileDiskModel } from './file-disk';
 const Prefix = {
   [myEnum.fileType.图片]: config.env.imgPrefix,
   [myEnum.fileType.视频]: config.env.videoPrefix,
+  [myEnum.fileType.RAW]: config.env.rawFilePrefix,
 };
 
 type RawFileType = {
@@ -418,6 +419,31 @@ export class FileMapper {
     let rows = rs.rows.map(ele => {
       let obj = ele as typeof ele & { url?: string };
       obj.url = this.getUrl(ele._id, ele.fileType, { host: opt.host });
+      return obj;
+    });
+    return {
+      ...rs,
+      rows
+    };
+  }
+
+  static async diskFileQuery(data: ValidSchema.FileList, opt: { host?: string }) {
+    let cond: any = {};
+    ['md5'].forEach(key => {
+      if (data[key])
+        cond[key] = new RegExp(common.escapeRegExp(data[key]), 'i');
+    });
+    let pipeline = [{
+      $match: cond
+    }];
+    let rs = await FileDiskModel.aggregatePaginate(pipeline, {
+      ...BaseMapper.getListOptions(data),
+    });
+    let rows = rs.rows.map(ele => {
+      let obj = ele as typeof ele & { url?: string, fileType?: string };
+      let fileType = ele.contentType?.split('/')[0];
+      obj.fileType = fileType;
+      obj.url = this.getUrl(ele._id, myEnum.fileType.RAW, { host: opt.host });
       return obj;
     });
     return {

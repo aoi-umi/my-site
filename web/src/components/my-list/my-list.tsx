@@ -151,9 +151,10 @@ class MyListProp<QueryArgs = any> {
   @Prop()
   tableHeight?: string | number
 
-  @Prop({
-    // default: true
-  })
+  @Prop()
+  selectable?: boolean
+
+  @Prop()
   draggable?: boolean
 
   @Prop({})
@@ -173,7 +174,7 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
   stylePrefix = clsPrefix;
 
   private cols?: ColType[] = [];
-  protected created () {
+  protected created() {
     if (this.type == 'table') {
       if (!this.columns && !this.itemConfigs) { throw new Error(`type 'table' require 'columns' or 'colConfigs'!`) }
     } else if (this.type == 'custom' && !this.customRenderFn) {
@@ -184,7 +185,7 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
   }
 
   private dragInst
-  mounted () {
+  mounted() {
     if (this.draggable) {
       this.dragInst = Sortable.create(
         this.$refs.table.$el.querySelector('.ivu-table-tbody'),
@@ -208,9 +209,17 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
   @Watch('itemConfigs', {
     immediate: true
   })
-  private setCols () {
+  private setCols() {
     if (this.type !== 'table') return
-    this.cols = []
+    this.cols = [];
+    if (this.selectable) {
+      this.cols.push({
+        key: '_selection',
+        type: 'selection',
+        width: 60,
+        align: 'center'
+      })
+    }
     if (this.draggable) {
       this.cols.push({
         key: '__sort',
@@ -266,7 +275,7 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
     })
   }
 
-  valid () {
+  valid() {
     let rules = Utils.getValidRulesByDynCfg(this.itemConfigs)
     return Utils.valid({ data: this.result.data }, {
       data: {
@@ -279,31 +288,31 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
     })
   }
 
-  private addEvent () {
+  private addEvent() {
     window.addEventListener('scroll', this.handleScrollEnd)
   }
-  protected beforeDestroy () {
+  protected beforeDestroy() {
     if (this.dragInst) {
       this.dragInst.destroy()
     }
     window.removeEventListener('scroll', this.handleScrollEnd)
   }
 
-  private handleScrollEnd () {
+  private handleScrollEnd() {
     if (this.infiniteScroll && Utils.isScrollEnd()) {
       this.scrollEndHandler()
     }
   }
 
-  private scrollEndHandler () {
+  private scrollEndHandler() {
     if (!this.loadedLastPage && !this.loading) {
       this.handleQuery({ noClear: true })
     }
   }
-  public query (data?: any, noClear?: boolean) {
+  public query(data?: any, noClear?: boolean) {
     return this._handleQuery(data, noClear)
   }
-  private async _handleQuery (data?: any, noClear?: boolean) {
+  private async _handleQuery(data?: any, noClear?: boolean) {
     this.loading = true
     try {
       this.selectedRows = []
@@ -338,18 +347,18 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
     }
   }
 
-  private setResultData (data) {
+  private setResultData(data) {
     // data.forEach((ele, idx) => {
     //   ele._index = idx
     // })
     this.result.data = data
   }
 
-  refresh () {
+  refresh() {
     this.handleQuery({ resetPage: true })
   }
 
-  handleQuery (opt?: {
+  handleQuery(opt?: {
     noClear?: boolean;
     resetPage?: boolean;
   }) {
@@ -362,34 +371,34 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
     this.$emit('query', this.model, opt.noClear, this)
   }
 
-  private handlePress (e) {
+  private handlePress(e) {
     if (e.charCode == 13) {
       this.refresh()
     }
   }
 
-  get selectedRows () {
+  get selectedRows() {
     return this.model.selection
   }
-  set selectedRows (val) {
+  set selectedRows(val) {
     this.model.selection = val
   }
-  private selectionChangeHandler (selection) {
+  private selectionChangeHandler(selection) {
     this.selectedRows = selection
   }
 
-  private currentChangeHandler (currentRow) {
+  private currentChangeHandler(currentRow) {
     if (!currentRow) {
       this.currentChange(null)
     }
   }
 
-  private rowClickHandler (_currentRow, index) {
+  private rowClickHandler(_currentRow, index) {
     let currentRow = this.result.data[index]
 
     this.currentChange(currentRow)
   }
-  private currentChange (currentRow) {
+  private currentChange(currentRow) {
     this.$emit('current-change', {
       currentRow
     })
@@ -400,14 +409,14 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
   model = this.value;
 
   @Watch('value')
-  private watchValue (newVal) {
+  private watchValue(newVal) {
     this.model = newVal
   }
 
   @Watch('data', {
     immediate: true
   })
-  private setData (val: any[]) {
+  private setData(val: any[]) {
     if (val) {
       this.setResultData(val)
       this.result.total = val.length
@@ -416,12 +425,12 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
     }
   }
 
-  setQueryByKey (data, keyList: string[]) {
+  setQueryByKey(data, keyList: string[]) {
     keyList.forEach(key => {
       if (data[key]) { this.$set(this.model.query, key, data[key]) }
     })
   }
-  setModel (data, opt: {
+  setModel(data, opt: {
     queryKeyList?: string[];
     toListModel?: (data, model: MyListModel) => any;
   }) {
@@ -443,7 +452,7 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
 
   filterKey = ''
 
-  private get bottomBarClass () {
+  private get bottomBarClass() {
     const cls = this.getStyleName('bottom-bar')
     if (this.multiOperateBtnList.length && this.selectedRows.length) {
       cls.push('active')
@@ -451,7 +460,7 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
     return cls
   }
 
-  private resetQueryArgs () {
+  private resetQueryArgs() {
     if (this.queryArgs) {
       for (const key in this.queryArgs) {
         this.$set(this.model.query, key, '')
@@ -459,7 +468,7 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
     }
   }
 
-  private _customRenderFn (rs: ResultType) {
+  private _customRenderFn(rs: ResultType) {
     let defaultFail
     if (!rs.success || !rs.data.length) {
       const msg = !rs.success ? rs.msg : this.defaultCustomNoDataMsg
@@ -475,7 +484,7 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
     )
   }
 
-  private renderPage (position: string) {
+  private renderPage(position: string) {
     if (!this.infiniteScroll && (this.showPage ?? !!this.queryFn) && this.result.total !== 0 && (['both', position].includes(this.pagePosition))) {
       return (
         <Page
@@ -501,7 +510,7 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
     }
   }
 
-  private get filterData () {
+  private get filterData() {
     let filter = null
     if (this.filterKey && this.filter) {
       filter = typeof this.filter === 'function' ? this.filter : (ele) => {
@@ -511,7 +520,7 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
     return filter ? this.result.data.filter(filter) : this.result.data
   }
 
-  protected render () {
+  protected render() {
     const hideQueryBtn = this.hideQueryBtn || {}
     if (this.$refs.page && this.$refs.page.currentPage !== this.model.page.index) {
       this.$refs.page.currentPage = this.model.page.index
@@ -645,7 +654,7 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
       </div>
     )
   }
-  protected renderBtns () {
+  protected renderBtns() {
     return (
       this.buttonConfigs?.length > 0 && <MyButtons value={this.buttonConfigs} />
     )

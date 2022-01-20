@@ -56,6 +56,7 @@ const cfg: ConfigType = {
   },
   imgPrefix: `${urlPrefix}/img`,
   videoPrefix: `${urlPrefix}/video`,
+  rawFilePrefix: `${urlPrefix}/file/mgt/get`,
   ali: {
     sandbox: true,
     appId: '2016100100641227',

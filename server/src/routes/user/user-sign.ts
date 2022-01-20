@@ -1,4 +1,6 @@
 
+import { Context } from 'koa';
+
 import * as common from '@/_system/common';
 import { MyRequestHandler } from '@/middleware';
 import { paramsValid, logger, } from '@/helpers';
@@ -11,7 +13,6 @@ import { ThirdPartyAuthMapper } from '@/3rd-party';
 import { UserModel, UserMapper, UserLogMapper } from '@/models/mongo/user';
 import { SettingMapper } from '@/models/mongo/setting';
 import { FileMapper } from '@/models/mongo/file';
-import { Context } from 'koa';
 import { MyData } from '@/typings/libs';
 
 export let accountExists: MyRequestHandler = async (opt) => {
@@ -75,7 +76,11 @@ export let signUpCheck: MyRequestHandler = async () => {
     throw common.error('暂不开放注册', config.error.NO_PERMISSIONS);
 };
 
-let signInFn = async (data: ValidSchema.UserSignIn, opt: { noPwd?: boolean, myData: MyData }) => {
+let signInFn = async (data: ValidSchema.UserSignIn, opt: {
+  noPwd?: boolean,
+  myData: MyData,
+  ctx: Context
+}) => {
   let { myData } = opt;
   let token = myData.user.key;
   let { user, disableResult } = await UserMapper.accountCheck(data.account);
@@ -89,21 +94,26 @@ let signInFn = async (data: ValidSchema.UserSignIn, opt: { noPwd?: boolean, myDa
   });
   let userInfoCfg = { ...config.dev.cache.user, key: returnUser.key };
   await cache.setByCfg(userInfoCfg, returnUser);
+  opt.ctx.cookies.set(config.dev.cache.user.prefix, token);
   return returnUser;
 };
 
-export let signIn: MyRequestHandler = async (opt) => {
+export let signIn: MyRequestHandler = async (opt, ctx) => {
   let data = paramsValid(opt.reqData, ValidSchema.UserSignIn);
-  return signInFn(data, { myData: opt.myData });
+  return signInFn(data, { myData: opt.myData, ctx });
 };
 
-export let signInByAuth: MyRequestHandler = async (opt) => {
+export let signInByAuth: MyRequestHandler = async (opt, ctx) => {
   let data = paramsValid(opt.reqData, ValidSchema.UserSignInByAuth);
   let userByRs = await ThirdPartyAuthMapper.userByHandler({ by: data.by, val: data.val });
   let existsRs = await UserMapper.accountExists(userByRs.val, data.by);
   if (!existsRs)
     throw common.error('账号未绑定');
-  let rs = await signInFn({ account: existsRs.account, rand: data.val }, { myData: opt.myData, noPwd: true });
+  let rs = await signInFn({ account: existsRs.account, rand: data.val }, {
+    myData: opt.myData,
+    noPwd: true, 
+    ctx
+  });
   cache.delByCfg({
     ...config.dev.cache.wxAuthCode,
     key: data.val

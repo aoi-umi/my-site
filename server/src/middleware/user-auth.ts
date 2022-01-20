@@ -10,10 +10,10 @@ import { UserMapper } from '@/models/mongo/user';
 import { LoginUser } from '@/models/login-user';
 
 export class UserAuthMid {
-  static async  getUser(token, opt?: {
-        resetOpt?;
-        autoLogin?: boolean;
-    }) {
+  static async getUser(token, opt?: {
+    resetOpt?;
+    autoLogin?: boolean;
+  }) {
     opt = { ...opt };
     let user = plainToClass(LoginUser, {
       _id: undefined,
@@ -60,9 +60,10 @@ export class UserAuthMid {
 
   static normal(authData?: AuthType) {
     return async (ctx: Context & RouterContext, next) => {
-      // let ctx = c as Context;
       let tokenKey = config.dev.cache.user.prefix;
-      let token = ctx.request.get(tokenKey) || ctx.query[tokenKey];
+      let token = ctx.query[tokenKey]
+        || ctx.request.get(tokenKey)
+        || ctx.cookies.get(tokenKey);
       let user = await UserAuthMid.getUser(token, {
         autoLogin: true,
         resetOpt: { imgHost: ctx.myData.imgHost }

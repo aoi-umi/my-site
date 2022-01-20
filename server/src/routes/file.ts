@@ -128,9 +128,9 @@ export const mgtQuery: MyRequestHandler = async (opt, ctx) => {
   let { myData } = opt;
   let { user } = myData;
   let data = paramsValid(opt.reqData, ValidSchema.FileList);
-  let { rows, total } = await FileMapper.query({
+  let { rows, total } = await FileMapper.diskFileQuery({
     ...data,
-  }, { user, host: opt.myData.fileHost, mgt: true });
+  }, { host: opt.myData.fileHost });
   return {
     rows,
     total,
@@ -139,5 +139,9 @@ export const mgtQuery: MyRequestHandler = async (opt, ctx) => {
 
 export const mgtDownload: MyRequestHandler = (opt, ctx) => {
   opt.reqOption = {};
+  opt.reqData = {
+    ...opt.reqData,
+    isRaw: true,
+  };
   return download(opt, ctx);
 };

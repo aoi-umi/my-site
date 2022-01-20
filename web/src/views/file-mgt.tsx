@@ -6,16 +6,17 @@ import { testApi } from '@/api'
 import { convert } from '@/helpers'
 import { Tag, Modal, Input, Row, Col, Form, FormItem, Button } from '@/components/iview'
 import { MyList, Const as MyListConst, OnSortChangeOptions, MyListModel } from '@/components/my-list'
-import { MyTagModel, MyTag } from '@/components/my-tag'
+import { MyUpload, FileDataType } from '@/components/my-upload'
+import { MyImgViewer } from '@/components/my-img-viewer'
+
 import { Base } from './base'
 import { UserAvatar } from './comps/user-avatar'
-import { MyUpload } from '@/components/my-upload'
 
 @Component
 export default class FileMgt extends Base {
   detailShow = false;
   detail: any;
-  $refs: { list: MyList<any> };
+  $refs: { list: MyList<any>, imgViewer: MyImgViewer };
 
   mounted() {
     this.query()
@@ -43,49 +44,47 @@ export default class FileMgt extends Base {
     this.query()
   }
 
+  private currUrl = ''
+
+  private imgClick(row) {
+    this.currUrl = row.url;
+    this.$refs.imgViewer.show();
+  }
+
   protected render() {
     return (
       <div>
+        <MyImgViewer ref='imgViewer' src={this.currUrl} />
         <MyList
           ref='list'
           hideQueryBtn={{ add: true }}
           queryArgs={{
-            name: {
-              label: '名字'
+            md5: {
+              label: 'hash'
             },
-            url: {},
             anyKey: {
               label: '任意字'
             }
           }}
+          selectable
           columns={[{
-            title: '名字',
-            key: 'filename',
+            title: 'hash',
+            key: 'md5',
             sortable: 'custom',
             minWidth: 120
           }, {
             title: '文件',
-            key: 'file',
-            sortable: true,
+            key: 'url',
             minWidth: 200,
             render: (h, params) => {
               return (
                 params.row.url &&
-                <MyUpload
-                  readonly
-                  width={160} height={90}
-                  value={[{ url: params.row.url, fileType: params.row.fileType, originFileType: 'video/mp4' }]}
-                ></MyUpload>
-              )
-            }
-          }, {
-            title: '上传者',
-            key: 'uploader',
-            fixed: 'right',
-            width: 120,
-            render: (h, params) => {
-              return (
-                <UserAvatar user={params.row.user} type="text" />
+                (params.row.fileType == FileDataType.图片 ?
+                  <img style="width:160px; height:90px; object-fit: cover;" src={params.row.url} on-click={() => {
+                    this.imgClick(params.row)
+                  }} /> :
+                  <a href={params.row.url}>查看</a>)
+
               )
             }
           }, {
@@ -103,7 +102,10 @@ export default class FileMgt extends Base {
           }]}
 
           queryFn={async (data) => {
-            const rs = await testApi.fileMgtQuery(data)
+            const rs = await testApi.fileMgtQuery(data);
+            rs.rows.forEach(ele => {
+              ele._disabled = ele.isUserDel
+            })
             return rs
           }}
 
@@ -117,6 +119,13 @@ export default class FileMgt extends Base {
             })
           }}
 
+          multiOperateBtnList={[{
+            text: '批量删除',
+            onClick: (selection) => {
+              this.delIds = selection.map(ele => ele._id)
+              this.delHandler()
+            }
+          }]}
 
         ></MyList>
       </div>
