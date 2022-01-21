@@ -4,7 +4,7 @@ import { Component, Vue, Prop, Confirm } from '@/components/decorator'
 
 import { testApi } from '@/api'
 import { convert } from '@/helpers'
-import { Tag, Modal, Input, Row, Col, Form, FormItem, Button } from '@/components/iview'
+import { Tag, Modal, Input, Row, Col, Form, FormItem, Button, Checkbox } from '@/components/iview'
 import { MyList, Const as MyListConst, OnSortChangeOptions, MyListModel } from '@/components/my-list'
 import { MyUpload, FileDataType } from '@/components/my-upload'
 import { MyImgViewer } from '@/components/my-img-viewer'
@@ -35,13 +35,27 @@ export default class FileMgt extends Base {
     this.$refs.list.query(query)
   }
 
-  delIds = []
+  operateIds = []
   @Confirm(function (this: FileMgt) {
-    return `将要删除${this.delIds.length}项`
+    return `将要删除${this.operateIds.length}项`
   }, { title: '确认删除?' })
   async delHandler() {
-    this.delIds = []
-    this.query()
+    await this.operateHandler('删除', async () => {
+      await testApi.fileMgtDel({ idList: this.operateIds })
+      this.operateIds = []
+      this.query()
+    })
+  }
+
+  @Confirm(function (this: FileMgt) {
+    return `将要恢复${this.operateIds.length}项`
+  }, { title: '确认恢复?' })
+  async recoveryHandler() {
+    await this.operateHandler('恢复', async () => {
+      await testApi.fileMgtRecovery({ idList: this.operateIds })
+      this.operateIds = []
+      this.query()
+    })
   }
 
   private currUrl = ''
@@ -88,6 +102,13 @@ export default class FileMgt extends Base {
               )
             }
           }, {
+            title: '已删除',
+            key: 'isDel',
+            minWidth: 120,
+            render: (h, params) => {
+              return (<Checkbox disabled value={params.row.isDel}></Checkbox>)
+            }
+          }, {
             title: '操作',
             key: 'action',
             fixed: 'right',
@@ -120,10 +141,16 @@ export default class FileMgt extends Base {
           }}
 
           multiOperateBtnList={[{
-            text: '批量删除',
+            text: '删除',
             onClick: (selection) => {
-              this.delIds = selection.map(ele => ele._id)
+              this.operateIds = selection.map(ele => ele._id)
               this.delHandler()
+            }
+          }, {
+            text: '恢复',
+            onClick: (selection) => {
+              this.operateIds = selection.map(ele => ele._id)
+              this.recoveryHandler()
             }
           }]}
 

@@ -29,6 +29,7 @@ type RawFileType = {
   md5: string;
   contentType: string;
   filepath?: string;
+  isDel?: boolean
 }
 
 type UploadOption = {
@@ -90,6 +91,7 @@ export class FileMapper {
           md5: ele.md5,
           modifiedDate: stat.mtime,
           filepath: filename,
+          isDel: ele.isDel,
         });
       }
     });
@@ -321,6 +323,7 @@ export class FileMapper {
       end: number
     },
     ifModifiedSince?: string
+    mgt?: boolean
   }) {
     let rawFile: RawFileType;
     let range: { start: number, end: number };
@@ -340,6 +343,7 @@ export class FileMapper {
       rawFile = list[0];
     }
     if (!rawFile) return;
+    if (rawFile.isDel && !opt.mgt) return;
 
     let stream: NodeJS.ReadableStream;
     let streamOpt;
@@ -450,5 +454,11 @@ export class FileMapper {
       ...rs,
       rows
     };
+  }
+
+  static async diskFileOperate(data: ValidSchema.OperateBase, opt: { operate: string }) {
+    await FileDiskModel.updateMany({ _id: data.idList }, {
+      isDel: opt.operate === myEnum.fileOperate.删除 ? true : false
+    });
   }
 }

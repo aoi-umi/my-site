@@ -99,6 +99,8 @@ export type TestMethod = {
   // file
   fileMgtQuery,
   fileMgtDownload,
+  fileMgtDel,
+  fileMgtRecovery,
   fileUploadByChunks,
   fileUploadCheck,
   imgUpload,

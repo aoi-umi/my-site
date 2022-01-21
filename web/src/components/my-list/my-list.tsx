@@ -647,7 +647,8 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
           <Card class={this.bottomBarClass}>
             {this.multiOperateBtnList.map(ele => {
               return (
-                <Button on-click={() => { ele.onClick && ele.onClick(this.selectedRows) }}>{ele.text}</Button>
+                <Button class={this.getStyleName('bottom-bar-item')}
+                  on-click={() => { ele.onClick && ele.onClick(this.selectedRows) }}>{ele.text}</Button>
               )
             })}
           </Card>}

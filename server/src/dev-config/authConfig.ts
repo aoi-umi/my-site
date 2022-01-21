@@ -1,9 +1,90 @@
 
 import errorConfig from './errorConfig';
 export type AuthConfigType = {
-    code: string;
-    errCode?: ErrorConfigType;
+  code: string;
+  errCode?: ErrorConfigType;
 }
+
+export const dbAuthority = {
+  authorityQuery: {
+    name: '权限查询'
+  },
+  authoritySave: {
+    name: '权限修改'
+  },
+  authorityDel: {
+    name: '权限删除'
+  },
+
+  roleQuery: {
+    name: '角色查询'
+  },
+  roleSave: {
+    name: '角色修改'
+  },
+  roleDel: {
+    name: '角色删除'
+  },
+
+  userMgtQuery: {
+    name: '用户管理查询'
+  },
+  userMgtEdit: {
+    name: '用户管理修改'
+  },
+  userMgtDisable: {
+    name: '用户管理封禁'
+  },
+
+  articleMgtDel: {
+    name: '文章管理删除'
+  },
+  articleMgtAudit: {
+    name: '文章管理审核'
+  },
+
+  videoMgtDel: {
+    code: '视频管理删除'
+  },
+  videoMgtAudit: {
+    name: '视频管理审核'
+  },
+
+  commentMgtDel: {
+    name: '评论管理删除'
+  },
+
+  goodsMgtAudit: {
+    name: '商品管理审核'
+  },
+
+  payMgtQuery: {
+    name: '支付管理查询'
+  },
+  payMgtOperate: {
+    name: '支付管理操作'
+  },
+  settingQuery: {
+    name: '设置查询'
+  },
+  settingSave: {
+    name: '设置修改'
+  },
+  fileMgtQuery: {
+    name: '文件管理查询'
+  },
+  fileMgtDel: {
+    name: '文件管理删除'
+  },
+  fileMgtRecovery: {
+    name: '文件管理恢复'
+  },
+};
+
+Object.entries(dbAuthority).forEach(([key, value]) => {
+  value['code'] = key;
+});
+
 export const authConfig = {
   dev: {
     code: 'dev',
@@ -26,73 +107,7 @@ export const authConfig = {
     errCode: errorConfig.NO_PERMISSIONS,
   },
 
-  userMgtQuery: {
-    code: 'userMgtQuery',
-  },
-  userMgtEdit: {
-    code: 'userMgtEdit',
-  },
-  userMgtDisable: {
-    code: 'userMgtDisable',
-  },
-
-  roleQuery: {
-    code: 'roleQuery',
-  },
-  roleSave: {
-    code: 'roleSave',
-  },
-  roleDel: {
-    code: 'roleDel',
-  },
-  authorityQuery: {
-    code: 'authorityQuery',
-  },
-  authoritySave: {
-    code: 'authorityQuery',
-  },
-  authorityDel: {
-    code: 'authorityDel',
-  },
-
-  articleMgtDel: {
-    code: 'articleMgtDel'
-  },
-  articleMgtAudit: {
-    code: 'articleMgtAudit'
-  },
-
-  videoMgtDel: {
-    code: 'videoMgtDel'
-  },
-  videoMgtAudit: {
-    code: 'videoMgtAudit'
-  },
-
-  commentMgtDel: {
-    code: 'commentMgtDel'
-  },
-
-  goodsMgtAudit: {
-    code: 'goodsMgtAudit'
-  },
-
-  payMgtQuery: {
-    code: 'payMgtQuery'
-  },
-  payMgtOperate: {
-    code: 'payMgtOperate'
-  },
-
-  settingQuery: {
-    code: 'settingQuery'
-  },
-  settingSave: {
-    code: 'settingSave'
-  },
-  fileMgtQuery: {
-    code: 'fileMgtQuery'
-  }
+  ...dbAuthority as any as { [key in keyof typeof dbAuthority]: AuthConfigType },
 };
 
 export default authConfig;

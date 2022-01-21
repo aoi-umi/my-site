@@ -291,6 +291,12 @@ let test: TestApiConfigType = {
       url: '/file/mgt/download',
       method: 'get'
     },
+    fileMgtDel: {
+      url: '/file/mgt/del',
+    },
+    fileMgtRecovery: {
+      url: '/file/mgt/recovery',
+    },
     fileUploadByChunks: {
       url: '/file/uploadByChunks'
     },

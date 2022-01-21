@@ -25,7 +25,7 @@ const upload: MyRequestHandler = async (opt) => {
 };
 
 const download: MyRequestHandler = async (opt, ctx) => {
-  let option = <{ fileType: string }>opt.reqOption;
+  let option = <{ fileType: string, mgt: boolean }>opt.reqOption;
 
   let data = paramsValid(opt.reqData, ValidSchema.FileGet);
 
@@ -44,7 +44,8 @@ const download: MyRequestHandler = async (opt, ctx) => {
   let rs = await FileMapper.download(data, {
     fileType: option.fileType,
     range,
-    ifModifiedSince
+    ifModifiedSince,
+    mgt: option.mgt
   });
   opt.noSend = true;
   if (!rs) {
@@ -138,10 +139,26 @@ export const mgtQuery: MyRequestHandler = async (opt, ctx) => {
 };
 
 export const mgtDownload: MyRequestHandler = (opt, ctx) => {
-  opt.reqOption = {};
+  opt.reqOption = {
+    mgt: true,
+  };
   opt.reqData = {
     ...opt.reqData,
     isRaw: true,
   };
   return download(opt, ctx);
+};
+
+export const mgtDel: MyRequestHandler = async (opt, ctx) => {
+  let data = paramsValid(opt.reqData, ValidSchema.FileOperate);
+  await FileMapper.diskFileOperate({
+    ...data,
+  }, { operate: myEnum.fileOperate.删除 });
+};
+
+export const mgtRecovery: MyRequestHandler = async (opt, ctx) => {
+  let data = paramsValid(opt.reqData, ValidSchema.FileOperate);
+  await FileMapper.diskFileOperate({
+    ...data,
+  }, { operate: myEnum.fileOperate.恢复 });
 };

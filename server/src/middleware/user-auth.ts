@@ -61,14 +61,18 @@ export class UserAuthMid {
   static normal(authData?: AuthType) {
     return async (ctx: Context & RouterContext, next) => {
       let tokenKey = config.dev.cache.user.prefix;
+      let cookieToken = ctx.cookies.get(tokenKey);
       let token = ctx.query[tokenKey]
         || ctx.request.get(tokenKey)
-        || ctx.cookies.get(tokenKey);
+        || cookieToken;
       let user = await UserAuthMid.getUser(token, {
         autoLogin: true,
         resetOpt: { imgHost: ctx.myData.imgHost }
       });
       ctx.myData.user = user;
+      if (!cookieToken) {
+        ctx.cookies.set(tokenKey, token);
+      }
 
       //url权限认证
       if (authData)

@@ -2,7 +2,7 @@ import { IsDefined } from 'class-validator';
 import { Types } from 'mongoose';
 import { Transform, Type } from 'class-transformer';
 import { objectIdTransform } from './util';
-import { ListBase } from './base';
+import { ListBase, OperateBase } from './base';
 
 export class FileGet {
     @IsDefined()
@@ -36,3 +36,5 @@ export class FileList extends ListBase {
   @Type()
   hash: string
 }
+
+export class FileOperate extends OperateBase {}

@@ -3,84 +3,14 @@ import 'reflect-metadata';
 import '../moduleAlias';
 
 import * as config from '@/dev-config';
+import { dbAuthority } from '@/dev-config/authConfig';
 import * as db from '@/_system/dbMongo';
 import { AuthorityDocType } from '@/models/mongo/authority';
 import { RoleDocType } from '@/models/mongo/role';
 
 async function initAuthority() {
   let { AuthorityModel } = await import('@/models/mongo/authority');
-  let authority = {
-    authorityQuery: {
-      name: '权限查询'
-    },
-    authoritySave: {
-      name: '权限修改'
-    },
-    authorityDel: {
-      name: '权限删除'
-    },
-
-    roleQuery: {
-      name: '角色查询'
-    },
-    roleSave: {
-      name: '角色修改'
-    },
-    roleDel: {
-      name: '角色删除'
-    },
-
-    userMgtQuery: {
-      name: '用户管理查询'
-    },
-    userMgtEdit: {
-      name: '用户管理修改'
-    },
-    userMgtDisable: {
-      name: '用户管理封禁'
-    },
-
-    articleMgtDel: {
-      name: '文章管理删除'
-    },
-    articleMgtAudit: {
-      name: '文章管理审核'
-    },
-
-    videoMgtDel: {
-      code: '视频管理删除'
-    },
-    videoMgtAudit: {
-      name: '视频管理审核'
-    },
-
-    commentMgtDel: {
-      name: '评论管理删除'
-    },
-
-    goodsMgtAudit: {
-      name: '商品管理审核'
-    },
-
-    payMgtQuery: {
-      name: '支付管理查询'
-    },
-    payMgtOperate: {
-      name: '支付管理操作'
-    },
-    settingQuery: {
-      name: '设置查询'
-    },
-    settingSave: {
-      name: '设置修改'
-    },
-    fileMgtQuery: {
-      name: '文件管理查询'
-    },
-    fileMgtDel: {
-      name: '文件管理删除'
-    },
-  };
+  let authority = dbAuthority;
 
   let list: AuthorityDocType[] = [];
   for (let key in authority) {
@@ -97,6 +27,7 @@ async function initAuthority() {
   let existsCode = exists.map(ele => ele.code);
   let notExists = list.filter(ele => !existsCode.includes(ele.code));
   if (notExists.length) {
+    console.log(`插入权限: ${notExists.map(ele => ele.code).join(',')}`);
     await AuthorityModel.create(notExists);
   }
 }
@@ -125,6 +56,7 @@ async function initRole() {
   let existsCode = exists.map(ele => ele.code);
   let notExists = list.filter(ele => !existsCode.includes(ele.code));
   if (notExists.length) {
+    console.log(`插入角色: ${notExists.map(ele => ele.code).join(',')}`);
     await RoleModel.create(notExists);
   }
 }

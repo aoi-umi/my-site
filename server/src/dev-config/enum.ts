@@ -128,6 +128,10 @@ export const enumDefine = {
     硬盘: 'disk',
     数据库: 'db'
   },
+  fileOperate: {
+    删除: 'del',
+    恢复: 'recovery'
+  },
   settingSignUpType: {
     开放: 0,
     限时开放: 1,
