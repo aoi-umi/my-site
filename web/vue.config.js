@@ -19,7 +19,7 @@ function getCdn(prefix, cfg, opt) {
   return rs
 }
 let cdnOpt = {
-  urlPrefix: 'https://cdn.jsdelivr.net/npm',
+  urlPrefix: 'http://static.sellfishboy.top/cdn',
   css: {
     'iview/dist/styles/iview.css': `/iview@3.5.4/dist/styles/iview.css`,
     'view-design/dist/styles/iview.css': `/view-design@4.5.0/dist/styles/iview.css`,
@@ -29,7 +29,7 @@ let cdnOpt = {
       'quill/dist/quill.snow.css': 'quill.snow.css',
       'quill/dist/quill.bubble.css': 'quill.bubble.css'
     }),
-    'highlight.js/styles/github.css': `/highlight.js/styles/github.css`,
+    'highlight.js/styles/github.css': `/highlight.js@10.0.2/styles/github.css`,
     ...getCdn('/', {
       'hiprint/css/hiprint.css': 'hiprint/css/hiprint.css',
       'hiprint/css/print-lock.css': 'hiprint/css/print-lock.css'
@@ -38,7 +38,7 @@ let cdnOpt = {
   js: {
     vue: {
       moduleName: 'Vue',
-      url: `/vue@2.6.10/dist/vue.min.js`
+      url: `/vue@2.6.10/dist/vue.min.js`,
     },
     'vue-router': {
       moduleName: 'VueRouter',
@@ -50,7 +50,7 @@ let cdnOpt = {
     },
     'vue-lazyload': {
       moduleName: 'VueLazyload',
-      url: `/vue-lazyload@1.3.3/vue-lazyload.js`
+      url: `/vue-lazyload@1.3.4/vue-lazyload.js`
     },
     axios: {
       moduleName: 'axios',
