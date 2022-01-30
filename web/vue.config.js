@@ -7,13 +7,12 @@ function resolve(dir) {
 
 let env = process.env
 let isProd = env.NODE_ENV === 'production'
-function getCdn(prefix, cfg, opt) {
+function getCdn(commonCfg, cfg) {
   let rs = {}
-  opt = { ...opt }
   for (let key in cfg) {
     rs[key] = {
-      ...opt,
-      url: prefix + cfg[key]
+      ...commonCfg,
+      url: cfg[key]
     }
   }
   return rs
@@ -21,32 +20,56 @@ function getCdn(prefix, cfg, opt) {
 let cdnOpt = {
   urlPrefix: 'http://static.sellfishboy.top/cdn',
   css: {
-    'iview/dist/styles/iview.css': `/iview@3.5.4/dist/styles/iview.css`,
-    'view-design/dist/styles/iview.css': `/view-design@4.5.0/dist/styles/iview.css`,
-    'video.js/dist/video-js.min.css': `/video.js@7.6.6/dist/video-js.min.css`,
-    ...getCdn(`/quill@1.3.7/dist/`, {
-      'quill/dist/quill.core.css': 'quill.core.css',
-      'quill/dist/quill.snow.css': 'quill.snow.css',
-      'quill/dist/quill.bubble.css': 'quill.bubble.css'
+    'view-design/dist/styles/iview.css': {
+      package: 'view-design',
+      version: '4.5.0',
+      root: '/dist',
+      url: '/styles/iview.css',
+    },
+    'video.js/dist/video-js.min.css': {
+      package: 'video.js',
+      version: '7.6.6',
+      root: '/dist',
+      url: '/video-js.min.css'
+    },
+    ...getCdn({
+      package: 'quill',
+      version: '1.3.7',
+      root: '/dist',
+    }, {
+      'quill/dist/quill.core.css': '/quill.core.css',
+      'quill/dist/quill.snow.css': '/quill.snow.css',
+      'quill/dist/quill.bubble.css': '/quill.bubble.css',
     }),
     'highlight.js/styles/github.css': `/highlight.js@10.0.2/styles/github.css`,
-    ...getCdn('/', {
+    ...getCdn({
+      prefix: '/'
+    }, {
       'hiprint/css/hiprint.css': 'hiprint/css/hiprint.css',
       'hiprint/css/print-lock.css': 'hiprint/css/print-lock.css'
-    }, { noUrlPrefix: true })
+    })
   },
   js: {
     vue: {
       moduleName: 'Vue',
-      url: `/vue@2.6.10/dist/vue.min.js`,
+      package: 'vue',
+      version: '2.6.10',
+      root: '/dist',
+      url: '/vue.min.js',
     },
     'vue-router': {
       moduleName: 'VueRouter',
-      url: `/vue-router@3.0.2/dist/vue-router.min.js`
+      package: 'vue-router',
+      version: '3.0.2',
+      root: '/dist',
+      url: '/vue-router.min.js',
     },
     vuex: {
       moduleName: 'Vuex',
-      url: `/vuex@3.1.0/dist/vuex.min.js`
+      package: 'vuex',
+      version: '3.1.0',
+      root: '/dist',
+      url: '/vuex.min.js',
     },
     'vue-lazyload': {
       moduleName: 'VueLazyload',
@@ -54,32 +77,46 @@ let cdnOpt = {
     },
     axios: {
       moduleName: 'axios',
-      url: `/axios@0.19.0/dist/axios.min.js`
-    },
-    iview: {
-      moduleName: 'iview',
-      url: `/iview@3.5.4/dist/iview.min.js`
+      package: 'axios',
+      version: '0.19.0',
+      root: '/dist',
+      url: `/axios.min.js`
     },
     'view-design': {
       moduleName: 'iview',
-      url: `/view-design@4.5.0/dist/iview.min.js`
+      package: 'view-design',
+      version: '4.5.0',
+      root: '/dist',
+      url: `/iview.min.js`
     },
 
     'video.js': {
       moduleName: 'videojs',
-      url: `/video.js@7.6.6/dist/video.min.js`
+      package: 'video.js',
+      version: '7.6.6',
+      root: '/dist',
+      url: '/video.min.js',
     },
     quill: {
       moduleName: 'Quill',
-      url: `/quill@1.3.7/dist/quill.min.js`
+      package: 'quill',
+      version: '1.3.7',
+      root: '/dist',
+      url: '/quill.min.js',
     },
     echarts: {
       moduleName: 'echarts',
-      url: `/echarts@5.0.2/dist/echarts.min.js`
+      package: 'echarts',
+      version: '5.0.2',
+      root: '/dist',
+      url: `/echarts.min.js`
     },
     jquery: {
       moduleName: 'jQuery',
-      url: `/jquery@3.5.1/dist/jquery.min.js`
+      package: 'jquery',
+      version: '3.5.1',
+      root: '/dist',
+      url: `/jquery.min.js`
     },
     'spark-md5': {
       moduleName: 'SparkMD5',
