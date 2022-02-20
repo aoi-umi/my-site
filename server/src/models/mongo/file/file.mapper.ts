@@ -331,12 +331,15 @@ export class FileMapper {
 
     let rawId;
     let noModified = false;
+    let filename;
     if (data.isRaw) {
       rawId = data._id;
     } else {
       let fileModel = await FileModel.findOne({ _id: data._id, fileType: opt.fileType });
-      if (fileModel)
+      if (fileModel) {
         rawId = fileModel.fileId;
+        filename = fileModel.filename;
+      }
     }
     if (rawId) {
       let list = await this.findRaw({ _id: rawId });
@@ -397,6 +400,7 @@ export class FileMapper {
       stream,
       range,
       noModified,
+      filename
     };
   }
 

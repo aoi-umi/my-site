@@ -52,6 +52,11 @@ const download: MyRequestHandler = async (opt, ctx) => {
     ctx.status = 404;
     return;
   }
+  if (rs.filename) {
+    ctx.set({
+      'Content-Disposition': `filename="${encodeURI(rs.filename)}"`,
+    });
+  }
   //分片下载
   if (rs.range) {
     let total = rs.length;
