@@ -29,9 +29,6 @@ dist
 dest
 package-lock.json
 yarn.lock
-Template/Output
-MyService/**/routes/dal/models/_auto
-MyService/file
 pm2.*
 .dev
 env

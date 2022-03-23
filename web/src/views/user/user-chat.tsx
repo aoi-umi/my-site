@@ -15,7 +15,7 @@ import { routerConfig } from '@/router'
 import './user.less'
 
 @Component
-class ChatDetail extends Base {
+export default class ChatDetail extends Base {
     stylePrefix = 'user-chat-detail-';
     detail: UserDetailDataType = {};
     created () {
