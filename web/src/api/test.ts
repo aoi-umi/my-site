@@ -25,6 +25,9 @@ export type TestMethod = {
   userMgtSave,
   userMgtDisable,
 
+  userCommentQuery,
+  userCommentReplyQuery,
+
   bookmarkQuery: ApiMethodInferType<any, ListResult>,
   bookmarkSave,
   bookmarkDel,

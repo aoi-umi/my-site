@@ -12,6 +12,7 @@ export * from './user/chat';
 export * from './user/follow';
 export * from './user/role';
 export * from './user/user';
+export * from './user/comment';
 
 export * from './asset';
 export * from './base';

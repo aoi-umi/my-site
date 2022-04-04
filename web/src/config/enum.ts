@@ -179,7 +179,8 @@ const enumDefineFront = {
     视频: 'video',
     文章: 'article',
     私信: 'chat',
-    收藏: 'favourite'
+    收藏: 'favourite',
+    评论: 'comment',
   },
   chatSendStatus: {
     发送中: 0,

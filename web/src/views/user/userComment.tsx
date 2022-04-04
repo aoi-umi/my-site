@@ -3,16 +3,16 @@ import { Component } from '@/components/decorator'
 import { testApi } from '@/api'
 import { Input } from '@/components/iview'
 import { MyList, ResultType } from '@/components/my-list'
-
-import { Base } from '../base'
-import { ContentMixItem } from '../content/content-mix'
 import { convert } from '@/helpers'
 
+import { Base } from '../base'
+import { Comment, CommentDetail } from '../content/comment'
+
 /**
- * 收藏
+ * 用户评论列表
  */
 @Component
-export class FavouriteList extends Base {
+export class UserCommentList extends Base {
   $refs: {
     list: MyList<any>,
   };
@@ -39,12 +39,13 @@ export class FavouriteList extends Base {
           ref='list'
           type='custom'
           hideSearchBox
+          pagePosition="both"
           on-query={(t) => {
             this.queryData(convert.Test.listModelToQuery(t))
           }}
 
           queryFn={async (data) => {
-            const rs = await testApi.favouriteQuery(data)
+            const rs = await testApi.userCommentQuery(data)
             return rs
           }}
 
@@ -58,8 +59,9 @@ export class FavouriteList extends Base {
 
   private renderFn(rs: ResultType) {
     return rs.data.map(ele => {
-      return <ContentMixItem value={ele} />
+      return (
+        <CommentDetail value={ele} queryByUser></CommentDetail>
+      )
     })
   }
 }
-

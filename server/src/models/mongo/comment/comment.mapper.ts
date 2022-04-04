@@ -9,11 +9,11 @@ import { myEnum } from '@/dev-config';
 import { LoginUser } from '../../login-user';
 import { BaseMapper } from '../_base';
 import { ContentBaseInstanceType } from '../content';
-import { ArticleMapper } from '../article';
-import { VideoMapper } from '../video';
+import { ArticleMapper, ArticleModel } from '../article';
+import { VideoMapper, VideoModel } from '../video';
 import { UserModel, UserMapper, UserDocType, UserResetOption } from '../user';
 import { VoteModel, VoteMapper, VoteInstanceType } from '../vote';
-import { CommentModel, CommentDocType, CommentInstanceType } from './comment';
+import { CommentModel, CommentDocType, CommentInstanceType, CommentModelType } from './comment';
 
 type CommentResetOption = {
   imgHost?: string;
@@ -63,26 +63,40 @@ export class CommentMapper {
       };
     }
 
-    // let owner = await CommentMapper.findOwner({
-    //     ownerId: data.ownerId,
-    //     type: data.type,
-    //     mgt: true,
-    // });
     let pipeline: any[] = [
       {
         $match: match
       },
     ];
-    let resetOpt = { ...opt.resetOpt };
 
     let rs = await CommentModel.aggregatePaginate(pipeline, {
       ...BaseMapper.getListOptions({
         ...data,
       }),
     });
-    let commentList = rs.rows.map(ele => new CommentModel(ele));
 
-    let quoteList = rs.rows.filter(ele => ele.quoteUserId);
+    let { rows } = await this.restComment({
+      ...opt,
+      commentList: rs.rows,
+      getReply,
+    });
+
+    return {
+      ...rs,
+      rows,
+    };
+  }
+
+  static async restComment<T = {}>(opt: {
+    resetOpt?: CommentResetOption,
+    commentList: any[]
+    getReply?: boolean
+  }) {
+    let { getReply, } = opt;
+    let resetOpt = { ...opt.resetOpt };
+
+    let commentList = opt.commentList.map(ele => new CommentModel(ele));
+    let quoteList = commentList.filter(ele => ele.quoteUserId);
 
     let replyList = [];
     //获取二级回复
@@ -98,6 +112,7 @@ export class CommentMapper {
     ], (list, val) => {
       return list.findIndex(l => l.equals(val)) < 0;
     });
+
     let userList = await UserMapper.queryById(userIdList, { imgHost: resetOpt.imgHost });
 
     let voteList: VoteInstanceType[];
@@ -117,14 +132,13 @@ export class CommentMapper {
     };
     replyList = replyList.map(ele => CommentMapper.resetDetail(ele.toJSON(), commentResetOpt));
     let rows = commentList.map(detail => {
-      let obj = CommentMapper.resetDetail(detail.toJSON(), commentResetOpt);
+      let obj = CommentMapper.resetDetail<{ replyList: any[] } & T>(detail.toJSON(), commentResetOpt);
       if (getReply) {
         obj.replyList = replyList.filter(reply => reply.topId.equals(detail._id));
       }
       return obj;
     });
     return {
-      ...rs,
       rows,
     };
   }
@@ -185,7 +199,7 @@ export class CommentMapper {
     return owner;
   }
 
-  static resetDetail(detail, opt: CommentResetOption) {
+  static resetDetail<T = {}>(detail, opt: CommentResetOption) {
     let { userList, user, voteList } = opt;
     if (user) {
       if (voteList?.length) {
@@ -209,13 +223,80 @@ export class CommentMapper {
       UserMapper.resetDetail(detail.user, { imgHost: opt.imgHost });
     }
     detail.isDel = false;
-    if (detail.status !== myEnum.commentStatus.正常) {
+    if ([myEnum.commentStatus.已删除].includes(detail.status)) {
       detail.isDel = true;
       delete detail.comment;
       delete detail.user;
     }
     delete detail.updatedAt;
     delete detail.__v;
-    return detail;
+    return detail as CommentDocType & { user: any, quoteUser: any, isDel: boolean } & T;
+  }
+
+  // user comment
+  static async userCommentQuery(data: ValidSchema.UserCommentQuery, opt: {
+    user: LoginUser,
+    isReply?: boolean,
+    resetOpt?: CommentResetOption,
+  }) {
+    let { user } = opt;
+    let match: any = {
+      userId: user._id,
+      status: { $nin: [config.myEnum.commentStatus.已删除] }
+    };
+    let anyKeyAnd = BaseMapper.multiKeyLike(data.anyKey, (anykey) => {
+      return {
+        $or: [
+          { comment: anykey },
+        ]
+      };
+    });
+    let and = [];
+    if (anyKeyAnd.length) {
+      and.push({ $and: anyKeyAnd });
+    }
+    if (and.length)
+      match.$and = and;
+    let pipeline: any[] = [
+      {
+        $match: match
+      },
+    ];
+
+    let rs = await CommentModel.aggregatePaginate(pipeline, {
+      ...BaseMapper.getListOptions({
+        ...data,
+      }),
+    });
+    let { rows } = await this.restComment<{ owner: any }>({
+      ...opt,
+      commentList: rs.rows,
+    });
+
+    // 获取对应的文章/视频
+    let ownerIds = rows.map(ele => ele.ownerId);
+    let [articleList, videoList] = await Promise.all([
+      ArticleModel.find({ _id: ownerIds }),
+      VideoModel.find({ _id: ownerIds })
+    ]);
+
+    let ownerList = [...articleList, ...videoList];
+    rows.forEach(ele => {
+      ele.owner = {};
+      let matched = ownerList.find(owner => owner._id.equals(ele.ownerId));
+      if (matched) {
+        ele.owner._id = matched._id;
+        ele.owner.title = matched.title;
+      }
+      if (opt.isReply)
+        delete ele.quoteUser;
+      else
+        delete ele.user;
+    });
+
+    return {
+      ...rs,
+      rows,
+    };
   }
 }

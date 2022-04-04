@@ -210,7 +210,6 @@ const _Utils = {
   },
 
   md5(data: string | any) {
-    console.log(data)
     if (typeof data === 'string')
       return SparkMD5.hash(data)
     else

@@ -6,13 +6,13 @@ import { convert } from '@/helpers'
 import { MyList, ResultType } from '@/components/my-list'
 import { MyEditor } from '@/components/my-editor'
 import { Divider, Button, Avatar, Modal, Icon, Time } from '@/components/iview'
-import { MyConfirm } from '@/components/my-confirm'
 import { dev, myEnum } from '@/config'
 import { Base } from '../base'
 import { UserAvatar } from '../comps/user-avatar'
 import { UserPoptip } from '../comps/user-poptip'
 
 import './comment.less'
+import { routerConfig } from '@/router'
 
 class CommentProp {
   @Prop()
@@ -33,24 +33,24 @@ export class Comment extends Vue<CommentProp, Base> {
   stylePrefix = 'comment-';
 
   $refs: { list: MyList<any>, replyList: MyList<any> };
-  mounted () {
+  mounted() {
     this.query()
     this.$refs.replyList.model.setPage({ size: 3 })
   }
 
-  async query (opt?, noClear?) {
+  async query(opt?, noClear?) {
     this.refreshLoading = true
     await this.$refs.list.query(opt)
     this.refreshLoading = false
   }
 
-  async replyQuery (opt?, noClear?) {
+  async replyQuery(opt?, noClear?) {
     if (this.replyShow) { await this.$refs.replyList.query(opt, noClear) }
   }
 
   refreshLoading = false;
   submitLoading = false;
-  submit () {
+  submit() {
     const reply = this.reply.content.trim()
     if (!reply) { return this.$Message.warning('请输入评论') }
     this.operateHandler('发送评论', async () => {
@@ -81,39 +81,10 @@ export class Comment extends Vue<CommentProp, Base> {
 
   replyShow = false;
   @Watch('replyShow')
-  private watchReplyShow (newVal) {
+  private watchReplyShow(newVal) {
     if (!newVal) { this.currComment = null }
   }
   currComment;
-  delList = [];
-  handleDel (ele) {
-    this.delList = [ele]
-    this.$utils.confirm('确认删除?', {
-      ok: this.delClick
-    })
-  }
-
-  delClick () {
-    return this.operateHandler('删除', async () => {
-      await testApi.commentDel({ idList: this.delList.map(ele => ele._id) })
-      this.delList.forEach(ele => {
-        ele.isDel = true
-      })
-      this.delList = []
-    })
-  }
-
-  handleVote (detail, value) {
-    this.operateHandler('', async () => {
-      const rs = await testApi.voteSubmit({ ownerId: detail._id, value, type: myEnum.voteType.评论 })
-      for (const key in rs) {
-        detail[key] = rs[key]
-      }
-      detail.voteValue = value
-    }, {
-      noSuccessHandler: true
-    })
-  }
 
   private reply = {
     floor: -1,
@@ -121,12 +92,12 @@ export class Comment extends Vue<CommentProp, Base> {
     content: ''
   };
 
-  private resetReply (comment?) {
+  private resetReply(comment?) {
     this.reply.content = ''
     this.reply.floor = comment ? comment.floor : -1
     this.reply.quote = comment || null
   }
-  renderSubmitBox () {
+  renderSubmitBox() {
     return (
       <div class={this.getStyleName('send-box')}>
         <MyEditor
@@ -158,72 +129,42 @@ export class Comment extends Vue<CommentProp, Base> {
     )
   }
 
-  renderComment (ele, reply?: boolean) {
+  renderComment(ele, reply?: boolean) {
     return (
-      <div class={this.getStyleName(!reply ? 'main' : 'reply')} key={ele._id}>
-        <div class={this.getStyleName('content-root')}>
-          {ele.user && <UserAvatar user={ele.user} isAuthor={ele.user._id === this.ownUserId} />}
-          <span class={this.getStyleName('floor')}>
-            #{ele.floor}
-          </span>
-          <div class={this.getStyleName('content')}>
-            {ele.quoteUser &&
-              <div><span>回复</span>
-                <UserPoptip user={ele.quoteUser}>
-                  <b><a>{ele.quoteUser.nickname}</a></b>
-                </UserPoptip>
-                <b>{ele.quoteUser._id === this.ownUserId && '(作者)'}:</b>
-              </div>
-            }
-            {ele.isDel
-              ? <p class={this.getStyleName('text')}>评论已删除</p>
-              : <p domPropsInnerHTML={ele.comment} class={this.getStyleName('text')} />
-            }
-            <div class={this.getStyleName('bottom')}>
-              <span class='not-important' ><Time time={new Date(ele.createdAt)} /></span>
-              <div class='flex-stretch'></div>
-              <div class={[...this.getStyleName('op-box'), 'pointer']}>
-                {ele.canDel && <Icon type='md-trash' size={20} on-click={() => {
-                  this.handleDel(ele)
-                }} />}
-                <span><Icon type='md-thumbs-up' size={20} color={ele.voteValue == myEnum.voteValue.喜欢 ? 'red' : ''} on-click={() => {
-                  this.handleVote(ele, ele.voteValue == myEnum.voteValue.喜欢 ? myEnum.voteValue.无 : myEnum.voteValue.喜欢)
-                }} />{ele.like}</span>
-                <Icon type='md-quote' size={20} on-click={() => {
-                  this.resetReply(ele)
-                }} />
-              </div>
-            </div>
-          </div>
+      <CommentDetail value={ele} isReply={reply} ownUserId={this.ownUserId}
+        on-quote-click={(ele) => {
+          this.resetReply(ele);
+        }} >
+        <div slot="submitBox">
           {this.reply.quote === ele && this.renderSubmitBox()}
         </div>
-        {(ele.replyList && ele.replyList.length > 0) &&
-          <div class={this.getStyleName('reply-list')}>
-            {ele.replyList.map(reply => this.renderComment(reply, true)).concat(
-              <div class={[...this.getStyleName('more-reply'), 'center']}>
-                <a on-click={() => {
-                  this.replyShow = true
-                  this.currComment = {
-                    ...ele,
-                    replyList: []
-                  }
-                  this.$refs.replyList.handleQuery({ resetPage: true })
-                }}>更多</a>
-              </div>)}
-          </div>
-        }
-        <Divider size='small' />
-      </div>
+        <div>
+          {(ele.replyList && ele.replyList.length > 0) &&
+            <div class={this.getStyleName('reply-list')}>
+              {ele.replyList.map(reply => this.renderComment(reply, true)).concat(
+                <div class={[...this.getStyleName('more-reply'), 'center']}>
+                  <a on-click={() => {
+                    this.replyShow = true
+                    this.currComment = {
+                      ...ele,
+                      replyList: []
+                    }
+                    this.$refs.replyList.handleQuery({ resetPage: true })
+                  }}>更多</a>
+                </div>)}
+            </div>}
+        </div>
+      </CommentDetail>
     )
   }
 
-  renderResult (rs: ResultType) {
+  renderResult(rs: ResultType) {
     return rs.data.map((ele) => {
       return this.renderComment(ele)
     })
   }
 
-  render () {
+  render() {
     const send = this.reply.floor === 0
     return (
       <div>
@@ -294,3 +235,135 @@ export class Comment extends Vue<CommentProp, Base> {
   }
 }
 
+
+class CommentDetailProp {
+
+  @Prop({
+    required: true
+  })
+  value: any
+
+  @Prop()
+  isReply?: boolean
+
+  @Prop()
+  ownUserId?: string;
+
+  @Prop()
+  queryByUser?: boolean;
+}
+
+@Component({
+  extends: Base,
+  props: CommentDetailProp
+})
+export class CommentDetail extends Vue<CommentDetailProp, Base> {
+  stylePrefix = 'comment-';
+
+  replyShow = false;
+  currComment;
+  @Watch('replyShow')
+  private watchReplyShow(newVal) {
+    if (!newVal) { this.currComment = null }
+  }
+
+  delList = [];
+  handleDel(ele) {
+    this.delList = [ele]
+    this.$utils.confirm('确认删除?', {
+      ok: this.delClick
+    })
+  }
+
+  delClick() {
+    return this.operateHandler('删除', async () => {
+      await testApi.commentDel({ idList: this.delList.map(ele => ele._id) })
+      this.delList.forEach(ele => {
+        ele.isDel = true;
+        ele.canDel = false;
+      })
+      this.delList = []
+    })
+  }
+
+  handleVote(detail, value) {
+    this.operateHandler('', async () => {
+      const rs = await testApi.voteSubmit({ ownerId: detail._id, value, type: myEnum.voteType.评论 })
+      for (const key in rs) {
+        detail[key] = rs[key]
+      }
+      detail.voteValue = value
+    }, {
+      noSuccessHandler: true
+    })
+  }
+
+  toOwner(ele) {
+    let detailUrl = {
+      [this.$enum.contentType.文章]: routerConfig.articleDetail.path,
+      [this.$enum.contentType.视频]: routerConfig.videoDetail.path,
+    }[ele.type];
+    this.$router.push({
+      path: detailUrl,
+      query: { _id: ele.ownerId },
+      hash: String(ele.floor)
+    })
+  }
+
+  renderComment(ele, reply?: boolean) {
+    return (
+      <div class={this.getStyleName(!reply ? 'main' : 'reply')} key={ele._id}>
+        {ele.owner && (
+          <div class={[...this.getStyleName('owner'), 'not-important']} on-click={() => {
+            this.toOwner(ele);
+          }}>
+            <span>在{this.$enum.contentType.getName(ele.type)}</span>
+            <span class={this.getStyleName('owner-title')}>《{ele.owner.title}》</span>
+            <span>发表了</span>
+          </div>)}
+        <div class={this.getStyleName('content-root')}>
+          {ele.user && <UserAvatar user={ele.user} isAuthor={ele.user._id === this.ownUserId} />}
+          <span class={this.getStyleName('floor')}>
+            #{ele.floor}
+          </span>
+          <div class={this.getStyleName('content')}>
+            {ele.quoteUser &&
+              <div><span>回复</span>
+                <UserPoptip user={ele.quoteUser}>
+                  <b><a>{ele.quoteUser.nickname}</a></b>
+                </UserPoptip>
+                <b>{ele.quoteUser._id === this.ownUserId && '(作者)'}:</b>
+              </div>
+            }
+            {ele.isDel
+              ? <p class={this.getStyleName('text')}>评论已删除</p>
+              : <p domPropsInnerHTML={ele.comment} class={this.getStyleName('text')} />
+            }
+            <div class={this.getStyleName('bottom')}>
+              <span class='not-important' ><Time time={new Date(ele.createdAt)} /></span>
+              <div class='flex-stretch'></div>
+              <div class={[...this.getStyleName('op-box'), 'pointer']}>
+                {ele.canDel && <Icon type='md-trash' size={20} on-click={() => {
+                  this.handleDel(ele)
+                }} />}
+                {!ele.isDel && <span><Icon type='md-thumbs-up' size={20} color={ele.voteValue == myEnum.voteValue.喜欢 ? 'red' : ''} on-click={() => {
+                  this.handleVote(ele, ele.voteValue == myEnum.voteValue.喜欢 ? myEnum.voteValue.无 : myEnum.voteValue.喜欢)
+                }} />{ele.like}</span>}
+                {!this.queryByUser && <Icon type='md-quote' size={20} on-click={() => {
+                  this.$emit('quote-click', ele);
+                }} />}
+              </div>
+            </div>
+          </div>
+          {this.$slots.submitBox}
+        </div>
+        {this.$slots.default}
+        <Divider size='small' />
+      </div>
+    )
+  }
+
+  render() {
+    return this.renderComment(this.value, this.isReply)
+  }
+}

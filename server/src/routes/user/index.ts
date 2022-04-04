@@ -58,3 +58,9 @@ router.post('/chat/submit', UserAuthMid.normal([auth.login]), MyRequestHandlerMi
 router.get('/chat/query', UserAuthMid.normal([auth.login]), MyRequestHandlerMid.convert(chat.query));
 router.get('/chat/list', UserAuthMid.normal([auth.login]), MyRequestHandlerMid.convert(chat.list));
 //#endregion
+
+//#region comment 
+import * as comment from './comment';
+router.get('/user/comment/query', UserAuthMid.normal([auth.login]), MyRequestHandlerMid.convert(comment.query));
+router.get('/user/comment/replyQuery', UserAuthMid.normal([auth.login]), MyRequestHandlerMid.convert(comment.replyQuery));
+//#endregion

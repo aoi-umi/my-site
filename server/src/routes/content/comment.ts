@@ -30,7 +30,7 @@ export let submit: MyRequestHandler = async (opt) => {
       avatarUrl: user.avatarUrl,
     }
   };
-  let obj = CommentMapper.resetDetail(ret, {
+  let obj = CommentMapper.resetDetail<{ replyList: any[] }>(ret, {
     user,
     imgHost: opt.myData.imgHost,
   });

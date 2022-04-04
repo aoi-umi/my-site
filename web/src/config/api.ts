@@ -61,6 +61,15 @@ let test: TestApiConfigType = {
       url: '/user/mgt/disable'
     },
 
+    userCommentQuery: {
+      url: '/user/comment/query',
+      method: 'get'
+    },
+    userCommentReplyQuery: {
+      url: '/user/comment/replyQuery',
+      method: 'get'
+    },
+
     bookmarkQuery: {
       url: '/bookmark/query',
       method: 'GET'
