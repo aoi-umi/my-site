@@ -19,6 +19,7 @@ let isDev = !processEnv.NODE_ENV || processEnv.NODE_ENV === 'development';
 let logPath = pathResolve('../logs/out.log');
 const cfg: ConfigType = {
   isDev,
+  monitorEnable: false,
   name,
   port: 8000,
   version: '0.0.1',

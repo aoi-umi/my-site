@@ -1,5 +1,5 @@
 
-import { Component } from '@/components/decorator'
+import { Component, Prop, Vue } from '@/components/decorator'
 import { testApi } from '@/api'
 import { Input } from '@/components/iview'
 import { MyList, ResultType } from '@/components/my-list'
@@ -11,8 +11,16 @@ import { Comment, CommentDetail } from '../content/comment'
 /**
  * 用户评论列表
  */
-@Component
-export class UserCommentList extends Base {
+
+ class UserCommentProp {
+  @Prop()
+  isReply?: boolean;
+}
+@Component({
+  extends: Base,
+  props: UserCommentProp
+})
+export class UserCommentList extends Vue<UserCommentProp, Base> {
   $refs: {
     list: MyList<any>,
   };
@@ -45,7 +53,10 @@ export class UserCommentList extends Base {
           }}
 
           queryFn={async (data) => {
-            const rs = await testApi.userCommentQuery(data)
+            const rs = await testApi.userCommentQuery({
+              ...data,
+              isReply: this.isReply
+            })
             return rs
           }}
 

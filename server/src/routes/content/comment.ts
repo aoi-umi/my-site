@@ -80,11 +80,6 @@ export let del: MyRequestHandler = async (opt) => {
     if (detail) {
       if (user.equalsId(detail.userId))
         delIdList = [id];
-      // else {
-      //     let owner = await CommentMapper.findOwner({ ownerId: detail.ownerId, type: detail.type, mgt: true });
-      //     if (owner && owner.userId.equals(user._id))
-      //         delIdList = [id];
-      // }
     }
   }
   if (!delIdList.length)

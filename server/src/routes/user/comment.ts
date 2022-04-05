@@ -9,9 +9,9 @@ export const query: MyRequestHandler = async (opt) => {
   let { total, rows } = await CommentMapper.userCommentQuery({
     ...data,
   }, {
-    user,
     resetOpt: {
       imgHost: opt.myData.imgHost,
+      user
     },
   });
 

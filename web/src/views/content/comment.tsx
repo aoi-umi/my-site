@@ -139,19 +139,16 @@ export class Comment extends Vue<CommentProp, Base> {
           {this.reply.quote === ele && this.renderSubmitBox()}
         </div>
         <div>
-          {(ele.replyList && ele.replyList.length > 0) &&
-            <div class={this.getStyleName('reply-list')}>
-              {ele.replyList.map(reply => this.renderComment(reply, true)).concat(
-                <div class={[...this.getStyleName('more-reply'), 'center']}>
-                  <a on-click={() => {
-                    this.replyShow = true
-                    this.currComment = {
-                      ...ele,
-                      replyList: []
-                    }
-                    this.$refs.replyList.handleQuery({ resetPage: true })
-                  }}>更多</a>
-                </div>)}
+          {ele.replyList?.length &&
+            <div class={[...this.getStyleName('more-reply'), 'center']}>
+              <a on-click={() => {
+                this.replyShow = true
+                this.currComment = {
+                  ...ele,
+                  replyList: []
+                }
+                this.$refs.replyList.handleQuery({ resetPage: true })
+              }}>更多</a>
             </div>}
         </div>
       </CommentDetail>
@@ -313,13 +310,13 @@ export class CommentDetail extends Vue<CommentDetailProp, Base> {
   renderComment(ele, reply?: boolean) {
     return (
       <div class={this.getStyleName(!reply ? 'main' : 'reply')} key={ele._id}>
-        {ele.owner && (
+        {!reply && ele.owner && (
           <div class={[...this.getStyleName('owner'), 'not-important']} on-click={() => {
             this.toOwner(ele);
           }}>
             <span>在{this.$enum.contentType.getName(ele.type)}</span>
             <span class={this.getStyleName('owner-title')}>《{ele.owner.title}》</span>
-            <span>发表了</span>
+            <span>{ele.replyList?.length > 0 ? '回复了' : '评论了'}</span>
           </div>)}
         <div class={this.getStyleName('content-root')}>
           {ele.user && <UserAvatar user={ele.user} isAuthor={ele.user._id === this.ownUserId} />}
@@ -357,7 +354,11 @@ export class CommentDetail extends Vue<CommentDetailProp, Base> {
           </div>
           {this.$slots.submitBox}
         </div>
-        {this.$slots.default}
+        {(ele.replyList?.length > 0) &&
+          <div class={this.getStyleName('reply-list')}>
+            {ele.replyList.map(reply => this.renderComment(reply, true))}
+            {this.$slots.default}
+          </div>}
         <Divider size='small' />
       </div>
     )

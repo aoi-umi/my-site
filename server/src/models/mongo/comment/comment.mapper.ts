@@ -75,7 +75,7 @@ export class CommentMapper {
       }),
     });
 
-    let { rows } = await this.restComment({
+    let { rows } = await this.resetComment({
       ...opt,
       commentList: rs.rows,
       getReply,
@@ -87,12 +87,13 @@ export class CommentMapper {
     };
   }
 
-  static async restComment<T = {}>(opt: {
+  static async resetComment<T = {}>(opt: {
     resetOpt?: CommentResetOption,
-    commentList: any[]
+    commentList: any[],
+    otherCommentList?: CommentInstanceType[],
     getReply?: boolean
   }) {
-    let { getReply, } = opt;
+    let { getReply } = opt;
     let resetOpt = { ...opt.resetOpt };
 
     let commentList = opt.commentList.map(ele => new CommentModel(ele));
@@ -105,7 +106,10 @@ export class CommentMapper {
     }
 
     //获取用户信息
-    let allComment = [...commentList, ...replyList];
+    let allComment: CommentInstanceType[] = [...commentList, ...replyList];
+    if (opt.otherCommentList) {
+      allComment.push(...opt.otherCommentList);
+    }
     let userIdList = common.distinct([
       ...allComment.map(ele => ele.userId),
       ...quoteList.map(ele => ele.quoteUserId)
@@ -130,15 +134,21 @@ export class CommentMapper {
       userList,
       voteList,
     };
-    replyList = replyList.map(ele => CommentMapper.resetDetail(ele.toJSON(), commentResetOpt));
+    let allCommentList = allComment.map(ele => {
+      let obj = CommentMapper.resetDetail(ele.toJSON(), commentResetOpt);
+      return obj;
+    });
+
     let rows = commentList.map(detail => {
-      let obj = CommentMapper.resetDetail<{ replyList: any[] } & T>(detail.toJSON(), commentResetOpt);
+      let matched = allCommentList.find(ele => detail._id.equals(ele._id));
+      let obj = matched as typeof matched & { replyList: any[] };
       if (getReply) {
-        obj.replyList = replyList.filter(reply => reply.topId.equals(detail._id));
+        obj.replyList = allCommentList.filter(reply => detail._id.equals(reply.topId));
       }
       return obj;
     });
     return {
+      allCommentList,
       rows,
     };
   }
@@ -235,19 +245,25 @@ export class CommentMapper {
 
   // user comment
   static async userCommentQuery(data: ValidSchema.UserCommentQuery, opt: {
-    user: LoginUser,
-    isReply?: boolean,
     resetOpt?: CommentResetOption,
   }) {
-    let { user } = opt;
+    let { user } = opt.resetOpt;
     let match: any = {
-      userId: user._id,
       status: { $nin: [config.myEnum.commentStatus.已删除] }
     };
+    let userId = user._id;
+    if (!data.isReply) {
+      match.userId = userId;
+    } else {
+      match.userId = { $ne: userId };
+    }
+
+    let match2: any = {};
     let anyKeyAnd = BaseMapper.multiKeyLike(data.anyKey, (anykey) => {
       return {
         $or: [
-          { comment: anykey },
+          { 'comment.comment': anykey },
+          { 'owner.title': anykey },
         ]
       };
     });
@@ -256,42 +272,103 @@ export class CommentMapper {
       and.push({ $and: anyKeyAnd });
     }
     if (and.length)
-      match.$and = and;
+      match2.$and = and;
     let pipeline: any[] = [
       {
         $match: match
       },
+      { $project: { comment: '$$ROOT', ownerId: 1, topId: 1 } },
+      {
+        $lookup: {
+          from: CommentModel.collection.name,
+          localField: 'topId',
+          foreignField: '_id',
+          as: 'topComment'
+        }
+      },
+      {
+        $lookup: {
+          from: ArticleModel.collection.name,
+          localField: 'ownerId',
+          foreignField: '_id',
+          as: 'article'
+        }
+      },
+      {
+        $lookup: {
+          from: VideoModel.collection.name,
+          localField: 'ownerId',
+          foreignField: '_id',
+          as: 'video'
+        }
+      },
+      {
+        $project: {
+          comment: 1,
+          topComment: 1,
+          owner: {
+            $cond: { if: { $gt: [{ $size: '$article' }, 0] }, then: '$article', else: '$video' }
+          }
+        }
+      },
+      { $unwind: '$owner' },
+      { $unwind: { path: '$topComment', preserveNullAndEmptyArrays: true } },
+      {
+        $match: match2
+      },
     ];
+
+    if (data.isReply) {
+      pipeline.push({
+        $match: {
+          $or: [{ 'owner.userId': userId }, { 'comment.quoteUserId': userId }, { 'topComment.userId': userId }]
+        }
+      });
+    }
 
     let rs = await CommentModel.aggregatePaginate(pipeline, {
       ...BaseMapper.getListOptions({
         ...data,
       }),
     });
-    let { rows } = await this.restComment<{ owner: any }>({
+
+    let quoteList: CommentInstanceType[] = [];
+    let rsRows = rs.rows as any as { comment: CommentDocType, owner: any, topComment: any }[];
+
+    // 获取回复的
+    if (data.isReply) {
+      let quoteIds = rsRows.filter(ele => ele.comment.quoteId).map(ele => ele.comment.quoteId);
+      quoteList = await CommentModel.find({ _id: quoteIds });
+    }
+
+    let { rows, allCommentList } = await this.resetComment({
       ...opt,
-      commentList: rs.rows,
+      commentList: rsRows.map(ele => ele.comment),
+      otherCommentList: quoteList
     });
 
-    // 获取对应的文章/视频
-    let ownerIds = rows.map(ele => ele.ownerId);
-    let [articleList, videoList] = await Promise.all([
-      ArticleModel.find({ _id: ownerIds }),
-      VideoModel.find({ _id: ownerIds })
-    ]);
 
-    let ownerList = [...articleList, ...videoList];
-    rows.forEach(ele => {
-      ele.owner = {};
-      let matched = ownerList.find(owner => owner._id.equals(ele.ownerId));
-      if (matched) {
-        ele.owner._id = matched._id;
-        ele.owner.title = matched.title;
-      }
-      if (opt.isReply)
-        delete ele.quoteUser;
-      else
-        delete ele.user;
+    rows.forEach((ele, idx) => {
+      let rsRow = rsRows[idx];
+      let obj = ele as typeof ele & { owner: any, replyList?: any[] };
+      obj.owner = {
+        _id: rsRow.owner._id,
+        title: rsRow.owner.title
+      };
+
+      if (data.isReply) {
+        if (rsRow.topComment) {
+          let quote;
+          if (ele.quoteId)
+            quote = allCommentList.find(q => q._id.equals(ele.quoteId));
+          if (!quote)
+            quote = rsRow.topComment;
+          if (quote)
+            obj.replyList = [quote];
+        }
+        delete obj.quoteUser;
+      } else
+        delete obj.user;
     });
 
     return {

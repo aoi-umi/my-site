@@ -297,7 +297,7 @@ export default class UserInfo extends Base {
           <div class='flex-stretch'></div>
           {!detail.self && <div class={this.getStyleName('op-box')}>
             <FollowButton class={this.getStyleName('follow')} user={detail} />
-            <Button on-click={()=>{
+            <Button on-click={() => {
               this.$router.push({
                 path: routerConfig.userChat.path,
                 query: { _id: detail._id }
@@ -337,21 +337,30 @@ export default class UserInfo extends Base {
           }}>
             <FollowList ref={myEnum.userTab.关注} userId={this.detail._id} followType={myEnum.followQueryType.关注} />
           </TabPane>
-          {detail.self && <TabPane name={myEnum.userTab.收藏} label={() => {
-            return <div>收藏</div>
-          }}>
-            <FavouriteList ref={myEnum.userTab.收藏} />
-          </TabPane>}
-          {detail.self && <TabPane name={myEnum.userTab.私信} label={() => {
-            return <div>私信</div>
-          }}>
-            <ChatList ref={myEnum.userTab.私信} />
-          </TabPane>}
-          {detail.self && <TabPane name={myEnum.userTab.评论} label={() => {
-            return <div>评论</div>
-          }}>
-            <UserCommentList ref={myEnum.userTab.评论} />
-          </TabPane>}
+          {detail.self &&
+            <TabPane name={myEnum.userTab.收藏} label={() => {
+              return <div>收藏</div>
+            }}>
+              <FavouriteList ref={myEnum.userTab.收藏} />
+            </TabPane>}
+          {detail.self &&
+            <TabPane name={myEnum.userTab.私信} label={() => {
+              return <div>私信</div>
+            }}>
+              <ChatList ref={myEnum.userTab.私信} />
+            </TabPane>}
+          {detail.self &&
+            <TabPane name={myEnum.userTab.评论} label={() => {
+              return <div>评论</div>
+            }}>
+              <UserCommentList ref={myEnum.userTab.评论} />
+            </TabPane>}
+          {detail.self &&
+            <TabPane name={myEnum.userTab.回复评论} label={() => {
+              return <div>回复评论</div>
+            }}>
+              <UserCommentList ref={myEnum.userTab.回复评论} isReply/>
+            </TabPane>}
         </Tabs>
       </div>
     )

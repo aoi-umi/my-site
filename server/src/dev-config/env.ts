@@ -4,6 +4,7 @@ import { SequelizeOpt } from '@/_system/dbSequelize';
 
 export type ConfigType = {
   isDev: boolean,
+  monitorEnable: boolean,
   name: string,
   port: number,
   version: string,
