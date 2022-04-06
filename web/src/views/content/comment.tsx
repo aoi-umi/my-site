@@ -5,14 +5,16 @@ import { testApi } from '@/api'
 import { convert } from '@/helpers'
 import { MyList, ResultType } from '@/components/my-list'
 import { MyEditor } from '@/components/my-editor'
+import { MyInputBaseProp, MyInputBase } from '@/components/my-input'
 import { Divider, Button, Avatar, Modal, Icon, Time } from '@/components/iview'
 import { dev, myEnum } from '@/config'
+import { routerConfig } from '@/router'
+
 import { Base } from '../base'
 import { UserAvatar } from '../comps/user-avatar'
 import { UserPoptip } from '../comps/user-poptip'
 
 import './comment.less'
-import { routerConfig } from '@/router'
 
 class CommentProp {
   @Prop()
@@ -45,13 +47,13 @@ export class Comment extends Vue<CommentProp, Base> {
   }
 
   async replyQuery(opt?, noClear?) {
-    if (this.replyShow) { await this.$refs.replyList.query(opt, noClear) }
+    if (this.moreReplyShow) { await this.$refs.replyList.query(opt, noClear) }
   }
 
   refreshLoading = false;
   submitLoading = false;
   submit() {
-    const reply = this.reply.content.trim()
+    const reply = this.getReplyData(this.reply.quote._id).content.trim()
     if (!reply) { return this.$Message.warning('请输入评论') }
     this.operateHandler('发送评论', async () => {
       this.submitLoading = true
@@ -73,76 +75,77 @@ export class Comment extends Vue<CommentProp, Base> {
           }
         }
       }
-      this.resetReply()
+      this.resetReply({ clear: true })
     }).finally(() => {
       this.submitLoading = false
     })
   }
 
-  replyShow = false;
-  @Watch('replyShow')
-  private watchReplyShow(newVal) {
+  moreReplyShow = false;
+  @Watch('moreReplyShow')
+  private watchMoreReplyShow(newVal) {
     if (!newVal) { this.currComment = null }
   }
   currComment;
 
-  private reply = {
-    floor: -1,
-    quote: null,
-    content: ''
+  private newComment = {
+    _id: ''
   };
-
-  private resetReply(comment?) {
-    this.reply.content = ''
-    this.reply.floor = comment ? comment.floor : -1
-    this.reply.quote = comment || null
+  private reply = {
+    quote: null,
+    data: {},
+  };
+  private getReplyData(quoteId) {
+    let data = this.reply.data[quoteId]
+    if (!data)
+      data = this.reply.data[quoteId] = {
+        content: ''
+      };
+    return data;
   }
-  renderSubmitBox() {
-    return (
-      <div class={this.getStyleName('send-box')}>
-        <MyEditor
-          class={this.getStyleName('send')}
-          toolbar={
-            [
-              ['bold', 'italic', 'underline', 'strike'], // toggled buttons
-              [{ 'header': 1 }, { 'header': 2 }], // custom button values
-              [{ 'size': ['small', false, 'large', 'huge'] }], // custom dropdown
-              [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-              [{ 'color': [] }, { 'background': [] }], // dropdown with defaults from theme
-              [{ 'font': [] }],
-              ['link']
-            ]
-          }
-          placeholder='请输入评论'
-          v-model={this.reply.content}
-          defaultOnly
-        />
-        <div class={[...this.getStyleName('send-op-box'), 'button-group-normal']}>
-          <Button on-click={() => {
-            this.resetReply()
-          }} >取消</Button>
-          <Button type='primary' on-click={() => {
-            this.submit()
-          }} loading={this.submitLoading}>发送评论</Button>
-        </div>
-      </div>
-    )
+
+  private resetReply(opt?: {
+    comment?,
+    clear?: boolean
+  }) {
+    opt = {
+      ...opt
+    }
+    let { clear, comment } = opt
+    if (clear) {
+      if (this.reply.quote) {
+        let data = this.getReplyData(this.reply.quote._id);
+        data.content = ''
+      }
+      this.reply.quote = null;
+    }
+    if (comment) {
+      this.reply.quote = comment;
+      this.getReplyData(comment._id);
+    } else {
+      this.reply.quote = null
+    }
   }
 
   renderComment(ele, reply?: boolean) {
     return (
       <CommentDetail value={ele} isReply={reply} ownUserId={this.ownUserId}
+        replyData={this.reply} submitLoading={this.submitLoading}
         on-quote-click={(ele) => {
-          this.resetReply(ele);
-        }} >
-        <div slot="submitBox">
-          {this.reply.quote === ele && this.renderSubmitBox()}
-        </div>
+          this.resetReply({ comment: ele });
+        }}
+        on-submit={() => {
+          this.submit()
+        }}
+        on-cancel={() => {
+          this.resetReply()
+        }}
+      >
         <div>
           {ele.replyList?.length &&
             <div class={[...this.getStyleName('more-reply'), 'center']}>
               <a on-click={() => {
-                this.replyShow = true
+                this.moreReplyShow = true
                 this.currComment = {
                   ...ele,
                   replyList: []
@@ -161,17 +164,34 @@ export class Comment extends Vue<CommentProp, Base> {
     })
   }
 
+  renderSubmitBox() {
+    let data = this.getReplyData(this.reply.quote._id)
+    return (<CommentSubmitBox v-model={data.content} loading={this.submitLoading}
+      on-submit={() => {
+        this.submit()
+      }}
+      on-cancel={() => {
+        this.resetReply()
+      }}
+    />)
+  }
+
   render() {
-    const send = this.reply.floor === 0
+    const send = this.reply.quote === this.newComment;
+    const newData = this.getReplyData(this.newComment._id);
     return (
       <div>
         <div class={this.getStyleName('send-op-box').concat(['button-group-normal'])}>
           <Button on-click={() => {
             this.query(convert.Test.listModelToQuery(this.$refs.list.model))
           }} loading={this.refreshLoading}>刷新评论</Button>
-          <Button type='primary' on-click={() => {
-            this.resetReply({ floor: send ? -1 : 0 })
-          }}>{send ? '取消发送' : '发送评论'}</Button>
+          {send ?
+            <Button type='primary' on-click={() => {
+              this.resetReply()
+            }}>取消发送</Button> :
+            <Button type='primary' on-click={() => {
+              this.resetReply({ comment: this.newComment })
+            }}>发送评论</Button>}
         </div>
         {send && this.renderSubmitBox()}
         <MyList
@@ -195,7 +215,7 @@ export class Comment extends Vue<CommentProp, Base> {
             return rs
           }}
         ></MyList>
-        <Modal v-model={this.replyShow} class={this.getStyleName('reply-modal')} footer-hide>
+        <Modal v-model={this.moreReplyShow} class={this.getStyleName('reply-modal')} footer-hide>
           <h3>更多回复</h3>
           {this.currComment && this.renderComment(this.currComment)}
           <MyList
@@ -233,6 +253,49 @@ export class Comment extends Vue<CommentProp, Base> {
 }
 
 
+class CommentSubmitBoxProp extends MyInputBaseProp {
+  @Prop()
+  loading?: boolean
+}
+
+@Component({
+  extends: MyInputBase,
+  props: CommentSubmitBoxProp,
+})
+class CommentSubmitBox extends Vue<CommentSubmitBoxProp, MyInputBase> {
+  stylePrefix = 'comment-';
+  render() {
+    return (
+      <div class={this.getStyleName('send-box')}>
+        <MyEditor
+          class={this.getStyleName('send')}
+          toolbar={
+            [
+              ['bold', 'italic', 'underline', 'strike'], // toggled buttons
+              [{ 'header': 1 }, { 'header': 2 }], // custom button values
+              [{ 'size': ['small', false, 'large', 'huge'] }], // custom dropdown
+              [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+              [{ 'color': [] }, { 'background': [] }], // dropdown with defaults from theme
+              [{ 'font': [] }],
+              ['link']
+            ]
+          }
+          placeholder='请输入评论'
+          v-model={this.currentValue}
+          defaultOnly
+        />
+        <div class={[...this.getStyleName('send-op-box'), 'button-group-normal']}>
+          <Button on-click={() => {
+            this.$emit('cancel');
+          }} >取消</Button>
+          <Button type='primary' on-click={() => {
+            this.$emit('submit');
+          }} loading={this.loading}>发送评论</Button>
+        </div>
+      </div>
+    )
+  }
+}
 class CommentDetailProp {
 
   @Prop({
@@ -248,6 +311,12 @@ class CommentDetailProp {
 
   @Prop()
   queryByUser?: boolean;
+
+  @Prop()
+  replyData?: any
+
+  @Prop()
+  submitLoading?: boolean
 }
 
 @Component({
@@ -256,13 +325,6 @@ class CommentDetailProp {
 })
 export class CommentDetail extends Vue<CommentDetailProp, Base> {
   stylePrefix = 'comment-';
-
-  replyShow = false;
-  currComment;
-  @Watch('replyShow')
-  private watchReplyShow(newVal) {
-    if (!newVal) { this.currComment = null }
-  }
 
   delList = [];
   handleDel(ele) {
@@ -307,19 +369,25 @@ export class CommentDetail extends Vue<CommentDetailProp, Base> {
     })
   }
 
+  renderCommentContent(ele) {
+    return ele.isDel
+      ? <p class={this.getStyleName('text')}>评论已删除</p>
+      : <p domPropsInnerHTML={ele.comment} class={this.getStyleName('text')} />
+  }
+
   renderComment(ele, reply?: boolean) {
     return (
       <div class={this.getStyleName(!reply ? 'main' : 'reply')} key={ele._id}>
-        {!reply && ele.owner && (
-          <div class={[...this.getStyleName('owner'), 'not-important']} on-click={() => {
-            this.toOwner(ele);
-          }}>
-            <span>在{this.$enum.contentType.getName(ele.type)}</span>
-            <span class={this.getStyleName('owner-title')}>《{ele.owner.title}》</span>
-            <span>{ele.replyList?.length > 0 ? '回复了' : '评论了'}</span>
-          </div>)}
         <div class={this.getStyleName('content-root')}>
           {ele.user && <UserAvatar user={ele.user} isAuthor={ele.user._id === this.ownUserId} />}
+          {!reply && ele.owner && (
+            <div class={[...this.getStyleName('owner'), 'not-important']} on-click={() => {
+              this.toOwner(ele);
+            }}>
+              <span>在{this.$enum.contentType.getName(ele.type)}</span>
+              <span class={this.getStyleName('owner-title')}>《{ele.owner.title}》</span>
+              <span>{ele.quote || ele.replyList?.length > 0 ? '回复了' : '评论了'}</span>
+            </div>)}
           <span class={this.getStyleName('floor')}>
             #{ele.floor}
           </span>
@@ -332,10 +400,7 @@ export class CommentDetail extends Vue<CommentDetailProp, Base> {
                 <b>{ele.quoteUser._id === this.ownUserId && '(作者)'}:</b>
               </div>
             }
-            {ele.isDel
-              ? <p class={this.getStyleName('text')}>评论已删除</p>
-              : <p domPropsInnerHTML={ele.comment} class={this.getStyleName('text')} />
-            }
+            {this.renderCommentContent(ele)}
             <div class={this.getStyleName('bottom')}>
               <span class='not-important' ><Time time={new Date(ele.createdAt)} /></span>
               <div class='flex-stretch'></div>
@@ -352,9 +417,19 @@ export class CommentDetail extends Vue<CommentDetailProp, Base> {
               </div>
             </div>
           </div>
-          {this.$slots.submitBox}
+          {this.replyData?.quote === ele && <CommentSubmitBox v-model={this.replyData.data[this.replyData.quote._id].content} loading={this.submitLoading}
+            on-submit={() => {
+              this.$emit('submit')
+            }}
+            on-cancel={() => {
+              this.$emit('cancel')
+            }}></CommentSubmitBox>}
         </div>
-        {(ele.replyList?.length > 0) &&
+        {this.queryByUser ? (ele.quote &&
+          <div class={this.getStyleName('quote')}>
+            {this.renderCommentContent(ele.quote)}
+          </div>) :
+          (ele.replyList?.length > 0) &&
           <div class={this.getStyleName('reply-list')}>
             {ele.replyList.map(reply => this.renderComment(reply, true))}
             {this.$slots.default}

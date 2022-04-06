@@ -12,7 +12,7 @@ import { Comment, CommentDetail } from '../content/comment'
  * 用户评论列表
  */
 
- class UserCommentProp {
+class UserCommentProp {
   @Prop()
   isReply?: boolean;
 }
@@ -71,7 +71,8 @@ export class UserCommentList extends Vue<UserCommentProp, Base> {
   private renderFn(rs: ResultType) {
     return rs.data.map(ele => {
       return (
-        <CommentDetail value={ele} queryByUser></CommentDetail>
+        <CommentDetail value={ele} queryByUser>
+        </CommentDetail>
       )
     })
   }

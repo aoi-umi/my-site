@@ -141,7 +141,7 @@ export class CommentMapper {
 
     let rows = commentList.map(detail => {
       let matched = allCommentList.find(ele => detail._id.equals(ele._id));
-      let obj = matched as typeof matched & { replyList: any[] };
+      let obj = common.clone(matched) as typeof matched & { replyList: any[] };
       if (getReply) {
         obj.replyList = allCommentList.filter(reply => detail._id.equals(reply.topId));
       }
@@ -280,14 +280,6 @@ export class CommentMapper {
       { $project: { comment: '$$ROOT', ownerId: 1, topId: 1 } },
       {
         $lookup: {
-          from: CommentModel.collection.name,
-          localField: 'topId',
-          foreignField: '_id',
-          as: 'topComment'
-        }
-      },
-      {
-        $lookup: {
           from: ArticleModel.collection.name,
           localField: 'ownerId',
           foreignField: '_id',
@@ -305,14 +297,12 @@ export class CommentMapper {
       {
         $project: {
           comment: 1,
-          topComment: 1,
           owner: {
             $cond: { if: { $gt: [{ $size: '$article' }, 0] }, then: '$article', else: '$video' }
           }
         }
       },
       { $unwind: '$owner' },
-      { $unwind: { path: '$topComment', preserveNullAndEmptyArrays: true } },
       {
         $match: match2
       },
@@ -321,7 +311,9 @@ export class CommentMapper {
     if (data.isReply) {
       pipeline.push({
         $match: {
-          $or: [{ 'owner.userId': userId }, { 'comment.quoteUserId': userId }, { 'topComment.userId': userId }]
+          $or: [
+            { 'owner.userId': userId }, { 'comment.quoteUserId': userId },
+          ]
         }
       });
     }
@@ -333,7 +325,7 @@ export class CommentMapper {
     });
 
     let quoteList: CommentInstanceType[] = [];
-    let rsRows = rs.rows as any as { comment: CommentDocType, owner: any, topComment: any }[];
+    let rsRows = rs.rows as any as { comment: CommentDocType, owner: any }[];
 
     // 获取回复的
     if (data.isReply) {
@@ -350,21 +342,21 @@ export class CommentMapper {
 
     rows.forEach((ele, idx) => {
       let rsRow = rsRows[idx];
-      let obj = ele as typeof ele & { owner: any, replyList?: any[] };
+      let obj = ele as typeof ele & { owner: any, replyList?: any[], quote: any };
       obj.owner = {
         _id: rsRow.owner._id,
         title: rsRow.owner.title
       };
 
       if (data.isReply) {
-        if (rsRow.topComment) {
-          let quote;
-          if (ele.quoteId)
-            quote = allCommentList.find(q => q._id.equals(ele.quoteId));
-          if (!quote)
-            quote = rsRow.topComment;
+        if (ele.quoteId) {
+          let quote = allCommentList.find(q => q._id.equals(ele.quoteId));
+
           if (quote)
-            obj.replyList = [quote];
+            obj.quote = {
+              comment: quote.comment,
+              isDel: quote.isDel,
+            };
         }
         delete obj.quoteUser;
       } else
