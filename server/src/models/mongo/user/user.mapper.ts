@@ -17,6 +17,7 @@ import { ArticleModel } from '../article';
 import { UserLogModel } from './user-log';
 import { UserDocType, UserModel, UserInstanceType } from './user';
 import { VideoModel } from '../video';
+import { OauthModel } from '../oauth';
 
 export type UserResetOption = {
   imgHost?: string;
@@ -256,6 +257,16 @@ export class UserMapper {
         userDetail.auth[ele.code] = ele;
       });
     }
+    let userOauth = {};
+    myEnum.oauthName.getAllValue().forEach(v => {
+      userOauth[v] = false;
+    });
+    
+    let oauthList = await OauthModel.find({ userId: userDetail._id });
+    oauthList.forEach(ele => {
+      userOauth[ele.name] = true;
+    });
+    userDetail.oauth = userOauth;
     return userDetail;
   }
 
@@ -295,6 +306,7 @@ export class UserMapper {
     };
     if (!disabled) {
       let userDetail = await UserMapper.detail(user._id, opt.resetOpt);
+
       for (let key in userDetail.auth) {
         userAuth[key] = 1;
       }
@@ -306,7 +318,7 @@ export class UserMapper {
       key: checkToken, authority: userAuth,
       loginData: data,
       cacheAt: new Date(),
-      lastLoginAt
+      lastLoginAt,
     };
     UserMapper.resetDetail(rtn, opt.resetOpt);
     return plainToClass(LoginUser, rtn);

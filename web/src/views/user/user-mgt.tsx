@@ -33,6 +33,7 @@ export type DetailDataType = {
   article?: number;
   video?: number;
   bind?: { wx: boolean };
+  oauth?: any;
 
   self?: boolean;
 };
