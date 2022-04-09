@@ -13,7 +13,7 @@ let connectErrorTimes = 0;
 type CacheConfig = {
   prefix: string;
   time?: number;
-  key?: string;
+  key: string;
 };
 
 export class Cache {

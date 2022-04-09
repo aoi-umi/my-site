@@ -79,9 +79,13 @@ const cfg: ConfigType = {
     },
   },
   //公众平台
-  wxOffiaCcount: {
+  wxOfficialAccount: {
     appId: '',
     appSecret: '',
+  },
+  github: {
+    clientId: '',
+    clientSecret: '',
   },
   live: {
     host: 'localhost',

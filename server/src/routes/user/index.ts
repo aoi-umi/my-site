@@ -15,6 +15,7 @@ router.post('/user/signIn', UserAuthMid.normal(), MyRequestHandlerMid.convert(us
 router.post('/user/signInByAuth', UserAuthMid.normal(), MyRequestHandlerMid.convert(userSign.signInByAuth));
 router.post('/user/signOut', UserAuthMid.normal(), MyRequestHandlerMid.convert(userSign.signOut));
 router.post('/user/accountExists', UserAuthMid.normal(), MyRequestHandlerMid.convert(userSign.accountExists));
+router.post('/user/oauth/:name/signIn', UserAuthMid.normal(), MyRequestHandlerMid.convert(userSign.oauthSignIn));
 
 import * as user from './user';
 router.get('/user/info', UserAuthMid.normal([auth.login]), MyRequestHandlerMid.convert(user.info));

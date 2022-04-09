@@ -19,7 +19,7 @@ import { UserDocType, UserModel, UserInstanceType } from './user';
 import { VideoModel } from '../video';
 
 export type UserResetOption = {
-    imgHost?: string;
+  imgHost?: string;
 };
 export class UserMapper {
   static createToken(data, user: UserInstanceType) {
@@ -39,9 +39,11 @@ export class UserMapper {
     return common.md5(pwd);
   }
 
-  static async accountExists(val: string, by?: string) {
+  static async accountExists(val: any, by?: string) {
     let opt: any = {};
-    if (by === myEnum.userBy.微信授权) {
+    if (by === 'id') {
+      opt._id = val;
+    } else if (by === myEnum.userBy.微信授权) {
       opt.wxOpenId = val;
     } else {
       opt.account = val;
@@ -179,12 +181,12 @@ export class UserMapper {
       },
     ];
     let rs = await UserModel.aggregatePaginate<{
-            newAuthorityList: any[],
-            newRoleList: any[],
-        }>(pipeline, {
-          noTotal,
-          ...BaseMapper.getListOptions(data),
-        });
+      newAuthorityList: any[],
+      newRoleList: any[],
+    }>(pipeline, {
+      noTotal,
+      ...BaseMapper.getListOptions(data),
+    });
     let rows = rs.rows.map((ele) => {
       let model = new UserModel(ele);
       let obj = model.toJSON() as any;
@@ -275,13 +277,13 @@ export class UserMapper {
   }
 
   static async login(data: ValidSchema.UserSignIn, opt: {
-        disabled: boolean,
-        resetOpt: UserResetOption,
-        user: UserInstanceType,
-        token,
-        oldData?: any,
-        noPwd?: boolean,
-    }) {
+    disabled: boolean,
+    resetOpt: UserResetOption,
+    user: UserInstanceType,
+    token,
+    oldData?: any,
+    noPwd?: boolean,
+  }) {
     let { token, disabled, user } = opt;
     let { checkToken } = UserMapper.createToken(data, user);
     if (!opt.noPwd) {
@@ -356,11 +358,11 @@ export class UserMapper {
   }
 
   static lookupPipeline(opt?: {
-        userIdKey?: string;
-        asName?: string;
-        match?: object;
-        project?: object;
-    }) {
+    userIdKey?: string;
+    asName?: string;
+    match?: object;
+    project?: object;
+  }) {
     opt = {
       ...opt
     };
@@ -405,9 +407,9 @@ export class UserMapper {
 
 export class UserLogMapper {
   static create(user: UserInstanceType, operator: LoginUser, opt: {
-        remark?: string;
-        update?: object;
-    }) {
+    remark?: string;
+    update?: object;
+  }) {
     let log = new UserLogModel({
       userId: user._id,
       operatorId: operator._id,

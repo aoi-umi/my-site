@@ -50,9 +50,13 @@ export type ConfigType = {
     },
   },
   //公众平台
-  wxOffiaCcount: {
+  wxOfficialAccount: {
     appId: string,
     appSecret: string,
+  },
+  github: {
+    clientId: string;
+    clientSecret: string;
   },
   live: {
     host: string,

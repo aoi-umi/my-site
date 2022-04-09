@@ -10,6 +10,7 @@
     "report": "set report=true && npm run build"
   },
   "dependencies": {
+    "@types/qs": "^6.9.7",
     "animejs": "3.0.1",
     "async-validator": "^3.5.1",
     "awe-dnd": "^0.3.4",

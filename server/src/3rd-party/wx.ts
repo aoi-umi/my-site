@@ -94,4 +94,4 @@ export class Wx extends WxBase {
   }
 }
 
-export const wxInst = new Wx(env.wxOffiaCcount);
+export const wxInst = new Wx(env.wxOfficialAccount);

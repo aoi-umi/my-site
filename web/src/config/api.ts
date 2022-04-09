@@ -49,6 +49,9 @@ let test: TestApiConfigType = {
     userAccountExists: {
       url: '/user/accountExists'
     },
+    userOauthLogin: {
+      url: '/user/oauth/:name/signIn'
+    },
 
     userMgtQuery: {
       url: '/user/mgt/query',

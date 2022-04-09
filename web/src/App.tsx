@@ -206,11 +206,6 @@ export default class App extends Base {
               this.storeSetting.setSetting({
                 signInShow: false
               })
-            }}
-            on-3rd-party-login-click={() => {
-              this.storeSetting.setSetting({
-                signInShow: false
-              })
             }} />
         </Modal>
         <Header class='layout-header-bar'>

@@ -8,6 +8,8 @@ import { dev, error } from '@/config'
 import { routerConfig } from '@/router'
 import { MyBase } from '@/components/my-base'
 import { OperateOption, OperateModel } from '@/helpers'
+import { LocalStore } from '@/store'
+import { testSocket } from '@/api'
 
 @Component
 export class Base extends MyBase {
@@ -127,5 +129,13 @@ export class Base extends MyBase {
         </i-option>
       )
     })
+  }
+
+  protected setLoginUser(userInfo) {
+    if (!userInfo) return;
+    const token = userInfo.key
+    LocalStore.setItem(dev.cacheKey.testUser, token)
+    testSocket.login({ [dev.cacheKey.testUser]: token })
+    this.storeUser.setUser(userInfo)
   }
 }

@@ -25,6 +25,10 @@ export default {
       prefix: 'pay',
       time: 60 * 16,
     },
+    oauthSignIn: {
+      prefix: 'oauthSignIn',
+      time: 60 * 10,
+    }
   },
   //自动重新登录时间 秒
   autoLoginTime: 3600 * 2,

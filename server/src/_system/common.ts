@@ -6,9 +6,10 @@ import * as crypto from 'crypto';
 import * as Q from 'q';
 import * as zlib from 'zlib';
 import * as uuid from 'uuid';
-import * as  SqlString from 'sequelize/lib/sql-string';
+import * as SqlString from 'sequelize/lib/sql-string';
 import * as config from '@/dev-config';
 import * as moment from 'dayjs';
+import * as https from 'https';
 
 
 //#region 前后通用
@@ -113,6 +114,10 @@ export let promisifyAll = function (obj) {
 export let guid = function () {
   return uuid.v4();
 };
+
+export function randStr() {
+  return Math.random().toString(36).substr(2, 15);
+}
 
 //字符串
 export let stringFormat = function (formatString: string, ...args) {
@@ -413,6 +418,9 @@ export let requestServiceByConfig = async function (option: RequestServiceByConf
   };
 };
 
+const agent = new https.Agent({
+  rejectUnauthorized: false
+});
 export let requestService = async function (option: RequestServiceOption) {
   let opt: RequestServiceOption = {
     method: 'POST',

@@ -20,6 +20,7 @@ export type TestMethod = {
   userUpdate,
   userUnbind,
   userBind,
+  userOauthLogin,
 
   userMgtQuery,
   userMgtSave,
@@ -228,6 +229,7 @@ export class TestApi extends ApiModel<TestMethod> {
     return id ? this.videoUrl + '?_id=' + id : ''
   }
   // #endregion
+
 }
 
 type FileUploadRes = { fileId: string; url: string };

@@ -14,6 +14,9 @@ const config = {
   },
   wxOffiaCcount: {
     appId: 'wx4f6293a9fba42e66'
+  },
+  github: {
+    clientId: '48e4a7ba05d2838bb2ba',
   }
 }
 export default config

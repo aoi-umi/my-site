@@ -21,7 +21,12 @@ export class OperateModel {
 
   async run(args?) {
     if (this.loading) return
-
+    const result = {
+      success: true,
+      msg: '',
+      err: null,
+      data: null
+    }
     this.loading = true
     let opt = this.opt
     let operate = opt.prefix || ''
@@ -30,13 +35,15 @@ export class OperateModel {
       if (opt.validate) {
         let valid = await opt.validate()
         if (!valid) {
+          result.success = false
+          result.msg = '参数有误'
           if (!this.opt.noValidMessage) {
-            vm.$Message.error('参数有误')
+            vm.$Message.error(result.msg)
           }
-          return
+          return result
         }
       }
-      await opt.fn(args)
+      result.data = await opt.fn(args)
       if (!opt.noDefaultHandler && !opt.noSuccessHandler) {
         vm.$Message.success({
           content: operate + '成功',
@@ -44,6 +51,9 @@ export class OperateModel {
         })
       }
     } catch (e) {
+      result.success = false
+      result.msg = e.message
+      result.err = e
       if (!opt.noDefaultHandler && !opt.noErrorHandler) {
         let rs = opt.defaultErrHandler ? opt.defaultErrHandler(e) : true
         if (rs) {
@@ -56,5 +66,6 @@ export class OperateModel {
     } finally {
       this.loading = false
     }
+    return result;
   }
 }

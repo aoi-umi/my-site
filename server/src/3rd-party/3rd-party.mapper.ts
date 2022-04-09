@@ -1,29 +1,35 @@
 import * as wxpay from '3rd-party-pay/dest/lib/wxpay';
+import { Types } from 'mongoose';
 
-import { myEnum } from '@/dev-config';
+import { dev, myEnum } from '@/dev-config';
 import { logger } from '@/helpers';
 import * as common from '@/_system/common';
 import { transaction } from '@/_system/dbMongo';
 import { PayRefund } from '@/valid-schema/class-valid';
-import { mySocket } from '@/main';
+import { cache, mySocket } from '@/main';
 
-import { NotifyMapper, NotifyInstanceType, NotifyModel } from '@/models/mongo/notify';
-import { AssetLogModel, PayInstanceType, AssetLogInstanceType, PayModel, PayMapper } from '@/models/mongo/asset';
-import { RefundModel } from '@/models/mongo/asset/refund';
+import { NotifyModel } from '@/models/mongo/notify';
+import {
+  AssetLogModel, AssetLogInstanceType,
+  PayInstanceType, PayModel, PayMapper,
+  RefundModel
+} from '@/models/mongo/asset';
 import { UserMapper } from '@/models/mongo/user';
+import { OauthModel } from '@/models/mongo/oauth';
 
 import { alipayInst } from './alipay';
 import { wxpayInst } from './wxpay';
 import { wxInst } from './wx';
+import { githubInst } from './github';
 
 export type NotifyType = {
-    notifyId: any,
+  notifyId: any,
 };
 export class ThirdPartyPayMapper {
 
   static async createPay(data: {
-        pay: PayInstanceType
-    }) {
+    pay: PayInstanceType
+  }) {
     let pay = data.pay;
     let assetLog = new AssetLogModel({
       sourceType: pay.type,
@@ -33,9 +39,9 @@ export class ThirdPartyPayMapper {
       type: myEnum.assetType.支付
     });
     let payRs: {
-            url?: string,
-            qrcode?: string,
-        } = {};
+      url?: string,
+      qrcode?: string,
+    } = {};
     if (assetLog.sourceType === myEnum.assetSourceType.微信) {
       let rs = await wxpayInst.unifiedOrder({
         out_trade_no: assetLog.orderNo,
@@ -139,12 +145,45 @@ export class ThirdPartyPayMapper {
 }
 
 export class ThirdPartyAuthMapper {
-  static async userByHandler(data: { by: string, val: string }, opt?: { checkExists?: boolean }) {
+  static async userByHandler(data: {
+    // TODO: deprecated
+    by: string, val: string;
+    oauthToken?: string
+  }, opt?: {
+    checkIsBind?: boolean;
+  }) {
     opt = {
       ...opt,
     };
-    let rs: { val: string, avatarUrl?: string; saveKey?: string; raw?: any };
-    if (data.by) {
+    let rs: {
+      id?: string,
+      avatarUrl?: string;
+      oauthName?: string;
+      // TODO: deprecated
+      val?: string, saveKey?: string; raw?: any
+    };
+    if (data.oauthToken) {
+      let oauthCacheCfg = {
+        ...dev.cache.oauthSignIn,
+        key: data.oauthToken
+      };
+      let oauthCacheData = await cache.getByCfg(oauthCacheCfg);
+
+      if (oauthCacheData) {
+        let oauthData = await OauthModel.findOne({ name: oauthCacheData.oauthName, id: oauthCacheData.id });
+        if (oauthData) {
+          if (opt.checkIsBind) {
+            let oauthNameStr = myEnum.oauthName.getName(oauthCacheData.oauthName);
+            throw common.error(`${oauthNameStr}已绑定`);
+          }
+        }
+        rs = {
+          avatarUrl: oauthCacheData.avatarUrl,
+          id: oauthCacheData.id,
+          oauthName: oauthCacheData.oauthName,
+        };
+      }
+    } else if (data.by) {
       if (data.by === myEnum.userBy.微信授权) {
         let userRs = await wxInst.getUserInfo({ code: data.val }, { noReq: true });
         rs = {
@@ -159,7 +198,7 @@ export class ThirdPartyAuthMapper {
           saveKey: 'wxOpenId'
         }
       }[data.by];
-      if (opt.checkExists) {
+      if (opt.checkIsBind) {
         let exists = await UserMapper.accountExists(rs.val, data.by);
         if (exists)
           throw common.error(`${map.msg}已绑定`);
@@ -171,5 +210,31 @@ export class ThirdPartyAuthMapper {
       };
     }
     return rs;
+  }
+
+  static async oauthUserGet(data: { oauthName: string, code: string }) {
+    let resData: {
+      oauthName: string
+      id: string
+      nickname: string
+      avatarUrl: string;
+      userId?: Types.ObjectId
+    };
+    if (data.oauthName === myEnum.oauthName.github) {
+      let rs = await githubInst.getUser(data);
+      resData = {
+        oauthName: data.oauthName,
+        id: rs.id,
+        nickname: rs.login,
+        avatarUrl: rs.avatar_url
+      };
+    } else {
+      throw Error(`no oauth ${data.oauthName}`);
+    }
+    let oauthData = await OauthModel.findOne({ name: resData.oauthName, id: resData.id });
+    if (oauthData) {
+      resData.userId = oauthData.userId;
+    }
+    return resData;
   }
 }

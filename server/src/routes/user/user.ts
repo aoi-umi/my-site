@@ -107,7 +107,7 @@ export let unbind: MyRequestHandler = async (opt) => {
 
 export let bind: MyRequestHandler = async (opt) => {
   let data = paramsValid(opt.reqData, ValidSchema.UserBind);
-  let userByRs = await ThirdPartyAuthMapper.userByHandler({ by: data.by, val: data.val }, { checkExists: true });
+  let userByRs = await ThirdPartyAuthMapper.userByHandler({ by: data.by, val: data.val }, { checkIsBind: true });
   let user = opt.myData.user;
   let dbUser = await UserModel.findById(user._id);
   let update: UserDocType = {};

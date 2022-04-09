@@ -169,6 +169,12 @@ const cfg = {
     component: () => import('../views/wx-auth')
   },
 
+  oauth: {
+    path: '/oauth/:name',
+    text: '授权登录',
+    component: () => import('../views/oauth')
+  },
+
   printMgt: {
     path: '/printTempMgt',
     text: '模板管理',

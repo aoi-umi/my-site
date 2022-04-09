@@ -24,7 +24,11 @@ export const enumDefine = {
     微信授权: 'wxCode'
   },
   userBind: {
-    微信: 'wx'
+    微信: 'wx',
+  },
+  oauthName: {
+    微信: 'wx',
+    github: 'github'
   },
   articleStatus: contentStatus,
   videoStatus: contentStatus,

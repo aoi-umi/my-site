@@ -28,6 +28,8 @@ export class UserSignUp {
     by?: string;
 
     byVal?: string;
+
+    oauthToken?: string
 }
 
 export class UserSignIn {
@@ -45,6 +47,11 @@ export class UserSignInByAuth {
 
     @IsDefined()
     val: string;
+}
+
+export class UserOauthSignIn {
+    @IsDefined()
+    code: string;
 }
 
 export class UserUpdate {
