@@ -204,7 +204,14 @@ export class ThirdPartyLogin extends Vue<ThirdPartyLoginProp, Base> {
         {[{
           oauthName: myEnum.oauthName.微信,
           src: '/logo/weixin.svg',
-          to: (data?) => {
+          click: (data?) => {
+            if (true) {
+              this.$Modal.warning({
+                title: '警告',
+                content: '订阅号无法获取用户信息,已停用'
+              })
+              return;
+            }
             let query = { type: myEnum.wxAuthType.登录 };
             if (data?.bindData)
               query = data.bindData
@@ -214,7 +221,7 @@ export class ThirdPartyLogin extends Vue<ThirdPartyLoginProp, Base> {
         }, {
           oauthName: myEnum.oauthName.github,
           src: '/logo/github.svg',
-          to: () => {
+          click: () => {
             window.open(`https://github.com/login/oauth/authorize?` + `${qs.stringify({
               'client_id': env.github.clientId,
               state: helpers.randStr()
@@ -224,10 +231,10 @@ export class ThirdPartyLogin extends Vue<ThirdPartyLoginProp, Base> {
           const noBind = this.bind && !this.user.oauth[ele.oauthName]
           return <img class={this.getStyleName('item').concat([noBind ? 'disabled' : ''])} src={ele.src} on-click={() => {
             if (!this.bind) {
-              ele.to();
+              ele.click();
             } else {
               if (noBind) {
-                ele.to(ele);
+                ele.click(ele);
               } else {
                 this.$refs.userUnbind.show(ele.oauthName)
               }
