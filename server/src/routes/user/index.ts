@@ -24,6 +24,7 @@ router.get('/user/detailQuery', UserAuthMid.normal(), MyRequestHandlerMid.conver
 router.post('/user/update', UserAuthMid.normal([auth.login]), MyRequestHandlerMid.convert(user.update));
 router.post('/user/unbind', UserAuthMid.normal([auth.login]), MyRequestHandlerMid.convert(user.unbind));
 router.post('/user/bind', UserAuthMid.normal([auth.login]), MyRequestHandlerMid.convert(user.bind));
+router.post('/user/oauth/:name/bind', UserAuthMid.normal([auth.login]), MyRequestHandlerMid.convert(user.oauthBind));
 router.get('/user/mgt/query', UserAuthMid.normal([auth.userMgtQuery]), MyRequestHandlerMid.convert(user.mgtQuery));
 router.post('/user/mgt/save', UserAuthMid.normal([auth.userMgtEdit]), MyRequestHandlerMid.convert(user.mgtSave));
 router.post('/user/mgt/disable', UserAuthMid.normal([auth.userMgtDisable]), MyRequestHandlerMid.convert(user.mgtDisable));

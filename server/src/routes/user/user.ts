@@ -114,6 +114,16 @@ export let bind: MyRequestHandler = async (opt) => {
   update[userByRs.saveKey] = userByRs.val;
   await dbUser.update(update);
 };
+export let oauthBind: MyRequestHandler = async (opt, ctx) => {
+  let { params } = ctx;
+  let name = myEnum.oauthName.getName(params.name);
+  if (!name) {
+    ctx.status = 404;
+    return;
+  }
+  let data = paramsValid(opt.reqData, ValidSchema.UserOauthBind);
+  await UserMapper.oauthBind(data, { oauthName: params.name, user: opt.myData.user });
+};
 
 export let mgtQuery: MyRequestHandler = async (opt) => {
   let data = paramsValid(opt.reqData, ValidSchema.UserMgtQuery);

@@ -21,6 +21,7 @@ export type TestMethod = {
   userUnbind,
   userBind,
   userOauthLogin,
+  userOauthBind,
 
   userMgtQuery,
   userMgtSave,

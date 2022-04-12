@@ -134,10 +134,7 @@ export default class WxAuth extends Base {
         this.signInLoading = true
         const req = { by: this.by, val: this.val }
         const rs = await testApi.userSignInByAuth(req)
-        const token = rs.key
-        LocalStore.setItem(dev.cacheKey.testUser, token)
-        testSocket.login({ [dev.cacheKey.testUser]: token })
-        this.storeUser.setUser(rs)
+        this.setLoginUser(rs)
       }).finally(() => {
         this.signInLoading = false
       })

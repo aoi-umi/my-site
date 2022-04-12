@@ -1,13 +1,14 @@
 import { Watch } from 'vue-property-decorator'
-import { Base } from './base'
 
 import { Component, Vue } from '@/components/decorator'
-
-import './oauth.less';
 import { OperateModel } from '@/helpers';
 import { testApi, testSocket } from '@/api';
-import { Spin } from 'view-design';
+import { Spin } from '@/components/iview'
 import { SignIn, SignUp } from './user/user-sign';
+import { Base } from './base'
+
+import './oauth.less';
+import { Dictionary } from 'vuex';
 
 @Component
 export default class WxAuth extends Base {
@@ -17,21 +18,31 @@ export default class WxAuth extends Base {
   private err = null
   private authName = ''
   private oauthName = ''
+  private oauthSuccess = false;
   private oauthData: any = {};
   created() {
+    let { state, code } = this.$route.query as Dictionary<string>
+    let isBind = state && state.endsWith('_bind')
+    if (isBind) {
+      this.setTitle('授权绑定')
+    }
     this.oauthName = this.$route.params.name
     this.oauthOp = this.getOpModel({
       prefix: '认证',
       noDefaultHandler: true,
       fn: async () => {
-        let data = { code: this.$route.query.code };
-        let rs = await testApi.userOauthLogin(data, { params: { name: this.oauthName } });
-        this.oauthData = {
-          ...rs
-        };
-        this.setLoginUser(this.oauthData.userInfo);
-        
-        return rs;
+        let data = { code };
+        let params = { name: this.oauthName }
+        if (isBind) {
+          let rs = await testApi.userOauthBind(data, { params });
+          this.oauthSuccess = true;
+        } else {
+          let rs = await testApi.userOauthLogin(data, { params });
+          this.oauthData = {
+            ...rs
+          };
+          this.setLoginUser(this.oauthData.userInfo);
+        }
       }
     })
   }
@@ -72,9 +83,9 @@ export default class WxAuth extends Base {
               </div>
             </div> :
             (this.err ?
-              <div>{this.err}</div> :
+              <div class={this.getStyleName('err')}>失败: {this.err}</div> :
               <div>
-                {this.oauthData.userInfo ?
+                {(this.oauthSuccess || this.oauthData.userInfo) ?
                   <div>成功</div> :
                   <div>
                     该账号未绑定

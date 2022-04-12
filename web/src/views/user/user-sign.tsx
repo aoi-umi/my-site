@@ -75,7 +75,6 @@ export class SignIn extends Vue<SignInProp, Base> {
       const { account, password } = this.innerDetail
       const req = { account, rand: helpers.randStr() }
       const token = LoginUser.createToken(account, password, req)
-      LocalStore.setItem(dev.cacheKey.testUser, token)
       const rs = await testApi.userSignIn(req)
 
       let list = LocalStoreUser.getList()
@@ -83,8 +82,7 @@ export class SignIn extends Vue<SignInProp, Base> {
       const remberSignIn: LocalStoreUser = { account }
       if (this.remberPwd) { remberSignIn.password = password } else { this.innerDetail.password = '' }
       LocalStoreUser.updateAccount(remberSignIn, list)
-      testSocket.login({ [dev.cacheKey.testUser]: token })
-      this.storeUser.setUser(rs)
+      this.setLoginUser(rs)
       this.$emit('success')
       if (this.to) { this.$router.push({ path: this.to, query: this.toQuery }) }
     }, {
@@ -222,10 +220,14 @@ export class ThirdPartyLogin extends Vue<ThirdPartyLoginProp, Base> {
           oauthName: myEnum.oauthName.github,
           src: '/logo/github.svg',
           click: () => {
-            window.open(`https://github.com/login/oauth/authorize?` + `${qs.stringify({
+            let query: any = {
               'client_id': env.github.clientId,
               state: helpers.randStr()
-            })}`, '_self')
+            };
+            if (this.bind) {
+              query.state += '_bind'
+            }
+            window.open(`https://github.com/login/oauth/authorize?` + `${qs.stringify(query)}`, '_self')
           },
         }].map(ele => {
           const noBind = this.bind && !this.user.oauth[ele.oauthName]

@@ -212,7 +212,12 @@ export class ThirdPartyAuthMapper {
     return rs;
   }
 
-  static async oauthUserGet(data: { oauthName: string, code: string }) {
+  static async oauthUserGet(data: { oauthName: string, code: string }, opt?: {
+    checkIsBind?: boolean;
+  }) {
+    opt = {
+      ...opt
+    };
     let resData: {
       oauthName: string
       id: string
@@ -220,6 +225,7 @@ export class ThirdPartyAuthMapper {
       avatarUrl: string;
       userId?: Types.ObjectId
     };
+    let oauthNameStr = myEnum.oauthName.getName(data.oauthName);
     if (data.oauthName === myEnum.oauthName.github) {
       let rs = await githubInst.getUser(data);
       resData = {
@@ -228,12 +234,16 @@ export class ThirdPartyAuthMapper {
         nickname: rs.login,
         avatarUrl: rs.avatar_url
       };
+    } else if (oauthNameStr) {
+      throw common.error(`未实现[${oauthNameStr}]`);
     } else {
-      throw Error(`no oauth ${data.oauthName}`);
+      throw common.error(`no oauth ${data.oauthName}`);
     }
     let oauthData = await OauthModel.findOne({ name: resData.oauthName, id: resData.id });
     if (oauthData) {
       resData.userId = oauthData.userId;
+      if (opt.checkIsBind)
+        throw common.error(`${oauthNameStr}已绑定`);
     }
     return resData;
   }

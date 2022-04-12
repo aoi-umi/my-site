@@ -52,6 +52,9 @@ let test: TestApiConfigType = {
     userOauthLogin: {
       url: '/user/oauth/:name/signIn'
     },
+    userOauthBind: {
+      url: '/user/oauth/:name/bind'
+    },
 
     userMgtQuery: {
       url: '/user/mgt/query',

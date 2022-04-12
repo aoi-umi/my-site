@@ -49,9 +49,15 @@ export class UserSignInByAuth {
     val: string;
 }
 
-export class UserOauthSignIn {
-    @IsDefined()
-    code: string;
+export class UserOauth {
+  @IsDefined()
+  code: string;
+}
+export class UserOauthSignIn extends UserOauth {
+
+}
+export class UserOauthBind extends UserOauth {
+
 }
 
 export class UserUpdate {

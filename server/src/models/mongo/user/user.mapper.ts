@@ -18,6 +18,7 @@ import { UserLogModel } from './user-log';
 import { UserDocType, UserModel, UserInstanceType } from './user';
 import { VideoModel } from '../video';
 import { OauthModel } from '../oauth';
+import { ThirdPartyAuthMapper } from '@/3rd-party';
 
 export type UserResetOption = {
   imgHost?: string;
@@ -261,7 +262,7 @@ export class UserMapper {
     myEnum.oauthName.getAllValue().forEach(v => {
       userOauth[v] = false;
     });
-    
+
     let oauthList = await OauthModel.find({ userId: userDetail._id });
     oauthList.forEach(ele => {
       userOauth[ele.name] = true;
@@ -414,6 +415,18 @@ export class UserMapper {
       UserMapper.resetDetail(ele, opt);
     });
     return list;
+  }
+
+  static async oauthBind(data: ValidSchema.UserOauthBind, opt: {
+    oauthName: string,
+    user: LoginUser
+  }) {
+    let { user } = opt;
+    let oauthUserRs = await ThirdPartyAuthMapper.oauthUserGet({ oauthName: opt.oauthName, code: data.code }, {
+      checkIsBind: true
+    });
+    let oauth = new OauthModel({ id: oauthUserRs.id, name: oauthUserRs.oauthName, userId: user._id });
+    await oauth.save();
   }
 }
 
