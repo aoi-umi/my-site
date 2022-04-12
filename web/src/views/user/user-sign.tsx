@@ -75,6 +75,7 @@ export class SignIn extends Vue<SignInProp, Base> {
       const { account, password } = this.innerDetail
       const req = { account, rand: helpers.randStr() }
       const token = LoginUser.createToken(account, password, req)
+      LocalStore.setItem(dev.cacheKey.testUser, token)
       const rs = await testApi.userSignIn(req)
 
       let list = LocalStoreUser.getList()
