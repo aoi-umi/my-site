@@ -5,48 +5,48 @@ import { objectIdTransform } from '../util';
 import { myEnum } from '@/dev-config';
 
 export class UserAccountExists {
-    @IsDefined()
-    @MinLength(1)
-    val: string;
+  @IsDefined()
+  @MinLength(1)
+  val: string;
 
-    @IsIn(myEnum.userBy.getAllValue())
-    by?: string;
+  @IsIn(myEnum.userBy.getAllValue())
+  by?: string;
 }
 
 
 export class UserSignUp {
-    @IsDefined()
-    nickname: string;
+  @IsDefined()
+  nickname: string;
 
-    @IsDefined()
-    account: string;
+  @IsDefined()
+  account: string;
 
-    @IsDefined()
-    password: string;
+  @IsDefined()
+  password: string;
 
-    @IsIn(myEnum.userBy.getAllValue())
-    by?: string;
+  @IsIn(myEnum.userBy.getAllValue())
+  by?: string;
 
-    byVal?: string;
+  byVal?: string;
 
-    oauthToken?: string
+  oauthToken?: string
 }
 
 export class UserSignIn {
-    @IsDefined()
-    account: string;
+  @IsDefined()
+  account: string;
 
-    @IsDefined()
-    rand: string;
+  @IsDefined()
+  rand: string;
 }
 
 export class UserSignInByAuth {
-    @IsIn(myEnum.userBy.getAllValue())
-    @IsDefined()
-    by: string;
+  @IsIn(myEnum.userBy.getAllValue())
+  @IsDefined()
+  by: string;
 
-    @IsDefined()
-    val: string;
+  @IsDefined()
+  val: string;
 }
 
 export class UserOauth {
@@ -61,78 +61,81 @@ export class UserOauthBind extends UserOauth {
 }
 
 export class UserUpdate {
-    newPassword: string;
+  newPassword: string;
 
-    rand: string;
+  rand: string;
 
-    token: string;
+  token: string;
 }
 export class UserUnbind {
-    @IsIn(myEnum.userBind.getAllValue())
-    @IsDefined()
-    type: string;
+  @IsIn(myEnum.oauthName.getAllValue())
+  @IsDefined()
+  type: string;
 
-    @IsDefined()
-    rand: string;
+  @IsIn(myEnum.oauthName.getAllValue())
+  oauthName: string;
 
-    @IsDefined()
-    token: string;
+  @IsDefined()
+  rand: string;
+
+  @IsDefined()
+  token: string;
 }
 
 export class UserBind {
-    @IsIn(myEnum.userBy.getAllValue())
-    @IsDefined()
-    by: string;
+  @IsIn(myEnum.userBy.getAllValue())
+  @IsDefined()
+  by: string;
 
-    @IsDefined()
-    val: string;
+  @IsDefined()
+  val: string;
 }
 
 export class UserDetailQuery extends DetailQueryBase {
 }
 
 export class UserMgtQuery extends ListBase {
-    @Transform(objectIdTransform)
-    _id?: string;
-    account?: string;
-    nickname?: string;
-    authority?: string;
-    role?: string;
-    anyKey?: string;
+  @Transform(objectIdTransform)
+  _id?: string;
+  account?: string;
+  nickname?: string;
+  authority?: string;
+  role?: string;
+  anyKey?: string;
 
-    @Type()
-    //包含已删除的权限角色
-    includeDelAuth?: boolean;
+  @Type()
+  //包含已删除的权限角色
+  includeDelAuth?: boolean;
 }
 
 export class UserMgtSave {
-    @IsDefined()
-    @Transform(objectIdTransform)
-    _id: string;
+  @IsDefined()
+  @Transform(objectIdTransform)
+  _id: string;
 
-    @IsArray()
-    delAuthList?: string[];
+  @IsArray()
+  delAuthList?: string[];
 
-    @IsArray()
-    addAuthList?: string[];
+  @IsArray()
+  addAuthList?: string[];
 
-    @IsArray()
-    delRoleList?: string[];
+  @IsArray()
+  delRoleList?: string[];
 
-    @IsArray()
-    addRoleList?: string[];
+  @IsArray()
+  addRoleList?: string[];
 
-    password?: string;
+  password?: string;
 }
 
 export class UserMgtDisable {
-    @IsDefined()
-    @Transform(objectIdTransform)
-    _id: string;
+  @IsDefined()
+  @Transform(objectIdTransform)
+  _id: string;
 
-    @Type()
-    disabled?: boolean;
+  @Type()
+  disabled?: boolean;
 
-    //disabled为true, 不传时为永封
-    disabledTo?: string;
+  //disabled为true, 不传时为永封
+  disabledTo?: string;
 }

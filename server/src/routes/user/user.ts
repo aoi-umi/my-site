@@ -13,6 +13,7 @@ import { FileMapper } from '@/models/mongo/file';
 import { LoginUser } from '@/models/login-user';
 import { FollowModel, FollowInstanceType, FollowMapper } from '@/models/mongo/follow';
 import { ThirdPartyAuthMapper } from '@/3rd-party';
+import { OauthModel } from '@/models/mongo/oauth';
 
 function returnUser(user: LoginUser) {
   delete user.loginData;
@@ -98,11 +99,14 @@ export let unbind: MyRequestHandler = async (opt) => {
   let user = opt.myData.user;
   let dbUser = await UserModel.findById(user._id);
   UserMapper.checkToken(data, dbUser);
-  let update: UserDocType = {};
-  if (data.type === myEnum.userBind.微信) {
+  let oauthName = data.type;
+  if (oauthName === myEnum.oauthName.微信) {
+    let update: UserDocType = {};
     update.wxOpenId = '';
+    await dbUser.update(update);
+  } else {
+    await OauthModel.deleteOne({ name: oauthName, userId: dbUser._id });
   }
-  await dbUser.update(update);
 };
 
 export let bind: MyRequestHandler = async (opt) => {
