@@ -27,11 +27,11 @@ export class MySocket {
     }
 
     async authRecv(token: string, data) {
-      let cfg = config.dev.cache.wxAuth;
-      let rs = await cache.getByCfg({
-        ...cfg,
+      let cfg = {
+        ...config.dev.cache.wxAuth,
         key: token
-      });
+      };
+      let rs = await cache.getByCfg(cfg);
       if (!rs)
         return false;
       let socket = this.allSocket[rs];
