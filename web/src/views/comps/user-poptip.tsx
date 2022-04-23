@@ -120,14 +120,12 @@ export class UserPoptip extends Vue<UserPoptipProp, Base> {
           {this.$slots.default}
           {this.self ?
             <div slot='content' class={this.getStyleName('content')}>
-              <p class='ivu-select-item' v-mid-click on-click={(e) => {
-                this.goToPage(routerConfig.userInfo.path, {
-                  mouseButton: e.button
-                })
-              }}>主页</p>
-              <p class='ivu-select-item' on-click={() => {
-                this.goToPage(routerConfig.viewHistory.path)
-              }}>{routerConfig.viewHistory.text}</p>
+              <router-link class='ivu-select-item' to={routerConfig.userInfo.path}>
+                主页
+              </router-link>
+              <router-link class='ivu-select-item' to={routerConfig.viewHistory.path}>
+                {routerConfig.viewHistory.text}
+              </router-link>
               <p class='ivu-select-item' on-click={this.signOut}>退出</p>
             </div>
             : <div slot='content' class={this.getStyleName('content')}>
@@ -159,12 +157,12 @@ export class UserPoptip extends Vue<UserPoptipProp, Base> {
                   <Button on-click={() => {
                     this.getUserDetail()
                   }}>重试</Button>}
-                <Button on-click={() => {
-                  this.goToPage({
+                <Button>
+                  <router-link to={this.$utils.getUrl({
                     path: routerConfig.userInfo.path,
                     query: { _id: this.user._id }
-                  })
-                }}>主页</Button>
+                  })}>主页</router-link>
+                </Button>
                 {!loadFail && notSelf && <FollowButton user={this.userDetail} />}
                 {notSelf && <Button on-click={() => {
                   this.goToPage({

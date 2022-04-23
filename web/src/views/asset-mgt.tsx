@@ -65,28 +65,20 @@ export class AssetMgtLog extends Base {
           key: 'orderNo',
           render: (h, params) => {
             const detail = params.row
-            return <a v-mid-click on-click={(e) => {
-              this.goToPage({
-                path: routerConfig.assetMgtNotify.path,
-                query: { orderNo: detail.orderNo }
-              }, {
-                mouseButton: e.button
-              })
-            }}>{detail.orderNo}</a>
+            return <router-link to={this.$utils.getUrl({
+              path: routerConfig.assetMgtNotify.path,
+              query: { orderNo: detail.orderNo }
+            })}>{detail.orderNo}</router-link>
           }
         }, {
           title: '外部订单号',
           key: 'outOrderNo',
           render: (h, params) => {
             const detail = params.row
-            return <a v-mid-click on-click={(e) => {
-              this.goToPage({
-                path: routerConfig.assetMgtNotify.path,
-                query: { outOrderNo: detail.outOrderNo }
-              }, {
-                mouseButton: e.button
-              })
-            }}>{detail.outOrderNo}</a>
+            return <router-link to={this.$utils.getUrl({
+              path: routerConfig.assetMgtNotify.path,
+              query: { outOrderNo: detail.outOrderNo }
+            })}>{detail.outOrderNo}</router-link>
           }
         }, {
           title: '金额',
@@ -197,14 +189,10 @@ export class AssetMgtNotify extends Base {
           key: 'orderNo',
           render: (h, params) => {
             const detail = params.row
-            return <a v-mid-click on-click={(e) => {
-              this.goToPage({
-                path: routerConfig.assetMgtLog.path,
-                query: { orderNo: detail.orderNo }
-              }, {
-                mouseButton: e.button
-              })
-            }}>{detail.orderNo}</a>
+            return <router-link to={this.$utils.getUrl({
+              path: routerConfig.assetMgtLog.path,
+              query: { orderNo: detail.orderNo }
+            })}>{detail.orderNo}</router-link >
           }
         }, {
           title: '外部订单号',

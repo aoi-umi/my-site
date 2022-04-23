@@ -194,10 +194,15 @@ export class ContentOperate extends Vue<ContentOperateProp, Base> {
   }) {
     return (
       <div class={[this.getStyleName('item'), ...(!this.mgt ? [iconEle.class, 'center'] : [])]}
-        on-click={this.mgt ? () => { } : (iconEle.onClick || (() => {
+        on-click={() => {
+          if (this.mgt) return
+          if (iconEle.onClick) {
+            iconEle.onClick()
+            return
+          }
           this.toDetail && this.toDetail()
           this.$emit('operate-click', iconEle.type)
-        }))} >
+        }} >
         <Icon
           type={iconEle.icon}
           size={!this.mgt ? 24 : 20}
@@ -241,11 +246,13 @@ export class ContentListItem extends Vue<ContentListItemProp, Base> {
   private cfgs = {
     [myEnum.contentType.文章]: {
       detailUrl: routerConfig.articleDetail.path,
+      mgtDetailUrl: routerConfig.articleMgtDetail.path,
       profile: dev.defaultArticleProfile,
       voteType: myEnum.voteType.文章
     },
     [myEnum.contentType.视频]: {
       detailUrl: routerConfig.videoDetail.path,
+      mgtDetailUrl: routerConfig.videoMgtDetail.path,
       profile: dev.defaultVideoProfile,
       voteType: myEnum.voteType.视频
     }
@@ -253,32 +260,34 @@ export class ContentListItem extends Vue<ContentListItemProp, Base> {
   private cfg = this.cfgs[this.contentType];
 
   private toDetail(ele: ContentDataType) {
-    if (this.mgt) {
-      return
-    }
-    this.goToPage({
-      path: this.cfg.detailUrl,
+    this.goToPage(this.getDetailUrlObj(ele))
+  }
+
+  private getDetailUrlObj(ele: ContentDataType) {
+    return {
+      path: this.mgt ? this.cfg.mgtDetailUrl : this.cfg.detailUrl,
       query: { _id: ele._id }
-    })
+    }
   }
 
   private getDetailUrl(ele: ContentDataType) {
-    return `${location.host}${this.cfg.detailUrl}?_id=${ele._id}`
+    return this.$utils.getUrl({
+      path: `${location.host}${this.cfg.detailUrl}`,
+      query: { _id: ele._id }
+    })
   }
 
   render() {
     const ele = this.value
     if (this.min) {
       return (
-        <div class={this.getStyleName('min-box')}>
-          <div class={[...this.getStyleName('cover-box')]} on-click={() => {
-            this.toDetail(ele)
-          }}>
+        <router-link class={this.getStyleName('min-box')} to={this.$utils.getUrl(this.getDetailUrlObj(ele))}>
+          <div class={[...this.getStyleName('cover-box')]}>
             {<img class={[...this.getStyleName('cover')]} v-lazy={ele.coverUrl} />}
             <h4 class={[...this.getStyleName('list-title'), 'flex-stretch']} title={ele.title}>{ele.title}</h4>
           </div>
           PO: <UserAvatar user={ele.user} type="text" />
-        </div>
+        </router-link>
       )
     }
     return (
@@ -287,27 +296,29 @@ export class ContentListItem extends Vue<ContentListItemProp, Base> {
           <div on-click={() => {
             this.toDetail(ele)
           }}>
-            <Row>
-              <Col class={this.getStyleName('top-col')} span={24}>
-                <h3 class={[...this.getStyleName('list-title'), 'flex-stretch']} title={ele.title}>{ele.title}</h3>
-                {this.mgt && <MyTag value={ele.statusText} />}
-                {this.selectable && <Checkbox value={ele._checked} disabled={ele._disabled} on-on-change={(checked) => {
-                  this.$emit('selected-change', checked)
-                }} />}
-              </Col>
-              <Col class={this.getStyleName('user-col')} span={24}>
-                <UserAvatar user={ele.user} />
-                {ele.publishAt && <span class='not-important' style={{ marginLeft: '5px' }}>发布于 <Time time={new Date(ele.publishAt)} /></span>}
-              </Col>
-            </Row>
-            <Row class={this.getStyleName('content-row')}>
-              <Col class={this.getStyleName('cover-col')} span={24}>
-                {ele.coverUrl && <img class={[...this.getStyleName('cover'), 'my-upload-item cover']} v-lazy={ele.coverUrl} />}
-                {<p class={this.getStyleName('profile')}>{ele.profile || this.cfg.profile}</p>}
-              </Col>
-              {this.mgt && <p class='not-important'>创建于 <Time time={new Date(ele.createdAt)} /></p>}
-              {this.mgt && <ContentOperate data={ele} contentType={this.contentType} voteType={this.cfg.voteType} mgt />}
-            </Row>
+            <router-link to={this.$utils.getUrl(this.getDetailUrlObj(ele))}>
+              <Row>
+                <Col class={this.getStyleName('top-col')} span={24}>
+                  <h3 class={[...this.getStyleName('list-title'), 'flex-stretch']} title={ele.title}>{ele.title}</h3>
+                  {this.mgt && <MyTag value={ele.statusText} />}
+                  {this.selectable && <Checkbox value={ele._checked} disabled={ele._disabled} on-on-change={(checked) => {
+                    this.$emit('selected-change', checked)
+                  }} />}
+                </Col>
+                <Col class={this.getStyleName('user-col')} span={24}>
+                  <UserAvatar user={ele.user} />
+                  {ele.publishAt && <span class='not-important' style={{ marginLeft: '5px' }}>发布于 <Time time={new Date(ele.publishAt)} /></span>}
+                </Col>
+              </Row>
+              <Row class={this.getStyleName('content-row')}>
+                <Col class={this.getStyleName('cover-col')} span={24}>
+                  {ele.coverUrl && <img class={[...this.getStyleName('cover'), 'my-upload-item cover']} v-lazy={ele.coverUrl} />}
+                  {<p class={this.getStyleName('profile')}>{ele.profile || this.cfg.profile}</p>}
+                </Col>
+                {this.mgt && <p class='not-important'>创建于 <Time time={new Date(ele.createdAt)} /></p>}
+                {this.mgt && <ContentOperate data={ele} contentType={this.contentType} voteType={this.cfg.voteType} mgt />}
+              </Row>
+            </router-link>
             <Divider size='small' />
           </div>
           <div style='display:flex;'>

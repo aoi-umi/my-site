@@ -6,9 +6,12 @@ import { Tabs, TabPane, Modal, Input } from '@/components/iview'
 
 import ArticleMgt from './article-mgt'
 import VideoMgt from './video-mgt'
+import { Base } from '../base'
 
-@Component
-export default class ContentMgt extends Vue {
+@Component({
+  extends: Base
+})
+export default class ContentMgt extends Vue<Base> {
     $refs: { articleMgt: ArticleMgt, videoMgt: VideoMgt }
     tab = myEnum.contentMgtType.文章;
     mounted () {
