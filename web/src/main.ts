@@ -10,6 +10,7 @@ Vue.use(VueLazyload, {
 
 import Utils from '@/plugins/utils'
 Vue.use(Utils)
+import './directive'
 
 import App from './App'
 import router from './router'

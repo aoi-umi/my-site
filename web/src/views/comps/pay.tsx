@@ -75,7 +75,7 @@ export class Pay extends Vue<PayProp, Base> {
         this.showType = ShowType.二维码
         this.showPayContent(rs.url)
       } else {
-        window.open(rs.url, '_blank')
+        this.$utils.openWindow(rs.url, '_blank')
       }
       this.orderNo = rs.orderNo
       testSocket.pay({ orderNo: rs.orderNo })

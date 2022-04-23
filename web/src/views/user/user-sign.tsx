@@ -223,10 +223,10 @@ export class ThirdPartyLogin extends Vue<ThirdPartyLoginProp, Base> {
             if (this.bind) {
               query.state += '_bind'
             }
-            window.open(this.$utils.getUrl({
+            this.$utils.openWindow({
               path: 'https://github.com/login/oauth/authorize',
               query
-            }), '_self')
+            }, '_self')
           },
         }].map(ele => {
           const noBind = this.bind && !this.user.oauth[ele.oauthName]

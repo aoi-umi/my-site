@@ -3,6 +3,7 @@ import copy from 'copy-to-clipboard'
 import AsyncValidator, { ValidateOption } from 'async-validator'
 import SparkMD5 from 'spark-md5'
 import * as qs from 'qs';
+import { RawLocation, Location } from 'vue-router';
 
 import { UtilsTsx } from './tsx'
 
@@ -307,13 +308,15 @@ const _Utils = {
     return result
   },
 
-  getUrl(obj: {
-    path: string,
-    query: any
-  }) {
+  getUrl(obj: Location) {
     let queryStr = qs.stringify(obj.query)
     let url = obj.path + (queryStr ? `?${queryStr}` : queryStr)
     return url
+  },
+
+  openWindow(location: RawLocation, target?: string) {
+    let url = typeof location === 'string' ? location : Utils.getUrl(location);
+    window.open(url)
   }
 }
 

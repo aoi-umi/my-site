@@ -120,8 +120,10 @@ export class UserPoptip extends Vue<UserPoptipProp, Base> {
           {this.$slots.default}
           {this.self ?
             <div slot='content' class={this.getStyleName('content')}>
-              <p class='ivu-select-item' on-click={() => {
-                this.$router.push(routerConfig.userInfo.path)
+              <p class='ivu-select-item' v-mid-click on-click={(e) => {
+                this.goToPage(routerConfig.userInfo.path, {
+                  mouseButton: e.button
+                })
               }}>主页</p>
               <p class='ivu-select-item' on-click={() => {
                 this.$router.push(routerConfig.viewHistory.path)

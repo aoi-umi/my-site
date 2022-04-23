@@ -1,5 +1,6 @@
 import { Watch } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
+import { RawLocation } from 'vue-router'
 
 import { Component, Vue } from '@/components/decorator'
 import SettingStore from '@/store/setting'
@@ -137,5 +138,18 @@ export class Base extends MyBase {
     LocalStore.setItem(dev.cacheKey.testUser, token)
     testSocket.login({ [dev.cacheKey.testUser]: token })
     this.storeUser.setUser(userInfo)
+  }
+
+  protected goToPage(location: RawLocation, opt?: {
+    mouseButton?: number
+  }) {
+    opt = {
+      ...opt
+    }
+    if (opt.mouseButton === 1) {
+      this.$utils.openWindow(location, '_blank')
+      return;
+    }
+    this.$router.push(location)
   }
 }

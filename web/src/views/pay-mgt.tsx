@@ -81,7 +81,7 @@ class PayMgtDetail extends Vue<PayMgtDetailProp, Base> {
         content: detail.content,
         money: detail.money
       })
-      window.open(rs.url, '_blank')
+      this.$utils.openWindow(rs.url, '_blank')
       this.$emit('save-success', rs)
       this.initDetail(this.getDetailData())
     }, {
@@ -257,7 +257,7 @@ export default class Pay extends Base {
                 const rs = await testApi.paySubmit({
                   _id: detail._id
                 })
-                window.open(rs.url, '_blank')
+                this.$utils.openWindow(rs.url, '_blank')
               }, { noSuccessHandler: true })
 
               // 调用支付宝 `alipays://platformapi/startapp?appId=20000067&url=${encodeURI(url)}`
