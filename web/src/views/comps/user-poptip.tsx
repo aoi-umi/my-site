@@ -126,7 +126,7 @@ export class UserPoptip extends Vue<UserPoptipProp, Base> {
                 })
               }}>主页</p>
               <p class='ivu-select-item' on-click={() => {
-                this.$router.push(routerConfig.viewHistory.path)
+                this.goToPage(routerConfig.viewHistory.path)
               }}>{routerConfig.viewHistory.text}</p>
               <p class='ivu-select-item' on-click={this.signOut}>退出</p>
             </div>
@@ -160,14 +160,14 @@ export class UserPoptip extends Vue<UserPoptipProp, Base> {
                     this.getUserDetail()
                   }}>重试</Button>}
                 <Button on-click={() => {
-                  this.$router.push({
+                  this.goToPage({
                     path: routerConfig.userInfo.path,
                     query: { _id: this.user._id }
                   })
                 }}>主页</Button>
                 {!loadFail && notSelf && <FollowButton user={this.userDetail} />}
                 {notSelf && <Button on-click={() => {
-                  this.$router.push({
+                  this.goToPage({
                     path: routerConfig.userChat.path,
                     query: { _id: this.user._id }
                   })

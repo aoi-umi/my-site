@@ -291,7 +291,7 @@ export default class Role extends Base {
           }}
 
           on-query={(model) => {
-            this.$router.push({
+            this.goToPage({
               path: this.$route.path,
               query: {
                 ...model.query,

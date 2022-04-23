@@ -221,7 +221,7 @@ export class ChatList extends Base {
     }
 
     private toChat (userId) {
-      this.$router.push({
+      this.goToPage({
         path: routerConfig.userChat.path,
         query: { _id: userId }
       })

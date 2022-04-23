@@ -67,7 +67,7 @@ export default class App extends Base {
             let { to, ...query } = this.$route.query
             to = (to as string) || routerConfig.index.path
             const toQuery = query
-            this.$router.push({ path: to, query: toQuery })
+            this.goToPage({ path: to, query: toQuery })
           }
         }
       }).catch(e => {
@@ -234,7 +234,7 @@ export default class App extends Base {
                   })
                 }}>登录</Button>,
                 <Button on-click={() => {
-                  this.$router.push(routerConfig.userSignUp.path)
+                  this.goToPage(routerConfig.userSignUp.path)
                 }}>注册</Button>
               ]
             }

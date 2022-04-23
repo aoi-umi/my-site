@@ -57,7 +57,7 @@ export default class ViewHistory extends Vue<{}, ListBase> {
                 ...convert.Test.listModelToQuery(model)
               }
               if (!this.notQueryToRoute) {
-                this.$router.push({
+                this.goToPage({
                   path: this.$route.path,
                   query: q
                 })

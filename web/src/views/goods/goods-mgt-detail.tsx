@@ -152,7 +152,7 @@ export default class GoodsMgtDetail extends Base {
       },
       validate: this.$refs.formVaild.validate,
       onSuccessClose: () => {
-        this.$router.push(routerConfig.goodsMgt.path)
+        this.goToPage(routerConfig.goodsMgt.path)
       }
     }).finally(() => {
       this.saving = false

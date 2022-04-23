@@ -298,7 +298,7 @@ export default class UserInfo extends Base {
           {!detail.self && <div class={this.getStyleName('op-box')}>
             <FollowButton class={this.getStyleName('follow')} user={detail} />
             <Button on-click={() => {
-              this.$router.push({
+              this.goToPage({
                 path: routerConfig.userChat.path,
                 query: { _id: detail._id }
               })
@@ -306,7 +306,7 @@ export default class UserInfo extends Base {
           </div>}
         </div>
         <Tabs animated={false} v-model={this.tab} class={this.getStyleName('tab')} on-on-click={(name: string) => {
-          this.$router.push({
+          this.goToPage({
             path: this.$route.path,
             query: {
               ...this.$route.query,

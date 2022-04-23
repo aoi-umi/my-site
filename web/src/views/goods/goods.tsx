@@ -40,7 +40,7 @@ export default class Goods extends Base {
     }
 
     toDetail (data: SpuType) {
-      this.$router.push({
+      this.goToPage({
         path: routerConfig.goodsDetail.path,
         query: {
           _id: data._id
@@ -66,7 +66,7 @@ export default class Goods extends Base {
             }}
 
             on-query={(model) => {
-              this.$router.push({
+              this.goToPage({
                 path: this.$route.path,
                 query: {
                   ...model.query,

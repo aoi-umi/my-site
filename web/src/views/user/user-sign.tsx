@@ -84,7 +84,7 @@ export class SignIn extends Vue<SignInProp, Base> {
       LocalStoreUser.updateAccount(remberSignIn, list)
       this.setLoginUser(rs)
       this.$emit('success')
-      if (this.to) { this.$router.push({ path: this.to, query: this.toQuery }) }
+      if (this.to) { this.goToPage({ path: this.to, query: this.toQuery }) }
     }, {
       validate: this.$refs.formVaild.validate
     }
@@ -209,7 +209,7 @@ export class ThirdPartyLogin extends Vue<ThirdPartyLoginProp, Base> {
             let query = { type: myEnum.wxAuthType.登录 };
             if (data?.bindData)
               query = data.bindData
-            this.$router.push({ path: routerConfig.wxAuth.path, query })
+            this.goToPage({ path: routerConfig.wxAuth.path, query })
           },
           bindData: { type: myEnum.wxAuthType.绑定 }
         }, {
@@ -341,7 +341,7 @@ export class SignUp extends Vue<SignUpProp, Base> {
       const rs = await testApi.userSignUp(data)
       this.innerDetail = this.getDetailData()
       this.$emit('success')
-      this.$router.push(routerConfig.userSignIn.path)
+      this.goToPage(routerConfig.userSignIn.path)
     }, {
       validate: this.$refs.formVaild.validate
     }

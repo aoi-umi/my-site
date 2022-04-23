@@ -362,7 +362,7 @@ export class CommentDetail extends Vue<CommentDetailProp, Base> {
       [this.$enum.contentType.文章]: routerConfig.articleDetail.path,
       [this.$enum.contentType.视频]: routerConfig.videoDetail.path,
     }[ele.type];
-    this.$router.push({
+    this.goToPage({
       path: detailUrl,
       query: { _id: ele.ownerId },
       hash: String(ele.floor)

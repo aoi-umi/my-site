@@ -29,7 +29,7 @@ export default class Apps extends Base {
         {this.apps.map(ele => {
           return (
             <Card class={this.getStyleName('item')} nativeOn-click={() => {
-              this.$router.push(ele.url)
+              this.goToPage(ele.url)
             }}>
               <span>{ele.text}</span>
             </Card>

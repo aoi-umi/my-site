@@ -61,7 +61,7 @@ export default class GoodsMgt extends Base {
   }
 
   private toEdit (data?) {
-    this.$router.push({
+    this.goToPage({
       path: routerConfig.goodsMgtEdit.path,
       query: data
     })
@@ -116,7 +116,7 @@ export default class GoodsMgt extends Base {
               return (
                 <div class={MyListConst.clsActBox}>
                   <a on-click={() => {
-                    this.$router.push({
+                    this.goToPage({
                       path: routerConfig.goodsMgtDetail.path,
                       query: { _id: detail._id }
                     })
@@ -154,7 +154,7 @@ export default class GoodsMgt extends Base {
 
           on-query={(model) => {
             const q = { ...model.query }
-            this.$router.push({
+            this.goToPage({
               path: this.$route.path,
               query: {
                 ...q,

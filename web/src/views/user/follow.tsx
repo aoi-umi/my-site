@@ -59,7 +59,7 @@ export class FollowList extends Vue<FollowListProp, Base> {
       const user = this.followType == myEnum.followQueryType.粉丝 ? ele.followerUser : ele.followingUser
       return (
         <Card class={[...this.getStyleName('main'), 'pointer']} nativeOn-click={() => {
-          this.$router.push({
+          this.goToPage({
             path: routerConfig.userInfo.path,
             query: { _id: user._id }
           })

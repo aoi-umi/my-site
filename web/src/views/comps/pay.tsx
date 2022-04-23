@@ -54,7 +54,7 @@ export class Pay extends Vue<PayProp, Base> {
             <span>
               订单{data.orderNo}支付成功
               <a on-click={() => {
-                this.$router.push(routerConfig.payMgt.path)
+                this.goToPage(routerConfig.payMgt.path)
               }}>查看</a>
             </span>
           )

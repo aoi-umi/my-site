@@ -49,7 +49,7 @@ export default class ContentMgt extends Vue {
       return (
         <div>
           <Tabs v-model={this.tab} animated={false} on-on-click={(name: string) => {
-            this.$router.push({
+            this.goToPage({
               path: this.$route.path,
               query: {
                 ...this.$route.query,

@@ -157,7 +157,7 @@ export default class ArticleMgt extends Vue<ArticleMgtProp, ArticleMgtBase> impl
                 ...convert.Test.listModelToQuery(model)
               }
               if (!this.notQueryToRoute) {
-                this.$router.push({
+                this.goToPage({
                   path: this.$route.path,
                   query: q
                 })

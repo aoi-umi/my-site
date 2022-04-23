@@ -184,7 +184,7 @@ export default class WxAuth extends Base {
               ? <div class={this.getStyleName('err')}>
                 {this.errorMsg || this.msg}
                 {this.errorMsg && !isScan && <Button on-click={() => {
-                  this.$router.push({
+                  this.goToPage({
                     path: routerConfig.wxAuth.path,
                     query: { type: this.type }
                   })

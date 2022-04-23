@@ -120,7 +120,7 @@ export class AssetMgtLog extends Base {
         }}
 
         on-query={(model) => {
-          this.$router.push({
+          this.goToPage({
             path: this.$route.path,
             query: {
               ...model.query,
@@ -246,7 +246,7 @@ export class AssetMgtNotify extends Base {
         }}
 
         on-query={(model) => {
-          this.$router.push({
+          this.goToPage({
             path: this.$route.path,
             query: {
               ...model.query,

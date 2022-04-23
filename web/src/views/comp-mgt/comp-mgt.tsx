@@ -43,14 +43,14 @@ export default class CompMgt extends Base {
   }
 
   toDetail (query?) {
-    this.$router.push({
+    this.goToPage({
       path: routerConfig.compMgtDetail.path,
       query
     })
   }
 
   toPreview (query) {
-    this.$router.push({
+    this.goToPage({
       path: routerConfig.compMgtPreview.path,
       query
     })
@@ -112,7 +112,7 @@ export default class CompMgt extends Base {
           }}
 
           on-query={(model: MyListModel) => {
-            this.$router.push({
+            this.goToPage({
               path: this.$route.path,
               query: {
                 ...model.query,

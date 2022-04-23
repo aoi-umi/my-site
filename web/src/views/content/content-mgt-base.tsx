@@ -109,7 +109,7 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
   }
 
   protected toList() {
-    this.$router.push({
+    this.goToPage({
       path: routerConfig.contentMgt.path,
       query: {
         tab: this.contentMgtType as any
@@ -124,7 +124,7 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
     opt = {
       ...opt
     }
-    this.$router.push({
+    this.goToPage({
       path: this.toDetailUrl(opt.preview),
       query: { _id: _id || '', repost: opt.repost ? 'true' : '' }
     })

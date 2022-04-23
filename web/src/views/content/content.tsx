@@ -256,7 +256,7 @@ export class ContentListItem extends Vue<ContentListItemProp, Base> {
     if (this.mgt) {
       return
     }
-    this.$router.push({
+    this.goToPage({
       path: this.cfg.detailUrl,
       query: { _id: ele._id }
     })

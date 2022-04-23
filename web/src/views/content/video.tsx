@@ -77,7 +77,7 @@ export default class Video extends Vue<VideoProp, ListBase> {
               ...convert.Test.listModelToQuery(model)
             }
             if (!this.notQueryToRoute) {
-              this.$router.push({
+              this.goToPage({
                 path: this.$route.path,
                 query: q
               })

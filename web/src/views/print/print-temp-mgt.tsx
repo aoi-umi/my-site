@@ -43,7 +43,7 @@ export default class PrintMgt extends Base {
   }
 
   toDetail (query?) {
-    this.$router.push({
+    this.goToPage({
       path: routerConfig.printMgtDetail.path,
       query
     })
@@ -103,7 +103,7 @@ export default class PrintMgt extends Base {
           }}
 
           on-query={(model: MyListModel) => {
-            this.$router.push({
+            this.goToPage({
               path: this.$route.path,
               query: {
                 ...model.query,

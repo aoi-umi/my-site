@@ -69,7 +69,7 @@ export default class Article extends ListBase {
                 ...convert.Test.listModelToQuery(model)
               }
               if (!this.notQueryToRoute) {
-                this.$router.push({
+                this.goToPage({
                   path: this.$route.path,
                   query: q
                 })

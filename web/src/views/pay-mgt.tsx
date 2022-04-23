@@ -195,7 +195,7 @@ export default class Pay extends Base {
       render: (h, params) => {
         const detail = params.row
         return (this.storeUser.user.hasAuth(authority.payMgtQuery) ? <a on-click={() => {
-          this.$router.push({
+          this.goToPage({
             path: routerConfig.assetMgtLog.path,
             query: { orderNo: detail.orderNo }
           })
@@ -222,7 +222,7 @@ export default class Pay extends Base {
       render: (h, params) => {
         const detail = params.row
         return (this.storeUser.user.hasAuth(authority.payMgtQuery) ? <a on-click={() => {
-          this.$router.push({
+          this.goToPage({
             path: routerConfig.assetMgtLog.path,
             query: { outOrderNo: detail.outOrderNo }
           })
@@ -334,7 +334,7 @@ export default class Pay extends Base {
 
           on-query={(model) => {
             const { createdAt, ...q } = model.query
-            this.$router.push({
+            this.goToPage({
               path: this.$route.path,
               query: {
                 ...q,

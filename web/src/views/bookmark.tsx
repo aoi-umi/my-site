@@ -235,7 +235,7 @@ export default class Bookmark extends Base {
           }}
 
           on-query={(model: MyListModel) => {
-            this.$router.push({
+            this.goToPage({
               path: this.$route.path,
               query: {
                 ...model.query,

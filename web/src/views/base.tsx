@@ -112,7 +112,7 @@ export class Base extends MyBase {
   }
 
   protected toError(query: { code?: string; msg?: string }) {
-    this.$router.push({
+    this.goToPage({
       path: routerConfig.error.path,
       query
     })
