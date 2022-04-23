@@ -59,20 +59,20 @@ export class UserPoptip extends Vue<UserPoptipProp, Base> {
 
   $refs: { imgViewer: MyImgViewer };
 
-  created () {
+  created() {
     this.init(this.user)
   }
 
-  private init (user: User) {
+  private init(user: User) {
     this.avatarUrl = (user && user.avatarUrl) || ''
   }
 
   @Watch('user')
-  watchUser (newVal, oldVal) {
+  watchUser(newVal, oldVal) {
     this.init(newVal)
   }
 
-  signOut () {
+  signOut() {
     const token = LocalStore.getItem(dev.cacheKey.testUser)
     if (token) {
       testApi.userSignOut()
@@ -90,7 +90,7 @@ export class UserPoptip extends Vue<UserPoptipProp, Base> {
   }
   loading = false;
   loadFailMsg = '';
-  getUserDetail () {
+  getUserDetail() {
     if (!this.self && (!this.userDetail._id || this.userDetail._id != this.user._id)) {
       this.operateHandler('', async () => {
         this.loadFailMsg = ''
@@ -104,7 +104,7 @@ export class UserPoptip extends Vue<UserPoptipProp, Base> {
     }
   }
 
-  render () {
+  render() {
     const loadFail = !!this.loadFailMsg
     const notSelf = this.user._id !== this.storeUser.user._id
     return (
@@ -118,8 +118,8 @@ export class UserPoptip extends Vue<UserPoptipProp, Base> {
           }}
         >
           {this.$slots.default}
-          {this.self
-            ? <div slot='content'>
+          {this.self ?
+            <div slot='content' class={this.getStyleName('content')}>
               <p class='ivu-select-item' on-click={() => {
                 this.$router.push(routerConfig.userInfo.path)
               }}>主页</p>

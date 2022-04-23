@@ -3,7 +3,7 @@ import { Watch } from 'vue-property-decorator'
 import { Component, Vue, Prop } from '@/components/decorator'
 import { routerConfig, MyRouteConfig } from '@/router'
 import {
-  Icon, Content, Layout, Header, Button, Modal, BackTop, Spin
+  Icon, Content, Layout, Header, Button, Modal, BackTop, Spin, Input
 } from '@/components/iview'
 import { MyLoad } from '@/components/my-load'
 import { LocalStore } from '@/store'
@@ -189,9 +189,15 @@ export default class App extends Base {
 
   protected render() {
     return (
-      <MyLoad loadFn={() => { }} renderFn={this.renderMain} afterLoad={() => {
-        this.initAfterRender()
-      }} />
+      <div>
+        <div v-show={false}>
+          <Input placeholder='应对自动填充' />
+          <Input type='password' />
+        </div>
+        <MyLoad loadFn={() => { }} renderFn={this.renderMain} afterLoad={() => {
+          this.initAfterRender()
+        }} />
+      </div>
     )
   }
   protected renderMain() {

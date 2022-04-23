@@ -158,9 +158,9 @@ export class Comment extends Vue<CommentProp, Base> {
     )
   }
 
-  renderResult(rs: ResultType) {
+  renderResult(rs: ResultType, reply?: boolean) {
     return rs.data.map((ele) => {
-      return this.renderComment(ele)
+      return this.renderComment(ele, reply)
     })
   }
 
@@ -225,7 +225,7 @@ export class Comment extends Vue<CommentProp, Base> {
             showSizer={false}
             // infiniteScroll
 
-            customRenderFn={this.renderResult}
+            customRenderFn={(ele) => this.renderResult(ele, true)}
 
             on-query={(t, noClear) => {
               this.replyQuery(convert.Test.listModelToQuery(t), noClear)
@@ -388,9 +388,10 @@ export class CommentDetail extends Vue<CommentDetailProp, Base> {
               <span class={this.getStyleName('owner-title')}>《{ele.owner.title}》</span>
               <span>{ele.quote || ele.replyList?.length > 0 ? '回复了' : '评论了'}</span>
             </div>)}
-          <span class={this.getStyleName('floor')}>
-            #{ele.floor}
-          </span>
+          {!reply &&
+            <span class={this.getStyleName('floor')}>
+              #{ele.mainFloor}
+            </span>}
           <div class={this.getStyleName('content')}>
             {ele.quoteUser &&
               <div><span>回复</span>

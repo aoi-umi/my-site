@@ -2,6 +2,7 @@ import Vue from 'vue'
 import copy from 'copy-to-clipboard'
 import AsyncValidator, { ValidateOption } from 'async-validator'
 import SparkMD5 from 'spark-md5'
+import * as qs from 'qs';
 
 import { UtilsTsx } from './tsx'
 
@@ -304,6 +305,15 @@ const _Utils = {
     result.hash = hash;
     console.info('computed hash', hash);
     return result
+  },
+
+  getUrl(obj: {
+    path: string,
+    query: any
+  }) {
+    let queryStr = qs.stringify(obj.query)
+    let url = obj.path + (queryStr ? `?${queryStr}` : queryStr)
+    return url
   }
 }
 

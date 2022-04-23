@@ -35,9 +35,9 @@ export default class Live extends Base {
   }
 
   async loadDetail() {
-    let data = await testApi.liveInfo();
-    this.liveInfo = data;
-    this.liveUrl = data.pullUrl
+    // let data = await testApi.liveInfo();
+    this.liveInfo = {} as any;
+    this.liveUrl = 'http://192.168.0.103:8888/live?port=1935&app=live&stream=test'
   }
 
   renderDetail() {

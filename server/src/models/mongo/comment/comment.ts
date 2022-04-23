@@ -70,6 +70,11 @@ export class Comment extends Base implements IVoteOwner {
     })
     floor: number;
 
+    @prop({
+      required: true
+    })
+    mainFloor: number;
+
     @prop()
     ip: string;
 

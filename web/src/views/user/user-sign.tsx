@@ -1,5 +1,4 @@
 import { Watch } from 'vue-property-decorator'
-import * as qs from 'qs';
 
 import { Component, Vue, Prop } from '@/components/decorator'
 import * as helpers from '@/helpers'
@@ -131,10 +130,6 @@ export class SignIn extends Vue<SignInProp, Base> {
     const detail = this.innerDetail
     return (
       <div class='dialog-view' on-keypress={this.handlePress}>
-        <div v-show={false}>
-          <Input placeholder='应对自动填充' />
-          <Input type='password' />
-        </div>
         {!this.noTitle && <h3>登录</h3>}
         <br />
         <Form class='dialog-content' label-position='top' ref='formVaild' props={{ model: detail }} rules={this.rules}>
@@ -228,7 +223,10 @@ export class ThirdPartyLogin extends Vue<ThirdPartyLoginProp, Base> {
             if (this.bind) {
               query.state += '_bind'
             }
-            window.open(`https://github.com/login/oauth/authorize?` + `${qs.stringify(query)}`, '_self')
+            window.open(this.$utils.getUrl({
+              path: 'https://github.com/login/oauth/authorize',
+              query
+            }), '_self')
           },
         }].map(ele => {
           const noBind = this.bind && !this.user.oauth[ele.oauthName]

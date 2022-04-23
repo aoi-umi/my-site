@@ -25,6 +25,7 @@ type CommentResetOption = {
 export class CommentMapper {
   static async create(data: ValidSchema.CommentSubmit, type, user: LoginUser) {
     let lastComment = await CommentModel.findOne({ ownerId: data.ownerId }).sort({ floor: -1 });
+    let lastMainComment = await CommentModel.findOne({ ownerId: data.ownerId }).sort({ mainFloor: -1 });
     let quote: CommentInstanceType;
     if (data.quoteId)
       quote = await CommentModel.findById(data.quoteId);
@@ -35,7 +36,8 @@ export class CommentMapper {
       comment: data.comment,
       topId: data.topId,
       type: type,
-      floor: lastComment ? lastComment.floor + 1 : 1
+      floor: (lastComment?.floor || 0) + 1,
+      mainFloor: (!data.quoteId ? lastMainComment?.mainFloor || 0 : -1) + 1
     };
     if (quote) {
       obj.quoteId = quote._id;
