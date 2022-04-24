@@ -23,6 +23,7 @@ import { MyLoad } from '@/components/my-load'
 
 import { UserAvatar } from '../comps/user-avatar'
 import { Base } from '../base'
+import { OperateDataType, OperateButton } from '../comps/operate-button'
 export class ContentDetailType<T extends ContentDataType = ContentDataType> {
   detail: T
   log?: any[]
@@ -73,7 +74,7 @@ export type ContentDataType = {
   _checked?: boolean
 }
 
-type OpType = { text: string; type?: string; fn?: () => any; to?: string }
+type OpType = OperateDataType
 
 export interface IContentMgtBase {
   contentMgtType: string
@@ -243,31 +244,17 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
         ),
       })
     }
-    return operate
-  }
 
-  renderOpButton(ele: OpType) {
-    return ele.to ? (
-      <router-link to={ele.to}>
-        <Button
-          type={ele.type as any}
-          on-click={() => {
-            if (ele.fn) ele.fn()
-          }}
-        >
-          {ele.text}
-        </Button>
-      </router-link>
-    ) : (
-      <Button
-        type={ele.type as any}
-        on-click={() => {
-          if (ele.fn) ele.fn()
-        }}
-      >
-        {ele.text}
-      </Button>
-    )
+    const defaultData = {
+      tag: 'i-button',
+    }
+    operate = operate.map((ele) => {
+      return {
+        ...defaultData,
+        ...ele,
+      }
+    })
+    return operate
   }
 
   protected renderListOpBox(
@@ -277,7 +264,7 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
     return (
       <div class={['content-mgt-item-op-box', 'button-group-normal']}>
         {this.getOperate(detail, opt).map((ele) => {
-          return this.renderOpButton(ele)
+          return <OperateButton data={ele}></OperateButton>
         })}
       </div>
     )
@@ -292,7 +279,7 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
           <Affix offset-bottom={40}>
             <Card class="button-group-normal">
               {operate.map((ele) => {
-                return this.renderOpButton(ele)
+                return <OperateButton data={ele}></OperateButton>
               })}
             </Card>
           </Affix>

@@ -4,8 +4,10 @@ import { Component, Vue, Prop } from '@/components/decorator'
 import { testApi } from '@/api'
 import { convert } from '@/helpers'
 import { MyList, Const as MyListConst, MyListModel } from '@/components/my-list'
-import { Base } from '../base'
 import { routerConfig } from '@/router'
+
+import { Base } from '../base'
+import { OperateButton, OperateDataType } from '../comps/operate-button'
 
 @Component
 export default class CompMgt extends Base {
@@ -52,6 +54,31 @@ export default class CompMgt extends Base {
     })
   }
 
+  private getOp(detail) {
+    let operate: OperateDataType[] = []
+    operate.push({
+      text: '编辑',
+      to: this.$utils.getUrl({
+        path: routerConfig.compMgtDetail.path,
+        query: { _id: detail._id },
+      }),
+    })
+    operate.push({
+      text: '预览',
+      to: this.$utils.getUrl({
+        path: routerConfig.compMgtPreview.path,
+        query: { _id: detail._id },
+      }),
+    })
+    operate.push({
+      text: '删除',
+      fn: () => {
+        this.delHandler([detail._id])
+      },
+    })
+    return operate
+  }
+
   protected render() {
     return (
       <div>
@@ -90,29 +117,9 @@ export default class CompMgt extends Base {
               render: (h, params) => {
                 return (
                   <div class={MyListConst.clsActBox}>
-                    <a
-                      on-click={() => {
-                        let row = params.row
-                        this.toDetail({ _id: row._id })
-                      }}
-                    >
-                      编辑
-                    </a>
-                    <a
-                      on-click={() => {
-                        let row = params.row
-                        this.toPreview({ _id: row._id })
-                      }}
-                    >
-                      预览
-                    </a>
-                    <a
-                      on-click={() => {
-                        this.delHandler([params.row._id])
-                      }}
-                    >
-                      删除
-                    </a>
+                    {this.getOp(params.row).map((ele) => (
+                      <OperateButton data={ele}></OperateButton>
+                    ))}
                   </div>
                 )
               },

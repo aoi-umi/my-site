@@ -7,13 +7,13 @@ export type AuthType = AuthorityType | AuthorityType[] | AuthorityType[][];
 
 type AuthorityType = string | AuthConfigType;
 type UserType = {
-    authority: { [key: string]: boolean }
+  authority: { [key: string]: boolean }
 };
 export class Auth {
   isAccessable(user: UserType, auth: AuthType, opt?: IsExistsAuthorityOption) {
     let result = !auth
-            || (Array.isArray(auth) && !auth.length)
-            || Auth.includes(user, auth, opt);
+      || (Array.isArray(auth) && !auth.length)
+      || Auth.includes(user, auth, opt);
     return result;
   }
 
@@ -69,7 +69,7 @@ export class Auth {
 }
 
 type IsExistsAuthorityOption = {
-    //output
-    notExistsAuthority?: string;
-    throwError?: boolean;
+  //output
+  notExistsAuthority?: string;
+  throwError?: boolean;
 }

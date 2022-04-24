@@ -4,28 +4,12 @@ import { Component, Vue, Prop, Confirm } from '@/components/decorator'
 
 import { testApi } from '@/api'
 import { convert } from '@/helpers'
-import {
-  Tag,
-  Modal,
-  Input,
-  Row,
-  Col,
-  Form,
-  FormItem,
-  Button,
-  Checkbox,
-} from '@/components/iview'
-import {
-  MyList,
-  Const as MyListConst,
-  OnSortChangeOptions,
-  MyListModel,
-} from '@/components/my-list'
+import { Checkbox } from '@/components/iview'
+import { MyList, Const as MyListConst, MyListModel } from '@/components/my-list'
 import { MyUpload, FileDataType } from '@/components/my-upload'
 import { MyImgViewer } from '@/components/my-img-viewer'
 
 import { Base } from './base'
-import { UserAvatar } from './comps/user-avatar'
 
 @Component
 export default class FileMgt extends Base {

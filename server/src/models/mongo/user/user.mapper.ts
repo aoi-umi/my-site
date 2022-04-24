@@ -289,14 +289,13 @@ export class UserMapper {
   }
 
   static async login(data: ValidSchema.UserSignIn, opt: {
-    disabled: boolean,
     resetOpt: UserResetOption,
     user: UserInstanceType,
     token,
     oldData?: any,
     noPwd?: boolean,
   }) {
-    let { token, disabled, user } = opt;
+    let { token, user } = opt;
     let { checkToken } = UserMapper.createToken(data, user);
     if (!opt.noPwd) {
       if (token !== checkToken)
@@ -305,12 +304,10 @@ export class UserMapper {
     let userAuth = {
       [config.auth.login.code]: 1
     };
-    if (!disabled) {
-      let userDetail = await UserMapper.detail(user._id, opt.resetOpt);
+    let userDetail = await UserMapper.detail(user._id, opt.resetOpt);
 
-      for (let key in userDetail.auth) {
-        userAuth[key] = 1;
-      }
+    for (let key in userDetail.auth) {
+      userAuth[key] = 1;
     }
 
     let lastLoginAt = (opt.oldData?.lastLoginAt) || new Date();

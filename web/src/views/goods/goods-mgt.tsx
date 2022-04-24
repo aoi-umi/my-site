@@ -9,6 +9,7 @@ import { MyList, Const as MyListConst } from '@/components/my-list'
 import { TagType, MyTag } from '@/components/my-tag'
 
 import { Base } from '../base'
+import { OperateDataType, OperateButton } from '../comps/operate-button'
 
 @Component
 export default class GoodsMgt extends Base {
@@ -71,7 +72,7 @@ export default class GoodsMgt extends Base {
   }
 
   private getOp(detail) {
-    let operate = []
+    let operate: OperateDataType[] = []
     operate.push({
       text: '预览',
       to: this.$utils.getUrl({
@@ -82,7 +83,7 @@ export default class GoodsMgt extends Base {
     if (detail.canUpdate) {
       operate.push({
         text: '编辑',
-        to: this.$utils.getUrl(this.getEditUrlObj(detail)),
+        to: this.$utils.getUrl(this.getEditUrlObj({ _id: detail._id })),
       })
     }
     if (detail.canDel) {
@@ -149,18 +150,7 @@ export default class GoodsMgt extends Base {
                 return (
                   <div class={MyListConst.clsActBox}>
                     {this.getOp(detail).map((ele) => {
-                      // TODO 封装组件
-                      return ele.to ? (
-                        <router-link to={ele.to}>{ele.text}</router-link>
-                      ) : (
-                        <a
-                          on-click={() => {
-                            ele.fn && ele.fn()
-                          }}
-                        >
-                          {ele.text}
-                        </a>
-                      )
+                      return <OperateButton data={ele}></OperateButton>
                     })}
                   </div>
                 )

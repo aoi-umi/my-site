@@ -5,6 +5,7 @@ import { objectIdTransform } from '@/valid-schema/class-valid/util';
 
 export class LoginUser {
     isLogin: boolean;
+    isDisabled: boolean;
 
     @Transform(objectIdTransform)
     _id: Types.ObjectId;
@@ -13,7 +14,7 @@ export class LoginUser {
     avatar?: string;
     avatarUrl?: string;
 
-    authority: { [key: string]: boolean };
+    authority: { [key: string]: any };
     key?: string;
     loginData?: any;
 

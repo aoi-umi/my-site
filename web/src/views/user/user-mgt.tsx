@@ -22,6 +22,7 @@ import { AuthorityTag } from '../comps/authority-tag'
 import { RoleTag } from '../comps/role-tag'
 import { UserAvatar } from '../comps/user-avatar'
 import { Base } from '../base'
+import { OperateButton, OperateDataType } from '../comps/operate-button'
 
 export type DetailDataType = {
   _id?: string
@@ -233,6 +234,30 @@ export default class UserMgt extends Base {
     this.$refs.list.query(query)
   }
 
+  private getOp(detail) {
+    const operate: OperateDataType[] = []
+    if (this.storeUser.user.hasAuth(authority.userMgtEdit) && detail.canEdit) {
+      operate.push({
+        text: '编辑',
+        fn: () => {
+          this.showDetail(myEnum.userEditType.修改, detail)
+        },
+      })
+    }
+    if (
+      this.storeUser.user.hasAuth(authority.userMgtDisable) &&
+      detail.canEdit
+    ) {
+      operate.push({
+        text: '封禁',
+        fn: () => {
+          this.showDetail(myEnum.userEditType.封禁, detail)
+        },
+      })
+    }
+    return operate
+  }
+
   private getColumns() {
     const columns = [
       {
@@ -296,26 +321,9 @@ export default class UserMgt extends Base {
           const detail = params.row
           return (
             <div class={MyListConst.clsActBox}>
-              {this.storeUser.user.hasAuth(authority.userMgtEdit) &&
-                detail.canEdit && (
-                  <a
-                    on-click={() => {
-                      this.showDetail(myEnum.userEditType.修改, detail)
-                    }}
-                  >
-                    编辑
-                  </a>
-                )}
-              {this.storeUser.user.hasAuth(authority.userMgtDisable) &&
-                detail.canEdit && (
-                  <a
-                    on-click={() => {
-                      this.showDetail(myEnum.userEditType.封禁, detail)
-                    }}
-                  >
-                    禁用
-                  </a>
-                )}
+              {this.getOp(detail).map((ele) => (
+                <OperateButton data={ele}></OperateButton>
+              ))}
             </div>
           )
         },

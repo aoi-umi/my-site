@@ -334,6 +334,69 @@ export class ContentListItem extends Vue<ContentListItemProp, Base> {
     })
   }
 
+  renderItem(ele) {
+    return (
+      <div>
+        <Row>
+          <Col class={this.getStyleName('top-col')} span={24}>
+            <h3
+              class={[...this.getStyleName('list-title'), 'flex-stretch']}
+              title={ele.title}
+            >
+              {ele.title}
+            </h3>
+            {this.mgt && <MyTag value={ele.statusText} />}
+            {this.selectable && (
+              <Checkbox
+                value={ele._checked}
+                disabled={ele._disabled}
+                on-on-change={(checked) => {
+                  this.$emit('selected-change', checked)
+                }}
+              />
+            )}
+          </Col>
+          <Col class={this.getStyleName('user-col')} span={24}>
+            <UserAvatar user={ele.user} />
+            {ele.publishAt && (
+              <span class="not-important" style={{ marginLeft: '5px' }}>
+                发布于 <Time time={new Date(ele.publishAt)} />
+              </span>
+            )}
+          </Col>
+        </Row>
+        <Row class={this.getStyleName('content-row')}>
+          <Col class={this.getStyleName('cover-col')} span={24}>
+            {ele.coverUrl && (
+              <img
+                class={[...this.getStyleName('cover'), 'my-upload-item cover']}
+                v-lazy={ele.coverUrl}
+              />
+            )}
+            {
+              <p class={this.getStyleName('profile')}>
+                {ele.profile || this.cfg.profile}
+              </p>
+            }
+          </Col>
+          {this.mgt && (
+            <p class="not-important">
+              创建于 <Time time={new Date(ele.createdAt)} />
+            </p>
+          )}
+          {this.mgt && (
+            <ContentOperate
+              data={ele}
+              contentType={this.contentType}
+              voteType={this.cfg.voteType}
+              mgt
+            />
+          )}
+        </Row>
+      </div>
+    )
+  }
+
   render() {
     const ele = this.value
     if (this.min) {
@@ -363,72 +426,14 @@ export class ContentListItem extends Vue<ContentListItemProp, Base> {
     return (
       <div>
         <Card style={{ marginTop: '5px', cursor: this.mgt ? '' : 'pointer' }}>
-          <div
-            on-click={() => {
-              this.toDetail(ele)
-            }}
-          >
-            <router-link to={this.$utils.getUrl(this.getDetailUrlObj(ele))}>
-              <Row>
-                <Col class={this.getStyleName('top-col')} span={24}>
-                  <h3
-                    class={[...this.getStyleName('list-title'), 'flex-stretch']}
-                    title={ele.title}
-                  >
-                    {ele.title}
-                  </h3>
-                  {this.mgt && <MyTag value={ele.statusText} />}
-                  {this.selectable && (
-                    <Checkbox
-                      value={ele._checked}
-                      disabled={ele._disabled}
-                      on-on-change={(checked) => {
-                        this.$emit('selected-change', checked)
-                      }}
-                    />
-                  )}
-                </Col>
-                <Col class={this.getStyleName('user-col')} span={24}>
-                  <UserAvatar user={ele.user} />
-                  {ele.publishAt && (
-                    <span class="not-important" style={{ marginLeft: '5px' }}>
-                      发布于 <Time time={new Date(ele.publishAt)} />
-                    </span>
-                  )}
-                </Col>
-              </Row>
-              <Row class={this.getStyleName('content-row')}>
-                <Col class={this.getStyleName('cover-col')} span={24}>
-                  {ele.coverUrl && (
-                    <img
-                      class={[
-                        ...this.getStyleName('cover'),
-                        'my-upload-item cover',
-                      ]}
-                      v-lazy={ele.coverUrl}
-                    />
-                  )}
-                  {
-                    <p class={this.getStyleName('profile')}>
-                      {ele.profile || this.cfg.profile}
-                    </p>
-                  }
-                </Col>
-                {this.mgt && (
-                  <p class="not-important">
-                    创建于 <Time time={new Date(ele.createdAt)} />
-                  </p>
-                )}
-                {this.mgt && (
-                  <ContentOperate
-                    data={ele}
-                    contentType={this.contentType}
-                    voteType={this.cfg.voteType}
-                    mgt
-                  />
-                )}
-              </Row>
-            </router-link>
+          <div>
+            {this.mgt ? (
+              this.renderItem(ele)
+            ) : (
+              <router-link to={this.$utils.getUrl(this.getDetailUrlObj(ele))}>
+                {this.renderItem(ele)}
+              </router-link>
+            )}
             <Divider size="small" />
           </div>
           <div style="display:flex;">

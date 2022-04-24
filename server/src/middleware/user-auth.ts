@@ -8,6 +8,8 @@ import { auth, cache } from '@/main';
 import { logger } from '@/helpers';
 import { UserMapper } from '@/models/mongo/user';
 import { LoginUser } from '@/models/login-user';
+import * as common from '@/_system/common';
+
 
 export class UserAuthMid {
   static async getUser(token, opt?: {
@@ -34,14 +36,12 @@ export class UserAuthMid {
         user.isLogin = true;
 
         let { disableResult, user: dbUser } = await UserMapper.accountCheck(user.account, user);
-        if (disableResult.disabled) {
-          user.authority = {};
-        }
+        user.isDisabled = disableResult.disabled;
+
         //自动重新登录
         if (opt.autoLogin && user.cacheAt && user.cacheAt.getTime() < new Date().getTime() - 1000 * config.dev.autoLoginTime) {
           try {
             let cacheUser = user = await UserMapper.login(user.loginData, {
-              disabled: disableResult.disabled,
               resetOpt: opt.resetOpt,
               token,
               user: dbUser,
@@ -58,7 +58,12 @@ export class UserAuthMid {
     return user;
   }
 
-  static normal(authData?: AuthType) {
+  static normal(authData?: AuthType, opt?: {
+    allowIfDisabled?: boolean
+  }) {
+    opt = {
+      ...opt
+    };
     return async (ctx: Context & RouterContext, next) => {
       let tokenKey = config.dev.cache.user.prefix;
       let cookieToken = ctx.cookies.get(tokenKey);
@@ -72,6 +77,10 @@ export class UserAuthMid {
       ctx.myData.user = user;
       if (!cookieToken) {
         ctx.cookies.set(tokenKey, token);
+      }
+      if (user.isDisabled) {
+        if (!opt.allowIfDisabled && ctx.method !== 'GET')
+          throw common.error('账号已被禁用');
       }
 
       //url权限认证

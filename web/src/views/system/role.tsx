@@ -10,17 +10,17 @@ import {
   Form,
   FormItem,
   Button,
-  Checkbox,
   Switch,
 } from '@/components/iview'
 import { MyList, Const as MyListConst } from '@/components/my-list'
-import { MyConfirm } from '@/components/my-confirm'
 import { MyTransfer } from '@/components/my-transfer'
 import { TagType, MyTag } from '@/components/my-tag'
 
 import { AuthorityTag, AuthorityDetail } from '../comps/authority-tag'
-import { AuthorityTransfer } from './authority'
 import { Base } from '../base'
+import { OperateButton, OperateDataType } from '../comps/operate-button'
+
+import { AuthorityTransfer } from './authority'
 
 export type DetailDataType = {
   _id?: string
@@ -215,6 +215,38 @@ export default class Role extends Base {
     return list
   }
 
+  private getOp(detail) {
+    let operate: OperateDataType[] = []
+    if (this.storeUser.user.hasAuth(authority.roleSave)) {
+      operate = [
+        ...operate,
+        {
+          text: detail.status == myEnum.roleStatus.启用 ? '禁用' : '启用',
+          fn: () => {
+            this.updateStatus(detail)
+          },
+        },
+        {
+          text: '编辑',
+          fn: () => {
+            this.detail = detail
+            this.detailShow = true
+          },
+        },
+      ]
+    }
+    if (this.storeUser.user.hasAuth(authority.roleDel)) {
+      operate.push({
+        text: '删除',
+        fn: () => {
+          this.delIds = [detail._id]
+          this.delConfirm()
+        },
+      })
+    }
+    return operate
+  }
+
   private getColumns() {
     const columns = [
       {
@@ -263,33 +295,9 @@ export default class Role extends Base {
           const detail = params.row
           return (
             <div class={MyListConst.clsActBox}>
-              {this.storeUser.user.hasAuth(authority.roleSave) && [
-                <a
-                  on-click={() => {
-                    this.updateStatus(detail)
-                  }}
-                >
-                  {detail.status == myEnum.roleStatus.启用 ? '禁用' : '启用'}
-                </a>,
-                <a
-                  on-click={() => {
-                    this.detail = detail
-                    this.detailShow = true
-                  }}
-                >
-                  编辑
-                </a>,
-              ]}
-              {this.storeUser.user.hasAuth(authority.roleDel) && (
-                <a
-                  on-click={() => {
-                    this.delIds = [detail._id]
-                    this.delConfirm()
-                  }}
-                >
-                  删除
-                </a>
-              )}
+              {this.getOp(detail).map((ele) => (
+                <OperateButton data={ele}></OperateButton>
+              ))}
             </div>
           )
         },

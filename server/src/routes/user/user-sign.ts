@@ -103,13 +103,12 @@ let signInFn = async (data: ValidSchema.UserSignIn, opt: {
 }) => {
   let { myData } = opt;
   let token = myData.user.key;
-  let { user, disableResult } = await UserMapper.accountCheck(data.account);
+  let { user } = await UserMapper.accountCheck(data.account);
 
   let returnUser = await UserMapper.login(data, {
     resetOpt: { imgHost: myData.imgHost },
     token,
     user,
-    disabled: disableResult.disabled,
     noPwd: opt.noPwd
   });
   let userInfoCfg = { ...config.dev.cache.user, key: returnUser.key };
