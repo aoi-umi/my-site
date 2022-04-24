@@ -5,21 +5,21 @@
     "source.fixAll": false,
     "source.fixAll.eslint": true
   },
-  "editor.detectIndentation": false,
+  // "editor.detectIndentation": false,
 
-  "eslint.codeActionsOnSave.mode": "all",
-  "eslint.options": {
-    "extensions": [".tsx", ".ts"]
-  },
-  "eslint.validate": ["javascript", "typescript", "typescriptreact"],
-  "editor.tabSize": 2,
-  "files.exclude": {
-    "**/.git": true,
-    "**/.svn": true,
-    "**/.hg": true,
-    "**/CVS": true,
-    "**/.DS_Store": true,
-    "dist": true,
-    // "node_modules": true
-  }
+  // "eslint.codeActionsOnSave.mode": "all",
+  // "eslint.options": {
+  //   "extensions": [".tsx", ".ts"]
+  // },
+  // "eslint.validate": ["javascript", "typescript", "typescriptreact"],
+  // "editor.tabSize": 2,
+  // "files.exclude": {
+  //   "**/.git": true,
+  //   "**/.svn": true,
+  //   "**/.hg": true,
+  //   "**/CVS": true,
+  //   "**/.DS_Store": true,
+  //   "dist": true,
+  //   // "node_modules": true
+  // }
 }

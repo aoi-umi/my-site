@@ -1,4 +1,3 @@
-
 import { Component } from '@/components/decorator'
 import { testApi } from '@/api'
 import { Input } from '@/components/iview'
@@ -14,9 +13,9 @@ import { convert } from '@/helpers'
 @Component
 export class FavouriteList extends Base {
   $refs: {
-    list: MyList<any>,
-  };
-  anyKey = '';
+    list: MyList<any>
+  }
+  anyKey = ''
   query() {
     this.$refs.list.handleQuery({ resetPage: true })
   }
@@ -24,7 +23,7 @@ export class FavouriteList extends Base {
   private async queryData(opt) {
     opt = {
       ...opt,
-      anyKey: this.anyKey
+      anyKey: this.anyKey,
     }
     await this.$refs.list.query(opt)
   }
@@ -32,22 +31,24 @@ export class FavouriteList extends Base {
   render() {
     return (
       <div>
-        <Input v-model={this.anyKey} search on-on-search={() => {
-          this.query()
-        }} />
+        <Input
+          v-model={this.anyKey}
+          search
+          on-on-search={() => {
+            this.query()
+          }}
+        />
         <MyList
-          ref='list'
-          type='custom'
+          ref="list"
+          type="custom"
           hideSearchBox
           on-query={(t) => {
             this.queryData(convert.Test.listModelToQuery(t))
           }}
-
           queryFn={async (data) => {
             const rs = await testApi.favouriteQuery(data)
             return rs
           }}
-
           customRenderFn={(rs) => {
             return this.renderFn(rs)
           }}
@@ -57,9 +58,8 @@ export class FavouriteList extends Base {
   }
 
   private renderFn(rs: ResultType) {
-    return rs.data.map(ele => {
+    return rs.data.map((ele) => {
       return <ContentMixItem value={ele} />
     })
   }
 }
-

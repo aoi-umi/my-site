@@ -1,7 +1,11 @@
 import { Watch } from 'vue-property-decorator'
 
 import { Prop, Component, Vue } from '@/components/decorator'
-import { DynamicCompConfigType, DynamicComp, DynamicCompProp } from '../my-dynamic-comp'
+import {
+  DynamicCompConfigType,
+  DynamicComp,
+  DynamicCompProp,
+} from '../my-dynamic-comp'
 import { Row, Col } from '../iview'
 import { MyBase } from '../my-base'
 import { Utils } from '../utils'
@@ -12,13 +16,13 @@ export type MyDetailDynamicCompConfigType = DynamicCompConfigType & {
 }
 class MyDetailProp {
   @Prop({})
-  itemConfigs: MyDetailDynamicCompConfigType[];
+  itemConfigs: MyDetailDynamicCompConfigType[]
 
   @Prop()
   dynamicCompOptions: Omit<DynamicCompProp, 'config'>
 
   @Prop({})
-  buttonConfigs?: MyButtonsModel[];
+  buttonConfigs?: MyButtonsModel[]
 
   @Prop()
   colConfig?: Partial<iView.Col>
@@ -26,22 +30,22 @@ class MyDetailProp {
 
 @Component({
   extends: MyBase,
-  props: MyDetailProp
+  props: MyDetailProp,
 })
 export class MyDetail extends Vue<MyDetailProp, MyBase> {
   stylePrefix = 'my-detail-'
 
-  valid () {
+  valid() {
     let rules = Utils.getValidRulesByDynCfg(this.itemConfigs)
     return Utils.valid(this.dynamicCompOptions.data, rules)
   }
 
-  private getColConfig (ele: MyDetailDynamicCompConfigType) {
+  private getColConfig(ele: MyDetailDynamicCompConfigType) {
     let obj = this.colConfig || {
       xs: 24,
       md: 12,
       lg: 6,
-      xl: 4
+      xl: 4,
     }
     if (ele.size && ele.size > 1) {
       for (let key in obj) {
@@ -53,7 +57,7 @@ export class MyDetail extends Vue<MyDetailProp, MyBase> {
     return obj
   }
 
-  protected render () {
+  protected render() {
     return (
       <div>
         {this.renderBtns()}
@@ -62,23 +66,24 @@ export class MyDetail extends Vue<MyDetailProp, MyBase> {
     )
   }
 
-  protected renderBtns () {
+  protected renderBtns() {
     return (
       this.buttonConfigs?.length > 0 && <MyButtons value={this.buttonConfigs} />
     )
   }
 
-  protected renderItem () {
+  protected renderItem() {
     return (
       <Row class={this.getStyleName('item-main')}>
         {this.itemConfigs.map((ele, idx) => {
           let colConfig = this.getColConfig(ele)
           return (
             <Col props={colConfig}>
-              <DynamicComp class={this.getStyleName('item')}
+              <DynamicComp
+                class={this.getStyleName('item')}
                 config={ele}
                 data={this.dynamicCompOptions.data}
-                readonlyType='disabled'
+                readonlyType="disabled"
                 showText
                 props={this.dynamicCompOptions}
               />

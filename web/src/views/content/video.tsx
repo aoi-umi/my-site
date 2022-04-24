@@ -14,14 +14,14 @@ import { ContentListItem } from './content'
 
 import './video.less'
 
-class VideoProp extends ListBaseProp { }
+class VideoProp extends ListBaseProp {}
 @Component({
-  extends: ListBase
+  extends: ListBase,
 })
 export default class Video extends Vue<VideoProp, ListBase> {
-  $refs: { list: MyList<any> };
+  $refs: { list: MyList<any> }
 
-  anyKey = '';
+  anyKey = ''
 
   query() {
     const list = this.$refs.list
@@ -44,74 +44,75 @@ export default class Video extends Vue<VideoProp, ListBase> {
   protected render() {
     return (
       <div>
-        <Input v-model={this.anyKey} search on-on-search={() => {
-          this.$refs.list.handleQuery({ resetPage: true })
-        }} />
+        <Input
+          v-model={this.anyKey}
+          search
+          on-on-search={() => {
+            this.$refs.list.handleQuery({ resetPage: true })
+          }}
+        />
         <MyList
-          ref='list'
+          ref="list"
           hideSearchBox
-
-          type='custom'
+          type="custom"
           customRenderFn={(rs) => {
             return (
               <Row gutter={5}>
-                {rs.data.map(ele => {
+                {rs.data.map((ele) => {
                   return (
                     <Col xl={4} lg={6} md={8} xs={12}>
                       <VideoListItem value={ele} min />
                     </Col>
                   )
                 })}
-              </Row>)
+              </Row>
+            )
           }}
-
           queryFn={async (data) => {
             const rs = await testApi.videoQuery({ ...data, ...this.queryOpt })
             return rs
           }}
-
           on-query={(model, noClear, list: MyList<any>) => {
             const q = {
               ...model.query,
               anyKey: this.anyKey,
-              ...convert.Test.listModelToQuery(model)
+              ...convert.Test.listModelToQuery(model),
             }
             if (!this.notQueryToRoute) {
               this.goToPage({
                 path: this.$route.path,
-                query: q
+                query: q,
               })
             } else {
               list.query(q)
             }
           }}
-        >
-        </MyList>
-      </div >
+        ></MyList>
+      </div>
     )
   }
 }
 
 class VideoListItemProp {
   @Prop({
-    required: true
+    required: true,
   })
-  value: DetailDataType;
+  value: DetailDataType
 
   @Prop({
-    default: false
+    default: false,
   })
-  selectable?: boolean;
+  selectable?: boolean
 
   @Prop()
-  mgt?: boolean;
+  mgt?: boolean
 
   @Prop()
-  min?: boolean;
+  min?: boolean
 }
 @Component({
   extends: Base,
-  props: VideoListItemProp
+  props: VideoListItemProp,
 })
 export class VideoListItem extends Vue<VideoListItemProp, Base> {
   render() {
@@ -131,4 +132,3 @@ export class VideoListItem extends Vue<VideoListItemProp, Base> {
     )
   }
 }
-

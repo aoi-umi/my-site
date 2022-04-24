@@ -6,9 +6,9 @@ export default {
     testUser: 'userCacheKey',
     remberSignIn: 'remberSignIn',
     signInUsers: 'signInUsers',
-    sessionId: 'sessionId'
+    sessionId: 'sessionId',
   },
   defaultProfile: defaultProfile,
   defaultArticleProfile: defaultProfile,
-  defaultVideoProfile: defaultProfile
+  defaultVideoProfile: defaultProfile,
 }

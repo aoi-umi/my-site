@@ -2,8 +2,8 @@ import Vue from 'vue'
 import copy from 'copy-to-clipboard'
 import AsyncValidator, { ValidateOption } from 'async-validator'
 import SparkMD5 from 'spark-md5'
-import * as qs from 'qs';
-import { RawLocation, Location } from 'vue-router';
+import * as qs from 'qs'
+import { RawLocation, Location } from 'vue-router'
 
 import { UtilsTsx } from './tsx'
 
@@ -11,14 +11,14 @@ export * from './utils'
 
 const vm = Vue.prototype
 export type Md5FileResult = {
-  hash: string,
-  chunkSize: number,
+  hash: string
+  chunkSize: number
   chunks: FileChunkResult[]
-};
+}
 
 type FileChunkResult = {
-  data: ArrayBuffer,
-  index: number,
+  data: ArrayBuffer
+  index: number
   start: number
   end: number
 }
@@ -27,7 +27,7 @@ const _Utils = {
   async promise<T>(fn: (resolve, reject) => void) {
     return new Promise<T>(async (res, rej) => {
       try {
-        fn(res, rej);
+        fn(res, rej)
       } catch (e) {
         rej(e)
       }
@@ -46,13 +46,19 @@ const _Utils = {
   },
 
   getStyleName(stylePrefix: string, ...args: string[]) {
-    return args.filter(ele => !!ele).map(ele => stylePrefix + ele)
+    return args.filter((ele) => !!ele).map((ele) => stylePrefix + ele)
   },
 
   dateParse(date) {
-    if (typeof date == 'string') { date = date.replace(/-/g, '/') }
-    if (!isNaN(date) && !isNaN(parseInt(date))) { date = parseInt(date) }
-    if (!(date instanceof Date)) { date = new Date(date) }
+    if (typeof date == 'string') {
+      date = date.replace(/-/g, '/')
+    }
+    if (!isNaN(date) && !isNaN(parseInt(date))) {
+      date = parseInt(date)
+    }
+    if (!(date instanceof Date)) {
+      date = new Date(date)
+    }
     return date
   },
 
@@ -75,8 +81,16 @@ const _Utils = {
     const hours = Math.floor(timestamp % 24)
     timestamp /= 24
     const days = Math.floor(timestamp)
-    let diff = (days ? days + ' ' : '') + ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2) + ':' + ('0' + seconds).slice(-2)
-    if (isMinus) { diff = '-' + diff }
+    let diff =
+      (days ? days + ' ' : '') +
+      ('0' + hours).slice(-2) +
+      ':' +
+      ('0' + minutes).slice(-2) +
+      ':' +
+      ('0' + seconds).slice(-2)
+    if (isMinus) {
+      diff = '-' + diff
+    }
     return diff
   },
 
@@ -88,8 +102,10 @@ const _Utils = {
     let scrollTop, clientHeight, scrollHeight
     if (!elm || elm instanceof Window || [document.body].includes(elm)) {
       scrollTop = document.documentElement.scrollTop || document.body.scrollTop
-      clientHeight = document.documentElement.clientHeight || document.body.clientHeight
-      scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight
+      clientHeight =
+        document.documentElement.clientHeight || document.body.clientHeight
+      scrollHeight =
+        document.documentElement.scrollHeight || document.body.scrollHeight
     } else {
       scrollTop = elm.scrollTop
       clientHeight = elm.clientHeight
@@ -99,7 +115,7 @@ const _Utils = {
     // console.log([document.documentElement.scrollTop, document.documentElement.clientHeight, document.documentElement.scrollHeight].join(','));
     // console.log([document.body.scrollTop, document.body.clientHeight, document.body.scrollHeight].join(','));
     // console.log([scrollTop, clientHeight, scrollHeight].join(','));
-    return (scrollTop + clientHeight >= scrollHeight)
+    return scrollTop + clientHeight >= scrollHeight
   },
 
   isWxClient() {
@@ -108,12 +124,12 @@ const _Utils = {
 
   // 转换为中划线
   stringToHyphen(str) {
-    str = str.replace(/^[A-Z]+/, function () {
-      return arguments[0].toLowerCase()
+    str = str.replace(/^[A-Z]+/, function (...args) {
+      return args[0].toLowerCase()
     })
     str = str.replace(/_/g, '-')
-    str = str.replace(/[A-Z]/g, function () {
-      return '-' + arguments[0].toLowerCase()
+    str = str.replace(/[A-Z]/g, function (...args) {
+      return '-' + args[0].toLowerCase()
     })
     str = str.toLowerCase()
     return str
@@ -121,7 +137,7 @@ const _Utils = {
 
   getObjByDynCfg(cfgs) {
     let obj: any = {}
-    cfgs?.forEach(ele => {
+    cfgs?.forEach((ele) => {
       obj[ele.name] = null
     })
     return obj
@@ -129,11 +145,11 @@ const _Utils = {
 
   getValidRulesByDynCfg(cfgs, moduleText?) {
     let obj = {}
-    cfgs?.forEach(ele => {
+    cfgs?.forEach((ele) => {
       if (ele.required) {
         obj[ele.name] = {
           required: true,
-          message: `${moduleText ? `[${moduleText}]` : ''}请填写[${ele.text}]`
+          message: `${moduleText ? `[${moduleText}]` : ''}请填写[${ele.text}]`,
         }
       }
     })
@@ -145,14 +161,14 @@ const _Utils = {
       firstFields: true,
       first: true,
       showMsg: true,
-      ...opt
+      ...opt,
     }
     let { showMsg, ...validOpt } = opt
     const validator = new AsyncValidator(rules)
     const result = {
       success: false,
       msg: '',
-      invalidFields: null
+      invalidFields: null,
     }
     return new Promise<typeof result>((resolve) => {
       validator.validate(data, validOpt, (errors, invalidFields) => {
@@ -180,11 +196,11 @@ const _Utils = {
     for (let v of list) {
       let g = groupFn(v)
       if (!g) continue
-      let o = obj.find(ele => ele.group.name === g.name)
+      let o = obj.find((ele) => ele.group.name === g.name)
       if (!o) {
         o = {
           group: g,
-          child: []
+          child: [],
         }
         obj.push(o)
       }
@@ -207,47 +223,51 @@ const _Utils = {
   },
 
   round(x: number, n?: number) {
-    let y = !n ? 1 : 10 ** n;
-    return Math.round(x * y) / y;
+    let y = !n ? 1 : 10 ** n
+    return Math.round(x * y) / y
   },
 
   md5(data: string | any) {
-    if (typeof data === 'string')
-      return SparkMD5.hash(data)
-    else
-      return SparkMD5.hashBinary(data)
+    if (typeof data === 'string') return SparkMD5.hash(data)
+    else return SparkMD5.hashBinary(data)
   },
 
-  async readFile(file: File, opt?: {
-    chunkSize?: number;
-    ranges?: { start?: number, end?: number }[]
-  }) {
+  async readFile(
+    file: File,
+    opt?: {
+      chunkSize?: number
+      ranges?: { start?: number; end?: number }[]
+    },
+  ) {
     return _Utils.promise<FileChunkResult[]>((resolve, reject) => {
       opt = { ...opt }
-      let blobSlice = File.prototype.slice || File.prototype['mozSlice'] || File.prototype['webkitSlice'];
+      let blobSlice =
+        File.prototype.slice ||
+        File.prototype['mozSlice'] ||
+        File.prototype['webkitSlice']
 
-      let fileReader = new FileReader();
-      let currRange = 0;
-      let ranges = opt.ranges;
+      let fileReader = new FileReader()
+      let currRange = 0
+      let ranges = opt.ranges
       if (ranges) {
-
       } else if (opt.chunkSize) {
-        ranges = [];
-        let chunkSize = opt.chunkSize;
-        let chunks = Math.ceil(file.size / chunkSize);
-        let currentChunk = 0;
+        ranges = []
+        let chunkSize = opt.chunkSize
+        let chunks = Math.ceil(file.size / chunkSize)
+        let currentChunk = 0
         while (currentChunk < chunks) {
-          let start = currentChunk * chunkSize;
-          let end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
+          let start = currentChunk * chunkSize
+          let end =
+            start + chunkSize >= file.size ? file.size : start + chunkSize
           ranges.push({
             start,
             end,
           })
-          currentChunk++;
+          currentChunk++
         }
       }
 
-      let buffs: FileChunkResult[] = [];
+      let buffs: FileChunkResult[] = []
       let range
       fileReader.onload = function (e) {
         let buff = e.target.result as any
@@ -255,56 +275,56 @@ const _Utils = {
           data: buff,
           start: range?.start,
           end: range?.end,
-          index: currRange
-        });
-        currRange++;
+          index: currRange,
+        })
+        currRange++
         if (!ranges || currRange >= ranges.length) {
-          resolve(buffs);
+          resolve(buffs)
         } else {
-          loadNext();
+          loadNext()
         }
       }
 
       fileReader.onerror = function (e) {
-        reject(e);
-      };
+        reject(e)
+      }
       function loadNext() {
-        let start, end;
+        let start, end
         range = ranges?.[currRange]
         if (range) {
           start = range.start
           end = range.end
         }
-        fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
+        fileReader.readAsArrayBuffer(blobSlice.call(file, start, end))
       }
 
-      loadNext();
+      loadNext()
     })
   },
 
   async md5File(file: File, chunkSize?: number) {
     // Read in chunks of 2MB
-    chunkSize = chunkSize ?? 1024 * 1024 * 2;
-    let spark = new SparkMD5.ArrayBuffer();
+    chunkSize = chunkSize ?? 1024 * 1024 * 2
+    let spark = new SparkMD5.ArrayBuffer()
 
     let fileChunks = await _Utils.readFile(file, { chunkSize })
 
     let result: Md5FileResult = {
       hash: '',
       chunkSize,
-      chunks: []
+      chunks: [],
     }
 
     for (let chunk of fileChunks) {
       result.chunks.push({
         ...chunk,
       })
-      spark.append(chunk.data);
+      spark.append(chunk.data)
     }
 
     let hash = spark.end()
-    result.hash = hash;
-    console.info('computed hash', hash);
+    result.hash = hash
+    console.info('computed hash', hash)
     return result
   },
 
@@ -315,15 +335,15 @@ const _Utils = {
   },
 
   openWindow(location: RawLocation, target?: string) {
-    let url = typeof location === 'string' ? location : Utils.getUrl(location);
+    let url = typeof location === 'string' ? location : Utils.getUrl(location)
     window.open(url)
-  }
+  },
 }
 
 export const Utils = { ..._Utils, ...UtilsTsx }
 
-type GroupDefaultType = { name: string, text?: string }
+type GroupDefaultType = { name: string; text?: string }
 export type MyGroupType<T, U extends GroupDefaultType = GroupDefaultType> = {
-  group: U,
+  group: U
   child: T[]
 }

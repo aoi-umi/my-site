@@ -27,16 +27,16 @@ marked.setOptions({
   sanitize: false,
   smartLists: true,
   smartypants: false,
-  xhtml: false
+  xhtml: false,
 })
 @Component
 export default class ArticleDetail extends Base {
-  $refs: { loadView: MyLoad, comment: Comment };
+  $refs: { loadView: MyLoad; comment: Comment }
 
   render() {
     return (
       <MyLoad
-        ref='loadView'
+        ref="loadView"
         loadFn={async () => {
           const query = this.$route.query
           const rs = await testApi.articleDetailQuery({ _id: query._id })
@@ -49,38 +49,50 @@ export default class ArticleDetail extends Base {
               <ArticleDetailMain data={detail} />
               <Affix offset-bottom={40}>
                 <Card>
-                  <ContentOperate data={detail} contentType={myEnum.contentType.文章} voteType={myEnum.voteType.文章} on-operate-click={(type) => {
-                    if (type === myEnum.contentOperateType.评论) {
-                      const el = this.$refs.comment.$el as HTMLElement
-                      window.scrollTo(0, el.offsetTop)
-                    }
-                  }} getShareUrl={() => {
-                    return location.href
-                  }} />
+                  <ContentOperate
+                    data={detail}
+                    contentType={myEnum.contentType.文章}
+                    voteType={myEnum.voteType.文章}
+                    on-operate-click={(type) => {
+                      if (type === myEnum.contentOperateType.评论) {
+                        const el = this.$refs.comment.$el as HTMLElement
+                        window.scrollTo(0, el.offsetTop)
+                      }
+                    }}
+                    getShareUrl={() => {
+                      return location.href
+                    }}
+                  />
                 </Card>
               </Affix>
-              <Divider size='small' />
-              <Comment ref='comment' ownerId={detail._id} ownUserId={detail.userId} type={myEnum.contentType.文章} />
+              <Divider size="small" />
+              <Comment
+                ref="comment"
+                ownerId={detail._id}
+                ownUserId={detail.userId}
+                type={myEnum.contentType.文章}
+              />
             </div>
           )
-        }} />
+        }}
+      />
     )
   }
 }
 
 class ArticleDetailMainProp {
   @Prop({
-    required: true
+    required: true,
   })
-  data: DetailDataType;
+  data: DetailDataType
 }
 @Component({
   extends: Base,
-  props: ArticleDetailMainProp
+  props: ArticleDetailMainProp,
 })
 export class ArticleDetailMain extends Vue<ArticleDetailMainProp, Base> {
-  stylePrefix = 'article-';
-  content = '';
+  stylePrefix = 'article-'
+  content = ''
   created() {
     const detail = this.data
     this.content = detail.content
@@ -93,10 +105,12 @@ export class ArticleDetailMain extends Vue<ArticleDetailMainProp, Base> {
     return (
       <div>
         <UserAvatar user={detail.user} />
-        {[
-          '发布于: ' + this.$utils.dateFormat(detail.publishAt)
-        ].map(ele => {
-          return (<span class='not-important' style={{ marginLeft: '5px' }}>{ele}</span>)
+        {['发布于: ' + this.$utils.dateFormat(detail.publishAt)].map((ele) => {
+          return (
+            <span class="not-important" style={{ marginLeft: '5px' }}>
+              {ele}
+            </span>
+          )
         })}
       </div>
     )
@@ -110,13 +124,12 @@ export class ArticleDetailMain extends Vue<ArticleDetailMainProp, Base> {
         <br />
         {this.renderHeader(detail)}
         <br />
-        <div class='ql-snow'>
-          <div class='ql-editor' domPropsInnerHTML={this.content} />
+        <div class="ql-snow">
+          <div class="ql-editor" domPropsInnerHTML={this.content} />
         </div>
         <br />
         <div class="not-important">简介: {detail.profile}</div>
-      </div >
+      </div>
     )
   }
 }
-

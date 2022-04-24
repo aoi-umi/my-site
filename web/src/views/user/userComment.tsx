@@ -1,4 +1,3 @@
-
 import { Component, Prop, Vue } from '@/components/decorator'
 import { testApi } from '@/api'
 import { Input } from '@/components/iview'
@@ -14,17 +13,17 @@ import { Comment, CommentDetail } from '../content/comment'
 
 class UserCommentProp {
   @Prop()
-  isReply?: boolean;
+  isReply?: boolean
 }
 @Component({
   extends: Base,
-  props: UserCommentProp
+  props: UserCommentProp,
 })
 export class UserCommentList extends Vue<UserCommentProp, Base> {
   $refs: {
-    list: MyList<any>,
-  };
-  anyKey = '';
+    list: MyList<any>
+  }
+  anyKey = ''
   query() {
     this.$refs.list.handleQuery({ resetPage: true })
   }
@@ -32,7 +31,7 @@ export class UserCommentList extends Vue<UserCommentProp, Base> {
   private async queryData(opt) {
     opt = {
       ...opt,
-      anyKey: this.anyKey
+      anyKey: this.anyKey,
     }
     await this.$refs.list.query(opt)
   }
@@ -40,26 +39,28 @@ export class UserCommentList extends Vue<UserCommentProp, Base> {
   render() {
     return (
       <div>
-        <Input v-model={this.anyKey} search on-on-search={() => {
-          this.query()
-        }} />
+        <Input
+          v-model={this.anyKey}
+          search
+          on-on-search={() => {
+            this.query()
+          }}
+        />
         <MyList
-          ref='list'
-          type='custom'
+          ref="list"
+          type="custom"
           hideSearchBox
           pagePosition="both"
           on-query={(t) => {
             this.queryData(convert.Test.listModelToQuery(t))
           }}
-
           queryFn={async (data) => {
             const rs = await testApi.userCommentQuery({
               ...data,
-              isReply: this.isReply
+              isReply: this.isReply,
             })
             return rs
           }}
-
           customRenderFn={(rs) => {
             return this.renderFn(rs)
           }}
@@ -69,11 +70,8 @@ export class UserCommentList extends Vue<UserCommentProp, Base> {
   }
 
   private renderFn(rs: ResultType) {
-    return rs.data.map(ele => {
-      return (
-        <CommentDetail value={ele} queryByUser>
-        </CommentDetail>
-      )
+    return rs.data.map((ele) => {
+      return <CommentDetail value={ele} queryByUser></CommentDetail>
     })
   }
 }

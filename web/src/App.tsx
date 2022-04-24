@@ -3,7 +3,15 @@ import { Watch } from 'vue-property-decorator'
 import { Component, Vue, Prop } from '@/components/decorator'
 import { routerConfig, MyRouteConfig } from '@/router'
 import {
-  Icon, Content, Layout, Header, Button, Modal, BackTop, Spin, Input
+  Icon,
+  Content,
+  Layout,
+  Header,
+  Button,
+  Modal,
+  BackTop,
+  Spin,
+  Input,
 } from '@/components/iview'
 import { MyLoad } from '@/components/my-load'
 import { LocalStore } from '@/store'
@@ -18,15 +26,15 @@ import './App.less'
 
 @Component
 export default class App extends Base {
-  theme = 'light' as any;
-  title = '';
-  $refs: { sideMenu: SideMenu, signIn: SignIn };
+  theme = 'light' as any
+  title = ''
+  $refs: { sideMenu: SideMenu; signIn: SignIn }
 
   async logPV() {
     testApi.statPVSave({ path: this.$route.path })
   }
 
-  activeName = '';
+  activeName = ''
   getActiveNameByPath(path: string) {
     return this.$refs.sideMenu?.getActiveNameByPath(path)
   }
@@ -43,8 +51,7 @@ export default class App extends Base {
     this.logPV()
   }
 
-  protected mounted() {
-  }
+  protected mounted() {}
 
   private initAfterRender() {
     this.setActiveNameByPath()
@@ -54,26 +61,29 @@ export default class App extends Base {
     this.title = this.$route.meta.title || ''
     document.title = this.title || env.title
   }
-  getingUserInfo = false;
+  getingUserInfo = false
   async getUserInfo() {
     this.getingUserInfo = true
     let token = LocalStore.getItem(dev.cacheKey.testUser)
     if (token) {
-      await testApi.userInfo().then(user => {
-        this.storeUser.setUser(user)
-        testSocket.login({ [dev.cacheKey.testUser]: token })
-        if (user) {
-          if (location.pathname === routerConfig.userSignIn.path) {
-            let { to, ...query } = this.$route.query
-            to = (to as string) || routerConfig.index.path
-            const toQuery = query
-            this.goToPage({ path: to, query: toQuery })
+      await testApi
+        .userInfo()
+        .then((user) => {
+          this.storeUser.setUser(user)
+          testSocket.login({ [dev.cacheKey.testUser]: token })
+          if (user) {
+            if (location.pathname === routerConfig.userSignIn.path) {
+              let { to, ...query } = this.$route.query
+              to = (to as string) || routerConfig.index.path
+              const toQuery = query
+              this.goToPage({ path: to, query: toQuery })
+            }
           }
-        }
-      }).catch(e => {
-        token = ''
-        console.error(e)
-      })
+        })
+        .catch((e) => {
+          token = ''
+          console.error(e)
+        })
     }
     this.getingUserInfo = false
 
@@ -93,82 +103,108 @@ export default class App extends Base {
     this.logPV()
   }
 
-  private menuCfg: MenuConfig[] = [];
+  private menuCfg: MenuConfig[] = []
   private setMenuCfg() {
-    this.menuCfg = [{
-      routerConfig: routerConfig.bookmark,
-      icon: 'md-home',
-      show: false
-    }, {
-      routerConfig: routerConfig.video,
-      icon: 'logo-youtube'
-    }, {
-      routerConfig: routerConfig.article,
-      icon: 'md-paper'
-    }, {
-      routerConfig: routerConfig.goods,
-      icon: 'md-cart'
-    }, {
-      routerConfig: routerConfig.apps,
-      icon: 'md-apps'
-    }, {
-      text: '我的',
-      icon: 'md-person',
-      name: 'my',
-      children: [{
-        routerConfig: routerConfig.contentMgt,
-        icon: 'md-create'
-      }, {
-        routerConfig: routerConfig.payMgt,
-        icon: 'logo-usd'
-      }, {
-        routerConfig: routerConfig.goodsMgt,
-        icon: 'md-nutrition'
-      }, {
-        routerConfig: routerConfig.imgMgt,
-        icon: 'md-image'
-      }]
-    }, {
-      text: '管理',
-      icon: 'md-cog',
-      name: 'mgt',
-      children: [{
-        routerConfig: routerConfig.userMgt,
-        icon: 'md-people'
-      }, {
-        routerConfig: routerConfig.role,
-        icon: 'md-person'
-      }, {
-        routerConfig: routerConfig.authority,
-        icon: 'md-lock'
-      }, {
-        text: '资金',
-        name: 'asset',
-        icon: 'md-stats',
-        children: [{
-          routerConfig: routerConfig.assetMgtLog,
-          icon: 'logo-usd'
-        }, {
-          routerConfig: routerConfig.assetMgtNotify,
-          icon: 'md-copy'
-        }]
-      }, {
-        routerConfig: routerConfig.setting,
-        icon: 'md-settings'
-      }, {
-        routerConfig: routerConfig.fileMgt,
-        icon: 'md-folder'
-      }]
-    }, {
-      routerConfig: routerConfig.stat,
-      icon: 'md-pie'
-    }, {
-      routerConfig: routerConfig.printMgt,
-      icon: 'md-print'
-    }, {
-      routerConfig: routerConfig.compMgt,
-      icon: 'md-construct'
-    }].map(ele => this.convMenu(ele))
+    this.menuCfg = [
+      {
+        routerConfig: routerConfig.bookmark,
+        icon: 'md-home',
+        show: false,
+      },
+      {
+        routerConfig: routerConfig.video,
+        icon: 'logo-youtube',
+      },
+      {
+        routerConfig: routerConfig.article,
+        icon: 'md-paper',
+      },
+      {
+        routerConfig: routerConfig.goods,
+        icon: 'md-cart',
+      },
+      {
+        routerConfig: routerConfig.apps,
+        icon: 'md-apps',
+      },
+      {
+        text: '我的',
+        icon: 'md-person',
+        name: 'my',
+        children: [
+          {
+            routerConfig: routerConfig.contentMgt,
+            icon: 'md-create',
+          },
+          {
+            routerConfig: routerConfig.payMgt,
+            icon: 'logo-usd',
+          },
+          {
+            routerConfig: routerConfig.goodsMgt,
+            icon: 'md-nutrition',
+          },
+          {
+            routerConfig: routerConfig.imgMgt,
+            icon: 'md-image',
+          },
+        ],
+      },
+      {
+        text: '管理',
+        icon: 'md-cog',
+        name: 'mgt',
+        children: [
+          {
+            routerConfig: routerConfig.userMgt,
+            icon: 'md-people',
+          },
+          {
+            routerConfig: routerConfig.role,
+            icon: 'md-person',
+          },
+          {
+            routerConfig: routerConfig.authority,
+            icon: 'md-lock',
+          },
+          {
+            text: '资金',
+            name: 'asset',
+            icon: 'md-stats',
+            children: [
+              {
+                routerConfig: routerConfig.assetMgtLog,
+                icon: 'logo-usd',
+              },
+              {
+                routerConfig: routerConfig.assetMgtNotify,
+                icon: 'md-copy',
+              },
+            ],
+          },
+          {
+            routerConfig: routerConfig.setting,
+            icon: 'md-settings',
+          },
+          {
+            routerConfig: routerConfig.fileMgt,
+            icon: 'md-folder',
+          },
+        ],
+      },
+      {
+        routerConfig: routerConfig.stat,
+        icon: 'md-pie',
+      },
+      {
+        routerConfig: routerConfig.printMgt,
+        icon: 'md-print',
+      },
+      {
+        routerConfig: routerConfig.compMgt,
+        icon: 'md-construct',
+      },
+    ].map((ele) => this.convMenu(ele))
   }
 
   private convMenu(ele) {
@@ -178,11 +214,13 @@ export default class App extends Base {
     if (routeCfg) {
       obj.to = routeCfg.path
       obj.text = routeCfg.text
-      if (routeCfg.meta.authority) { obj.show = () => this.storeUser.user.hasAuth(routeCfg.meta.authority) }
+      if (routeCfg.meta.authority) {
+        obj.show = () => this.storeUser.user.hasAuth(routeCfg.meta.authority)
+      }
     }
     obj = { ...obj, ...rest }
     if (children && children.length) {
-      obj.children = children.map(child => this.convMenu(child))
+      obj.children = children.map((child) => this.convMenu(child))
     }
     return obj
   }
@@ -191,65 +229,98 @@ export default class App extends Base {
     return (
       <div>
         <div v-show={false}>
-          <Input placeholder='应对自动填充' />
-          <Input type='password' />
+          <Input placeholder="应对自动填充" />
+          <Input type="password" />
         </div>
-        <MyLoad loadFn={() => { }} renderFn={this.renderMain} afterLoad={() => {
-          this.initAfterRender()
-        }} />
+        <MyLoad
+          loadFn={() => {}}
+          renderFn={this.renderMain}
+          afterLoad={() => {
+            this.initAfterRender()
+          }}
+        />
       </div>
     )
   }
   protected renderMain() {
     return (
-      <Layout class='layout no-bg'>
-        <Modal v-model={this.storeSetting.setting.signInShow} footer-hide on-on-visible-change={(val) => {
-          if (val && this.$refs.signIn) { this.$refs.signIn.setUserList() }
-        }}>
+      <Layout class="layout no-bg">
+        <Modal
+          v-model={this.storeSetting.setting.signInShow}
+          footer-hide
+          on-on-visible-change={(val) => {
+            if (val && this.$refs.signIn) {
+              this.$refs.signIn.setUserList()
+            }
+          }}
+        >
           <SignIn
-            ref='signIn'
+            ref="signIn"
             on-success={() => {
               this.storeSetting.setSetting({
-                signInShow: false
+                signInShow: false,
               })
-            }} />
+            }}
+          />
         </Modal>
-        <Header class='layout-header-bar'>
+        <Header class="layout-header-bar">
           <Icon
             on-click={this.toggleSider}
-            class='menu-icon'
-            type='md-menu'
-            size='24'
+            class="menu-icon"
+            type="md-menu"
+            size="24"
           />
           <span>{this.title}</span>
-          <div class='layout-header-wrap'></div>
-          <div class='layout-header-right button-group-normal' style='position: relative;'>
+          <div class="layout-header-wrap"></div>
+          <div
+            class="layout-header-right button-group-normal"
+            style="position: relative;"
+          >
             {this.getingUserInfo && <Spin fix />}
-            {this.storeUser.user.isLogin
-              ? <UserAvatar user={this.storeUser.user} self tipsPlacement='bottom' />
-              : [
-                <Button type='primary' on-click={() => {
-                  this.storeSetting.setSetting({
-                    signInShow: true
-                  })
-                }}>登录</Button>,
-                <Button on-click={() => {
-                  this.goToPage(routerConfig.userSignUp.path)
-                }}>注册</Button>
+            {this.storeUser.user.isLogin ? (
+              <UserAvatar
+                user={this.storeUser.user}
+                self
+                tipsPlacement="bottom"
+              />
+            ) : (
+              [
+                <Button
+                  type="primary"
+                  on-click={() => {
+                    this.storeSetting.setSetting({
+                      signInShow: true,
+                    })
+                  }}
+                >
+                  登录
+                </Button>,
+                <Button
+                  on-click={() => {
+                    this.goToPage(routerConfig.userSignUp.path)
+                  }}
+                >
+                  注册
+                </Button>,
               ]
-            }
+            )}
           </div>
         </Header>
-        <SideMenu ref='sideMenu' menuCfg={this.menuCfg} activeName={this.activeName}>
-          <Content class='main-content'>
-            {
-              this.getingUserInfo ? <Spin fix />
-                : this.$route.meta.keepAlive
-                  ? <keep-alive>
-                    <router-view></router-view>
-                  </keep-alive>
-                  : <router-view></router-view>
-            }
+        <SideMenu
+          ref="sideMenu"
+          menuCfg={this.menuCfg}
+          activeName={this.activeName}
+        >
+          <Content class="main-content">
+            {this.getingUserInfo ? (
+              <Spin fix />
+            ) : this.$route.meta.keepAlive ? (
+              <keep-alive>
+                <router-view></router-view>
+              </keep-alive>
+            ) : (
+              <router-view></router-view>
+            )}
           </Content>
           <BackTop bottom={100} right={10} />
         </SideMenu>

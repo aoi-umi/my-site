@@ -1,9 +1,9 @@
 import * as helpers from '@/helpers'
 import { Utils } from '@/components/utils'
 
-export type LoginUserType = UserInfo & LoginUser;
+export type LoginUserType = UserInfo & LoginUser
 export class LoginUser {
-  isLogin = false;
+  isLogin = false
   static create(data: UserInfo) {
     const user = new LoginUser()
     if (data) {
@@ -12,7 +12,6 @@ export class LoginUser {
       }
       user.isLogin = true
     } else {
-
     }
     return user as LoginUserType
   }
@@ -21,7 +20,9 @@ export class LoginUser {
     if (auth) {
       const authList = auth instanceof Array ? auth : [auth]
       for (const ele of authList) {
-        if (!this.authority || !this.authority[ele]) { return false }
+        if (!this.authority || !this.authority[ele]) {
+          return false
+        }
       }
     }
     return true
@@ -30,7 +31,9 @@ export class LoginUser {
   existsAuth(this: LoginUserType, auth: string | string[]) {
     const authList = auth instanceof Array ? auth : [auth]
     for (const ele of authList) {
-      if (this.authority && this.authority[ele]) { return true }
+      if (this.authority && this.authority[ele]) {
+        return true
+      }
     }
     return false
   }
@@ -48,7 +51,7 @@ export class LoginUser {
   static createReqWithToken(account, pwd, data) {
     data = {
       ...data,
-      rand: helpers.randStr()
+      rand: helpers.randStr(),
     }
     const token = LoginUser.createToken(account, pwd, data)
     data.token = token

@@ -5,7 +5,7 @@ export const cls = {
   mask: '',
   center: '',
   circle: '',
-  pointer: ''
+  pointer: '',
 }
 for (const key in cls) {
   cls[key] = clsPrefix + (cls[key] || key)

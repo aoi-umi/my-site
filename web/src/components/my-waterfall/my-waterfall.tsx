@@ -8,142 +8,155 @@ import { Checkbox } from '../iview'
 import { MyImgViewer } from '../my-img-viewer'
 
 export type MyWaterfallDataType = {
-  src: string;
-  data?: any;
-};
+  src: string
+  data?: any
+}
 type MyWaterfallItemType = {
-  data: MyWaterfallDataType,
-  selected?: boolean,
-  loaded: boolean,
-  success: boolean,
-  height: number,
-  bottom?: number,
-  left?: number,
-  colIdx?: number,
-  style: any,
-  img: HTMLImageElement,
-  timer?: any,
-  index: number,
-};
+  data: MyWaterfallDataType
+  selected?: boolean
+  loaded: boolean
+  success: boolean
+  height: number
+  bottom?: number
+  left?: number
+  colIdx?: number
+  style: any
+  img: HTMLImageElement
+  timer?: any
+  index: number
+}
 
-type GetDataFnResult<T> = { data: T[], finished?: boolean };
+type GetDataFnResult<T> = { data: T[]; finished?: boolean }
 
 const ScrollElm = {
-  window: 'window' as 'window',
-  root: 'root' as 'root'
+  window: 'window' as const,
+  root: 'root' as const,
 }
-type TypeOfValue<T> = T[keyof T];
+type TypeOfValue<T> = T[keyof T]
 
 class MyWaterfallProp {
   @Prop({
     default: () => (width) => {
       let w = 128
-      if (width > 768) { w = 198 }
+      if (width > 768) {
+        w = 198
+      }
       return Math.max(Math.floor(width / w), 1)
-    }
+    },
   })
-  col?: number | ((width: number) => number);
+  col?: number | ((width: number) => number)
 
   @Prop({
-    default: 10
+    default: 10,
   })
-  space?: number;
+  space?: number
 
   @Prop({
-    default: 20
+    default: 20,
   })
-  timeout?: number;
+  timeout?: number
 
   /**
    * 滚动的元素，默认为window
    * 设为root时，给root一个高度
    */
   @Prop({
-    default: ScrollElm.window
+    default: ScrollElm.window,
   })
-  scrollElm?: TypeOfValue<typeof ScrollElm>;
+  scrollElm?: TypeOfValue<typeof ScrollElm>
 
   @Prop({
-    required: true
+    required: true,
   })
-  getDataFn: () => (GetDataFnResult<MyWaterfallDataType> | Promise<GetDataFnResult<MyWaterfallDataType>>);
+  getDataFn: () =>
+    | GetDataFnResult<MyWaterfallDataType>
+    | Promise<GetDataFnResult<MyWaterfallDataType>>
 
   @Prop()
-  maskContentRenderFn?: (item: MyWaterfallDataType) => any;
+  maskContentRenderFn?: (item: MyWaterfallDataType) => any
 
   @Prop()
-  selectable?: boolean;
+  selectable?: boolean
 
   @Prop()
-  noDefaultClickEvent?: boolean;
+  noDefaultClickEvent?: boolean
 }
 @Component({
   extends: MyBase,
-  props: MyWaterfallProp
+  props: MyWaterfallProp,
 })
 export class MyWaterfall extends Vue<MyWaterfallProp, MyBase> {
-  stylePrefix = 'my-waterfall-';
+  stylePrefix = 'my-waterfall-'
 
-  $refs: { root: HTMLDivElement; imgViewer: MyImgViewer };
+  $refs: { root: HTMLDivElement; imgViewer: MyImgViewer }
 
-  currVal: any[] = [];
-  selectedVal: any[] = [];
+  currVal: any[] = []
+  selectedVal: any[] = []
 
-  currUrl = '';
-  private actualCol = 1;
+  currUrl = ''
+  private actualCol = 1
   @Watch('col')
-  private watchCol () {
-    if (typeof this.col !== 'function') { this.actualCol = this.col } else { this.actualCol = this.col(this.$refs.root.clientWidth) }
+  private watchCol() {
+    if (typeof this.col !== 'function') {
+      this.actualCol = this.col
+    } else {
+      this.actualCol = this.col(this.$refs.root.clientWidth)
+    }
   }
   @Watch('selectable')
-  private watchSelectable (newVal) {
+  private watchSelectable(newVal) {
     if (!newVal) {
-      this.itemList.forEach(ele => {
+      this.itemList.forEach((ele) => {
         ele.selected = false
       })
     }
   }
 
-  itemList: MyWaterfallItemType[] = [];
+  itemList: MyWaterfallItemType[] = []
 
-  private getScrollElm () {
+  private getScrollElm() {
     return this.scrollElm === ScrollElm.root ? this.$refs.root : window
   }
-  protected mounted () {
+  protected mounted() {
     this.watchCol()
     window.addEventListener('resize', this.handleResize)
     this.getScrollElm().addEventListener('scroll', this.handleScrollEnd)
   }
 
-  protected beforeDestroy () {
+  protected beforeDestroy() {
     window.removeEventListener('resize', this.handleResize)
     this.getScrollElm().removeEventListener('scroll', this.handleScrollEnd)
   }
 
-  private handleResize () {
+  private handleResize() {
     this.watchCol()
     this.handleItemStyle()
     this.handleScrollEnd()
   }
 
-  private loading = false;
-  private get imgLoading () {
-    return !!this.itemList.find(ele => !ele.loaded)
+  private loading = false
+  private get imgLoading() {
+    return !!this.itemList.find((ele) => !ele.loaded)
   }
-  private handleScrollEnd () {
+  private handleScrollEnd() {
     // console.log(this.$refs.root.clientWidth, !this.finished, !this.loading, !this.imgLoading, Utils.isScrollEnd(this.getScrollElm()));
-    if (!this.finished && !this.loading && !this.imgLoading && Utils.isScrollEnd(this.getScrollElm())) {
+    if (
+      !this.finished &&
+      !this.loading &&
+      !this.imgLoading &&
+      Utils.isScrollEnd(this.getScrollElm())
+    ) {
       this.getData()
     }
   }
 
-  protected created () {
+  protected created() {
     this.getData()
   }
 
-  private finished = false;
-  private errMsg = '';
-  async getData (refresh?: boolean) {
+  private finished = false
+  private errMsg = ''
+  async getData(refresh?: boolean) {
     this.loading = true
     this.errMsg = ''
     try {
@@ -156,9 +169,9 @@ export class MyWaterfall extends Vue<MyWaterfallProp, MyBase> {
     this.loading = false
   }
   @Watch('currVal')
-  private watchCurrVal () {
+  private watchCurrVal() {
     this.itemList = this.currVal.map((ele, idx) => {
-      const old = this.itemList.find(e => e.data === ele)
+      const old = this.itemList.find((e) => e.data === ele)
       if (old) {
         old.index = idx
         return old
@@ -173,7 +186,7 @@ export class MyWaterfall extends Vue<MyWaterfallProp, MyBase> {
         height: 0,
         style: {} as any,
         img,
-        selected: false
+        selected: false,
       }
       img.onload = img.onerror = (e) => {
         this.imgLoaded(obj)
@@ -187,17 +200,21 @@ export class MyWaterfall extends Vue<MyWaterfallProp, MyBase> {
       return obj
     })
   }
-  private imgLoaded (obj: MyWaterfallItemType) {
-    const idx = this.itemList.findIndex(item => item === obj)
-    if (obj.timer) { clearTimeout(obj.timer) }
-    if (idx === -1 || obj.loaded) { return }
+  private imgLoaded(obj: MyWaterfallItemType) {
+    const idx = this.itemList.findIndex((item) => item === obj)
+    if (obj.timer) {
+      clearTimeout(obj.timer)
+    }
+    if (idx === -1 || obj.loaded) {
+      return
+    }
     const img = obj.img
     obj.loaded = true
     obj.success = !!img.height
     this.handleItemStyle()
   }
 
-  private handleItemStyle () {
+  private handleItemStyle() {
     /*
       |<----------clientWidth-------------->|<-space->|
       |  col1                 |  col2       |
@@ -213,7 +230,9 @@ export class MyWaterfall extends Vue<MyWaterfallProp, MyBase> {
     for (let i = 0; i < this.itemList.length; i++) {
       const item = this.itemList[i]
       const show = item.loaded && lastShowIdx < i
-      if (!show) { break }
+      if (!show) {
+        break
+      }
       lastShowIdx = i
 
       /*
@@ -231,17 +250,21 @@ export class MyWaterfall extends Vue<MyWaterfallProp, MyBase> {
           |-----------------|
           */
       const width = itemWidth
-      const height = item.height = Math.round(item.img.height
-        ? (item.img.height / item.img.width) * (width - 2 * padding) + 2 * padding
-        : itemWidth)
+      const height = (item.height = Math.round(
+        item.img.height
+          ? (item.img.height / item.img.width) * (width - 2 * padding) +
+              2 * padding
+          : itemWidth,
+      ))
       item.style = {
         width: width + 'px',
         height: height + 'px',
-        padding: padding + 'px'
+        padding: padding + 'px',
       }
 
       // 第一行
-      let left = (itemWidth + this.space) * i; let top = 0
+      let left = (itemWidth + this.space) * i
+      let top = 0
       item.colIdx = i % this.actualCol
       if (i >= this.actualCol) {
         // 记录每一列最后一个,获取bottom最小的,在该item下面添加当前元素
@@ -251,8 +274,10 @@ export class MyWaterfall extends Vue<MyWaterfallProp, MyBase> {
           colDict[ele.colIdx] = ele
         }
         let minBottomCol: MyWaterfallItemType
-        Object.values<MyWaterfallItemType>(colDict).forEach(ele => {
-          if (!minBottomCol || minBottomCol.bottom > ele.bottom) { minBottomCol = ele }
+        Object.values<MyWaterfallItemType>(colDict).forEach((ele) => {
+          if (!minBottomCol || minBottomCol.bottom > ele.bottom) {
+            minBottomCol = ele
+          }
         })
         item.colIdx = minBottomCol.colIdx
         top = minBottomCol.bottom + this.space
@@ -272,7 +297,7 @@ export class MyWaterfall extends Vue<MyWaterfallProp, MyBase> {
     this.handleScrollEnd()
   }
 
-  removeItem (idxList: number[]) {
+  removeItem(idxList: number[]) {
     idxList.sort((a, b) => b - a)
     for (let i = this.currVal.length - 1; i >= 0; i--) {
       if (idxList.includes(i)) {
@@ -284,46 +309,76 @@ export class MyWaterfall extends Vue<MyWaterfallProp, MyBase> {
     })
   }
 
-  private divHeight = 0;
-  protected render () {
+  private divHeight = 0
+  protected render() {
     return (
-      <div ref='root' class={this.getStyleName('root')}>
-        <MyImgViewer ref='imgViewer' src={this.currUrl} />
-        <div class={this.getStyleName('main')} style={{ height: this.divHeight + 'px' }}>
+      <div ref="root" class={this.getStyleName('root')}>
+        <MyImgViewer ref="imgViewer" src={this.currUrl} />
+        <div
+          class={this.getStyleName('main')}
+          style={{ height: this.divHeight + 'px' }}
+        >
           {this.itemList.map((ele, idx) => {
             return (
-              <div class={this.getStyleName('item')} style={ele.style} >
+              <div class={this.getStyleName('item')} style={ele.style}>
                 <img src={ele.data.src} />
-                <div class={this.getStyleName('click-box')} on-click={(e) => {
-                  const item = ele.data
-                  this.currUrl = item.src
-                  if (!this.noDefaultClickEvent) {
-                    this.$refs.imgViewer.show()
-                  }
-                  this.$emit('item-click', e, item)
-                }} />
-                {this.selectable && <Checkbox v-model={ele.selected} class={this.getStyleName('select-box')} />}
+                <div
+                  class={this.getStyleName('click-box')}
+                  on-click={(e) => {
+                    const item = ele.data
+                    this.currUrl = item.src
+                    if (!this.noDefaultClickEvent) {
+                      this.$refs.imgViewer.show()
+                    }
+                    this.$emit('item-click', e, item)
+                  }}
+                />
+                {this.selectable && (
+                  <Checkbox
+                    v-model={ele.selected}
+                    class={this.getStyleName('select-box')}
+                  />
+                )}
                 <div class={this.getStyleName('item-mask')}>
-                  {this.maskContentRenderFn && this.maskContentRenderFn(ele.data) || ele.data.src}
+                  {(this.maskContentRenderFn &&
+                    this.maskContentRenderFn(ele.data)) ||
+                    ele.data.src}
                 </div>
               </div>
             )
           })}
         </div>
         <div class={this.getStyleName('bottom-box')}>
-          {this.errMsg
-            ? <span>{this.errMsg}<a on-click={() => {
-              this.getData()
-            }}>重试</a></span>
-            : <div>
-              {this.finished && !this.imgLoading && (this.$slots.loaded || <span>加载完毕</span>)}
-              {(this.loading || this.imgLoading) && (this.$slots.loading || <span>加载中</span>)}
-              {!this.finished && !this.loading && !this.imgLoading &&
-                (<div class={this.getStyleName('more')} on-click={() => {
+          {this.errMsg ? (
+            <span>
+              {this.errMsg}
+              <a
+                on-click={() => {
                   this.getData()
-                }}>{this.$slots.more || '更多'}</div>)}
+                }}
+              >
+                重试
+              </a>
+            </span>
+          ) : (
+            <div>
+              {this.finished &&
+                !this.imgLoading &&
+                (this.$slots.loaded || <span>加载完毕</span>)}
+              {(this.loading || this.imgLoading) &&
+                (this.$slots.loading || <span>加载中</span>)}
+              {!this.finished && !this.loading && !this.imgLoading && (
+                <div
+                  class={this.getStyleName('more')}
+                  on-click={() => {
+                    this.getData()
+                  }}
+                >
+                  {this.$slots.more || '更多'}
+                </div>
+              )}
             </div>
-          }
+          )}
         </div>
       </div>
     )

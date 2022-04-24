@@ -2,11 +2,23 @@ import { Watch } from 'vue-property-decorator'
 import Sortable from 'sortablejs'
 
 import { Component, Vue, Prop } from '@/components/decorator'
-import { DynamicCompConfigType, DynamicComp, DynamicCompProp } from '../my-dynamic-comp'
+import {
+  DynamicCompConfigType,
+  DynamicComp,
+  DynamicCompProp,
+} from '../my-dynamic-comp'
 
 import {
-  Table, Page, Row, Col,
-  Input, Button, Divider, Card, Icon, Spin
+  Table,
+  Page,
+  Row,
+  Col,
+  Input,
+  Button,
+  Divider,
+  Card,
+  Icon,
+  Spin,
 } from '../iview'
 import { Utils } from '../utils'
 import { MyBase } from '../my-base'
@@ -16,137 +28,137 @@ import { MyButtonsModel, MyButtons } from '../my-buttons'
 
 type QueryArgsType = {
   [key: string]: {
-    label?: string;
-    placeholder?: string;
-    comp?: (query, ele) => any;
+    label?: string
+    placeholder?: string
+    comp?: (query, ele) => any
   }
 }
 
 const event = {
   addClick: 'add-click',
   resetClick: 'reset-click',
-  query: 'query'
+  query: 'query',
 }
 const clsPrefix = 'my-list-'
 
 export const Const = {
-  clsActBox: clsPrefix + 'action-box'
+  clsActBox: clsPrefix + 'action-box',
 }
 
 export type ResultType = {
-  success: boolean,
-  total: number,
-  msg: string,
+  success: boolean
+  total: number
+  msg: string
   data: any[]
 }
 
-export type OnSortChangeOptions = { column: any, key: string, order: string };
+export type OnSortChangeOptions = { column: any; key: string; order: string }
 
 type ColType = {
-  type?: string;
-  title?: string,
-  key?: string,
-  width?: number;
-  minWidth?: number;
-  maxWidth?: number;
-  align?: string;
-  className?: string;
-  fixed?: string;
-  ellipsis?: boolean;
-  tooltip?: boolean;
-  render?: (h: any, params: { row: any; column: any }) => any;
-  renderHeader?: (h: any, params: { column: any }) => any;
-  indexMethod?: () => any;
-  sortable?: boolean | 'custom';
-  sortMethod?: () => any;
-  sortType?: 'asc' | 'desc';
+  type?: string
+  title?: string
+  key?: string
+  width?: number
+  minWidth?: number
+  maxWidth?: number
+  align?: string
+  className?: string
+  fixed?: string
+  ellipsis?: boolean
+  tooltip?: boolean
+  render?: (h: any, params: { row: any; column: any }) => any
+  renderHeader?: (h: any, params: { column: any }) => any
+  indexMethod?: () => any
+  sortable?: boolean | 'custom'
+  sortMethod?: () => any
+  sortType?: 'asc' | 'desc'
 
   // 自定义字段
-  hide?: boolean;
-};
+  hide?: boolean
+}
 
 class MyListProp<QueryArgs = any> {
   @Prop({
-    default: () => new MyListModel<{ [k in keyof QueryArgs]: any }>()
+    default: () => new MyListModel<{ [k in keyof QueryArgs]: any }>(),
   })
-  value?: MyListModel<{ [k in keyof QueryArgs]: any }>;
+  value?: MyListModel<{ [k in keyof QueryArgs]: any }>
 
   @Prop({
-    default: 'table'
+    default: 'table',
   })
-  type?: 'table' | 'custom';
+  type?: 'table' | 'custom'
 
   @Prop()
-  columns?: ColType[];
+  columns?: ColType[]
 
   @Prop()
-  itemConfigs?: (DynamicCompConfigType & { width?: number })[];
+  itemConfigs?: (DynamicCompConfigType & { width?: number })[]
 
   @Prop()
   dynamicCompOptions?: Partial<DynamicCompProp>
 
   @Prop({})
-  defaultColumn?: ColType;
+  defaultColumn?: ColType
 
   @Prop()
-  customRenderFn?: (result: ResultType) => any;
+  customRenderFn?: (result: ResultType) => any
 
   @Prop({
-    default: true
+    default: true,
   })
-  defaultCustomFail?: boolean;
+  defaultCustomFail?: boolean
 
   @Prop({
-    default: '空空的'
+    default: '空空的',
   })
-  defaultCustomNoDataMsg?: string;
+  defaultCustomNoDataMsg?: string
 
   @Prop()
-  data?: any[];
+  data?: any[]
 
   @Prop()
-  queryArgs?: QueryArgs;
+  queryArgs?: QueryArgs
 
   @Prop()
-  customQueryNode?: any;
+  customQueryNode?: any
 
   @Prop()
   hideQueryBtn?: {
-    all?: boolean;
-    add?: boolean;
-    reset?: boolean;
-    query?: boolean;
-  };
+    all?: boolean
+    add?: boolean
+    reset?: boolean
+    query?: boolean
+  }
 
   @Prop()
-  hideSearchBox?: boolean;
+  hideSearchBox?: boolean
 
   @Prop()
-  showPage?: boolean;
+  showPage?: boolean
 
   @Prop({
-    default: true
+    default: true,
   })
-  showSizer?: boolean;
+  showSizer?: boolean
 
   // 下拉刷新
   @Prop()
-  infiniteScroll?: boolean;
+  infiniteScroll?: boolean
 
   @Prop()
-  customOperateView?: any;
+  customOperateView?: any
 
   @Prop()
-  queryFn?: (data: any) => MyListResult | Promise<MyListResult>;
+  queryFn?: (data: any) => MyListResult | Promise<MyListResult>
 
   // 批量操作
   @Prop({ default: () => [] })
-  multiOperateBtnList?: { text: string; onClick: (selection: any[]) => void }[];
+  multiOperateBtnList?: { text: string; onClick: (selection: any[]) => void }[]
 
   @Prop({
-    default: 'bottom'
+    default: 'bottom',
   })
-  pagePosition?: 'top' | 'bottom' | 'both';
+  pagePosition?: 'top' | 'bottom' | 'both'
 
   @Prop()
   tableHeight?: string | number
@@ -158,7 +170,7 @@ class MyListProp<QueryArgs = any> {
   draggable?: boolean
 
   @Prop({})
-  buttonConfigs?: MyButtonsModel[];
+  buttonConfigs?: MyButtonsModel[]
 
   @Prop({})
   filter?: boolean | ((key: string) => boolean)
@@ -166,17 +178,21 @@ class MyListProp<QueryArgs = any> {
 @Component({
   extends: MyBase,
   props: MyListProp,
-  components: {
-  }
+  components: {},
 })
-export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListProp<QueryArgs>, MyBase> {
-  $refs: { table: iView.Table, page: iView.Page & { currentPage: number } };
-  stylePrefix = clsPrefix;
+export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<
+  MyListProp<QueryArgs>,
+  MyBase
+> {
+  $refs: { table: iView.Table; page: iView.Page & { currentPage: number } }
+  stylePrefix = clsPrefix
 
-  private cols?: ColType[] = [];
+  private cols?: ColType[] = []
   protected created() {
     if (this.type == 'table') {
-      if (!this.columns && !this.itemConfigs) { throw new Error(`type 'table' require 'columns' or 'colConfigs'!`) }
+      if (!this.columns && !this.itemConfigs) {
+        throw new Error(`type 'table' require 'columns' or 'colConfigs'!`)
+      }
     } else if (this.type == 'custom' && !this.customRenderFn) {
       throw new Error(`type 'custom' require 'customRenderFn'!`)
     }
@@ -193,31 +209,35 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
           handle: '.drag-btn',
           onEnd: ({ newIndex, oldIndex }) => {
             let data = this.result.data
-            let newIdx = data.findIndex(ele => ele === this.filterData[newIndex])
-            let oldIdx = data.findIndex(ele => ele === this.filterData[oldIndex])
+            let newIdx = data.findIndex(
+              (ele) => ele === this.filterData[newIndex],
+            )
+            let oldIdx = data.findIndex(
+              (ele) => ele === this.filterData[oldIndex],
+            )
             this.result.data = []
             this.$nextTick(() => {
               data.splice(newIdx, 0, ...data.splice(oldIdx, 1))
               this.result.data = data
             })
-          }
-        }
+          },
+        },
       )
     }
   }
 
   @Watch('itemConfigs', {
-    immediate: true
+    immediate: true,
   })
   private setCols() {
     if (this.type !== 'table') return
-    this.cols = [];
+    this.cols = []
     if (this.selectable) {
       this.cols.push({
         key: '_selection',
         type: 'selection',
         width: 60,
-        align: 'center'
+        align: 'center',
       })
     }
     if (this.draggable) {
@@ -228,10 +248,10 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
         render: () => {
           return (
             <div>
-              <Icon class='drag-btn' type='md-menu' size={24} />
+              <Icon class="drag-btn" type="md-menu" size={24} />
             </div>
           )
-        }
+        },
       })
     }
     // this.cols.push({
@@ -249,43 +269,57 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
     //   }
     // })
     if (this.itemConfigs) {
-      this.cols.push(...this.itemConfigs.map(ele => {
-        return {
-          key: ele.name,
-          title: ele.text || ele.name,
-          width: ele.width,
-          render: (h, params) => {
-            let data = this.result.data[params.index]
-            return (<DynamicComp props={this.dynamicCompOptions} config={ele} data={data}
-            ></DynamicComp>)
+      this.cols.push(
+        ...this.itemConfigs.map((ele) => {
+          return {
+            key: ele.name,
+            title: ele.text || ele.name,
+            width: ele.width,
+            render: (h, params) => {
+              let data = this.result.data[params.index]
+              return (
+                <DynamicComp
+                  props={this.dynamicCompOptions}
+                  config={ele}
+                  data={data}
+                ></DynamicComp>
+              )
+            },
           }
-        }
-      }))
+        }),
+      )
     }
-    if (this.columns) { this.cols.push(...this.columns) }
+    if (this.columns) {
+      this.cols.push(...this.columns)
+    }
     let defaultColumn = {
       align: 'center',
       minWidth: 120,
-      ...this.defaultColumn
+      ...this.defaultColumn,
     }
-    this.cols.forEach(ele => {
+    this.cols.forEach((ele) => {
       for (const key in defaultColumn) {
-        if (!(key in ele)) { ele[key] = defaultColumn[key] }
+        if (!(key in ele)) {
+          ele[key] = defaultColumn[key]
+        }
       }
     })
   }
 
   valid() {
     let rules = Utils.getValidRulesByDynCfg(this.itemConfigs)
-    return Utils.valid({ data: this.result.data }, {
-      data: {
-        type: 'array',
-        defaultField: {
-          type: 'object',
-          fields: rules
-        }
-      }
-    })
+    return Utils.valid(
+      { data: this.result.data },
+      {
+        data: {
+          type: 'array',
+          defaultField: {
+            type: 'object',
+            fields: rules,
+          },
+        },
+      },
+    )
   }
 
   private addEvent() {
@@ -317,10 +351,12 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
     try {
       this.selectedRows = []
       this.result.success = true
-      if (!noClear) { this.result.data = [] }
+      if (!noClear) {
+        this.result.data = []
+      }
       this.result.total = 0
       this.result.msg = '加载中'
-      const rs = this.queryFn && await this.queryFn(data)
+      const rs = this.queryFn && (await this.queryFn(data))
       this.result.msg = ''
       if (rs) {
         let d = []
@@ -334,14 +370,20 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
       }
       const lastPage = Math.ceil(this.result.total / this.model.page.size)
       this.loadedLastPage = this.model.page.index >= lastPage
-      if (!this.result.data.length) { this.result.msg = '暂无数据' } else if (this.loadedLastPage) { this.result.msg = '无更多数据' }
+      if (!this.result.data.length) {
+        this.result.msg = '暂无数据'
+      } else if (this.loadedLastPage) {
+        this.result.msg = '无更多数据'
+      }
       if (this.infiniteScroll && !this.loadedLastPage) {
         this.model.page.index++
       }
     } catch (e) {
       this.result.success = false
       this.result.msg = e.message
-      if (this.infiniteScroll) { this.$Message.error(this.result.msg) }
+      if (this.infiniteScroll) {
+        this.$Message.error(this.result.msg)
+      }
     } finally {
       this.loading = false
     }
@@ -358,16 +400,15 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
     this.handleQuery({ resetPage: true })
   }
 
-  handleQuery(opt?: {
-    noClear?: boolean;
-    resetPage?: boolean;
-  }) {
+  handleQuery(opt?: { noClear?: boolean; resetPage?: boolean }) {
     opt = {
-      ...opt
-    };
+      ...opt,
+    }
     // 防止使用router的时候页面不跳转
-    (this.model.query as any)._t = Date.now()
-    if (opt.resetPage) { this.model.page.index = 1 }
+    ;(this.model.query as any)._t = Date.now()
+    if (opt.resetPage) {
+      this.model.page.index = 1
+    }
     this.$emit('query', this.model, opt.noClear, this)
   }
 
@@ -400,13 +441,13 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
   }
   private currentChange(currentRow) {
     this.$emit('current-change', {
-      currentRow
+      currentRow,
     })
   }
 
-  private showQuery = true;
-  private loading = false;
-  model = this.value;
+  private showQuery = true
+  private loading = false
+  model = this.value
 
   @Watch('value')
   private watchValue(newVal) {
@@ -414,7 +455,7 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
   }
 
   @Watch('data', {
-    immediate: true
+    immediate: true,
   })
   private setData(val: any[]) {
     if (val) {
@@ -426,14 +467,19 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
   }
 
   setQueryByKey(data, keyList: string[]) {
-    keyList.forEach(key => {
-      if (data[key]) { this.$set(this.model.query, key, data[key]) }
+    keyList.forEach((key) => {
+      if (data[key]) {
+        this.$set(this.model.query, key, data[key])
+      }
     })
   }
-  setModel(data, opt: {
-    queryKeyList?: string[];
-    toListModel?: (data, model: MyListModel) => any;
-  }) {
+  setModel(
+    data,
+    opt: {
+      queryKeyList?: string[]
+      toListModel?: (data, model: MyListModel) => any
+    },
+  ) {
     if (opt.queryKeyList) {
       this.setQueryByKey(data, opt.queryKeyList)
     }
@@ -446,9 +492,9 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
     success: true,
     total: 0,
     msg: '',
-    data: []
-  };
-  loadedLastPage = false;
+    data: [],
+  }
+  loadedLastPage = false
 
   filterKey = ''
 
@@ -473,7 +519,12 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
     if (!rs.success || !rs.data.length) {
       const msg = !rs.success ? rs.msg : this.defaultCustomNoDataMsg
       defaultFail = (
-        <Card class='not-important' style={{ marginTop: '5px', textAlign: 'center' }}>{msg}</Card>
+        <Card
+          class="not-important"
+          style={{ marginTop: '5px', textAlign: 'center' }}
+        >
+          {msg}
+        </Card>
       )
     }
     return (
@@ -485,16 +536,24 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
   }
 
   private renderPage(position: string) {
-    if (!this.infiniteScroll && (this.showPage ?? !!this.queryFn) && this.result.total !== 0 && (['both', position].includes(this.pagePosition))) {
+    if (
+      !this.infiniteScroll &&
+      (this.showPage ?? !!this.queryFn) &&
+      this.result.total !== 0 &&
+      ['both', position].includes(this.pagePosition)
+    ) {
       return (
         <Page
-          ref='page'
-          class={this.getStyleName('page')} total={this.result.total}
-          placement='top'
+          ref="page"
+          class={this.getStyleName('page')}
+          total={this.result.total}
+          placement="top"
           current={this.model.page.index}
           page-size={this.model.page.size}
-          size='small'
-          show-total show-elevator show-sizer={this.showSizer}
+          size="small"
+          show-total
+          show-elevator
+          show-sizer={this.showSizer}
           on-on-change={(page) => {
             this.model.page.index = page
             this.handleQuery()
@@ -506,96 +565,154 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
             if (oldIdx == 1) {
               this.handleQuery()
             }
-          }} />)
+          }}
+        />
+      )
     }
   }
 
   private get filterData() {
     let filter = null
     if (this.filterKey && this.filter) {
-      filter = typeof this.filter === 'function' ? this.filter : (ele) => {
-        return Object.values(ele).some(v => String(v).toLowerCase().includes(this.filterKey))
-      }
+      filter =
+        typeof this.filter === 'function'
+          ? this.filter
+          : (ele) => {
+              return Object.values(ele).some((v) =>
+                String(v).toLowerCase().includes(this.filterKey),
+              )
+            }
     }
     return filter ? this.result.data.filter(filter) : this.result.data
   }
 
   protected render() {
     const hideQueryBtn = this.hideQueryBtn || {}
-    if (this.$refs.page && this.$refs.page.currentPage !== this.model.page.index) {
+    if (
+      this.$refs.page &&
+      this.$refs.page.currentPage !== this.model.page.index
+    ) {
       this.$refs.page.currentPage = this.model.page.index
     }
     // console.log(this.result.data.map(ele => ele.name))
     return (
       <div class={this.getStyleName('root')}>
-        {!this.hideSearchBox &&
+        {!this.hideSearchBox && (
           <Card>
             <div class={this.getStyleName('toggle-box')}>
-              <div class={style.cls.pointer} onClick={() => { this.showQuery = !this.showQuery }}>
+              <div
+                class={style.cls.pointer}
+                onClick={() => {
+                  this.showQuery = !this.showQuery
+                }}
+              >
                 {this.showQuery ? '隐藏' : '展开'}筛选
-                <Icon type={this.showQuery ? 'ios-arrow-up' : 'ios-arrow-down'} />
+                <Icon
+                  type={this.showQuery ? 'ios-arrow-up' : 'ios-arrow-down'}
+                />
               </div>
             </div>
-            <div class={this.getStyleName('query-args-box').concat(this.showQuery ? '' : 'collapsed')} on-keypress={this.handlePress}>
+            <div
+              class={this.getStyleName('query-args-box').concat(
+                this.showQuery ? '' : 'collapsed',
+              )}
+              on-keypress={this.handlePress}
+            >
               <Row gutter={5}>
-                {this.queryArgs && Object.entries(this.queryArgs).map(entry => {
-                  const key = entry[0]
-                  const ele = entry[1]
-                  return (
-                    <Col class={this.getStyleName('query-args-item')} xs={24} sm={8} md={6}>
-                      {ele.label || key}
-                      {ele.comp ? ele.comp(this.model.query, ele) : <Input placeholder={ele.placeholder} v-model={this.model.query[key]} clearable />}
-                    </Col>
-                  )
-                })}
+                {this.queryArgs &&
+                  Object.entries(this.queryArgs).map((entry) => {
+                    const key = entry[0]
+                    const ele = entry[1]
+                    return (
+                      <Col
+                        class={this.getStyleName('query-args-item')}
+                        xs={24}
+                        sm={8}
+                        md={6}
+                      >
+                        {ele.label || key}
+                        {ele.comp ? (
+                          ele.comp(this.model.query, ele)
+                        ) : (
+                          <Input
+                            placeholder={ele.placeholder}
+                            v-model={this.model.query[key]}
+                            clearable
+                          />
+                        )}
+                      </Col>
+                    )
+                  })}
               </Row>
               {this.customQueryNode}
-              <Divider size='small' />
-              <div class={['button-group-normal', ...this.getStyleName('op-box')]} >
-                {[{
-                  name: 'reset',
-                  text: '重置',
-                  click: () => {
-                    this.resetQueryArgs()
-                    this.$emit(event.resetClick)
-                  }
-                }, {
-                  name: 'query',
-                  text: '查询',
-                  type: 'primary',
-                  click: () => {
-                    this.handleQuery({ resetPage: true })
+              <Divider size="small" />
+              <div
+                class={['button-group-normal', ...this.getStyleName('op-box')]}
+              >
+                {[
+                  {
+                    name: 'reset',
+                    text: '重置',
+                    click: () => {
+                      this.resetQueryArgs()
+                      this.$emit(event.resetClick)
+                    },
                   },
-                  loading: () => {
-                    return this.loading
-                  }
-                }, {
-                  name: 'add',
-                  text: '新增',
-                  click: () => {
-                    this.$emit(event.addClick)
-                  }
-                }].filter(ele => !hideQueryBtn.all && !hideQueryBtn[ele.name]).map(ele => {
-                  return (
-                    <Button type={ele.type as any} loading={ele.loading && ele.loading()} on-click={() => {
-                      ele.click()
-                    }}>{ele.text}</Button>
-                  )
-                })}
+                  {
+                    name: 'query',
+                    text: '查询',
+                    type: 'primary',
+                    click: () => {
+                      this.handleQuery({ resetPage: true })
+                    },
+                    loading: () => {
+                      return this.loading
+                    },
+                  },
+                  {
+                    name: 'add',
+                    text: '新增',
+                    click: () => {
+                      this.$emit(event.addClick)
+                    },
+                  },
+                ]
+                  .filter((ele) => !hideQueryBtn.all && !hideQueryBtn[ele.name])
+                  .map((ele) => {
+                    return (
+                      <Button
+                        type={ele.type as any}
+                        loading={ele.loading && ele.loading()}
+                        on-click={() => {
+                          ele.click()
+                        }}
+                      >
+                        {ele.text}
+                      </Button>
+                    )
+                  })}
                 {this.customOperateView}
               </div>
             </div>
           </Card>
-        }
+        )}
         <div class={this.getStyleName('content')}>
           {this.$slots.default}
           {this.renderBtns()}
-          {this.filter && <Input v-model={this.filterKey} placeholder='过滤' clearable style='margin-bottom:5px' />}
+          {this.filter && (
+            <Input
+              v-model={this.filterKey}
+              placeholder="过滤"
+              clearable
+              style="margin-bottom:5px"
+            />
+          )}
           {this.renderPage('top')}
-          {this.type == 'table'
-            ? <Table
-              ref='table'
-              class={this.getStyleName('table')} columns={this.cols.filter(ele => {
+          {this.type == 'table' ? (
+            <Table
+              ref="table"
+              class={this.getStyleName('table')}
+              columns={this.cols.filter((ele) => {
                 const sort = this.model.sort
                 ele.sortType = '' as any
                 if (sort.orderBy && sort.sortOrder) {
@@ -605,19 +722,22 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
                 }
                 return !ele.hide
               })}
-
-              data={this.filterData} no-data-text={this.result.msg}
+              data={this.filterData}
+              no-data-text={this.result.msg}
               on-on-selection-change={this.selectionChangeHandler}
               on-on-sort-change={(opt: OnSortChangeOptions) => {
                 const sortMap = {
                   asc: 1,
-                  desc: -1
+                  desc: -1,
                 }
-                let orderBy; const sortOrder = sortMap[opt.order]
-                if (sortOrder) { orderBy = opt.key }
+                let orderBy
+                const sortOrder = sortMap[opt.order]
+                if (sortOrder) {
+                  orderBy = opt.key
+                }
                 this.model.setSort({
                   orderBy,
-                  sortOrder
+                  sortOrder,
                 })
                 this.handleQuery({ resetPage: true })
               }}
@@ -625,33 +745,54 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<MyListPro
               highlight-row
               on-on-current-change={this.currentChangeHandler}
               on-on-row-click={this.rowClickHandler}
-            >
-            </Table>
-            : this._customRenderFn(this.result)
-          }
+            ></Table>
+          ) : (
+            this._customRenderFn(this.result)
+          )}
           {this.renderPage('bottom')}
-          {!this.infiniteScroll
-            ? this.loading && <Spin size='large' fix />
-            : <div class={this.getStyleName('bottom-loading').concat(style.cls.center)}>
-              {this.loading && <Spin size='large' fix />}
-              <Divider class={this.getStyleName('bottom-loading-msg')} size='small'>
+          {!this.infiniteScroll ? (
+            this.loading && <Spin size="large" fix />
+          ) : (
+            <div
+              class={this.getStyleName('bottom-loading').concat(
+                style.cls.center,
+              )}
+            >
+              {this.loading && <Spin size="large" fix />}
+              <Divider
+                class={this.getStyleName('bottom-loading-msg')}
+                size="small"
+              >
                 <span>{this.result.msg}</span>
-                {!this.loadedLastPage && !this.loading && <a on-click={() => {
-                  this.scrollEndHandler()
-                }}>{!this.result.success ? '重试' : '更多'}</a>}
+                {!this.loadedLastPage && !this.loading && (
+                  <a
+                    on-click={() => {
+                      this.scrollEndHandler()
+                    }}
+                  >
+                    {!this.result.success ? '重试' : '更多'}
+                  </a>
+                )}
               </Divider>
             </div>
-          }
+          )}
         </div>
-        {this.multiOperateBtnList.length > 0 &&
+        {this.multiOperateBtnList.length > 0 && (
           <Card class={this.bottomBarClass}>
-            {this.multiOperateBtnList.map(ele => {
+            {this.multiOperateBtnList.map((ele) => {
               return (
-                <Button class={this.getStyleName('bottom-bar-item')}
-                  on-click={() => { ele.onClick && ele.onClick(this.selectedRows) }}>{ele.text}</Button>
+                <Button
+                  class={this.getStyleName('bottom-bar-item')}
+                  on-click={() => {
+                    ele.onClick && ele.onClick(this.selectedRows)
+                  }}
+                >
+                  {ele.text}
+                </Button>
               )
             })}
-          </Card>}
+          </Card>
+        )}
       </div>
     )
   }

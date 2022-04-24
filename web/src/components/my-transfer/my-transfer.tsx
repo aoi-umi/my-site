@@ -6,86 +6,99 @@ import { Button, Transfer } from '../iview'
 import { MyBase } from '../my-base'
 
 type DataType = {
-    key: string;
-    label: string;
-    data: any;
-    disabled?: boolean;
-};
+  key: string
+  label: string
+  data: any
+  disabled?: boolean
+}
 
 class MyTransferProp {
-    @Prop()
-    selectedData: DataType[];
+  @Prop()
+  selectedData: DataType[]
 
-    @Prop()
-    getDataFn: () => DataType[] | Promise<DataType[]>;
+  @Prop()
+  getDataFn: () => DataType[] | Promise<DataType[]>
 }
 @Component({
   extends: MyBase,
-  props: MyTransferProp
+  props: MyTransferProp,
 })
 export class MyTransfer extends Vue<MyTransferProp, MyBase> {
-    stylePrefix = 'my-transfer-';
+  stylePrefix = 'my-transfer-'
 
-    @Watch('selectedData')
-    private updateSelectedData (newVal: DataType[]) {
-      this.targetKeys = newVal ? newVal.map(ele => ele.key) : []
-    }
+  @Watch('selectedData')
+  private updateSelectedData(newVal: DataType[]) {
+    this.targetKeys = newVal ? newVal.map((ele) => ele.key) : []
+  }
 
-    private data: DataType[] = [];
-    private get allData () {
-      const list = [...this.data]
-      if (this.selectedData) {
-        this.selectedData.forEach(ele => {
-          if (!list.find(l => l.key == ele.key)) { list.push(ele) }
-        })
-      }
-      return list
+  private data: DataType[] = []
+  private get allData() {
+    const list = [...this.data]
+    if (this.selectedData) {
+      this.selectedData.forEach((ele) => {
+        if (!list.find((l) => l.key == ele.key)) {
+          list.push(ele)
+        }
+      })
     }
+    return list
+  }
 
-    getChangeData (key?: string) {
-      let addList: any[] = this.data.filter(e => this.targetKeys.includes(e.key) && !this.selectedData.find(s => s.key == e.key))
-      let delList: any[] = this.selectedData.filter(e => !this.targetKeys.includes(e.key))
-      if (key) {
-        addList = addList.map(ele => ele[key])
-        delList = delList.map(ele => ele[key])
-      }
-      return {
-        addList,
-        delList
-      }
+  getChangeData(key?: string) {
+    let addList: any[] = this.data.filter(
+      (e) =>
+        this.targetKeys.includes(e.key) &&
+        !this.selectedData.find((s) => s.key == e.key),
+    )
+    let delList: any[] = this.selectedData.filter(
+      (e) => !this.targetKeys.includes(e.key),
+    )
+    if (key) {
+      addList = addList.map((ele) => ele[key])
+      delList = delList.map((ele) => ele[key])
     }
-    private targetKeys = [];
-    private loading = false;
+    return {
+      addList,
+      delList,
+    }
+  }
+  private targetKeys = []
+  private loading = false
 
-    async loadData () {
-      this.loading = true
-      try {
-        this.data = await this.getDataFn()
-      } catch (e) {
-        this.$Message.error(e.message)
-      } finally {
-        this.loading = false
-      }
+  async loadData() {
+    this.loading = true
+    try {
+      this.data = await this.getDataFn()
+    } catch (e) {
+      this.$Message.error(e.message)
+    } finally {
+      this.loading = false
     }
-    protected render () {
-      return (
-        <Transfer
-          data={this.allData}
-          targetKeys={this.targetKeys}
-          filterable={true as any}
-          filter-method={(d, query?) => {
-            const data = d as any as { data: any; key: string; label: string }
-            return data.label.toLocaleLowerCase().indexOf(query.toLocaleLowerCase()) > -1
-          }}
-          titles={['未添加', '已添加']}
-          on-on-change={(targetKeys, direction, moveKeys) => {
-            this.targetKeys = targetKeys
-          }}
-        >
-          <div class={this.getStyleName('refresh')}>
-            <Button size='small' on-click={this.loadData} loading={this.loading}>刷新</Button>
-          </div>
-        </Transfer>
-      )
-    }
+  }
+  protected render() {
+    return (
+      <Transfer
+        data={this.allData}
+        targetKeys={this.targetKeys}
+        filterable={true as any}
+        filter-method={(d, query?) => {
+          const data = d as any as { data: any; key: string; label: string }
+          return (
+            data.label.toLocaleLowerCase().indexOf(query.toLocaleLowerCase()) >
+            -1
+          )
+        }}
+        titles={['未添加', '已添加']}
+        on-on-change={(targetKeys, direction, moveKeys) => {
+          this.targetKeys = targetKeys
+        }}
+      >
+        <div class={this.getStyleName('refresh')}>
+          <Button size="small" on-click={this.loadData} loading={this.loading}>
+            刷新
+          </Button>
+        </div>
+      </Transfer>
+    )
+  }
 }

@@ -7,56 +7,56 @@ export default {
     path: adminPath + '/userMgt',
     text: '用户',
     meta: {
-      authority: [authority.login, authority.userMgtQuery]
+      authority: [authority.login, authority.userMgtQuery],
     },
-    component: () => import('../views/user/user-mgt')
+    component: () => import('../views/user/user-mgt'),
   },
   role: {
     path: adminPath + '/roleMgt',
     text: '角色',
     meta: {
-      authority: [authority.login, authority.roleQuery]
+      authority: [authority.login, authority.roleQuery],
     },
-    component: () => import('../views/system/role')
+    component: () => import('../views/system/role'),
   },
   authority: {
     path: adminPath + '/authorityMgt',
     text: '权限',
     meta: {
-      authority: [authority.login, authority.authorityQuery]
+      authority: [authority.login, authority.authorityQuery],
     },
-    component: () => import('../views/system/authority')
+    component: () => import('../views/system/authority'),
   },
   setting: {
     path: adminPath + '/setting',
     text: '系统设置',
     meta: {
-      authority: [authority.login, authority.settingQuery]
+      authority: [authority.login, authority.settingQuery],
     },
-    component: () => import('../views/system/setting')
+    component: () => import('../views/system/setting'),
   },
   assetMgtLog: {
     path: adminPath + '/assetMgt/log',
     text: '资金记录',
     meta: {
-      authority: [authority.login, authority.payMgtQuery]
+      authority: [authority.login, authority.payMgtQuery],
     },
-    component: () => import('../views/asset-mgt').then(t => t.AssetMgtLog)
+    component: () => import('../views/asset-mgt').then((t) => t.AssetMgtLog),
   },
   assetMgtNotify: {
     path: adminPath + '/assetMgt/notify',
     text: '回调通知',
     meta: {
-      authority: [authority.login, authority.payMgtQuery]
+      authority: [authority.login, authority.payMgtQuery],
     },
-    component: () => import('../views/asset-mgt').then(t => t.AssetMgtNotify)
+    component: () => import('../views/asset-mgt').then((t) => t.AssetMgtNotify),
   },
   fileMgt: {
     path: adminPath + '/fileMgt',
     text: '文件管理',
     meta: {
-      authority: [authority.fileMgtQuery]
+      authority: [authority.fileMgtQuery],
     },
-    component: () => import('../views/file-mgt')
-  }
+    component: () => import('../views/file-mgt'),
+  },
 }

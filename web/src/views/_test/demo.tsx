@@ -17,32 +17,35 @@ import { MyButtons } from '@/components/my-buttons'
 
 @Component({})
 export default class App extends Base {
-  protected stylePrefix = 'demo-';
-  public value = '';
-  public msg = '';
-  public list: { test: string }[] = [];
-  color = 'white';
+  protected stylePrefix = 'demo-'
+  public value = ''
+  public msg = ''
+  public list: { test: string }[] = []
+  color = 'white'
   public get valueLength() {
     return this.value.length
   }
 
   $refs: {
-    board: HTMLElement; list: MyList<any>; echart: HTMLDivElement; canvas: HTMLDivElement;
-    upload: MyUpload; video: MyVideo; videoCover: any;
-  };
-  richText = '';
-  chart: echarts.ECharts;
-  chartAddData = '';
-  player: VideoJsPlayer;
+    board: HTMLElement
+    list: MyList<any>
+    echart: HTMLDivElement
+    canvas: HTMLDivElement
+    upload: MyUpload
+    video: MyVideo
+    videoCover: any
+  }
+  richText = ''
+  chart: echarts.ECharts
+  chartAddData = ''
+  player: VideoJsPlayer
 
   public created() {
     this.setList()
     testSocket.bindDanmakuRecv(this.recvDanmaku)
     const query: any = this.$route.query
     if (query.videoId) {
-      this.videoId =
-        this.videoIdText =
-        query.videoId as any
+      this.videoId = this.videoIdText = query.videoId as any
     }
   }
 
@@ -60,16 +63,18 @@ export default class App extends Base {
     const optionData: any = {
       xAxis: {
         type: 'category',
-        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
       },
       yAxis: {
-        type: 'value'
+        type: 'value',
       },
-      series: [{
-        data: [820, 932, 901, 934, 1290, 1330, 1320],
-        type: 'line'
-        // smooth: true
-      }]
+      series: [
+        {
+          data: [820, 932, 901, 934, 1290, 1330, 1320],
+          type: 'line',
+          // smooth: true
+        },
+      ],
     }
 
     this.chart.setOption(optionData)
@@ -82,7 +87,7 @@ export default class App extends Base {
   setList(start = 0, size = 10) {
     this.list = new Array(size).fill('').map((e, i) => {
       return {
-        test: i + start + 1 + ''
+        test: i + start + 1 + '',
       }
     })
   }
@@ -100,41 +105,52 @@ export default class App extends Base {
     return this.$refs.video.capture().data
   }
 
-  fail = false;
+  fail = false
   btnDisabled = false
   upload = {
-    maxSize: 102400
+    maxSize: 102400,
   }
   protected render() {
     return (
       <div>
-        <MyButtons value={[
-          {
-            name: 'test', text: '测试', type: 'text',
-            enable: () => {
-              return this.btnDisabled
-            }
-          },
-          {
-            name: 'testGroup1', text: '测试组1', group: '测试组',
-            click: (btn) => {
-              this.$Message.info(`点击了${btn.name}`)
-            }
-          },
-          {
-            name: 'testGroup2', text: '测试组2', group: '测试组',
-            click: (btn) => {
-              this.btnDisabled = !this.btnDisabled
-            }
-          }
-        ]} />
+        <MyButtons
+          value={[
+            {
+              name: 'test',
+              text: '测试',
+              type: 'text',
+              enable: () => {
+                return this.btnDisabled
+              },
+            },
+            {
+              name: 'testGroup1',
+              text: '测试组1',
+              group: '测试组',
+              click: (btn) => {
+                this.$Message.info(`点击了${btn.name}`)
+              },
+            },
+            {
+              name: 'testGroup2',
+              text: '测试组2',
+              group: '测试组',
+              click: (btn) => {
+                this.btnDisabled = !this.btnDisabled
+              },
+            },
+          ]}
+        />
         <Tsx />
-        <Tsx2 test='传参属性1' />
-        <MyQrcode text='qrcode' showText />
+        <Tsx2 test="传参属性1" />
+        <MyQrcode text="qrcode" showText />
         <div class={this.getStyleName('col')}>
           {this.renderVideo()}
           <div class={this.getStyleName('row')}>
-            <MyUpload ref='upload' width={400} height={300}
+            <MyUpload
+              ref="upload"
+              width={400}
+              height={300}
               headers={testApi.defaultHeaders}
               uploadUrl={testApi.fileUploadByChunksUrl}
               uploadCheckUrl={testApi.fileUploadCheckUrl}
@@ -146,36 +162,37 @@ export default class App extends Base {
               successHandler={(rs, file) => {
                 file.url = rs.url
                 return rs.fileId
-              }} />
+              }}
+            />
             <div>
               <div class={this.getStyleName('row')}>
                 文件最大size
-                <Input v-model={this.upload.maxSize} />
-                k
+                <Input v-model={this.upload.maxSize} />k
               </div>
-              <Button on-click={() => {
-                this.operateHandler('上传', async () => {
-                  const err = await this.$refs.upload.upload()
-                  if (err.length) {
-                    throw new Error(err.join(','))
-                  }
-                })
-              }}>upload</Button>
+              <Button
+                on-click={() => {
+                  this.operateHandler('上传', async () => {
+                    const err = await this.$refs.upload.upload()
+                    if (err.length) {
+                      throw new Error(err.join(','))
+                    }
+                  })
+                }}
+              >
+                upload
+              </Button>
             </div>
           </div>
-          <div>
-            {this.renderEditor()}
-          </div>
-
+          <div>{this.renderEditor()}</div>
         </div>
 
         {this.renderList()}
-      </div >
+      </div>
     )
   }
 
-  videoIdText = '';
-  videoId = '5da80f96cb21fc0abc856e75';
+  videoIdText = ''
+  videoId = '5da80f96cb21fc0abc856e75'
   renderVideo() {
     const danmakuList = []
     // test
@@ -183,50 +200,68 @@ export default class App extends Base {
       for (let j = 0; j < 3; j++) {
         danmakuList.push({
           msg: 'test' + (i * 3 + j),
-          pos: i * 1000 + j * 500
+          pos: i * 1000 + j * 500,
         })
       }
     }
     return (
       <div>
         <div class={this.getStyleName('danmaku-main')}>
-          <Input v-model={this.videoIdText} search enter-button='确认'
+          <Input
+            v-model={this.videoIdText}
+            search
+            enter-button="确认"
             on-on-search={() => {
               this.videoId = this.videoIdText
-              const url = testApi.getVideoUrl(this.videoId) || 'http://vjs.zencdn.net/v/oceans.mp4'
+              const url =
+                testApi.getVideoUrl(this.videoId) ||
+                'http://vjs.zencdn.net/v/oceans.mp4'
               this.player.src({
                 type: 'video/mp4',
-                src: url
+                src: url,
               })
               this.player.load()
               this.player.currentTime(0)
               this.player.play()
-            }} />
-          <MyVideo ref='video' options={{
-            poster: '//localhost:8000/devMgt/img?_id=5da818d6433fe2209054c290',
-            sources: [{
-              type: 'video/mp4',
-              src: testApi.getVideoUrl(this.videoId)
-            }],
-            danmaku: {
-              danmakuList
-              // sendFn: async (data) => {
-              //     let rs = await this.operateHandler('发送弹幕', async () => {
-              //         data.videoId = this.videoId;
-              //         await testApi.danmakuSubmit(data);
-              //     }, { noSuccessHandler: true });
-              //     return rs.success;
-              // }
-            }
-          }} />
+            }}
+          />
+          <MyVideo
+            ref="video"
+            options={{
+              poster:
+                '//localhost:8000/devMgt/img?_id=5da818d6433fe2209054c290',
+              sources: [
+                {
+                  type: 'video/mp4',
+                  src: testApi.getVideoUrl(this.videoId),
+                },
+              ],
+              danmaku: {
+                danmakuList,
+                // sendFn: async (data) => {
+                //     let rs = await this.operateHandler('发送弹幕', async () => {
+                //         data.videoId = this.videoId;
+                //         await testApi.danmakuSubmit(data);
+                //     }, { noSuccessHandler: true });
+                //     return rs.success;
+                // }
+              },
+            }}
+          />
         </div>
-        <div style={{
-          display: 'inline-block'
-        }}>
-          <Button on-click={() => {
-            this.$refs.videoCover.src = this.captureImage()
-          }}>截取</Button>
-          <img width='160' height='90' ref='videoCover' />
+        <div
+          style={{
+            display: 'inline-block',
+          }}
+        >
+          <Button
+            on-click={() => {
+              this.$refs.videoCover.src = this.captureImage()
+            }}
+          >
+            截取
+          </Button>
+          <img width="160" height="90" ref="videoCover" />
         </div>
       </div>
     )
@@ -234,44 +269,58 @@ export default class App extends Base {
 
   renderEditor() {
     return (
-      <div style={{
-        display: 'inline-block',
-        width: '600px',
-        verticalAlign: 'top'
-      }}>
-        <MyEditor v-model={this.richText} placeholder='输点啥。。。' />
-        <Button on-click={() => {
-          console.log(this.richText)
-        }}>log</Button>
-        <div ref='echart' style={{ height: '300px', width: '500px' }}></div>
-        <Input v-model={this.chartAddData} search enter-button='添加' on-on-search={() => {
-          const num = parseFloat(this.chartAddData)
-          if (!isNaN(num)) {
-            const opt = this.chart.getOption()
-            const data: number[] = (opt.series[0] as any).data
-            data.shift()
-            data.push(num)
-            this.chart.setOption(opt)
-            this.chartAddData = ''
-          }
-        }} />
+      <div
+        style={{
+          display: 'inline-block',
+          width: '600px',
+          verticalAlign: 'top',
+        }}
+      >
+        <MyEditor v-model={this.richText} placeholder="输点啥。。。" />
+        <Button
+          on-click={() => {
+            console.log(this.richText)
+          }}
+        >
+          log
+        </Button>
+        <div ref="echart" style={{ height: '300px', width: '500px' }}></div>
+        <Input
+          v-model={this.chartAddData}
+          search
+          enter-button="添加"
+          on-on-search={() => {
+            const num = parseFloat(this.chartAddData)
+            if (!isNaN(num)) {
+              const opt = this.chart.getOption()
+              const data: number[] = (opt.series[0] as any).data
+              data.shift()
+              data.push(num)
+              this.chart.setOption(opt)
+              this.chartAddData = ''
+            }
+          }}
+        />
       </div>
     )
   }
 
   renderList() {
     return (
-      <MyList ref='list' type='custom' infiniteScroll
+      <MyList
+        ref="list"
+        type="custom"
+        infiniteScroll
         customQueryNode={
           <label>
-            <Checkbox v-model={this.fail} />失败
+            <Checkbox v-model={this.fail} />
+            失败
           </label>
         }
         on-query={(model, noClear) => {
           const q = { ...model.query }
           this.$refs.list.query(q, noClear)
         }}
-
         queryFn={async () => {
           const page = this.$refs.list.model.page
           const total = 25
@@ -282,73 +331,81 @@ export default class App extends Base {
           await this.$utils.wait(2000)
           return {
             rows: this.list,
-            total
+            total,
           }
         }}
-
         customRenderFn={(rs) => {
-          const list = rs.data.map(ele => {
+          const list = rs.data.map((ele) => {
             return <Card style={{ marginBottom: '10px' }}>{ele.test}</Card>
           })
           return list
-        }}></MyList>
+        }}
+      ></MyList>
     )
   }
 }
 
 class PropClass {
   @Prop({
-    default: '组件1'
+    default: '组件1',
   })
-  cname?: string;
+  cname?: string
 
   @Prop({
     required: false,
-    default: '属性1'
+    default: '属性1',
   })
-  test?: string;
+  test?: string
 }
 
 @Component({
-  props: PropClass
+  props: PropClass,
 })
 class Tsx extends Vue<PropClass> {
   testFn() {
     return this.cname
   }
   protected render() {
-    return <div>{this.testFn()},{this.test},1111111111</div>
+    return (
+      <div>
+        {this.testFn()},{this.test},1111111111
+      </div>
+    )
   }
 }
 
 class PropClass2 {
   @Prop({
-    default: '组件2'
+    default: '组件2',
   })
-  cname?: string;
+  cname?: string
 
   @Prop({
     required: true,
-    default: '属性1'
+    default: '属性1',
   })
-  test?: string;
+  test?: string
 
   @Prop({
-    default: '属性2'
+    default: '属性2',
   })
-  test2?: number;
+  test2?: number
 }
 
 @Component({
   extends: Tsx,
-  props: PropClass2
+  props: PropClass2,
 })
 class Tsx2 extends Vue<PropClass2, Tsx> {
   protected render() {
     return (
       <div>
-        <div>{this.testFn()},{this.test},222222</div>
-        <div>{this.testFn()},{this.test2},222222</div>
+        <div>
+          {this.testFn()},{this.test},222222
+        </div>
+        <div>
+          {this.testFn()},{this.test2},222222
+        </div>
       </div>
     )
   }

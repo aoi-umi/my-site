@@ -7,22 +7,22 @@ import './videojs-comp.less'
 
 const clsPrefix = 'vjs-danmaku-'
 function getClsName(prefix, ...cls) {
-  return cls.map(ele => prefix + ele).join(' ')
+  return cls.map((ele) => prefix + ele).join(' ')
 }
 type DanmakOptions = {
-  enable?: boolean;
-  danmakuList?: DanmakuDataType[],
-  sendFn?: (data) => boolean | Promise<boolean>,
-  elementAfterInput?: HTMLElement | HTMLElement[];
-};
-export type DanmakuDataType = {
-  msg: string,
-  color?: string;
-  pos: number;
-  isSelf?: boolean;
-  createdAt?: string;
+  enable?: boolean
+  danmakuList?: DanmakuDataType[]
+  sendFn?: (data) => boolean | Promise<boolean>
+  elementAfterInput?: HTMLElement | HTMLElement[]
 }
-type DanmakuDataTypeInner = DanmakuDataType & { add?: boolean };
+export type DanmakuDataType = {
+  msg: string
+  color?: string
+  pos: number
+  isSelf?: boolean
+  createdAt?: string
+}
+type DanmakuDataTypeInner = DanmakuDataType & { add?: boolean }
 export type DanmakuPlayerOptions = videojs.PlayerOptions & {
   danmaku?: DanmakOptions
 }
@@ -31,44 +31,46 @@ const KeyCode = {
   left: 37,
   up: 38,
   right: 39,
-  down: 40
+  down: 40,
 }
 const Event = {
   danmakuSend: 'danmakuSend',
-  widthChange: 'widthChange'
+  widthChange: 'widthChange',
 }
 for (const key in Event) {
   Event[key] = Event[key].toLocaleLowerCase()
 }
 
 const StorageKey = {
-  volume: 'volume'
+  volume: 'volume',
 }
 export class DanmakuPlayer {
-  static Event = Event;
-  player: VideoJsPlayer;
-  input: HTMLInputElement;
-  sendBtn: HTMLButtonElement;
-  danmakuBoard: HTMLDivElement;
+  static Event = Event
+  player: VideoJsPlayer
+  input: HTMLInputElement
+  sendBtn: HTMLButtonElement
+  danmakuBoard: HTMLDivElement
   get options() {
     return this.player.options_ as DanmakuPlayerOptions
   }
-  constructor(id: any, options?: DanmakuPlayerOptions, ready?: (player: VideoJsPlayer) => void) {
+  constructor(
+    id: any,
+    options?: DanmakuPlayerOptions,
+    ready?: (player: VideoJsPlayer) => void,
+  ) {
     options = {
       defaultVolume: this.storage(StorageKey.volume) ?? 0.2,
-      ...options
+      ...options,
     }
     options.danmaku = {
-      ...options.danmaku
+      ...options.danmaku,
     }
     this.player = videojs(id, options, () => {
       this.player.volume(options.defaultVolume)
       ready && ready(this.player)
     })
     if (options.danmaku.danmakuList) {
-      this.danmakuDataList = [
-        ...options.danmaku.danmakuList
-      ]
+      this.danmakuDataList = [...options.danmaku.danmakuList]
     }
     this.initView()
     this.bindEvent()
@@ -82,25 +84,30 @@ export class DanmakuPlayer {
     const danmakuOpt = this.options.danmaku
     const danmakuHide = !danmakuOpt.enable
     const danmakuBar = videojs.dom.createEl('div', {
-      className: getClsName(clsPrefix, 'bar') + ' ' + (danmakuHide ? 'vjs-hidden' : '')
+      className:
+        getClsName(clsPrefix, 'bar') + ' ' + (danmakuHide ? 'vjs-hidden' : ''),
     })
-    const input = this.input = videojs.dom.createEl('input', {
+    const input = (this.input = videojs.dom.createEl('input', {
       placeholder: '输点啥',
-      className: getClsName(clsPrefix, 'input')
-    }) as any
+      className: getClsName(clsPrefix, 'input'),
+    }) as any)
 
-    const sendBtn = this.sendBtn = videojs.dom.createEl('button', {
+    const sendBtn = (this.sendBtn = videojs.dom.createEl('button', {
       innerText: '发送',
-      className: getClsName(clsPrefix, 'send') + ' vjs-control vjs-button'
-    }) as any
+      className: getClsName(clsPrefix, 'send') + ' vjs-control vjs-button',
+    }) as any)
     danmakuBar.append(input)
     if (danmakuOpt.elementAfterInput) {
-      danmakuBar.append(...(danmakuOpt.elementAfterInput instanceof Array ? danmakuOpt.elementAfterInput : [danmakuOpt.elementAfterInput]))
+      danmakuBar.append(
+        ...(danmakuOpt.elementAfterInput instanceof Array
+          ? danmakuOpt.elementAfterInput
+          : [danmakuOpt.elementAfterInput]),
+      )
     }
     danmakuBar.append(sendBtn)
     const statusBar2 = videojs.dom.createEl('div', {
       tabIndex: -1,
-      className: getClsName(clsPrefix, 'status-bar')
+      className: getClsName(clsPrefix, 'status-bar'),
     })
     const child = controlBarEl.children
     statusBar2.append(...child)
@@ -120,10 +127,10 @@ export class DanmakuPlayer {
 
     // 弹幕层
     const poster = player.el().querySelector('.vjs-poster')
-    const danmakuBoard = this.danmakuBoard = videojs.dom.createEl('div', {
+    const danmakuBoard = (this.danmakuBoard = videojs.dom.createEl('div', {
       tabIndex: -1,
-      className: getClsName(clsPrefix, 'board')
-    }) as any
+      className: getClsName(clsPrefix, 'board'),
+    }) as any)
     poster.after(danmakuBoard)
   }
 
@@ -131,15 +138,14 @@ export class DanmakuPlayer {
     let k = `videoSetting:${key}`
     if (val === undefined) {
       let v = localStorage.getItem(k)
-      if (v)
-        return JSON.parse(v)
+      if (v) return JSON.parse(v)
     }
     localStorage.setItem(k, JSON.stringify(val))
   }
 
-  private startPos = 0;
-  private videoWidth = 0;
-  private _resizeHandler;
+  private startPos = 0
+  private videoWidth = 0
+  private _resizeHandler
   private bindEvent() {
     // 快进/快退
     this.player.on('keydown', this.keydownHandler.bind(this))
@@ -153,7 +159,9 @@ export class DanmakuPlayer {
     this.player.on('timeupdate', this.timeUpdateHandler.bind(this))
     // 暂停/播放
     this.player.on('play', () => {
-      if (!this.player.seeking()) { this.handlePlayPause(true) }
+      if (!this.player.seeking()) {
+        this.handlePlayPause(true)
+      }
     })
     this.player.on('pause', () => {
       this.handlePlayPause(false)
@@ -163,11 +171,13 @@ export class DanmakuPlayer {
       this.seek()
     })
     this.player.on('seeked', () => {
-      if (!this.player.paused()) { this.handlePlayPause(true) }
+      if (!this.player.paused()) {
+        this.handlePlayPause(true)
+      }
     })
     let volumechange = Utils.debounce(() => {
-      let v = Utils.round(this.player.volume(), 2);
-      this.storage(StorageKey.volume, v);
+      let v = Utils.round(this.player.volume(), 2)
+      this.storage(StorageKey.volume, v)
     })
     this.player.on('volumechange', volumechange)
 
@@ -176,13 +186,18 @@ export class DanmakuPlayer {
     })
 
     this.input.addEventListener('keypress', (e: KeyboardEvent) => {
-      if (e.keyCode === 13) { this.sendDanmaku() }
+      if (e.keyCode === 13) {
+        this.sendDanmaku()
+      }
       e.stopPropagation()
     })
 
     this.sendBtn.addEventListener('click', this.sendDanmaku.bind(this))
 
-    this.danmakuBoard.addEventListener('click', this.handleBoardClick.bind(this))
+    this.danmakuBoard.addEventListener(
+      'click',
+      this.handleBoardClick.bind(this),
+    )
 
     // 大小改变
     this.videoWidth = this.danmakuBoard.clientWidth
@@ -206,7 +221,9 @@ export class DanmakuPlayer {
     }
 
     const currTime = player.currentTime()
-    if (skip !== 0) { player.currentTime(currTime + skip) }
+    if (skip !== 0) {
+      player.currentTime(currTime + skip)
+    }
 
     const vol = 0.1
     let changeVol = 0
@@ -217,9 +234,15 @@ export class DanmakuPlayer {
     }
 
     const currVol = player.volume()
-    if (changeVol !== 0) { player.volume(currVol + changeVol) }
+    if (changeVol !== 0) {
+      player.volume(currVol + changeVol)
+    }
 
-    if ([KeyCode.right, KeyCode.left, KeyCode.up, KeyCode.down].includes(e.keyCode)) {
+    if (
+      [KeyCode.right, KeyCode.left, KeyCode.up, KeyCode.down].includes(
+        e.keyCode,
+      )
+    ) {
       e.preventDefault()
     }
   }
@@ -244,7 +267,7 @@ export class DanmakuPlayer {
   private handlePlayPause(play: boolean) {
     // console.log('danmaku play', play);
     // console.log(new Error().stack);
-    this.danmakuList.forEach(ele => {
+    this.danmakuList.forEach((ele) => {
       if (ele.animeInst && !ele.finished) {
         if (play) {
           ele.animeInst.play()
@@ -256,7 +279,7 @@ export class DanmakuPlayer {
   }
 
   private seek() {
-    this.danmakuList.forEach(ele => {
+    this.danmakuList.forEach((ele) => {
       delete ele.animeInst
       if (ele.dom) {
         ele.dom.remove()
@@ -264,7 +287,7 @@ export class DanmakuPlayer {
       }
     })
     this.danmakuList = []
-    this.danmakuDataList.forEach(ele => {
+    this.danmakuDataList.forEach((ele) => {
       ele.add = false
     })
     this.updateDanmaku()
@@ -272,13 +295,15 @@ export class DanmakuPlayer {
 
   private timeUpdateHandler() {
     const currPos = this.player.currentTime() * 1000
-    const list = this.danmakuDataList.filter(ele => !ele.add && ele.pos >= this.startPos && ele.pos <= currPos)
+    const list = this.danmakuDataList.filter(
+      (ele) => !ele.add && ele.pos >= this.startPos && ele.pos <= currPos,
+    )
     this.addDanmaku(list)
   }
 
-  changeSrc(src){
-    this.player.pause();
-    this.player.currentTime(0);
+  changeSrc(src) {
+    this.player.pause()
+    this.player.currentTime(0)
     this.player.src(src)
   }
 
@@ -291,19 +316,19 @@ export class DanmakuPlayer {
   }
 
   private resize() {
-    this.danmakuList.forEach(ele => {
+    this.danmakuList.forEach((ele) => {
       // ele.animeInst.
     })
   }
 
-  danmakuDataList: DanmakuDataTypeInner[] = [];
+  danmakuDataList: DanmakuDataTypeInner[] = []
   danmakuList: (DanmakuDataType & {
-    idx?: number,
-    animeInst?: anime.AnimeInstance,
-    finished?: boolean,
-    dom?: HTMLElement,
-    playNow?: boolean;
-  })[] = [];
+    idx?: number
+    animeInst?: anime.AnimeInstance
+    finished?: boolean
+    dom?: HTMLElement
+    playNow?: boolean
+  })[] = []
 
   private get danmaku() {
     return this.input.value
@@ -313,29 +338,42 @@ export class DanmakuPlayer {
   }
 
   // 颜色
-  color = '';
+  color = ''
   danmakuPush(danmaku: DanmakuDataType | DanmakuDataType[], top?: boolean) {
     const list = danmaku instanceof Array ? danmaku : [danmaku]
-    list.forEach(ele => {
-      if (!top) { this.danmakuDataList.push(ele) } else { this.danmakuDataList.unshift(ele) }
+    list.forEach((ele) => {
+      if (!top) {
+        this.danmakuDataList.push(ele)
+      } else {
+        this.danmakuDataList.unshift(ele)
+      }
     })
   }
 
-  private sending = false;
+  private sending = false
   private async sendDanmaku() {
     const player = this.player
     const danmaku = this.danmaku && this.danmaku.trim()
-    if (!danmaku) { return }
+    if (!danmaku) {
+      return
+    }
     // 冷却中
-    if (this.sending) { return }
+    if (this.sending) {
+      return
+    }
     try {
       this.sending = true
       const data: DanmakuDataType = {
-        msg: danmaku, color: this.color,
-        pos: player.ended() ? 0 : parseInt(player.currentTime() * 1000 as any)
+        msg: danmaku,
+        color: this.color,
+        pos: player.ended()
+          ? 0
+          : parseInt((player.currentTime() * 1000) as any),
       }
       let sendSuccess = false
-      if (this.options.danmaku.sendFn) { sendSuccess = await this.options.danmaku.sendFn(data) } else {
+      if (this.options.danmaku.sendFn) {
+        sendSuccess = await this.options.danmaku.sendFn(data)
+      } else {
         this.danmakuPush(data)
         sendSuccess = true
       }
@@ -350,27 +388,24 @@ export class DanmakuPlayer {
 
   private addDanmaku(danmaku: DanmakuDataTypeInner | DanmakuDataTypeInner[]) {
     const list = danmaku instanceof Array ? danmaku : [danmaku]
-    list.forEach(ele => {
+    list.forEach((ele) => {
       ele.add = true
     })
-    this.danmakuList = [
-      ...this.danmakuList,
-      ...list
-    ]
+    this.danmakuList = [...this.danmakuList, ...list]
     this.updateDanmaku()
   }
 
   private getTransOption(danmakuWidth) {
     const speed = 1
-    const duration = danmakuWidth * 10 / speed
+    const duration = (danmakuWidth * 10) / speed
     return {
       translateX: -danmakuWidth,
-      duration
+      duration,
     }
   }
 
   private updateDanmaku() {
-    let pause = this.player.paused();
+    let pause = this.player.paused()
     const width = this.danmakuBoard.offsetWidth
     const height = this.danmakuBoard.offsetHeight
     const transXReg = /\.*translateX\((.*)px\)/i
@@ -380,13 +415,19 @@ export class DanmakuPlayer {
       // 创建dom
       if (!dom) {
         const cls = ['danmaku']
-        if (ele.isSelf) { cls.push('danmaku-self') }
-        ele.dom = dom = videojs.dom.createEl('div', {
-          className: getClsName(clsPrefix, ...cls),
-          innerText: ele.msg
-        }, {
-          style: `color: ${ele.color};left: ${width}px`
-        }) as any
+        if (ele.isSelf) {
+          cls.push('danmaku-self')
+        }
+        ele.dom = dom = videojs.dom.createEl(
+          'div',
+          {
+            className: getClsName(clsPrefix, ...cls),
+            innerText: ele.msg,
+          },
+          {
+            style: `color: ${ele.color};left: ${width}px`,
+          },
+        ) as any
         this.danmakuBoard.appendChild(dom)
       }
       // 计算高度,移动动画
@@ -395,14 +436,22 @@ export class DanmakuPlayer {
         danmakuList.forEach((ele2, idx2) => {
           const dom2 = ele2.dom
           if (idx != idx2 && dom2) {
-            const x = Math.abs(parseFloat(transXReg.exec(dom2.style.transform)[1]))
+            const x = Math.abs(
+              parseFloat(transXReg.exec(dom2.style.transform)[1]),
+            )
             if (!isNaN(x) && x < dom2.offsetWidth) {
               const top = dom2.offsetTop
-              if (!topLevelDict[top]) { topLevelDict[top] = 0 }
+              if (!topLevelDict[top]) {
+                topLevelDict[top] = 0
+              }
               topLevelDict[top]++
               let newTop = dom2.offsetHeight + dom2.offsetTop
-              if (newTop + dom.offsetHeight >= height) { newTop = 0 }
-              if (!topLevelDict[newTop]) { topLevelDict[newTop] = 0 }
+              if (newTop + dom.offsetHeight >= height) {
+                newTop = 0
+              }
+              if (!topLevelDict[newTop]) {
+                topLevelDict[newTop] = 0
+              }
             }
           }
         })
@@ -416,11 +465,13 @@ export class DanmakuPlayer {
             top = parseFloat(key)
           }
         }
-        if (top) { dom.style.top = top + 'px' }
+        if (top) {
+          dom.style.top = top + 'px'
+        }
         ele.animeInst = anime({
           targets: dom,
           easing: 'linear',
-          ...this.getTransOption(danmakuWidth)
+          ...this.getTransOption(danmakuWidth),
         })
         if (pause) {
           ele.animeInst.pause()

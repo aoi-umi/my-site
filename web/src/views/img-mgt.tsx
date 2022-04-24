@@ -8,31 +8,34 @@ import { testApi } from '@/api'
 import { Base } from './base'
 @Component
 export default class ImgMgt extends Base {
-  $refs: { root: HTMLDivElement; waterFall: MyWaterfall };
-  stylePrefix = 'img-mgt';
-  imgsArr = [];
+  $refs: { root: HTMLDivElement; waterFall: MyWaterfall }
+  stylePrefix = 'img-mgt'
+  imgsArr = []
 
-  page = 1;
-  rows = 10;
+  page = 1
+  rows = 10
   async getData() {
     const rs = await testApi.myImgQuery({ page: this.page, rows: this.rows })
-    const finished = rs.total == ((this.page - 1) * this.rows + rs.rows.length)
+    const finished = rs.total == (this.page - 1) * this.rows + rs.rows.length
     this.page++
     return {
-      data: rs.rows.map(ele => ({
+      data: rs.rows.map((ele) => ({
         src: ele.url,
-        data: ele
+        data: ele,
       })),
-      finished
+      finished,
     }
   }
 
-  selectable = false;
+  selectable = false
   private cancel() {
     this.selectable = false
   }
   private get deletable() {
-    return this.$refs.waterFall && this.$refs.waterFall.itemList.filter(ele => ele.selected).length > 0
+    return (
+      this.$refs.waterFall &&
+      this.$refs.waterFall.itemList.filter((ele) => ele.selected).length > 0
+    )
   }
   private async del() {
     const waterFall = this.$refs.waterFall
@@ -51,24 +54,41 @@ export default class ImgMgt extends Base {
 
   render() {
     return (
-      <div class='button-group-normal'>
-        {!this.selectable ?
-          <Button type='primary' on-click={() => {
-            this.selectable = true
-          }}>选择</Button> :
+      <div class="button-group-normal">
+        {!this.selectable ? (
+          <Button
+            type="primary"
+            on-click={() => {
+              this.selectable = true
+            }}
+          >
+            选择
+          </Button>
+        ) : (
           <div>
-            <Button disabled={!this.deletable} type='error' on-click={() => {
-              this.$utils.confirm(`确认删除?`, {
-                ok: this.del
-              })
-            }}>删除</Button>
-            <Button on-click={() => {
-              this.cancel()
-            }}>取消</Button>
-          </div>}
+            <Button
+              disabled={!this.deletable}
+              type="error"
+              on-click={() => {
+                this.$utils.confirm(`确认删除?`, {
+                  ok: this.del,
+                })
+              }}
+            >
+              删除
+            </Button>
+            <Button
+              on-click={() => {
+                this.cancel()
+              }}
+            >
+              取消
+            </Button>
+          </div>
+        )}
         <Divider />
         <MyWaterfall
-          ref='waterFall'
+          ref="waterFall"
           selectable={this.selectable}
           getDataFn={() => {
             return this.getData()

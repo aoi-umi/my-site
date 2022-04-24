@@ -3,308 +3,308 @@ import { currEnvCfg } from './env'
 
 let test: TestApiConfigType = {
   defaultArgs: {
-    host: `${currEnvCfg.apiHost}/devMgt`
+    host: `${currEnvCfg.apiHost}/devMgt`,
   },
   method: {
     serverInfo: {
       url: '/server/info',
-      method: 'get'
+      method: 'get',
     },
     userSignUp: {
-      url: '/user/signUp'
+      url: '/user/signUp',
     },
     userSignUpCheck: {
-      url: '/user/signUpCheck'
+      url: '/user/signUpCheck',
     },
     userSignIn: {
-      url: '/user/signIn'
+      url: '/user/signIn',
     },
     userSignInByAuth: {
-      url: '/user/signInByAuth'
+      url: '/user/signInByAuth',
     },
     userSignOut: {
-      url: '/user/signOut'
+      url: '/user/signOut',
     },
     userInfo: {
       url: '/user/info',
-      method: 'get'
+      method: 'get',
     },
     userDetail: {
       url: '/user/detail',
-      method: 'get'
+      method: 'get',
     },
     userDetailQuery: {
       url: '/user/detailQuery',
-      method: 'get'
+      method: 'get',
     },
     userUpdate: {
-      url: '/user/update'
+      url: '/user/update',
     },
     userUnbind: {
-      url: '/user/unbind'
+      url: '/user/unbind',
     },
     userBind: {
-      url: '/user/bind'
+      url: '/user/bind',
     },
     userAccountExists: {
-      url: '/user/accountExists'
+      url: '/user/accountExists',
     },
     userOauthLogin: {
-      url: '/user/oauth/:name/signIn'
+      url: '/user/oauth/:name/signIn',
     },
     userOauthBind: {
-      url: '/user/oauth/:name/bind'
+      url: '/user/oauth/:name/bind',
     },
 
     userMgtQuery: {
       url: '/user/mgt/query',
-      method: 'get'
+      method: 'get',
     },
     userMgtSave: {
-      url: '/user/mgt/save'
+      url: '/user/mgt/save',
     },
     userMgtDisable: {
-      url: '/user/mgt/disable'
+      url: '/user/mgt/disable',
     },
 
     userCommentQuery: {
       url: '/user/comment/query',
-      method: 'get'
+      method: 'get',
     },
     userCommentReplyQuery: {
       url: '/user/comment/replyQuery',
-      method: 'get'
+      method: 'get',
     },
 
     bookmarkQuery: {
       url: '/bookmark/query',
-      method: 'GET'
+      method: 'GET',
     },
     bookmarkSave: {
-      url: '/bookmark/save'
+      url: '/bookmark/save',
     },
     bookmarkDel: {
-      url: '/bookmark/del'
+      url: '/bookmark/del',
     },
 
     authorityQuery: {
       url: '/authority/query',
-      method: 'GET'
+      method: 'GET',
     },
     authorityCodeExists: {
-      url: '/authority/codeExists'
+      url: '/authority/codeExists',
     },
     authoritySave: {
-      url: '/authority/save'
+      url: '/authority/save',
     },
     authorityUpdate: {
-      url: '/authority/update'
+      url: '/authority/update',
     },
     authorityDel: {
-      url: '/authority/del'
+      url: '/authority/del',
     },
 
     roleQuery: {
       url: '/role/query',
-      method: 'GET'
+      method: 'GET',
     },
     roleCodeExists: {
-      url: '/role/codeExists'
+      url: '/role/codeExists',
     },
     roleSave: {
-      url: '/role/save'
+      url: '/role/save',
     },
     roleUpdate: {
-      url: '/role/update'
+      url: '/role/update',
     },
     roleDel: {
-      url: '/role/del'
+      url: '/role/del',
     },
 
     articleQuery: {
       url: '/article/query',
-      method: 'GET'
+      method: 'GET',
     },
     articleDetailQuery: {
       url: '/article/detailQuery',
-      method: 'GET'
+      method: 'GET',
     },
     articleMgtQuery: {
       url: '/article/mgt/query',
-      method: 'GET'
+      method: 'GET',
     },
     articleMgtDetailQuery: {
       url: '/article/mgt/detailQuery',
-      method: 'GET'
+      method: 'GET',
     },
     articleMgtSave: {
-      url: '/article/mgt/save'
+      url: '/article/mgt/save',
     },
     articleMgtDel: {
-      url: '/article/mgt/del'
+      url: '/article/mgt/del',
     },
     articleMgtAudit: {
-      url: '/article/mgt/audit'
+      url: '/article/mgt/audit',
     },
 
     videoQuery: {
       url: '/video/query',
-      method: 'GET'
+      method: 'GET',
     },
     videoDetailQuery: {
       url: '/video/detailQuery',
-      method: 'GET'
+      method: 'GET',
     },
     videoMgtQuery: {
       url: '/video/mgt/query',
-      method: 'GET'
+      method: 'GET',
     },
     videoMgtDetailQuery: {
       url: '/video/mgt/detailQuery',
-      method: 'GET'
+      method: 'GET',
     },
     videoMgtSave: {
-      url: '/video/mgt/save'
+      url: '/video/mgt/save',
     },
     videoMgtDel: {
-      url: '/video/mgt/del'
+      url: '/video/mgt/del',
     },
     videoMgtAudit: {
-      url: '/video/mgt/audit'
+      url: '/video/mgt/audit',
     },
 
     danmakuSubmit: {
-      url: '/danmaku/submit'
+      url: '/danmaku/submit',
     },
     danmakuQuery: {
       url: '/danmaku/query',
-      method: 'GET'
+      method: 'GET',
     },
 
     commentQuery: {
       url: '/comment/query',
-      method: 'GET'
+      method: 'GET',
     },
     commentSubmit: {
-      url: '/comment/submit'
+      url: '/comment/submit',
     },
     commentDel: {
-      url: '/comment/del'
+      url: '/comment/del',
     },
 
     voteSubmit: {
-      url: '/vote/submit'
+      url: '/vote/submit',
     },
     favouriteSubmit: {
-      url: '/favourite/submit'
+      url: '/favourite/submit',
     },
     favouriteQuery: {
       url: '/favourite/query',
-      method: 'get'
+      method: 'get',
     },
     viewHistoryQuery: {
       url: '/view-history/query',
-      method: 'get'
+      method: 'get',
     },
     myImgQuery: {
       url: '/my/img/query',
-      method: 'get'
+      method: 'get',
     },
     myImgDel: {
-      url: '/my/img/del'
+      url: '/my/img/del',
     },
     followSave: {
-      url: '/follow/save'
+      url: '/follow/save',
     },
     followQuery: {
       url: '/follow/query',
-      method: 'get'
+      method: 'get',
     },
     chatSubmit: {
-      url: '/chat/submit'
+      url: '/chat/submit',
     },
     chatQuery: {
       url: '/chat/query',
-      method: 'get'
+      method: 'get',
     },
     chatList: {
       url: '/chat/list',
-      method: 'get'
+      method: 'get',
     },
     payCreate: {
-      url: '/pay/create'
+      url: '/pay/create',
     },
     paySubmit: {
-      url: '/pay/submit'
+      url: '/pay/submit',
     },
     payCancel: {
-      url: '/pay/cancel'
+      url: '/pay/cancel',
     },
     payQuery: {
       url: '/pay/query',
-      method: 'get'
+      method: 'get',
     },
     payRefundApply: {
-      url: '/pay/refundApply'
+      url: '/pay/refundApply',
     },
     payRefund: {
-      url: '/pay/refund'
+      url: '/pay/refund',
     },
 
     assetLogQuery: {
       url: '/asset/logQuery',
-      method: 'get'
+      method: 'get',
     },
     assetNotifyQuery: {
       url: '/asset/notifyQuery',
-      method: 'get'
+      method: 'get',
     },
     assetNotifyRetry: {
-      url: '/asset/notifyRetry'
+      url: '/asset/notifyRetry',
     },
 
     goodsMgtQuery: {
       url: '/goods/mgt/query',
-      method: 'get'
+      method: 'get',
     },
     goodsMgtDetailQuery: {
       url: '/goods/mgt/detailQuery',
-      method: 'get'
+      method: 'get',
     },
     goodsMgtSave: {
-      url: '/goods/mgt/save'
+      url: '/goods/mgt/save',
     },
     goodsMgtDel: {
-      url: '/goods/mgt/del'
+      url: '/goods/mgt/del',
     },
     goodsQuery: {
       url: '/goods/query',
-      method: 'get'
+      method: 'get',
     },
     goodsDetailQuery: {
       url: '/goods/detailQuery',
-      method: 'get'
+      method: 'get',
     },
     goodsBuy: {
-      url: '/goods/buy'
+      url: '/goods/buy',
     },
 
     settingDetailQuery: {
       url: '/setting/mgt/detailQuery',
-      method: 'get'
+      method: 'get',
     },
     settingSave: {
-      url: '/setting/mgt/save'
+      url: '/setting/mgt/save',
     },
 
     // file
     fileMgtQuery: {
       url: '/file/mgt/query',
-      method: 'get'
+      method: 'get',
     },
     fileMgtDownload: {
       url: '/file/mgt/download',
-      method: 'get'
+      method: 'get',
     },
     fileMgtDel: {
       url: '/file/mgt/del',
@@ -313,99 +313,99 @@ let test: TestApiConfigType = {
       url: '/file/mgt/recovery',
     },
     fileUploadByChunks: {
-      url: '/file/uploadByChunks'
+      url: '/file/uploadByChunks',
     },
     fileUploadCheck: {
-      url: '/file/uploadCheck'
+      url: '/file/uploadCheck',
     },
     imgUpload: {
-      url: '/img/upload'
+      url: '/img/upload',
     },
     imgGet: {
-      url: '/img'
+      url: '/img',
     },
     videoUpload: {
-      url: '/video/upload'
+      url: '/video/upload',
     },
     videoGet: {
-      url: '/video'
+      url: '/video',
     },
 
     wxGetCode: {
       url: '/wx/getCode',
-      method: 'get'
+      method: 'get',
     },
     wxGetUserInfo: {
       url: '/wx/getUserInfo',
-      method: 'get'
+      method: 'get',
     },
     wxCodeSend: {
-      url: '/wx/codeSend'
+      url: '/wx/codeSend',
     },
     statPVSave: {
-      url: '/stat/pv/save'
+      url: '/stat/pv/save',
     },
     statQuery: {
       url: '/stat/query',
-      method: 'get'
+      method: 'get',
     },
     printMgtQuery: {
       url: '/print/mgt/query',
-      method: 'get'
+      method: 'get',
     },
     printMgtDetailQuery: {
       url: '/print/mgt/detailQuery',
-      method: 'get'
+      method: 'get',
     },
     printMgtSave: {
-      url: '/print/mgt/save'
+      url: '/print/mgt/save',
     },
     printMgtDel: {
-      url: '/print/mgt/del'
+      url: '/print/mgt/del',
     },
     printGetData: {
       url: '/print/getData',
-      method: 'get'
+      method: 'get',
     },
     dynamicSqlExec: {
-      url: '/dynamicSql/exec'
+      url: '/dynamicSql/exec',
     },
 
     compMgtSave: {
-      url: '/comp/mgt/save'
+      url: '/comp/mgt/save',
     },
     compMgtModuleSave: {
-      url: '/comp/mgt/moduleSave'
+      url: '/comp/mgt/moduleSave',
     },
     compMgtConfigSave: {
-      url: '/comp/mgt/configSave'
+      url: '/comp/mgt/configSave',
     },
     compMgtConfigQuery: {
       url: '/comp/mgt/configQuery',
-      method: 'get'
+      method: 'get',
     },
     compMgtQuery: {
       url: '/comp/mgt/query',
-      method: 'get'
+      method: 'get',
     },
     compMgtDetailQuery: {
       url: '/comp/mgt/detailQuery',
-      method: 'get'
+      method: 'get',
     },
     compMgtDel: {
-      url: '/comp/mgt/del'
+      url: '/comp/mgt/del',
     },
     compDetailQuery: {
       url: '/comp/detailQuery',
-      method: 'get'
+      method: 'get',
     },
     liveInfo: {
       url: '/live/info',
-      method: 'get'
-    }
-  }
+      method: 'get',
+    },
+  },
 }
 
 export default {
-  test
+  test,
 }

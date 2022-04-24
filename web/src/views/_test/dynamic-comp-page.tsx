@@ -1,4 +1,3 @@
-
 import { Watch } from 'vue-property-decorator'
 
 import { Component } from '@/components/decorator'
@@ -18,11 +17,11 @@ import { CompModuleType } from '../comp-mgt/comp-mgt-detail'
 @Component
 export default class CompDetailPage extends Base {
   $refs: {
-    loadView: MyLoad,
+    loadView: MyLoad
     comp: CompDetail
-  };
+  }
 
-  created () {
+  created() {
     this.init()
   }
 
@@ -32,68 +31,77 @@ export default class CompDetailPage extends Base {
   private moduleList: DeepPartial<CompModuleType>[] = []
 
   private addEnable = true
-  init () {
-    this.moduleList = [{
-      name: 'test22',
-      buttonList: [{
-        name: 'add',
-        click: (btn) => {
-          this.click(btn)
+  init() {
+    this.moduleList = [
+      {
+        name: 'test22',
+        buttonList: [
+          {
+            name: 'add',
+            click: (btn) => {
+              this.click(btn)
+            },
+            enable: () => {
+              return this.addEnable
+            },
+          },
+          {
+            name: 'update',
+            click: (btn) => {
+              this.click(btn)
+            },
+          },
+          {
+            name: 'test',
+            click: (btn) => {
+              this.addEnable = !this.addEnable
+            },
+          },
+        ],
+        itemProp: {
+          test11111: {
+            event: {
+              onChange: (args) => {
+                this.handler(args)
+              },
+            },
+          },
+          tt: {
+            event: {
+              onChange: (args) => {
+                this.handler(args)
+              },
+            },
+          },
         },
-        enable: () => {
-          return this.addEnable
-        }
-      }, {
-        name: 'update',
-        click: (btn) => {
-          this.click(btn)
-        }
-      }, {
-        name: 'test',
-        click: (btn) => {
-          this.addEnable = !this.addEnable
-        }
-      }],
-      itemProp: {
-        'test11111': {
-          event: {
-            onChange: (args) => {
-              this.handler(args)
+        itemDynamicConfigFn: ({ config, name, value, data }) => {
+          if (name === 'test11111') {
+            return {
+              editable: !data.test24,
             }
           }
         },
-        'tt': {
-          event: {
-            onChange: (args) => {
-              this.handler(args)
-            }
-          }
-        }
       },
-      itemDynamicConfigFn: ({ config, name, value, data }) => {
-        if (name === 'test11111') {
-          return {
-            editable: !data.test24
-          }
-        }
-      }
-    }]
+    ]
   }
 
-  private click (btn: MyButtonsModel) {
+  private click(btn: MyButtonsModel) {
     this.$Message.info(`点击了${btn.name}`)
   }
 
-  private handler (args: DynamicCompEventType) {
+  private handler(args: DynamicCompEventType) {
     console.log(`${args.config.name}: 触发了事件`)
     console.log(args)
   }
 
-  async loadDetail () {
+  async loadDetail() {
     this.compConfig = await testApi.compDetailQuery({ name: this.name })
     let data = {}
-    this.compConfig.moduleList = this.$utils.dynamicCompMergeModule(this.compConfig.moduleList, this.moduleList)
-    this.compConfig.moduleList.forEach(ele => {
+    this.compConfig.moduleList = this.$utils.dynamicCompMergeModule(
+      this.compConfig.moduleList,
+      this.moduleList,
+    )
+    this.compConfig.moduleList.forEach((ele) => {
       let d = Utils.getObjByDynCfg(ele.itemList)
       if (ele.viewType === dynamicCompViewType.列表) {
         data[ele.name] = [d]
@@ -104,29 +112,36 @@ export default class CompDetailPage extends Base {
     this.data = data
   }
 
-  protected render () {
+  protected render() {
     return (
       <div>
         <MyLoad
-          ref='loadView'
+          ref="loadView"
           loadFn={this.loadDetail}
           renderFn={() => {
             return this.renderDetail()
-          }} />
+          }}
+        />
       </div>
     )
   }
 
-  protected renderDetail () {
-    return <div>
-      <Button on-click={() => {
-        this.valid()
-      }}>测试校验</Button>
-      <CompDetail ref='comp' compConfig={this.compConfig} data={this.data} />
-    </div>
+  protected renderDetail() {
+    return (
+      <div>
+        <Button
+          on-click={() => {
+            this.valid()
+          }}
+        >
+          测试校验
+        </Button>
+        <CompDetail ref="comp" compConfig={this.compConfig} data={this.data} />
+      </div>
+    )
   }
 
-  private async valid () {
+  private async valid() {
     let rs = await this.$refs.comp.valid()
     console.log(rs)
   }

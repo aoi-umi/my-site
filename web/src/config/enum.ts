@@ -4,100 +4,100 @@ const contentStatus = {
   待审核: 1,
   审核通过: 2,
   审核不通过: 3,
-  已删除: -1
+  已删除: -1,
 }
 const enumDefine = {
   authorityStatus: {
     禁用: 0,
-    启用: 1
+    启用: 1,
   },
   roleStatus: {
     禁用: 0,
-    启用: 1
+    启用: 1,
   },
   userStatus: {
     禁用: 0,
     待审核: 1,
-    正常: 2
+    正常: 2,
   },
   userBy: {
-    微信授权: 'wxCode'
+    微信授权: 'wxCode',
   },
   userBind: {
     微信: 'wx',
   },
   oauthName: {
     微信: 'wx',
-    github: 'github'
+    github: 'github',
   },
   articleStatus: contentStatus,
   videoStatus: contentStatus,
   contentType: {
     文章: 0,
-    视频: 1
+    视频: 1,
   },
   articleContentType: {
     默认: 0,
-    Markdown: 1
+    Markdown: 1,
   },
   commentStatus: {
     正常: 0,
-    已删除: -1
+    已删除: -1,
   },
   voteType: {
     文章: 0,
     视频: 1,
-    评论: 10
+    评论: 10,
   },
   voteValue: {
     无: 0,
     喜欢: 1,
-    不喜欢: 2
+    不喜欢: 2,
   },
   followStatus: {
     未关注: 0,
     已关注: 1,
-    已取消: -1
+    已取消: -1,
   },
   followQueryType: {
     关注: 1,
-    粉丝: 2
+    粉丝: 2,
   },
   assetSourceType: {
     微信: 1,
-    支付宝: 2
+    支付宝: 2,
   },
   assetType: {
     支付: 1,
-    退款: 2
+    退款: 2,
   },
   assetLogStatus: {
     未完成: 0,
-    已完成: 1
+    已完成: 1,
   },
   payStatus: {
     未支付: 0,
     待处理: 1,
     已支付: 2,
-    已取消: -1
+    已取消: -1,
   },
   payRefundStatus: {
     未退款: 0,
     已申请: 1,
-    已退款: 2
+    已退款: 2,
   },
   notifyType: {
     微信: 1,
-    支付宝: 2
+    支付宝: 2,
   },
   goodsStatus: {
     上架: 1,
     下架: 0,
-    已删除: -1
+    已删除: -1,
   },
   goodsSkuStatus: {
     上架: 1,
-    下架: 0
+    下架: 0,
   },
 
   socket: {
@@ -110,25 +110,25 @@ const enumDefine = {
     授权: '3rdPartyAuth',
     授权接收: '3rdPartyAuthRecv',
     支付: 'pay',
-    支付回调: 'payCallback'
+    支付回调: 'payCallback',
   },
   fileType: {
     图片: 'image',
-    视频: 'video'
+    视频: 'video',
   },
   settingSignUpType: {
     开放: 0,
     限时开放: 1,
     关闭: 2,
-    限时关闭: 3
+    限时关闭: 3,
   },
   dynamicSqlType: {
     列表: 'list',
-    无数据: 'noData'
+    无数据: 'noData',
   },
   dynamicSqlCalcType: {
     求和: 'sum',
-    平均: 'avg'
+    平均: 'avg',
   },
 
   dynamicCompType: {
@@ -138,13 +138,13 @@ const enumDefine = {
     多选框: 'checkbox',
     日期: 'date',
     时间: 'time',
-    日期时间: 'datetime'
+    日期时间: 'datetime',
   },
   dynamicCompStringQueryType: {
     等于: 'eq',
     模糊: 'like',
     左模糊: 'left-like',
-    右模糊: 'right-like'
+    右模糊: 'right-like',
   },
   dynamicCompNumQueryType: {
     大于: '>',
@@ -152,14 +152,14 @@ const enumDefine = {
     小于: '<',
     小于等于: '<=',
     等于: '=',
-    不等于: '!='
-  }
+    不等于: '!=',
+  },
 }
 
 const enumDefineFront = {
   contentMgtType: {
     文章: 'article',
-    视频: 'video'
+    视频: 'video',
   },
   contentOperateType: {
     查看: 0,
@@ -167,15 +167,15 @@ const enumDefineFront = {
     赞: 2,
     踩: 3,
     收藏: 4,
-    分享: 5
+    分享: 5,
   },
   userEditType: {
     修改: 'edit',
-    封禁: 'disable'
+    封禁: 'disable',
   },
   userDisableType: {
     解封: 0,
-    封禁至: 1
+    封禁至: 1,
   },
   userTab: {
     粉丝: 'follower',
@@ -190,26 +190,26 @@ const enumDefineFront = {
   chatSendStatus: {
     发送中: 0,
     发送成功: 1,
-    发送失败: -1
+    发送失败: -1,
   },
   goodsResetType: {
     初始化: 0,
     规格数量: 1,
-    规格值: 2
+    规格值: 2,
   },
   wxAuthType: {
     登录: 'login',
     绑定: 'bind',
-    扫码: 'scan'
+    扫码: 'scan',
   },
   dynamicCompViewType: {
     表单: 'form',
     列表: 'list',
-    查询条件: 'query'
-  }
+    查询条件: 'query',
+  },
 }
 export const enumDef = {
   ...enumDefine,
-  ...enumDefineFront
+  ...enumDefineFront,
 }
 export const myEnum = Enum.createInstance(enumDef)

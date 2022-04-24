@@ -16,110 +16,110 @@ import * as style from '../style'
 export const FileDataType = {
   未知: '',
   图片: 'image',
-  视频: 'video'
+  视频: 'video',
 }
 
 export type FileType = {
-  name?: string;
-  url?: string;
-  percentage?: number;
-  status?: string;
+  name?: string
+  url?: string
+  percentage?: number
+  status?: string
   // showProgress?: boolean;
-  metadata?: any;
+  metadata?: any
 
-  file?: File;
-  originFileType?: string;
-  fileType?: any;
-  data?: string;
-  originData?: string;
-  willUpload?: boolean;
-  uploadRes?: any;
-};
+  file?: File
+  originFileType?: string
+  fileType?: any
+  data?: string
+  originData?: string
+  willUpload?: boolean
+  uploadRes?: any
+}
 
 type UploadOption = {
-  file: FileType,
+  file: FileType
 }
 
 type CropperOption = {
-  img?: any;
-  autoCrop?: boolean;
-  autoCropWidth?: number;
-  autoCropHeight?: number;
-  fixed?: boolean;
+  img?: any
+  autoCrop?: boolean
+  autoCropWidth?: number
+  autoCropHeight?: number
+  fixed?: boolean
   fixedNumber?: [number, number]
   outputType?: 'jpeg' | 'png' | 'webp'
-};
+}
 
 type SetFileType = {
-  data: string;
-  fileType: string;
-  file: File,
-  originFileType?: string;
-};
+  data: string
+  fileType: string
+  file: File
+  originFileType?: string
+}
 class MyUploadProp {
   @Prop()
-  readonly?: boolean;
+  readonly?: boolean
 
   @Prop()
-  uploadCheckUrl?: string;
+  uploadCheckUrl?: string
 
   @Prop()
-  uploadUrl?: string;
+  uploadUrl?: string
 
   @Prop({
-    default: () => []
+    default: () => [],
   })
-  format?: string[];
+  format?: string[]
 
   @Prop({
-    default: 1024 * 5
+    default: 1024 * 5,
   })
-  maxSize?: number;
+  maxSize?: number
 
   @Prop({
-    default: 1
+    default: 1,
   })
-  maxCount?: number;
+  maxCount?: number
 
   @Prop({
-    default: 60
+    default: 60,
   })
-  width?: number;
+  width?: number
 
   @Prop({
-    default: 60
+    default: 60,
   })
-  height?: number;
+  height?: number
 
   @Prop()
-  headers?: () => any;
+  headers?: () => any
 
   @Prop({
-    default: 'square'
+    default: 'square',
   })
-  shape?: 'circle' | 'square';
+  shape?: 'circle' | 'square'
 
   @Prop({
-    default: () => []
+    default: () => [],
   })
-  value?: FileType[];
+  value?: FileType[]
 
   @Prop({
-    default: FileDataType.图片
+    default: FileDataType.图片,
   })
-  uploadIconType?: string;
+  uploadIconType?: string
 
   @Prop()
-  resHandler?: (res: any) => any;
+  resHandler?: (res: any) => any
 
   @Prop()
-  successHandler?: (res: any, file: FileType) => any;
+  successHandler?: (res: any, file: FileType) => any
 
   @Prop()
-  cropperOptions?: CropperOption;
+  cropperOptions?: CropperOption
 
   @Prop()
-  showVideoCrop?: boolean;
+  showVideoCrop?: boolean
 
   @Prop()
   showProgress?: boolean
@@ -133,15 +133,15 @@ class MyUploadProp {
   components: { VueCropper },
   model: {
     prop: 'value',
-    event: 'change'
-  }
+    event: 'change',
+  },
 })
 export class MyUpload extends Vue<MyUploadProp, MyBase> {
-  stylePrefix = 'my-upload-';
+  stylePrefix = 'my-upload-'
 
-  fileList: FileType[] = [];
+  fileList: FileType[] = []
 
-  protected disableEmitChange = false;
+  protected disableEmitChange = false
   @Watch('value', { immediate: true })
   private watchValue(val: any[]) {
     if (this.fileList === val) {
@@ -149,9 +149,10 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
       return
     }
     if (val) {
-      let fileList = this.maxCount > 0 && val.length > this.maxCount
-        ? val.slice(0, this.maxCount)
-        : val
+      let fileList =
+        this.maxCount > 0 && val.length > this.maxCount
+          ? val.slice(0, this.maxCount)
+          : val
       this.setFile(fileList, { willUpload: false })
     } else {
       this.fileList = []
@@ -169,21 +170,22 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
 
   $refs: {
     upload: iView.Upload & {
-      fileList: FileType[],
+      fileList: FileType[]
       handleClick: () => any
-    },
-    cropper: any, imgViewer: MyImgViewer
-  };
+    }
+    cropper: any
+    imgViewer: MyImgViewer
+  }
 
-  defaultList = [];
+  defaultList = []
 
-  private showUrl = '';
-  private uploadHeaders = {};
-  private cropperShow = false;
-  private editIndex = -1;
-  private selectedIndex = -1;
-  private file: File;
-  private fileType = FileDataType.未知;
+  private showUrl = ''
+  private uploadHeaders = {}
+  private cropperShow = false
+  private editIndex = -1
+  private selectedIndex = -1
+  private file: File
+  private fileType = FileDataType.未知
   private cropper: CropperOption = {
     img: '',
     autoCrop: true,
@@ -191,8 +193,8 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
     autoCropHeight: 288,
     fixed: true,
     fixedNumber: [16, 9],
-    outputType: 'png'
-  };
+    outputType: 'png',
+  }
   private getFileCount() {
     return this.fileList.length
   }
@@ -205,13 +207,12 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
     if (this.cropperOptions) {
       this.cropper = {
         ...this.cropper,
-        ...this.cropperOptions
+        ...this.cropperOptions,
       }
     }
   }
 
-  protected mounted() {
-  }
+  protected mounted() {}
 
   private handleEdit(file: FileType) {
     this.editIndex = this.fileList.indexOf(file)
@@ -238,10 +239,10 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
     const headers = this.headers && this.headers()
     const rs = await axios.request({
       headers,
-      ...opt
+      ...opt,
     })
-    let res = this.resHandler ? this.resHandler(rs.data) : rs.data;
-    return res;
+    let res = this.resHandler ? this.resHandler(rs.data) : rs.data
+    return res
   }
 
   async upload() {
@@ -250,9 +251,11 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
       const file = this.fileList[idx]
       if (file.willUpload) {
         try {
-          let rs = await this.uploadToServer({ file });
+          let rs = await this.uploadToServer({ file })
           if (!rs) throw new Error('fail')
-          file.uploadRes = this.successHandler ? this.successHandler(rs, file) : rs
+          file.uploadRes = this.successHandler
+            ? this.successHandler(rs, file)
+            : rs
           file.willUpload = false
         } catch (e) {
           errorList.push(`[文件${idx + 1}]:${e.message}`)
@@ -263,7 +266,7 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
   }
 
   private async uploadToServer(opt: UploadOption) {
-    let rs;
+    let rs
     if (!this.uploadByChunks) {
       rs = await this.uploadToServerNormal(opt)
     } else {
@@ -273,18 +276,19 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
         rs = await this.uploadToServerByChunks({
           ...opt,
           md5Result: checkRs.md5Result,
-          requiredChunks: checkRs.checkResult.requiredChunks
+          requiredChunks: checkRs.checkResult.requiredChunks,
         })
     }
     return rs
   }
 
-  private async uploadCheck(opt: UploadOption & {
-    md5Result?: Md5FileResult
-  }) {
+  private async uploadCheck(
+    opt: UploadOption & {
+      md5Result?: Md5FileResult
+    },
+  ) {
     let { file, md5Result } = opt
-    if (!md5Result)
-      md5Result = await Utils.md5File(file.file);
+    if (!md5Result) md5Result = await Utils.md5File(file.file)
     const rs = await this.request({
       method: 'post',
       url: this.uploadCheckUrl,
@@ -298,7 +302,7 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
     })
     return {
       md5Result,
-      checkResult: rs
+      checkResult: rs,
     }
   }
 
@@ -314,21 +318,21 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
       url: this.uploadUrl,
       data: formData,
       onUploadProgress: (progress) => {
-        file.percentage = Math.round(
-          progress.loaded / progress.total * 100
-        )
-      }
+        file.percentage = Math.round((progress.loaded / progress.total) * 100)
+      },
     })
-    return rs;
+    return rs
   }
 
-  private async uploadToServerByChunks(opt: UploadOption & {
-    md5Result: Md5FileResult
-    requiredChunks: any[]
-  }) {
+  private async uploadToServerByChunks(
+    opt: UploadOption & {
+      md5Result: Md5FileResult
+      requiredChunks: any[]
+    },
+  ) {
     let { file, md5Result } = opt
     file.percentage = 0
-    let requiredChunks = md5Result.chunks;
+    let requiredChunks = md5Result.chunks
     let successCount = md5Result.chunks.length - requiredChunks.length
     for (let chunk of requiredChunks) {
       const formData = new FormData()
@@ -340,13 +344,13 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
         url: this.uploadUrl,
         data: formData,
       })
-      successCount++;
+      successCount++
       file.percentage = Math.round(
-        successCount / md5Result.chunks.length * 100
+        (successCount / md5Result.chunks.length) * 100,
       )
     }
 
-    let checkRs = await this.uploadCheck(opt);
+    let checkRs = await this.uploadCheck(opt)
     return checkRs.checkResult.fileObj
   }
 
@@ -354,7 +358,9 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
     // check format
     if (this.format.length) {
       const fileFormat = file.name.split('.').pop().toLocaleLowerCase()
-      const checked = this.format.some(item => item.toLocaleLowerCase() === fileFormat)
+      const checked = this.format.some(
+        (item) => item.toLocaleLowerCase() === fileFormat,
+      )
       if (!checked) {
         this.handleFormatError(file, this.fileList)
         return false
@@ -366,7 +372,9 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
   private handleFormatError(file: File, fileList: FileType[]) {
     this.$Notice.warning({
       title: '文件格式不正确',
-      desc: `文件 "${file.name}" 的格式不正确, 只能上传${this.format.join(',')}格式的文件`
+      desc: `文件 "${file.name}" 的格式不正确, 只能上传${this.format.join(
+        ',',
+      )}格式的文件`,
     })
   }
 
@@ -391,13 +399,17 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
   private handleMaxSize(file: File, fileList: FileType[]) {
     this.$Notice.warning({
       title: '文件大小超出限制',
-      desc: `文件 "${file.name}" 大小超出限制(${(this.maxSize / 1024).toFixed(2)}M)`
+      desc: `文件 "${file.name}" 大小超出限制(${(this.maxSize / 1024).toFixed(
+        2,
+      )}M)`,
     })
   }
 
   private handleBeforeUpload(file: File) {
     const rs = this.checkFormat(file)
-    if (!rs) { return false }
+    if (!rs) {
+      return false
+    }
     this.file = file
     if (file.type.includes('image/')) {
       this.fileType = FileDataType.图片
@@ -407,7 +419,7 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
 
     const reader = new FileReader()
     reader.readAsDataURL(file)
-    reader.onload = e => {
+    reader.onload = (e) => {
       const fileData = (e.target as any).result
       if (this.fileType === FileDataType.图片) {
         this.cropper.img = fileData
@@ -423,18 +435,18 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
     return {
       status: 'finished',
       willUpload: true,
-      percentage: 0
+      percentage: 0,
     }
   }
 
   setFile(data: SetFileType | SetFileType[], option?) {
     const list = data instanceof Array ? data : [data]
-    this.fileList = list.map(ele => {
+    this.fileList = list.map((ele) => {
       return {
         ...ele,
         originData: ele.data,
         ...this.getDefaultFileData(),
-        ...option
+        ...option,
       }
     })
   }
@@ -446,15 +458,19 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
       file: this.file,
       fileType: this.fileType,
       originFileType: this.file.type,
-      ...this.getDefaultFileData()
+      ...this.getDefaultFileData(),
     }
     const rs = this.checkSize(this.file, data)
-    if (!rs) { return false }
+    if (!rs) {
+      return false
+    }
     if (this.editIndex >= 0) {
       this.fileList.splice(this.editIndex, 1, file)
     } else if (this.selectedIndex >= 0) {
       this.fileList.splice(this.selectedIndex, 1, file)
-    } else { this.fileList.push(file) }
+    } else {
+      this.fileList.push(file)
+    }
 
     this.cropperShow = false
   }
@@ -466,7 +482,7 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
     if (window.innerWidth < 1024) {
       cropperSize = {
         width: window.innerWidth + 'px',
-        height: (window.innerHeight - 200) + 'px'
+        height: window.innerHeight - 200 + 'px',
       }
     }
     const coverHeight = '50px' || height
@@ -478,44 +494,96 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
           const itemRefName = 'itemRef' + idx
           return (
             <div class={this.getStyleName('item-root')}>
-              <div class={[
-                ...this.getStyleName('item'),
-                this.shape == 'circle' ? style.cls.circle : '',
-                this.fileList.length > 1 ? 'move' : ''
-              ]} style={{ width, height }}
+              <div
+                class={[
+                  ...this.getStyleName('item'),
+                  this.shape == 'circle' ? style.cls.circle : '',
+                  this.fileList.length > 1 ? 'move' : '',
+                ]}
+                style={{ width, height }}
                 v-dragging={{ item, list: this.fileList, group: 'upload-item' }}
                 key={idx}
               >
-                {isImg && <MyImg ref={itemRefName} class={this.getStyleName('item-cont')} src={item.url || item.data} />}
-                {isVideo && <MyVideo ref={itemRefName} class={this.getStyleName('item-cont')} options={{
-                  sources: [{
-                    type: item.originFileType,
-                    src: item.url || item.data
-                  }],
-                }} />}
-                {!this.readonly && <div class={[...this.getStyleName('item-cover')]} style={{ lineHeight: coverHeight }}>
-                  {isImg && item.originData && <Icon type='md-create' nativeOn-click={() => { this.handleEdit(item) }} />}
-                  <Icon type='md-camera' nativeOn-click={() => {
-                    this.handleSelectFile(item)
-                  }} />
-                  {isImg && <Icon type='md-eye' nativeOn-click={() => { this.handleView(item) }} />}
-                  <Icon type='md-trash' nativeOn-click={() => { this.handleRemove(item) }} />
-                  {isVideo && this.showVideoCrop && <Icon type='md-crop' nativeOn-click={() => {
-                    const ref: MyVideo = this.$refs[itemRefName]
-                    let data = null
-                    if (ref) { data = ref.capture() }
-                    this.$emit('video-crop', data, item)
-                  }} />}
-                </div>}
+                {isImg && (
+                  <MyImg
+                    ref={itemRefName}
+                    class={this.getStyleName('item-cont')}
+                    src={item.url || item.data}
+                  />
+                )}
+                {isVideo && (
+                  <MyVideo
+                    ref={itemRefName}
+                    class={this.getStyleName('item-cont')}
+                    options={{
+                      sources: [
+                        {
+                          type: item.originFileType,
+                          src: item.url || item.data,
+                        },
+                      ],
+                    }}
+                  />
+                )}
+                {!this.readonly && (
+                  <div
+                    class={[...this.getStyleName('item-cover')]}
+                    style={{ lineHeight: coverHeight }}
+                  >
+                    {isImg && item.originData && (
+                      <Icon
+                        type="md-create"
+                        nativeOn-click={() => {
+                          this.handleEdit(item)
+                        }}
+                      />
+                    )}
+                    <Icon
+                      type="md-camera"
+                      nativeOn-click={() => {
+                        this.handleSelectFile(item)
+                      }}
+                    />
+                    {isImg && (
+                      <Icon
+                        type="md-eye"
+                        nativeOn-click={() => {
+                          this.handleView(item)
+                        }}
+                      />
+                    )}
+                    <Icon
+                      type="md-trash"
+                      nativeOn-click={() => {
+                        this.handleRemove(item)
+                      }}
+                    />
+                    {isVideo && this.showVideoCrop && (
+                      <Icon
+                        type="md-crop"
+                        nativeOn-click={() => {
+                          const ref: MyVideo = this.$refs[itemRefName]
+                          let data = null
+                          if (ref) {
+                            data = ref.capture()
+                          }
+                          this.$emit('video-crop', data, item)
+                        }}
+                      />
+                    )}
+                  </div>
+                )}
               </div>
-              {this.showProgress && <div class={this.getStyleName('progress')}>
-                <Progress
-                  style={{ width }}
-                  percent={item.percentage}
-                  stroke-width={5}
-                  hide-info
-                />
-              </div>}
+              {this.showProgress && (
+                <div class={this.getStyleName('progress')}>
+                  <Progress
+                    style={{ width }}
+                    percent={item.percentage}
+                    stroke-width={5}
+                    hide-info
+                  />
+                </div>
+              )}
             </div>
           )
         })}
@@ -523,10 +591,10 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
         <Upload
           class={this.getStyleName('upload')}
           v-show={!this.getHideUpload()}
-          ref='upload'
+          ref="upload"
           show-upload-list={false}
           format={this.format}
-          accept={this.format.map(ele => `.${ele}`).join(',')}
+          accept={this.format.map((ele) => `.${ele}`).join(',')}
           max-size={this.maxSize}
           // props={{
           //     onSuccess: this.handleSuccess,
@@ -537,50 +605,80 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
           before-upload={this.handleBeforeUpload}
           headers={this.uploadHeaders}
           multiple={false}
-          type='drag'
+          type="drag"
           action={this.uploadUrl}
           style={{ width }}
           nativeOn-click={() => {
             this.selectedIndex = -1
-          }}>
-          <div style={{ width, height, lineHeight: height }} on-click={() => {
-            if (this.headers) { this.uploadHeaders = this.headers() }
-          }}>
-            <Icon type={{
-              [FileDataType.图片]: 'md-camera',
-              [FileDataType.视频]: 'logo-youtube'
-            }[this.uploadIconType]} size='20'></Icon>
+          }}
+        >
+          <div
+            style={{ width, height, lineHeight: height }}
+            on-click={() => {
+              if (this.headers) {
+                this.uploadHeaders = this.headers()
+              }
+            }}
+          >
+            <Icon
+              type={
+                {
+                  [FileDataType.图片]: 'md-camera',
+                  [FileDataType.视频]: 'logo-youtube',
+                }[this.uploadIconType]
+              }
+              size="20"
+            ></Icon>
           </div>
         </Upload>
-        <transition name='fade'>
+        <transition name="fade">
           <div class={[style.cls.mask]} v-show={this.cropperShow}>
             <div class={this.getStyleName('cropper-root')}>
-              <div class={this.getStyleName('cropper-cont')} style={{ ...cropperSize }}>
+              <div
+                class={this.getStyleName('cropper-cont')}
+                style={{ ...cropperSize }}
+              >
                 <VueCropper
-                  ref='cropper'
+                  ref="cropper"
                   props={this.cropper}
-                  class={this.shape == 'circle' ? this.getStyleName('cropper-circle') : ''}
+                  class={
+                    this.shape == 'circle'
+                      ? this.getStyleName('cropper-circle')
+                      : ''
+                  }
                 />
               </div>
-              <div class='button-group-normal'>
-                <Button on-click={() => {
-                  this.cropperShow = false
-                }}>取消</Button>
-                <Button type='primary' on-click={() => {
-                  this.$refs.cropper.getCropData((data) => {
-                    this.pushFile(data, this.cropper.img)
-                  })
-                }}>截取</Button>
-                <Button on-click={() => {
-                  this.pushFile(this.cropper.img)
-                }}>原图</Button>
+              <div class="button-group-normal">
+                <Button
+                  on-click={() => {
+                    this.cropperShow = false
+                  }}
+                >
+                  取消
+                </Button>
+                <Button
+                  type="primary"
+                  on-click={() => {
+                    this.$refs.cropper.getCropData((data) => {
+                      this.pushFile(data, this.cropper.img)
+                    })
+                  }}
+                >
+                  截取
+                </Button>
+                <Button
+                  on-click={() => {
+                    this.pushFile(this.cropper.img)
+                  }}
+                >
+                  原图
+                </Button>
               </div>
             </div>
           </div>
         </transition>
-        <MyImgViewer ref='imgViewer' src={this.showUrl} />
+        <MyImgViewer ref="imgViewer" src={this.showUrl} />
       </div>
     )
   }
 }
-

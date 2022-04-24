@@ -9,173 +9,203 @@ import { MyBase } from '../my-base'
 import * as style from '../style'
 
 class MyImgViewerProp {
-    @Prop({
-      default: ''
-    })
-    src: string | string[];
+  @Prop({
+    default: '',
+  })
+  src: string | string[]
 
-    @Prop({
-      default: 0
-    })
-    idx?: number;
+  @Prop({
+    default: 0,
+  })
+  idx?: number
 
-    @Prop({
-      default: true
-    })
-    maskClosable?: boolean;
+  @Prop({
+    default: true,
+  })
+  maskClosable?: boolean
 }
 @Component({
   extends: MyBase,
-  props: MyImgViewerProp
+  props: MyImgViewerProp,
 })
 export class MyImgViewer extends Vue<MyImgViewerProp, MyBase> {
-    stylePrefix = 'my-img-viewer-';
+  stylePrefix = 'my-img-viewer-'
 
-    created () {
-      this.watchSrc()
-    }
-    private list: { src: string; }[] = [];
-    @Watch('src')
-    private watchSrc () {
-      this.list = (this.src instanceof Array ? this.src : [this.src]).map(src => {
+  created() {
+    this.watchSrc()
+  }
+  private list: { src: string }[] = []
+  @Watch('src')
+  private watchSrc() {
+    this.list = (this.src instanceof Array ? this.src : [this.src]).map(
+      (src) => {
         return {
-          src
+          src,
         }
-      })
-    }
+      },
+    )
+  }
 
-    visible = false;
+  visible = false
 
-    show () {
-      this.visible = true
-    }
+  show() {
+    this.visible = true
+  }
 
-    hide () {
-      this.visible = false
-    }
+  hide() {
+    this.visible = false
+  }
 
-    render () {
-      const list = this.list
-      const mutli = list.length > 1
-      return (
-        <transition name='fade'>
-          {this.visible && <div class={style.cls.mask}
+  render() {
+    const list = this.list
+    const mutli = list.length > 1
+    return (
+      <transition name="fade">
+        {this.visible && (
+          <div
+            class={style.cls.mask}
             on-click={() => {
-              if (this.maskClosable) { this.hide() }
-            }} >
-            <div class={this.getStyleName('stop-box')}
+              if (this.maskClosable) {
+                this.hide()
+              }
+            }}
+          >
+            <div
+              class={this.getStyleName('stop-box')}
               on-touchmove={(event) => {
                 event.preventDefault()
               }}
               on-mousewheel={(event) => {
                 event.preventDefault()
-              }} />
-            <div class={this.getStyleName('box')}
+              }}
+            />
+            <div
+              class={this.getStyleName('box')}
               on-click={(event) => {
                 event.stopPropagation()
-              }}>
-              <Carousel class={this.getStyleName('content')} value={this.idx}
+              }}
+            >
+              <Carousel
+                class={this.getStyleName('content')}
+                value={this.idx}
                 arrow={mutli ? 'hover' : 'never'}
-                dots={mutli ? 'inside' : 'none'}>
-                {list.map(ele => {
+                dots={mutli ? 'inside' : 'none'}
+              >
+                {list.map((ele) => {
                   return (
                     <CarouselItem>
                       <div class={this.getStyleName('item')}>
                         <Gesture>
-                          <MyImg class={this.getStyleName('img')} src={ele.src} />
+                          <MyImg
+                            class={this.getStyleName('img')}
+                            src={ele.src}
+                          />
                         </Gesture>
                       </div>
                     </CarouselItem>
                   )
                 })}
               </Carousel>
-              <Button shape='circle' icon='md-close' type='error' class={this.getStyleName('close-btn')} on-click={this.hide} />
+              <Button
+                shape="circle"
+                icon="md-close"
+                type="error"
+                class={this.getStyleName('close-btn')}
+                on-click={this.hide}
+              />
             </div>
-          </div>}
-        </transition>
-      )
-    }
+          </div>
+        )}
+      </transition>
+    )
+  }
 }
 
 @Component({
-  extends: MyBase
+  extends: MyBase,
 })
 class Gesture extends Vue<{}, MyBase> {
-    stylePrefix = 'my-gesture-';
-    $refs: { root: HTMLDivElement };
-    private startX = 0;
-    private startY = 0;
-    x = 0;
-    y = 0;
-    scale = 1;
+  stylePrefix = 'my-gesture-'
+  $refs: { root: HTMLDivElement }
+  private startX = 0
+  private startY = 0
+  x = 0
+  y = 0
+  scale = 1
 
-    private reset () {
-      this.x = 0
-      this.y = 0
-      this.scale = 1
-      this.updatePos()
-    }
+  private reset() {
+    this.x = 0
+    this.y = 0
+    this.scale = 1
+    this.updatePos()
+  }
 
-    private updatePos () {
-      this.startX = this.x
-      this.startY = this.y
-    }
-    mounted () {
-      const hammer = new Hammer(this.$refs.root)
-      hammer.get('pan').set({ direction: Hammer.DIRECTION_ALL })
-      hammer.on('panmove panend', (event) => {
-        this.x = this.startX + event.deltaX / this.scale
-        this.y = this.startY + event.deltaY / this.scale
-        if (event.type === 'panend') {
-          this.updatePos()
-        }
-      })
-      hammer.get('pinch').set({
-        enable: true
-      })
-      hammer.on('pinchin pinchout', (ev) => {
-        this.scaleHandler(ev.type == 'pinchout')
-      })
-      hammer.on('doubletap', () => {
-        this.reset()
-      })
-
-      this.$refs.root.addEventListener('mousedown', this.mousedownHandler)
-    }
-
-    beforeDestroy () {
-      this.$refs.root.removeEventListener('mousedown', this.mousedownHandler)
-    }
-    scaleHandler (scaleUp: boolean) {
-      let scale = this.scale
-      const step = 0.05
-      scale = scale + ((scaleUp ? 1 : -1) * step)
-      if (scale > 5) {
-        scale = 5
-      } else if (scale < 0.5) {
-        scale = 0.5
+  private updatePos() {
+    this.startX = this.x
+    this.startY = this.y
+  }
+  mounted() {
+    const hammer = new Hammer(this.$refs.root)
+    hammer.get('pan').set({ direction: Hammer.DIRECTION_ALL })
+    hammer.on('panmove panend', (event) => {
+      this.x = this.startX + event.deltaX / this.scale
+      this.y = this.startY + event.deltaY / this.scale
+      if (event.type === 'panend') {
+        this.updatePos()
       }
-      this.scale = scale
-    }
+    })
+    hammer.get('pinch').set({
+      enable: true,
+    })
+    hammer.on('pinchin pinchout', (ev) => {
+      this.scaleHandler(ev.type == 'pinchout')
+    })
+    hammer.on('doubletap', () => {
+      this.reset()
+    })
 
-    mousedownHandler (event) {
-      event.preventDefault()
-    }
+    this.$refs.root.addEventListener('mousedown', this.mousedownHandler)
+  }
 
-    render () {
-      const transform = `scale(${this.scale}) translate(${this.x}px, ${this.y}px)`
-      return (
-        <div ref='root' class={[...this.getStyleName('root'), 'center']}
-          on-mousewheel={(event) => {
-            event.preventDefault()
-            this.scaleHandler(event.wheelDeltaY > 0)
-          }}>
-          <div class={this.getStyleName('main')} style={{
-            transform
-          }}>
-            {this.$slots.default}
-          </div>
+  beforeDestroy() {
+    this.$refs.root.removeEventListener('mousedown', this.mousedownHandler)
+  }
+  scaleHandler(scaleUp: boolean) {
+    let scale = this.scale
+    const step = 0.05
+    scale = scale + (scaleUp ? 1 : -1) * step
+    if (scale > 5) {
+      scale = 5
+    } else if (scale < 0.5) {
+      scale = 0.5
+    }
+    this.scale = scale
+  }
+
+  mousedownHandler(event) {
+    event.preventDefault()
+  }
+
+  render() {
+    const transform = `scale(${this.scale}) translate(${this.x}px, ${this.y}px)`
+    return (
+      <div
+        ref="root"
+        class={[...this.getStyleName('root'), 'center']}
+        on-mousewheel={(event) => {
+          event.preventDefault()
+          this.scaleHandler(event.wheelDeltaY > 0)
+        }}
+      >
+        <div
+          class={this.getStyleName('main')}
+          style={{
+            transform,
+          }}
+        >
+          {this.$slots.default}
         </div>
-      )
-    }
+      </div>
+    )
+  }
 }

@@ -4,7 +4,18 @@ import { Component, Vue, Prop } from '@/components/decorator'
 import { testApi } from '@/api'
 import { myEnum, dev } from '@/config'
 import { routerConfig } from '@/router'
-import { Form, FormItem, Button, Modal, Input, Divider, Checkbox, DatePicker, Affix, Card } from '@/components/iview'
+import {
+  Form,
+  FormItem,
+  Button,
+  Modal,
+  Input,
+  Divider,
+  Checkbox,
+  DatePicker,
+  Affix,
+  Card,
+} from '@/components/iview'
 import { MyConfirm } from '@/components/my-confirm'
 import { MyList } from '@/components/my-list'
 import { MyUpload, FileDataType } from '@/components/my-upload'
@@ -13,8 +24,8 @@ import { MyLoad } from '@/components/my-load'
 import { UserAvatar } from '../comps/user-avatar'
 import { Base } from '../base'
 export class ContentDetailType<T extends ContentDataType = ContentDataType> {
-  detail: T;
-  log?: any[];
+  detail: T
+  log?: any[]
   static create<T extends ContentDataType>(): ContentDetailType<T> {
     const data = {
       detail: {
@@ -24,65 +35,68 @@ export class ContentDetailType<T extends ContentDataType = ContentDataType> {
         title: '',
         profile: '',
         statusText: '',
-        remark: ''
+        remark: '',
       } as any as T,
-      log: []
+      log: [],
     }
     return data
   }
 }
 
 export type ContentDataType = {
-  _id: string;
-  cover: string;
-  coverUrl: string;
-  title: string;
-  profile: string;
-  status: number;
-  statusText: string;
-  createdAt: string;
-  remark: string;
-  readTimes: number;
-  commentCount: number;
-  like: number;
-  dislike: number;
-  favourite: number;
-  setPublish: boolean;
-  setPublishAt: Date;
-  publishAt: string;
-  userId: string;
+  _id: string
+  cover: string
+  coverUrl: string
+  title: string
+  profile: string
+  status: number
+  statusText: string
+  createdAt: string
+  remark: string
+  readTimes: number
+  commentCount: number
+  like: number
+  dislike: number
+  favourite: number
+  setPublish: boolean
+  setPublishAt: Date
+  publishAt: string
+  userId: string
 
-  voteValue: number;
-  favouriteValue: boolean;
-  canUpdate: boolean;
-  canDel: boolean;
-  user: { _id: string; nickname: string; account: string };
+  voteValue: number
+  favouriteValue: boolean
+  canUpdate: boolean
+  canDel: boolean
+  user: { _id: string; nickname: string; account: string }
 
-  _disabled?: boolean;
-  _checked?: boolean;
-};
+  _disabled?: boolean
+  _checked?: boolean
+}
 
-type OpType = { text: string, type?: string, fn: () => any }
+type OpType = { text: string; type?: string; fn: () => any }
 
 export interface IContentMgtBase {
-  contentMgtType: string;
-  auditFn(detail: ContentDataType, pass: boolean): Promise<{ status, statusText }>;
-  canAudit(detail: ContentDataType): boolean;
-  toDetailUrl(preview: boolean): string;
-  isDel(detail: ContentDataType): boolean;
-  delFn(): Promise<any>;
+  contentMgtType: string
+  auditFn(
+    detail: ContentDataType,
+    pass: boolean,
+  ): Promise<{ status; statusText }>
+  canAudit(detail: ContentDataType): boolean
+  toDetailUrl(preview: boolean): string
+  isDel(detail: ContentDataType): boolean
+  delFn(): Promise<any>
 }
 @Component({
-  extends: Base
+  extends: Base,
 })
 export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
-  delShow = false;
-  delIds = [];
-  delRemark = '';
-  notPassShow = false;
-  notPassRemark = '';
-  operateDetail: ContentDataType;
-  protected preview = false;
+  delShow = false
+  delIds = []
+  delRemark = ''
+  notPassShow = false
+  notPassRemark = ''
+  operateDetail: ContentDataType
+  protected preview = false
 
   protected getDefaultDetail<T extends ContentDataType = ContentDataType>() {
     const data = ContentDetailType.create<T>()
@@ -112,48 +126,62 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
     this.goToPage({
       path: routerConfig.contentMgt.path,
       query: {
-        tab: this.contentMgtType as any
-      }
+        tab: this.contentMgtType as any,
+      },
     })
   }
 
-  protected toDetail(_id?, opt?: {
-    preview?: boolean,
-    repost?: boolean,
-  }) {
+  protected toDetail(
+    _id?,
+    opt?: {
+      preview?: boolean
+      repost?: boolean
+    },
+  ) {
     opt = {
-      ...opt
+      ...opt,
     }
     this.goToPage({
       path: this.toDetailUrl(opt.preview),
-      query: { _id: _id || '', repost: opt.repost ? 'true' : '' }
+      query: { _id: _id || '', repost: opt.repost ? 'true' : '' },
     })
   }
 
-  protected getOperate(detail: ContentDataType, opt?: { noPreview?: boolean; isDetail?: boolean; }) {
+  protected getOperate(
+    detail: ContentDataType,
+    opt?: { noPreview?: boolean; isDetail?: boolean },
+  ) {
     opt = { ...opt }
     let operate: OpType[] = []
     if (this.canAudit(detail)) {
-      operate = [...operate, {
-        text: '审核通过',
-        type: 'primary',
-        fn: () => {
-          this.audit(detail, true)
-        }
-      }, {
-        text: '审核不通过',
-        fn: () => {
-          this.operateDetail = detail
-          this.toggleNotPass(true)
-        }
-      }]
+      operate = [
+        ...operate,
+        {
+          text: '审核通过',
+          type: 'primary',
+          fn: () => {
+            this.audit(detail, true)
+          },
+        },
+        {
+          text: '审核不通过',
+          fn: () => {
+            this.operateDetail = detail
+            this.toggleNotPass(true)
+          },
+        },
+      ]
     }
     if (detail.canUpdate) {
       operate.push({
         text: '修改',
         fn: () => {
-          if (opt.isDetail) { this.preview = false } else { this.toDetail(detail._id) }
-        }
+          if (opt.isDetail) {
+            this.preview = false
+          } else {
+            this.toDetail(detail._id)
+          }
+        },
       })
     }
     if (!opt.noPreview) {
@@ -161,7 +189,7 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
         text: '预览',
         fn: () => {
           this.toDetail(detail._id, { preview: true })
-        }
+        },
       })
     }
     if (detail.canDel) {
@@ -170,7 +198,7 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
         fn: () => {
           this.delIds = [detail._id]
           this.delShow = true
-        }
+        },
       })
     }
     if (detail.user._id === this.storeUser.user._id && this.isDel(detail)) {
@@ -178,58 +206,64 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
         text: '重投',
         fn: () => {
           this.toDetail(detail._id, { repost: true })
-        }
+        },
       })
     }
     return operate
   }
 
-  protected renderListOpBox(detail: ContentDataType, opt?: { noPreview?: boolean; isDetail?: boolean; }) {
+  protected renderListOpBox(
+    detail: ContentDataType,
+    opt?: { noPreview?: boolean; isDetail?: boolean },
+  ) {
     return (
       <div class={['content-mgt-item-op-box', 'button-group-normal']}>
-        {
-          this.getOperate(detail, opt).map(ele => {
-            return (
-              <Button type={ele.type as any} on-click={ele.fn}>
-                {ele.text}
-              </Button>
-            )
-          })
-        }
+        {this.getOperate(detail, opt).map((ele) => {
+          return (
+            <Button type={ele.type as any} on-click={ele.fn}>
+              {ele.text}
+            </Button>
+          )
+        })}
       </div>
     )
   }
 
   protected renderDetailOpBox(detail: ContentDataType) {
     const operate = this.getOperate(detail, { noPreview: true, isDetail: true })
-    return (operate.length &&
-      <div>
-        <Divider />
-        <Affix offset-bottom={40}>
-          <Card class='button-group-normal'>
-            {operate.map(ele => {
-              return (
-                <Button type={ele.type as any} on-click={ele.fn}>
-                  {ele.text}
-                </Button>
-              )
-            })}
-          </Card>
-        </Affix>
-      </div>
+    return (
+      operate.length && (
+        <div>
+          <Divider />
+          <Affix offset-bottom={40}>
+            <Card class="button-group-normal">
+              {operate.map((ele) => {
+                return (
+                  <Button type={ele.type as any} on-click={ele.fn}>
+                    {ele.text}
+                  </Button>
+                )
+              })}
+            </Card>
+          </Affix>
+        </div>
+      )
     )
   }
 
   protected renderNotPassConfirm() {
     return (
       <Modal v-model={this.notPassShow} footer-hide>
-        <MyConfirm title='审核不通过' loading={true}
+        <MyConfirm
+          title="审核不通过"
+          loading={true}
           cancel={() => {
             this.toggleNotPass(false)
           }}
           ok={() => {
             return this.audit(this.operateDetail, false)
-          }}>
+          }}
+        >
           备注: <Input v-model={this.notPassRemark} />
         </MyConfirm>
       </Modal>
@@ -239,15 +273,20 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
   protected renderDelConfirm() {
     return (
       <Modal v-model={this.delShow} footer-hide>
-        <MyConfirm title='确认删除?' loading={true}
+        <MyConfirm
+          title="确认删除?"
+          loading={true}
           cancel={() => {
             this.delShow = false
           }}
           ok={async () => {
             await this.delClick()
-          }}>
+          }}
+        >
           <p>将要删除{this.delIds.length}项</p>
-          <p>备注: <Input v-model={this.delRemark} /></p>
+          <p>
+            备注: <Input v-model={this.delRemark} />
+          </p>
         </MyConfirm>
       </Modal>
     )
@@ -269,65 +308,64 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
 
 class ContentMgtDetailProp {
   @Prop({
-    required: true
+    required: true,
   })
-  loadDetailData: () => Promise<ContentDetailType>;
+  loadDetailData: () => Promise<ContentDetailType>
 
   @Prop()
-  getRules?: () => any;
+  getRules?: () => any
 
   @Prop()
-  beforeValidFn?: (detail) => Promise<any>;
+  beforeValidFn?: (detail) => Promise<any>
 
   @Prop({
-    required: true
+    required: true,
   })
-  saveFn: (detail, submit: boolean) => Promise<any>;
+  saveFn: (detail, submit: boolean) => Promise<any>
 
   @Prop({
-    required: true
+    required: true,
   })
-  saveSuccessFn: (rs) => void;
+  saveSuccessFn: (rs) => void
 
   @Prop()
-  preview?: boolean;
+  preview?: boolean
 
   @Prop({
-    required: true
+    required: true,
   })
-  renderPreviewFn: (detail) => any;
+  renderPreviewFn: (detail) => any
 }
 @Component({
   extends: Base,
-  props: ContentMgtDetailProp
+  props: ContentMgtDetailProp,
 })
 export class ContentMgtDetail extends Vue<ContentMgtDetailProp, Base> {
-  $refs: { formVaild: iView.Form, cover: MyUpload, loadView: MyLoad };
+  $refs: { formVaild: iView.Form; cover: MyUpload; loadView: MyLoad }
 
   @Watch('$route')
   route(to, from) {
     this.$refs.loadView.loadData()
   }
 
-  innerDetail: ContentDetailType = null;
+  innerDetail: ContentDetailType = null
 
-  rules = {};
+  rules = {}
   private getCommonRules() {
     return {
-      title: [
-        { required: true }
+      title: [{ required: true }],
+      setPublishAt: [
+        {
+          validator: (rule, value, callback) => {
+            const { detail } = this.innerDetail
+            if (detail.setPublish && !detail.setPublishAt) {
+              callback(new Error('请填写发布时间'))
+            } else {
+              callback()
+            }
+          },
+        },
       ],
-      setPublishAt: [{
-        validator: (rule, value, callback) => {
-          const { detail } = this.innerDetail
-          if (detail.setPublish && !detail.setPublishAt) {
-            callback(new Error('请填写发布时间'))
-          } else {
-            callback()
-          }
-        }
-
-      }]
     }
   }
 
@@ -335,16 +373,20 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp, Base> {
     const rule = this.getRules ? this.getRules() : {}
     this.rules = {
       ...this.getCommonRules(),
-      ...rule
+      ...rule,
     }
   }
 
-  private coverList = [];
+  private coverList = []
   private async loadDetail() {
     const detailInfo = await this.loadDetailData()
     const detail = detailInfo.detail
-    this.coverList = detail.coverUrl ? [{ url: detail.coverUrl, fileType: FileDataType.图片 }] : []
-    if (detail.setPublishAt) { detail.setPublishAt = new Date(detail.setPublishAt) }
+    this.coverList = detail.coverUrl
+      ? [{ url: detail.coverUrl, fileType: FileDataType.图片 }]
+      : []
+    if (detail.setPublishAt) {
+      detail.setPublishAt = new Date(detail.setPublishAt)
+    }
     this.innerDetail = detailInfo
     this.setRules()
     return detailInfo
@@ -360,24 +402,32 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp, Base> {
     return file
   }
 
-  private saving = false;
+  private saving = false
   private async handleSave(submit?: boolean) {
     this.saving = true
     const { detail } = this.innerDetail
     let rs
-    await this.operateHandler('保存', async () => {
-      rs = await this.saveFn(detail, submit)
-    }, {
-      validate: submit ? this.$refs.formVaild.validate : null,
-      beforeValid: async () => {
-        const file = await this.uploadCover()
-        if (!file) { detail.cover = '' } else if (file.uploadRes) { detail.cover = file.uploadRes }
-        this.beforeValidFn && await this.beforeValidFn(detail)
+    await this.operateHandler(
+      '保存',
+      async () => {
+        rs = await this.saveFn(detail, submit)
       },
-      onSuccessClose: () => {
-        this.saveSuccessFn(rs)
-      }
-    }).finally(() => {
+      {
+        validate: submit ? this.$refs.formVaild.validate : null,
+        beforeValid: async () => {
+          const file = await this.uploadCover()
+          if (!file) {
+            detail.cover = ''
+          } else if (file.uploadRes) {
+            detail.cover = file.uploadRes
+          }
+          this.beforeValidFn && (await this.beforeValidFn(detail))
+        },
+        onSuccessClose: () => {
+          this.saveSuccessFn(rs)
+        },
+      },
+    ).finally(() => {
       this.saving = false
     })
   }
@@ -385,10 +435,12 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp, Base> {
   protected render() {
     return (
       <MyLoad
-        ref='loadView'
+        ref="loadView"
         loadFn={this.loadDetail}
         renderFn={() => {
-          if (!this.preview) { return this.renderEdit() }
+          if (!this.preview) {
+            return this.renderEdit()
+          }
           return this.renderPreviewFn(this.innerDetail)
         }}
       />
@@ -402,9 +454,14 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp, Base> {
         {[
           '状态: ' + detail.statusText,
           '创建于: ' + this.$utils.dateFormat(detail.createdAt),
-          detail.publishAt && ('发布于:' + this.$utils.dateFormat(detail.publishAt))
-        ].map(ele => {
-          return (<span class='not-important' style={{ marginLeft: '5px' }}>{ele}</span>)
+          detail.publishAt &&
+            '发布于:' + this.$utils.dateFormat(detail.publishAt),
+        ].map((ele) => {
+          return (
+            <span class="not-important" style={{ marginLeft: '5px' }}>
+              {ele}
+            </span>
+          )
         })}
       </div>
     )
@@ -412,9 +469,7 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp, Base> {
 
   protected renderLog() {
     const { log } = this.innerDetail
-    return (
-      <ContentLogList log={log} />
-    )
+    return <ContentLogList log={log} />
   }
 
   protected renderEdit() {
@@ -422,13 +477,18 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp, Base> {
     return (
       <div>
         <h3>{detail._id ? '修改' : '新增'}</h3>
-        <Form ref='formVaild' label-position='top' props={{ model: detail }} rules={this.rules}>
-          <FormItem label='' prop='header' v-show={!detail._id}>
+        <Form
+          ref="formVaild"
+          label-position="top"
+          props={{ model: detail }}
+          rules={this.rules}
+        >
+          <FormItem label="" prop="header" v-show={!detail._id}>
             {!!detail._id && this.renderHeader(detail)}
           </FormItem>
-          <FormItem label='封面' prop='cover'>
+          <FormItem label="封面" prop="cover">
             <MyUpload
-              ref='cover'
+              ref="cover"
               headers={testApi.defaultHeaders}
               uploadUrl={testApi.imgUploadUrl}
               successHandler={(res, file) => {
@@ -437,101 +497,135 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp, Base> {
                 return rs.fileId
               }}
               format={['jpg', 'jpeg', 'png', 'bmp', 'gif']}
-              width={160} height={90}
+              width={160}
+              height={90}
               v-model={this.coverList}
               showProgress
             />
           </FormItem>
-          <FormItem label='标题' prop='title'>
+          <FormItem label="标题" prop="title">
             <Input v-model={detail.title} />
           </FormItem>
-          <FormItem label='简介' prop='profile'>
-            <Input v-model={detail.profile} type='textarea' />
+          <FormItem label="简介" prop="profile">
+            <Input v-model={detail.profile} type="textarea" />
           </FormItem>
           {this.$slots.default}
-          <FormItem prop='setPublishAt'>
+          <FormItem prop="setPublishAt">
             <label style={{ marginRight: '5px' }}>
               <Checkbox v-model={detail.setPublish} />
               指定时间发布
             </label>
-            <DatePicker v-model={detail.setPublishAt} type='datetime' options={{
-              disabledDate: (date?: Date) => {
-                const start = this.$moment().startOf('day')
-                const end = this.$moment(start).add(3, 'd')
-                return date && (date.valueOf() < start.valueOf() || date.valueOf() >= end.valueOf())
-              }
-            }} />
+            <DatePicker
+              v-model={detail.setPublishAt}
+              type="datetime"
+              options={{
+                disabledDate: (date?: Date) => {
+                  const start = this.$moment().startOf('day')
+                  const end = this.$moment(start).add(3, 'd')
+                  return (
+                    date &&
+                    (date.valueOf() < start.valueOf() ||
+                      date.valueOf() >= end.valueOf())
+                  )
+                },
+              }}
+            />
           </FormItem>
-          <FormItem label='备注' prop='remark'>
+          <FormItem label="备注" prop="remark">
             <Input v-model={detail.remark} />
           </FormItem>
-          {(!detail._id || detail.canUpdate) &&
+          {(!detail._id || detail.canUpdate) && (
             <Affix offset-bottom={40}>
-              <Card class='button-group-normal'>
-                <Button on-click={() => {
-                  this.handleSave(false)
-                }} loading={this.saving}>保存草稿</Button>
-                <Button type='primary' on-click={() => {
-                  this.handleSave(true)
-                }} loading={this.saving}>发布</Button>
+              <Card class="button-group-normal">
+                <Button
+                  on-click={() => {
+                    this.handleSave(false)
+                  }}
+                  loading={this.saving}
+                >
+                  保存草稿
+                </Button>
+                <Button
+                  type="primary"
+                  on-click={() => {
+                    this.handleSave(true)
+                  }}
+                  loading={this.saving}
+                >
+                  发布
+                </Button>
               </Card>
             </Affix>
-          }
+          )}
         </Form>
         {this.renderLog()}
-      </div >
+      </div>
     )
   }
 }
 
 class ContentLogListProp {
   @Prop({
-    default: () => []
+    default: () => [],
   })
-  log: any[];
+  log: any[]
 }
 @Component({
   extends: Base,
-  props: ContentLogListProp
+  props: ContentLogListProp,
 })
 export class ContentLogList extends Vue<ContentLogListProp, Base> {
   render() {
     const log = this.log
     return (
       <div>
-        {log.length > 0 &&
+        {log.length > 0 && (
           <div>
-            <Divider size='small' />
+            <Divider size="small" />
             <MyList
               hideSearchBox
-              columns={[{
-                title: '操作人',
-                key: 'user',
-                render: (h, params) => {
-                  return <UserAvatar style={{ margin: '5px' }} user={params.row.user} />
-                }
-              }, {
-                title: '源状态',
-                key: 'srcStatusText'
-              }, {
-                title: '目状态',
-                key: 'destStatusText'
-              }, {
-                title: '备注',
-                key: 'remark'
-              }, {
-                title: '操作时间',
-                key: 'createdAt',
-                render: (h, params) => {
-                  return <span>{this.$utils.dateFormat(params.row.createdAt)}</span>
-                }
-              }]}
-              data={log}>
-            </MyList>
+              columns={[
+                {
+                  title: '操作人',
+                  key: 'user',
+                  render: (h, params) => {
+                    return (
+                      <UserAvatar
+                        style={{ margin: '5px' }}
+                        user={params.row.user}
+                      />
+                    )
+                  },
+                },
+                {
+                  title: '源状态',
+                  key: 'srcStatusText',
+                },
+                {
+                  title: '目状态',
+                  key: 'destStatusText',
+                },
+                {
+                  title: '备注',
+                  key: 'remark',
+                },
+                {
+                  title: '操作时间',
+                  key: 'createdAt',
+                  render: (h, params) => {
+                    return (
+                      <span>
+                        {this.$utils.dateFormat(params.row.createdAt)}
+                      </span>
+                    )
+                  },
+                },
+              ]}
+              data={log}
+            ></MyList>
           </div>
-        }
+        )}
       </div>
     )
   }
 }
-

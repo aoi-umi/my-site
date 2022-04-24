@@ -8,50 +8,50 @@ import { UserPoptip } from './user-poptip'
 import './user-avatar.less'
 
 export type User = {
-  _id?: string;
-  nickname?: string;
-  account?: string;
-  avatarUrl?: string;
-  followStatus?: number;
-  followEachOther?: boolean;
-};
+  _id?: string
+  nickname?: string
+  account?: string
+  avatarUrl?: string
+  followStatus?: number
+  followEachOther?: boolean
+}
 
 class UserAvatarProp {
   @Prop()
-  user: User;
+  user: User
 
   @Prop()
-  showAccount?: boolean;
+  showAccount?: boolean
 
   // default text
   @Prop()
-  type?: string;
+  type?: string
 
   @Prop()
-  size?: iView.Avatar['size'];
+  size?: iView.Avatar['size']
 
   @Prop()
-  noTips?: boolean;
+  noTips?: boolean
 
   @Prop()
-  isAuthor?: boolean;
+  isAuthor?: boolean
 
   @Prop()
-  self?: boolean;
+  self?: boolean
 
   @Prop({
-    default: 'right-start'
+    default: 'right-start',
   })
-  tipsPlacement?: iView.Poptip['placement'];
+  tipsPlacement?: iView.Poptip['placement']
 }
 @Component({
   extends: Base,
-  props: UserAvatarProp
+  props: UserAvatarProp,
 })
 export class UserAvatar extends Vue<UserAvatarProp, Base> {
-  stylePrefix = 'comp-user-avatar-';
+  stylePrefix = 'comp-user-avatar-'
 
-  avatarUrl = '';
+  avatarUrl = ''
 
   created() {
     this.init(this.user)
@@ -95,15 +95,18 @@ export class UserAvatar extends Vue<UserAvatarProp, Base> {
           <Badge dot count={this.count}>
             <Avatar
               class={this.getStyleName('avatar').concat('shadow')}
-              icon='md-person'
+              icon="md-person"
               size={this.size}
               src={this.avatarUrl}
             />
           </Badge>
         </UserPoptip>
-        <span class={this.getStyleName('text').concat('not-important')}>{this.user.nickname}{this.showAccount && `(${this.user.account})`}{this.isAuthor && `(发布者)`}</span>
+        <span class={this.getStyleName('text').concat('not-important')}>
+          {this.user.nickname}
+          {this.showAccount && `(${this.user.account})`}
+          {this.isAuthor && `(发布者)`}
+        </span>
       </div>
     )
   }
 }
-

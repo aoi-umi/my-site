@@ -8,13 +8,13 @@ import { Utils } from './utils'
 _Vue.use(VueDND)
 @Component
 export class MyBase extends Vue {
-  protected stylePrefix = 'base-';
-  getStyleName (...args: string[]) {
+  protected stylePrefix = 'base-'
+  getStyleName(...args: string[]) {
     return Utils.getStyleName(this.stylePrefix, ...args)
   }
 
   // 防抖
-  protected debounce (fn: Function, delay = 500) {
+  protected debounce(fn: Function, delay = 500) {
     let timer = null
     return function () {
       if (timer) {

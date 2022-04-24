@@ -4,27 +4,40 @@ import { Component, Vue, Prop } from '@/components/decorator'
 import { testApi } from '@/api'
 import { myEnum, dev } from '@/config'
 import { routerConfig } from '@/router'
-import { FormItem, Button, Divider, Input, Icon, Affix, Card } from '@/components/iview'
+import {
+  FormItem,
+  Button,
+  Divider,
+  Input,
+  Icon,
+  Affix,
+  Card,
+} from '@/components/iview'
 import { MyUpload, FileDataType, FileType } from '@/components/my-upload'
 
 import { VideoMgtBase } from './video-mgt'
-import { ContentDetailType, ContentDataType, ContentMgtDetail, ContentLogList } from './content-mgt-base'
+import {
+  ContentDetailType,
+  ContentDataType,
+  ContentMgtDetail,
+  ContentLogList,
+} from './content-mgt-base'
 import { VideoDetailMain } from './video-detail'
 
 import './video.less'
 
 export type DetailDataType = ContentDataType & {
-  videoIdList: string[];
-  videoList: { _id: string, url: string, contentType: string }[];
-};
-export type DetailType = ContentDetailType<DetailDataType>;
+  videoIdList: string[]
+  videoList: { _id: string; url: string; contentType: string }[]
+}
+export type DetailType = ContentDetailType<DetailDataType>
 
 @Component
 export default class VideoMgtDetail extends VideoMgtBase {
-  stylePrefix = 'video-mgt-';
-  $refs: { detailView: ContentMgtDetail, upload: MyUpload };
+  stylePrefix = 'video-mgt-'
+  $refs: { detailView: ContentMgtDetail; upload: MyUpload }
 
-  private innerDetail: DetailType = this.getDetailData();
+  private innerDetail: DetailType = this.getDetailData()
   protected getDetailData() {
     const data = this.getDefaultDetail<DetailDataType>()
     data.detail.videoIdList = []
@@ -36,23 +49,27 @@ export default class VideoMgtDetail extends VideoMgtBase {
   private getRules() {
     return {
       cover: {
-        required: true
+        required: true,
       },
       videoIdList: {
-        required: true
-      }
+        required: true,
+      },
     }
   }
 
-  videoList: FileType[] = [];
+  videoList: FileType[] = []
   private async loadDetailData() {
     const query = this.$route.query
     let detail: DetailType
     if (query._id) {
       this.preview = this.$route.path == routerConfig.videoMgtDetail.path
       detail = await testApi.videoMgtDetailQuery({ _id: query._id })
-      this.videoList = detail.detail.videoList.map(ele => {
-        return { url: ele.url, fileType: FileDataType.视频, originFileType: ele.contentType }
+      this.videoList = detail.detail.videoList.map((ele) => {
+        return {
+          url: ele.url,
+          fileType: FileDataType.视频,
+          originFileType: ele.contentType,
+        }
       })
       if (query.repost) {
         detail.detail._id = ''
@@ -65,33 +82,35 @@ export default class VideoMgtDetail extends VideoMgtBase {
   }
 
   private async beforeValidFn(detail: DetailDataType) {
-    await this.operateHandler('上传视频', async () => {
-      const upload = this.$refs.upload
-      const err = await upload.upload()
-      if (err.length) {
-        throw new Error(err.join(','))
-      }
-      const file = upload.fileList[0]
-      if (file && file.uploadRes) {
-        detail.videoIdList = [file.uploadRes]
-      }
-    }, { noSuccessHandler: true, throwError: true })
+    await this.operateHandler(
+      '上传视频',
+      async () => {
+        const upload = this.$refs.upload
+        const err = await upload.upload()
+        if (err.length) {
+          throw new Error(err.join(','))
+        }
+        const file = upload.fileList[0]
+        if (file && file.uploadRes) {
+          detail.videoIdList = [file.uploadRes]
+        }
+      },
+      { noSuccessHandler: true, throwError: true },
+    )
   }
 
   private async saveFn(detail: DetailDataType, submit) {
     const { user, ...restDetail } = detail
     const rs = await testApi.videoMgtSave({
       ...restDetail,
-      submit
+      submit,
     })
     return rs
   }
 
   private renderLog() {
     const { log } = this.innerDetail
-    return (
-      <ContentLogList log={log} />
-    )
+    return <ContentLogList log={log} />
   }
 
   private renderPreview() {
@@ -110,7 +129,8 @@ export default class VideoMgtDetail extends VideoMgtBase {
   render() {
     const videoSize = 20
     return (
-      <ContentMgtDetail ref='detailView'
+      <ContentMgtDetail
+        ref="detailView"
         preview={this.preview}
         loadDetailData={this.loadDetailData}
         getRules={this.getRules}
@@ -121,8 +141,11 @@ export default class VideoMgtDetail extends VideoMgtBase {
         }}
         renderPreviewFn={this.renderPreview}
       >
-        <FormItem label='视频' prop='videoIdList'>
-          <MyUpload ref='upload' width={videoSize * 16} height={videoSize * 9}
+        <FormItem label="视频" prop="videoIdList">
+          <MyUpload
+            ref="upload"
+            width={videoSize * 16}
+            height={videoSize * 9}
             headers={testApi.defaultHeaders}
             uploadUrl={testApi.fileUploadByChunksUrl}
             uploadCheckUrl={testApi.fileUploadCheckUrl}
@@ -139,18 +162,19 @@ export default class VideoMgtDetail extends VideoMgtBase {
             uploadIconType={FileDataType.视频}
             showVideoCrop
             on-video-crop={(crop, item) => {
-              if (!crop || !crop.data) { return }
+              if (!crop || !crop.data) {
+                return
+              }
               const file = new File([], '截图', { type: crop.type })
               this.$refs.detailView.$refs.cover.setFile({
                 data: crop.data,
                 file: file,
-                fileType: FileDataType.图片
+                fileType: FileDataType.图片,
               })
             }}
             v-model={this.videoList}
             showProgress
-          >
-          </MyUpload>
+          ></MyUpload>
         </FormItem>
       </ContentMgtDetail>
     )

@@ -9,18 +9,18 @@ import { routerConfig } from '@/router'
 
 @Component
 export default class CompMgt extends Base {
-  $refs: { list: MyList<any> };
+  $refs: { list: MyList<any> }
 
-  mounted () {
+  mounted() {
     this.query()
   }
 
   @Watch('$route')
-  route (to, from) {
+  route(to, from) {
     this.query()
   }
 
-  query () {
+  query() {
     const list = this.$refs.list
     const query = this.$route.query
     list.setQueryByKey(query, ['name'])
@@ -28,109 +28,120 @@ export default class CompMgt extends Base {
     this.$refs.list.query(query)
   }
 
-  async delHandler (delIds: any[]) {
-    this.$utils.confirm((
-      <div>
-        将要删除{delIds.length}项
-      </div>
-    ), {
+  async delHandler(delIds: any[]) {
+    this.$utils.confirm(<div>将要删除{delIds.length}项</div>, {
       title: '确认删除?',
       ok: async () => {
         await testApi.compMgtDel({ idList: delIds })
         this.query()
-      }
+      },
     })
   }
 
-  toDetail (query?) {
+  toDetail(query?) {
     this.goToPage({
       path: routerConfig.compMgtDetail.path,
-      query
+      query,
     })
   }
 
-  toPreview (query) {
+  toPreview(query) {
     this.goToPage({
       path: routerConfig.compMgtPreview.path,
-      query
+      query,
     })
   }
 
-  protected render () {
+  protected render() {
     return (
       <div>
         <MyList
-          ref='list'
+          ref="list"
           queryArgs={{
             name: {
-              label: '名字'
+              label: '名字',
             },
             text: {
-              label: '显示'
-            }
+              label: '显示',
+            },
           }}
-          columns={[{
-            key: '_selection',
-            type: 'selection',
-            width: 60,
-            align: 'center'
-          }, {
-            title: '名字',
-            key: 'name',
-            minWidth: 120
-          }, {
-            title: '显示',
-            key: 'text',
-            minWidth: 120
-          }, {
-            title: '操作',
-            key: 'action',
-            fixed: 'right',
-            width: 120,
-            render: (h, params) => {
-              return (
-                <div class={MyListConst.clsActBox}>
-                  <a on-click={() => {
-                    let row = params.row
-                    this.toDetail({ _id: row._id })
-                  }}>编辑</a>
-                  <a on-click={() => {
-                    let row = params.row
-                    this.toPreview({ _id: row._id })
-                  }}>预览</a>
-                  <a on-click={() => {
-                    this.delHandler([params.row._id])
-                  }}>删除</a>
-                </div>
-              )
-            }
-          }]}
-
+          columns={[
+            {
+              key: '_selection',
+              type: 'selection',
+              width: 60,
+              align: 'center',
+            },
+            {
+              title: '名字',
+              key: 'name',
+              minWidth: 120,
+            },
+            {
+              title: '显示',
+              key: 'text',
+              minWidth: 120,
+            },
+            {
+              title: '操作',
+              key: 'action',
+              fixed: 'right',
+              width: 120,
+              render: (h, params) => {
+                return (
+                  <div class={MyListConst.clsActBox}>
+                    <a
+                      on-click={() => {
+                        let row = params.row
+                        this.toDetail({ _id: row._id })
+                      }}
+                    >
+                      编辑
+                    </a>
+                    <a
+                      on-click={() => {
+                        let row = params.row
+                        this.toPreview({ _id: row._id })
+                      }}
+                    >
+                      预览
+                    </a>
+                    <a
+                      on-click={() => {
+                        this.delHandler([params.row._id])
+                      }}
+                    >
+                      删除
+                    </a>
+                  </div>
+                )
+              },
+            },
+          ]}
           queryFn={async (data) => {
             const rs = await testApi.compMgtQuery(data)
             return rs
           }}
-
           on-query={(model: MyListModel) => {
             this.goToPage({
               path: this.$route.path,
               query: {
                 ...model.query,
-                ...convert.Test.listModelToQuery(model)
-              }
+                ...convert.Test.listModelToQuery(model),
+              },
             })
           }}
-
           on-add-click={() => {
             this.toDetail()
           }}
-
-          multiOperateBtnList={[{
-            text: '批量删除',
-            onClick: (selection) => {
-              this.delHandler(selection.map(ele => ele._id))
-            }
-          }]}
+          multiOperateBtnList={[
+            {
+              text: '批量删除',
+              onClick: (selection) => {
+                this.delHandler(selection.map((ele) => ele._id))
+              },
+            },
+          ]}
         ></MyList>
       </div>
     )

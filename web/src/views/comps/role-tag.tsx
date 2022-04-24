@@ -9,22 +9,22 @@ import { AuthorityTag } from './authority-tag'
 
 class RoleTagProp {
   @Prop({
-    default: []
+    default: [],
   })
-  value: DetailDataType[];
+  value: DetailDataType[]
 
   @Prop()
-  hideCode?: boolean;
+  hideCode?: boolean
 }
 @Component({
   extends: MyTagBase,
-  props: RoleTagProp
+  props: RoleTagProp,
 })
 export class RoleTag extends Vue<RoleTagProp, MyTagBase<DetailDataType>> {
-  render () {
+  render() {
     return (
       <div>
-        {this.tagList.map(ele => {
+        {this.tagList.map((ele) => {
           let color = ''
           let tag = ele.code
           if (ele.isDel || ele.status !== myEnum.roleStatus.启用) {
@@ -33,17 +33,19 @@ export class RoleTag extends Vue<RoleTagProp, MyTagBase<DetailDataType>> {
             tag = `${ele.name}` + (this.hideCode ? '' : `(${ele.code})`)
           }
           return (
-            <Tooltip theme='light' max-width='250' disabled={!ele.authorityList || !ele.authorityList.length}>
-              <div slot='content' >
+            <Tooltip
+              theme="light"
+              max-width="250"
+              disabled={!ele.authorityList || !ele.authorityList.length}
+            >
+              <div slot="content">
                 <AuthorityTag value={ele.authorityList} />
               </div>
-              {
-                this.renderTag({
-                  tag,
-                  color,
-                  isDel: ele.isDel
-                })
-              }
+              {this.renderTag({
+                tag,
+                color,
+                isDel: ele.isDel,
+              })}
             </Tooltip>
           )
         })}

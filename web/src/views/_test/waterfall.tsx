@@ -8,23 +8,23 @@ import { Base } from '../base'
 import './demo.less'
 @Component
 export default class Waterfall extends Base {
-  $refs: { root: HTMLDivElement; };
-  stylePrefix = 'waterfall-';
-  imgsArr = [];
-  group = 0;
-  type = '0';
+  $refs: { root: HTMLDivElement }
+  stylePrefix = 'waterfall-'
+  imgsArr = []
+  group = 0
+  type = '0'
 
   @Watch('$route')
-  watchRoute () {
+  watchRoute() {
     this.type = this.$route.query.type as any
   }
 
-  created () {
+  created() {
     this.getData()
     this.watchRoute()
   }
 
-  async getDataFn (refresh?: boolean) {
+  async getDataFn(refresh?: boolean) {
     const list = Array.from(new Array(10)).map((ele, idx) => {
       const source = [
         'https://nodejs.org/static/images/logo.svg',
@@ -34,32 +34,32 @@ export default class Waterfall extends Base {
         'https://www.tslang.cn/assets/images/ideicons/vscode.svg',
         'http://nginx.org/nginx.png',
         'https://gblobscdn.gitbook.com/assets%2F-MGP1hmjbQxtuPtZp3IX%2F-MJlyijmUOmEcCoVcDCb%2F-MJlyqbZcVlMmL9DHucN%2FMongoDB.png',
-        'http://lesscss.org/public/img/less_logo.png'
+        'http://lesscss.org/public/img/less_logo.png',
       ]
       const src = source[idx % source.length]
       return {
-        src
+        src,
       }
     })
     this.imgsArr = refresh ? list : [...this.imgsArr, ...list]
     await this.$utils.wait(1000)
     return {
       data: list,
-      finished: this.imgsArr.length > 50
+      finished: this.imgsArr.length > 50,
     }
   }
 
-  getData (refresh?: boolean) {
+  getData(refresh?: boolean) {
     this.getDataFn(refresh)
     this.group++
   }
 
-  render () {
+  render() {
     return (
-      <div ref='root' class={this.getStyleName('root')}>
-        {this.type == '1'
-          ? <MyWaterfall
-            scrollElm='root'
+      <div ref="root" class={this.getStyleName('root')}>
+        {this.type == '1' ? (
+          <MyWaterfall
+            scrollElm="root"
             style={{ height: '300px' }}
             getDataFn={() => {
               return this.getDataFn()
@@ -68,7 +68,8 @@ export default class Waterfall extends Base {
               return <div>test{item.src}</div>
             }}
           />
-          : <MyWaterfall
+        ) : (
+          <MyWaterfall
             getDataFn={() => {
               return this.getDataFn()
             }}
@@ -76,7 +77,7 @@ export default class Waterfall extends Base {
               return <div>test{item.src}</div>
             }}
           />
-        }
+        )}
       </div>
     )
   }

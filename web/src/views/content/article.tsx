@@ -14,96 +14,95 @@ import { ContentListItem } from './content'
 
 import './article.less'
 
-class ArticleProp extends ListBaseProp { }
+class ArticleProp extends ListBaseProp {}
 @Component
 export default class Article extends ListBase {
-    $refs: { list: MyList<any> };
+  $refs: { list: MyList<any> }
 
-    anyKey = '';
+  anyKey = ''
 
-    query () {
-      const list = this.$refs.list
-      let query
-      if (!this.notQueryOnRoute) {
-        query = this.$route.query
-        list.setQueryByKey(query, ['user', 'title'])
-        this.anyKey = query.anyKey
-      } else {
-        query = {}
-      }
-      convert.Test.queryToListModel(query, list.model)
-      this.$refs.list.query(query)
+  query() {
+    const list = this.$refs.list
+    let query
+    if (!this.notQueryOnRoute) {
+      query = this.$route.query
+      list.setQueryByKey(query, ['user', 'title'])
+      this.anyKey = query.anyKey
+    } else {
+      query = {}
     }
+    convert.Test.queryToListModel(query, list.model)
+    this.$refs.list.query(query)
+  }
 
-    protected delSuccessHandler () {
-      this.$refs.list.query()
-    }
+  protected delSuccessHandler() {
+    this.$refs.list.query()
+  }
 
-    protected render () {
-      return (
-        <div>
-          <Input v-model={this.anyKey} search on-on-search={() => {
+  protected render() {
+    return (
+      <div>
+        <Input
+          v-model={this.anyKey}
+          search
+          on-on-search={() => {
             this.$refs.list.handleQuery({ resetPage: true })
-          }} />
-          <MyList
-            ref='list'
-            hideSearchBox
-
-            type='custom'
-            customRenderFn={(rs) => {
-              return rs.data.map(ele => {
-                return (
-                  <ArticleListItem value={ele} />
-                )
+          }}
+        />
+        <MyList
+          ref="list"
+          hideSearchBox
+          type="custom"
+          customRenderFn={(rs) => {
+            return rs.data.map((ele) => {
+              return <ArticleListItem value={ele} />
+            })
+          }}
+          queryFn={async (data) => {
+            const rs = await testApi.articleQuery({ ...data, ...this.queryOpt })
+            return rs
+          }}
+          on-query={(model, noClear, list: MyList<any>) => {
+            const q = {
+              ...model.query,
+              anyKey: this.anyKey,
+              ...convert.Test.listModelToQuery(model),
+            }
+            if (!this.notQueryToRoute) {
+              this.goToPage({
+                path: this.$route.path,
+                query: q,
               })
-            }}
-
-            queryFn={async (data) => {
-              const rs = await testApi.articleQuery({ ...data, ...this.queryOpt })
-              return rs
-            }}
-
-            on-query={(model, noClear, list: MyList<any>) => {
-              const q = {
-                ...model.query, anyKey: this.anyKey,
-                ...convert.Test.listModelToQuery(model)
-              }
-              if (!this.notQueryToRoute) {
-                this.goToPage({
-                  path: this.$route.path,
-                  query: q
-                })
-              } else {
-                list.query(q)
-              }
-            }}
-          >
-          </MyList>
-        </div >
-      )
-    }
+            } else {
+              list.query(q)
+            }
+          }}
+        ></MyList>
+      </div>
+    )
+  }
 }
 class ArticleListItemProp {
-    @Prop({
-      required: true
-    })
-    value: DetailDataType;
+  @Prop({
+    required: true,
+  })
+  value: DetailDataType
 
-    @Prop({
-      default: false
-    })
-    selectable?: boolean;
+  @Prop({
+    default: false,
+  })
+  selectable?: boolean
 
-    @Prop()
-    mgt?: boolean;
+  @Prop()
+  mgt?: boolean
 }
 
 @Component({
   extends: Base,
-  props: ArticleListItemProp
+  props: ArticleListItemProp,
 })
 export class ArticleListItem extends Vue<ArticleListItemProp, Base> {
-  render () {
+  render() {
     return (
       <ContentListItem
         value={this.value}
@@ -119,4 +118,3 @@ export class ArticleListItem extends Vue<ArticleListItemProp, Base> {
     )
   }
 }
-

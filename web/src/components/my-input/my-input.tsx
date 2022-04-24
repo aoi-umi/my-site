@@ -7,21 +7,21 @@ import { MyBase } from '../my-base'
 
 export class MyInputBaseProp {
   @Prop()
-  value?: string;
+  value?: string
 
   @Prop()
-  placeholder?: string;
+  placeholder?: string
 }
 @Component({
   extends: MyBase,
-  props: MyInputBaseProp
+  props: MyInputBaseProp,
 })
 export class MyInputBase extends Vue<MyInputBaseProp, MyBase> {
-  protected currentValue = this.value || '';
-  protected disableEmitChange = false;
+  protected currentValue = this.value || ''
+  protected disableEmitChange = false
 
   @Watch('value')
-  watchValue (val) {
+  watchValue(val) {
     if (this.currentValue !== val) {
       this.disableEmitChange = true
     }
@@ -29,7 +29,7 @@ export class MyInputBase extends Vue<MyInputBaseProp, MyBase> {
   }
 
   @Watch('currentValue')
-  watchCurrentValue (val) {
+  watchCurrentValue(val) {
     this.watchCurrentValueHandler && this.watchCurrentValueHandler(val)
     this.$emit('input', val)
     if (this.disableEmitChange) {
@@ -39,53 +39,59 @@ export class MyInputBase extends Vue<MyInputBaseProp, MyBase> {
     this.$emit('on-change', val)
   }
 
-  protected watchCurrentValueHandler (val) { };
+  protected watchCurrentValueHandler(val) {}
 }
 
 class MyInputProp extends MyInputBaseProp {
   @Prop()
-  label?: string;
+  label?: string
 
   @Prop({
-    default: () => []
+    default: () => [],
   })
-  data: any[];
+  data: any[]
 
   @Prop()
-  disabled?: boolean;
+  disabled?: boolean
 
   @Prop()
-  clearable?: boolean;
+  clearable?: boolean
 
   @Prop()
-  size?: '' | 'small' | 'large' | 'default';
+  size?: '' | 'small' | 'large' | 'default'
 
   @Prop()
-  icon?: string;
+  icon?: string
 
   @Prop()
-  placement?: 'bottom' | 'top' | 'top-start' | 'bottom-start' | 'top-end' | 'bottom-end';
+  placement?:
+    | 'bottom'
+    | 'top'
+    | 'top-start'
+    | 'bottom-start'
+    | 'top-end'
+    | 'bottom-end'
 
   @Prop()
-  transfer?: boolean;
+  transfer?: boolean
 
   @Prop()
-  name?: string;
+  name?: string
 
   @Prop()
-  elementId?: string;
+  elementId?: string
 
   @Prop()
-  loading?: boolean;
+  loading?: boolean
 }
 @Component({
   extends: MyInputBase,
-  props: MyInputProp
+  props: MyInputProp,
 })
 class MyInput extends Vue<MyInputProp, MyInputBase> {
-  $refs: { select: any, input: any };
+  $refs: { select: any; input: any }
 
-  get inputIcon () {
+  get inputIcon() {
     let icon = ''
     if (this.clearable && this.currentValue) {
       icon = 'ios-close'
@@ -94,7 +100,7 @@ class MyInput extends Vue<MyInputProp, MyInputBase> {
     }
     return icon
   }
-  get filteredData () {
+  get filteredData() {
     // if (this.filterMethod) {
     //     return this.data.filter(item => this.filterMethod(this.currentValue, item));
     // } else {
@@ -102,43 +108,45 @@ class MyInput extends Vue<MyInputProp, MyInputBase> {
     // }
   }
 
-  watchCurrentValueHandler (val) {
+  watchCurrentValueHandler(val) {
     this.$refs.select.setQuery(val)
   }
 
-  private firstFocus = true;
-  private handleInputChange (e) {
+  private firstFocus = true
+  private handleInputChange(e) {
     const val = e.target.value && e.target.value.trim()
     this.$emit('on-search', val)
   }
-  private handleChange (val) {
+  private handleChange(val) {
     if (val === undefined || val === null) return
     // this.currentValue = val;
     this.$refs.input['blur']()
     this.$emit('on-select', val)
   }
-  private handleFocus (event) {
+  private handleFocus(event) {
     if (this.firstFocus) {
       this.firstFocus = false
       this.$emit('on-search', '')
     }
     this.$emit('on-focus', event)
   }
-  private handleBlur (event) {
+  private handleBlur(event) {
     this.$emit('on-blur', event)
   }
-  private handleClear () {
+  private handleClear() {
     if (!this.clearable) return
-    if (this.currentValue !== '') { this.$emit('on-search', '') }
+    if (this.currentValue !== '') {
+      this.$emit('on-search', '')
+    }
     this.currentValue = ''
     this.$refs.select['reset']()
     this.$emit('on-clear')
   }
-  protected render () {
+  protected render() {
     return (
       <Select
-        ref='select'
-        class='ivu-auto-complete'
+        ref="select"
+        class="ivu-auto-complete"
         label={this.label}
         disabled={this.disabled}
         clearable={this.clearable}
@@ -152,12 +160,13 @@ class MyInput extends Vue<MyInputProp, MyInputBase> {
         // remote-method={this.remoteMethod}
         on-on-change={this.handleChange}
         transfer={this.transfer}
-        loading={this.loading}>
-        {this.$slots.input ||
+        loading={this.loading}
+      >
+        {this.$slots.input || (
           <Input
             element-id={this.elementId}
-            ref='input'
-            slot='input'
+            ref="input"
+            slot="input"
             v-model={this.currentValue}
             name={this.name}
             placeholder={this.placeholder}
@@ -167,14 +176,18 @@ class MyInput extends Vue<MyInputProp, MyInputBase> {
             on-on-click={this.handleClear}
             on-on-focus={this.handleFocus}
             on-on-change={this.handleInputChange}
-            on-on-blur={this.handleBlur} />
-        }
+            on-on-blur={this.handleBlur}
+          />
+        )}
         {this.$slots.default ||
-          this.filteredData.map(item => {
-            return <Option value={item} key={item}>{item}</Option>
-          })
-        }
-      </Select >
+          this.filteredData.map((item) => {
+            return (
+              <Option value={item} key={item}>
+                {item}
+              </Option>
+            )
+          })}
+      </Select>
     )
   }
 }

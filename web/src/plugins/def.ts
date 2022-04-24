@@ -4,4 +4,3 @@ import * as _assist from 'view-design/src/utils/assist'
 
 export const iView: any = _iView
 export const assist = _assist
-

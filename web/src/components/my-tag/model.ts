@@ -1,33 +1,32 @@
-
 export type TagType = {
-  add?: boolean;
-  key?: string;
-  tag?: string;
-  checked?: boolean;
-  color?: string;
-  checkable?: boolean;
-  disabled?: boolean;
-  data?: any;
-  isDel?: boolean;
-};
+  add?: boolean
+  key?: string
+  tag?: string
+  checked?: boolean
+  color?: string
+  checkable?: boolean
+  disabled?: boolean
+  data?: any
+  isDel?: boolean
+}
 
 type TagObjType = {
-  key: string;
-  tag: string;
-  data?: any;
-  isDel?: boolean;
-};
-type OutTagType = TagObjType | string;
+  key: string
+  tag: string
+  data?: any
+  isDel?: boolean
+}
+type OutTagType = TagObjType | string
 export class MyTagModel {
-  tagList: TagType[] = [];
+  tagList: TagType[] = []
 
-  constructor (tagList?: OutTagType[]) {
+  constructor(tagList?: OutTagType[]) {
     this.initTag(tagList)
   }
 
-  initTag (tagList: OutTagType[]) {
+  initTag(tagList: OutTagType[]) {
     if (tagList && tagList.length) {
-      this.tagList = tagList.map(ele => {
+      this.tagList = tagList.map((ele) => {
         const newTag = this.getTag(ele)
         return {
           add: false,
@@ -36,7 +35,7 @@ export class MyTagModel {
           checked: true,
           checkable: true,
           data: newTag.data,
-          isDel: newTag.isDel
+          isDel: newTag.isDel,
         }
       })
     } else {
@@ -44,9 +43,14 @@ export class MyTagModel {
     }
   }
 
-  private getTag (ele: OutTagType) {
-    let key = ''; let tag = ''; let data; let isDel = false
-    if (typeof ele === 'string') { data = key = tag = ele } else {
+  private getTag(ele: OutTagType) {
+    let key = ''
+    let tag = ''
+    let data
+    let isDel = false
+    if (typeof ele === 'string') {
+      data = key = tag = ele
+    } else {
       key = ele.key
       tag = ele.tag
       data = ele.data
@@ -56,15 +60,15 @@ export class MyTagModel {
       key,
       tag,
       data,
-      isDel
+      isDel,
     }
   }
 
-  findTag (key: string) {
-    return this.tagList.find(ele => ele.key === key)
+  findTag(key: string) {
+    return this.tagList.find((ele) => ele.key === key)
   }
 
-  addTag (oTag: OutTagType) {
+  addTag(oTag: OutTagType) {
     const { key, tag, data } = this.getTag(oTag)
     const match = this.findTag(key)
     if (!match) {
@@ -74,14 +78,14 @@ export class MyTagModel {
         key,
         checked: true,
         checkable: true,
-        data
+        data,
       })
     } else {
       match.checked = true
     }
   }
 
-  delTag (oTag: OutTagType) {
+  delTag(oTag: OutTagType) {
     const { key, tag } = this.getTag(oTag)
     const match = this.findTag(key)
     if (match) {
@@ -89,10 +93,11 @@ export class MyTagModel {
     }
   }
 
-  getChangeTag (key?: string) {
-    type returnType = TagType | any;
-    const addTagList: returnType[] = []; const delTagList: returnType[] = []
-    this.tagList.map(ele => {
+  getChangeTag(key?: string) {
+    type returnType = TagType | any
+    const addTagList: returnType[] = []
+    const delTagList: returnType[] = []
+    this.tagList.map((ele) => {
       if (ele.add && ele.checked) {
         addTagList.push(key ? ele[key] : ele)
       } else if (!ele.add && !ele.checked) {
@@ -101,7 +106,7 @@ export class MyTagModel {
     })
     return {
       addTagList,
-      delTagList
+      delTagList,
     }
   }
 }

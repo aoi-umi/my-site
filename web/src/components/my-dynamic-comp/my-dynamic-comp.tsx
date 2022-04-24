@@ -3,7 +3,8 @@ import { Watch } from 'vue-property-decorator'
 import { Utils } from '@/components/utils'
 import { Component, Vue, Prop } from '@/components/decorator'
 import { myEnum } from '@/config'
-const { dynamicCompType, dynamicCompNumQueryType, dynamicCompStringQueryType } = myEnum
+const { dynamicCompType, dynamicCompNumQueryType, dynamicCompStringQueryType } =
+  myEnum
 
 import {
   Input,
@@ -12,39 +13,42 @@ import {
   InputNumber,
   DatePicker,
   TimePicker,
-  Tooltip
+  Tooltip,
 } from '../iview'
 import { MyBase } from '../my-base'
 
-type SelectOptionType = { label: string; value: any };
+type SelectOptionType = { label: string; value: any }
 
 export const DynamicCompSelectOptionsType = {
   extraValue: 'extraValue',
-  自定义: 'custom'
+  自定义: 'custom',
 }
 
 export type DynamicCompConfigType = {
-  name: string;
-  text: string;
+  name: string
+  text: string
   editable?: boolean
-  remark?: string;
+  remark?: string
   // 组件类型
-  type?: string;
+  type?: string
   // 是否区间
-  isRange?: boolean;
-  rangeSeparator?: string;
-  optionType?: string;
-  actOptions?: string | { [key: string]: number | string }
-  | SelectOptionType[] | ((query: string) => Promise<SelectOptionType[]>);
+  isRange?: boolean
+  rangeSeparator?: string
+  optionType?: string
+  actOptions?:
+    | string
+    | { [key: string]: number | string }
+    | SelectOptionType[]
+    | ((query: string) => Promise<SelectOptionType[]>)
   options?: string
   append?: any
   required?: boolean
   disabled?: boolean
-  queryMode?: string;
+  queryMode?: string
   queryMatchMode?: {
-    show?: boolean,
+    show?: boolean
     value?: string
-  },
+  }
 
   calcType?: string
   sort?: number
@@ -53,7 +57,7 @@ export type DynamicCompConfigType = {
   size?: number
   // my list
   width?: number
-};
+}
 
 export type DynamicCompPropType = {
   [key: string]: {
@@ -64,43 +68,43 @@ export type DynamicCompPropType = {
 }
 
 export type DynamicCompEventType = {
-  value: any,
-  config: DynamicCompConfigType,
-  data: any,
+  value: any
+  config: DynamicCompConfigType
+  data: any
   rawArgs: any[]
 }
 
 export type DynamicCompConfigFnType = (opt: {
-  config: DynamicCompConfigType,
-  name: string,
-  value: any,
-  data: any,
+  config: DynamicCompConfigType
+  name: string
+  value: any
+  data: any
 }) => any
 
 export class DynamicCompProp {
   @Prop({
-    required: true
+    required: true,
   })
-  config: DynamicCompConfigType;
+  config: DynamicCompConfigType
 
   @Prop({
-    required: true
+    required: true,
   })
-  data: any;
+  data: any
 
   @Prop()
-  compProp?: DynamicCompPropType;
+  compProp?: DynamicCompPropType
 
   @Prop()
-  showText?: boolean;
+  showText?: boolean
 
   @Prop({
-    default: true
+    default: true,
   })
-  editable?: boolean;
+  editable?: boolean
 
   @Prop({
-    default: 'text'
+    default: 'text',
   })
   readonlyType?: 'disabled' | 'text'
 
@@ -113,26 +117,33 @@ export class DynamicCompProp {
 
 @Component({
   extends: MyBase,
-  props: DynamicCompProp
+  props: DynamicCompProp,
 })
 export class DynamicComp extends Vue<DynamicCompProp, MyBase> {
-  stylePrefix = 'my-dynamic-comp-';
+  stylePrefix = 'my-dynamic-comp-'
 
-  created () {
-  }
+  created() {}
 
-  render () {
+  render() {
     return (
       <Tooltip class={this.getStyleName('root')} disabled={!this.toolTips}>
-        {this.showText &&
-          <span class={this.getStyleName('text').concat([this.actuallyRequired && 'required'])}>
+        {this.showText && (
+          <span
+            class={this.getStyleName('text').concat([
+              this.actuallyRequired && 'required',
+            ])}
+          >
             {this.actualOption.config.text}
           </span>
-        }
-        <div class={this.getStyleName('container').concat([
-          !this.showText && this.actuallyRequired && 'required'
-        ])}>{this.renderComp()}</div>
-        <div slot='content' style='white-space: normal;word-break: break-all;'>
+        )}
+        <div
+          class={this.getStyleName('container').concat([
+            !this.showText && this.actuallyRequired && 'required',
+          ])}
+        >
+          {this.renderComp()}
+        </div>
+        <div slot="content" style="white-space: normal;word-break: break-all;">
           {this.toolTips}
         </div>
       </Tooltip>
@@ -141,7 +152,7 @@ export class DynamicComp extends Vue<DynamicCompProp, MyBase> {
 
   private loading = false
 
-  private get selectOptions () {
+  private get selectOptions() {
     let { config, data } = this.getActualOption()
     let actOptions
     if (config.actOptions) {
@@ -156,10 +167,10 @@ export class DynamicComp extends Vue<DynamicCompProp, MyBase> {
       if (typeof actOptions === 'function') {
         actOptions = this.remoteSelectOptions
       } else if (!(actOptions instanceof Array)) {
-        actOptions = Object.entries(actOptions).map(ele => {
+        actOptions = Object.entries(actOptions).map((ele) => {
           return {
             label: ele[0],
-            value: ele[1]
+            value: ele[1],
           }
         })
       }
@@ -169,43 +180,46 @@ export class DynamicComp extends Vue<DynamicCompProp, MyBase> {
 
   private remoteSelectOptions: SelectOptionType[] = []
 
-  private get actuallyEditable () {
+  private get actuallyEditable() {
     return this.actualOption.editable
   }
-  private get actuallyRequired () {
+  private get actuallyRequired() {
     return this.actualOption.config.required
   }
 
-  private get isDate () {
+  private get isDate() {
     let { config } = this.getActualOption()
-    return [dynamicCompType.日期, dynamicCompType.日期时间].includes(config.type)
+    return [dynamicCompType.日期, dynamicCompType.日期时间].includes(
+      config.type,
+    )
   }
 
-  private get queryMatchMode () {
+  private get queryMatchMode() {
     let { config } = this.getActualOption()
 
     return config.queryMatchMode
   }
 
-  private get actualOption () {
+  private get actualOption() {
     return this.getActualOption()
   }
   // 获取实际的参数
-  private getActualOption () {
+  private getActualOption() {
     let { config, data } = this
     let cfg
     if (this.dynamicConfigFn) {
       cfg = this.dynamicConfigFn({
-        config, name: config.name,
+        config,
+        name: config.name,
         value: data[config.name],
-        data
+        data,
       })
     }
     let actConfig = config
     if (cfg) {
       actConfig = {
         ...actConfig,
-        ...cfg
+        ...cfg,
       }
     }
 
@@ -216,8 +230,10 @@ export class DynamicComp extends Vue<DynamicCompProp, MyBase> {
       for (let key in eve) {
         event[Utils.stringToHyphen(key)] = (...args) => {
           eve[key]({
-            value: data[config.name], config,
-            data, rawArgs: args
+            value: data[config.name],
+            config,
+            data,
+            rawArgs: args,
           })
         }
       }
@@ -227,56 +243,66 @@ export class DynamicComp extends Vue<DynamicCompProp, MyBase> {
       config: actConfig,
       editable: this.editable && actConfig.editable,
       rangeSeparator,
-      event
+      event,
     }
   }
 
-  private get toolTips () {
+  private get toolTips() {
     return this.getReadonlyValue()
   }
-  private getReadonlyValue () {
+  private getReadonlyValue() {
     let { data, config, rangeSeparator } = this.getActualOption()
 
     let val = data[config.name]
     let showValue = val
     if (config.type === dynamicCompType.选择器) {
-      let match = this.selectOptions?.find(ele => ele.value == val)
+      let match = this.selectOptions?.find((ele) => ele.value == val)
       if (match) showValue = match.label
     } else if (config.type === dynamicCompType.多选框) {
       showValue = val ? 'True' : 'False'
     } else if (this.isDate) {
       let fmt = {
         [dynamicCompType.日期]: 'date',
-        [dynamicCompType.日期时间]: 'datetime'
+        [dynamicCompType.日期时间]: 'datetime',
       }[config.type]
       showValue = ''
       if (val) {
         let list = val instanceof Array ? val : [val]
-        showValue = list.map(ele => this.$utils.dateFormat(ele, fmt))
+        showValue = list.map((ele) => this.$utils.dateFormat(ele, fmt))
       }
     }
-    if (showValue instanceof Array) { showValue = showValue.join(` ${rangeSeparator} `) }
+    if (showValue instanceof Array) {
+      showValue = showValue.join(` ${rangeSeparator} `)
+    }
     return showValue
   }
 
-  renderText () {
+  renderText() {
     return this.getReadonlyValue()
   }
 
-  private renderOption (option) {
+  private renderOption(option) {
     return option?.map((ele) => {
       let key = ele.label || ele.key
-      return <i-option value={ele.value} key={key}>{key}</i-option>
+      return (
+        <i-option value={ele.value} key={key}>
+          {key}
+        </i-option>
+      )
     })
   }
 
-  renderComp () {
+  renderComp() {
     let { data, config, rangeSeparator, event } = this.getActualOption()
 
     if (config.type === dynamicCompType.多选框) {
-      return <Checkbox v-model={data[config.name]}
-        disabled={!this.actuallyEditable}
-        on={event} />
+      return (
+        <Checkbox
+          v-model={data[config.name]}
+          disabled={!this.actuallyEditable}
+          on={event}
+        />
+      )
     }
 
     if (this.readonlyType === 'text' && !this.actuallyEditable) {
@@ -285,18 +311,28 @@ export class DynamicComp extends Vue<DynamicCompProp, MyBase> {
 
     if (config.type === dynamicCompType.选择器) {
       let isFn = typeof config.actOptions === 'function'
-      let method: any = !isFn ? null : this.debounce((query) => {
-        this.setSelectOption({
-          query
-        })
-      })
+      let method: any = !isFn
+        ? null
+        : this.debounce((query) => {
+            this.setSelectOption({
+              query,
+            })
+          })
       return (
         <Select
-          clearable transfer filterable
-          v-model={data[config.name]} placeholder={config.remark}
-          loading={this.loading} disabled={!this.actuallyEditable}
-          on={event} on-on-query-change={method} nativeOn-click={ () => {
-            if (method && !this.remoteSelectOptions.length) { method(data[config.name]) }
+          clearable
+          transfer
+          filterable
+          v-model={data[config.name]}
+          placeholder={config.remark}
+          loading={this.loading}
+          disabled={!this.actuallyEditable}
+          on={event}
+          on-on-query-change={method}
+          nativeOn-click={() => {
+            if (method && !this.remoteSelectOptions.length) {
+              method(data[config.name])
+            }
           }}
         >
           {this.renderOption(this.selectOptions)}
@@ -307,15 +343,20 @@ export class DynamicComp extends Vue<DynamicCompProp, MyBase> {
     if (this.isDate) {
       let type = {
         [dynamicCompType.日期]: 'date',
-        [dynamicCompType.日期时间]: 'datetime'
+        [dynamicCompType.日期时间]: 'datetime',
       }[config.type] as any
       if (config.isRange) type += 'range'
-      return <DatePicker
-        clearable transfer
-        type={type} v-model={data[config.name]}
-        disabled={!this.actuallyEditable}
-        on={event}
-        placeholder={config.remark} />
+      return (
+        <DatePicker
+          clearable
+          transfer
+          type={type}
+          v-model={data[config.name]}
+          disabled={!this.actuallyEditable}
+          on={event}
+          placeholder={config.remark}
+        />
+      )
     }
 
     if (config.type === dynamicCompType.时间) {
@@ -340,44 +381,45 @@ export class DynamicComp extends Vue<DynamicCompProp, MyBase> {
           v-model={data[config.name]}
           disabled={!this.actuallyEditable}
           on={event}
-          controls-position='right'
+          controls-position="right"
           placeholder={config.remark}
-        >
-        </InputNumber>
+        ></InputNumber>
       )
     }
 
-    return <Input
-      v-model={data[config.name]}
-      disabled={!this.actuallyEditable}
-      on={event}
-      placeholder={config.remark}
-      clearable
-    >
-      {this.queryMatchMode?.show && <span slot='prepend'>
-        {this.renderStrPrepend()}
-      </span>}
-      {config.append && <span slot='append'>{config.append}</span>}
-    </Input>
+    return (
+      <Input
+        v-model={data[config.name]}
+        disabled={!this.actuallyEditable}
+        on={event}
+        placeholder={config.remark}
+        clearable
+      >
+        {this.queryMatchMode?.show && (
+          <span slot="prepend">{this.renderStrPrepend()}</span>
+        )}
+        {config.append && <span slot="append">{config.append}</span>}
+      </Input>
+    )
   }
 
-  private renderStrPrepend () {
+  private renderStrPrepend() {
     return (
-      <Select v-model={this.queryMatchMode.value} style='width: 80px'>
+      <Select v-model={this.queryMatchMode.value} style="width: 80px">
         {this.renderOption(dynamicCompStringQueryType.toArray())}
       </Select>
     )
   }
 
-  private renderNumPrepend () {
+  private renderNumPrepend() {
     return (
-      <Select style='width: 80px'>
+      <Select style="width: 80px">
         {this.renderOption(dynamicCompNumQueryType.toArray())}
       </Select>
     )
   }
 
-  async setSelectOption (opt: { query?}) {
+  async setSelectOption(opt: { query? }) {
     let { query } = opt
     let { config, data } = this.getActualOption()
     this.loading = true
@@ -391,4 +433,3 @@ export class DynamicComp extends Vue<DynamicCompProp, MyBase> {
     }
   }
 }
-

@@ -3,14 +3,16 @@ import { AnimeInstance } from 'animejs'
 import SparkMD5 from 'spark-md5'
 
 export async function request(options: AxiosRequestConfig) {
-  if (!options.url) { throw new Error('url can not empty!') }
+  if (!options.url) {
+    throw new Error('url can not empty!')
+  }
   let opt: AxiosRequestConfig = {
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
       'Content-Type': 'application/json; charset=UTF-8',
-      'Access-Control-Allow-Origin': '*'
+      'Access-Control-Allow-Origin': '*',
     },
-    method: 'POST'
+    method: 'POST',
   }
   if (options.headers) {
     opt.headers = extend({}, opt.headers, options.headers)
@@ -18,7 +20,9 @@ export async function request(options: AxiosRequestConfig) {
   }
   opt = extend(opt, options)
 
-  if (opt.method?.toLowerCase() == 'get') { opt.params = opt.data }
+  if (opt.method?.toLowerCase() == 'get') {
+    opt.params = opt.data
+  }
 
   const rs = await axios.request(opt)
   return rs
@@ -28,11 +32,13 @@ export function extend(...args) {
   const res = args[0] || {}
   for (let i = 1; i < args.length; i++) {
     const arg = args[i]
-    if (typeof (arg) !== 'object') {
+    if (typeof arg !== 'object') {
       continue
     }
     for (const key in arg) {
-      if (arg[key] !== undefined) { res[key] = arg[key] }
+      if (arg[key] !== undefined) {
+        res[key] = arg[key]
+      }
     }
   }
   return res
@@ -43,14 +49,18 @@ export function clone<T>(obj: T): T {
 }
 
 function getDeco(fn: (constructor) => any) {
-  return function <T extends { new(...args: any[]): {} }>(constructor: T) {
+  return function <T extends { new (...args: any[]): {} }>(constructor: T) {
     return fn(constructor)
   }
 }
 
 export function error(e, code?) {
-  if (!(e instanceof Error)) { e = new Error(e) }
-  if (code) { e.code = code }
+  if (!(e instanceof Error)) {
+    e = new Error(e)
+  }
+  if (code) {
+    e.code = code
+  }
   return e
 }
 
@@ -59,14 +69,16 @@ export function randStr() {
 }
 
 export const stringFormat = function (formatString: string, ...args) {
-  if (!formatString) { formatString = '' }
+  if (!formatString) {
+    formatString = ''
+  }
   let reg = /(\{(\d)\})/g
   if (typeof args[0] === 'object') {
     args = args[0]
     reg = /(\{([^{}]+)\})/g
   }
-  const result = formatString.replace(reg, function () {
-    const match = arguments[2]
+  const result = formatString.replace(reg, function (...args) {
+    const match = args[2]
     return args[match] || ''
   })
   return result
@@ -80,7 +92,7 @@ export const stopAnimation = (animations: AnimeInstance | AnimeInstance[]) => {
       else anim.pause()
     }
   }
-  if (Array.isArray(animations)) animations.forEach(anim => stop(anim))
+  if (Array.isArray(animations)) animations.forEach((anim) => stop(anim))
   else stop(animations)
 }
 
@@ -94,6 +106,6 @@ export function defer<T = any>() {
   return {
     promise,
     resolve,
-    reject
+    reject,
   }
 }

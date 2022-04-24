@@ -1,5 +1,4 @@
-
-import { } from 'vue-property-decorator'
+import {} from 'vue-property-decorator'
 import * as QRCode from 'qrcode'
 
 import { Component, Vue, Prop } from '@/components/decorator'
@@ -9,48 +8,54 @@ import { Spin } from '../iview'
 
 class MyQrcodeProp {
   @Prop()
-  width?: number;
+  width?: number
 
   @Prop()
-  text?: string;
+  text?: string
 
   @Prop()
-  showText?: boolean;
+  showText?: boolean
 }
 @Component({
   extends: MyBase,
-  props: MyQrcodeProp
+  props: MyQrcodeProp,
 })
 export class MyQrcode extends Vue<MyQrcodeProp, MyBase> {
-  stylePrefix = 'my-qrcode-';
-  $refs: { qrCanvas: HTMLDivElement; }
+  stylePrefix = 'my-qrcode-'
+  $refs: { qrCanvas: HTMLDivElement }
 
-  mounted () {
+  mounted() {
     if (this.text) {
       this.drawQrcode(this.text)
     }
   }
 
-  private qrErr = '';
-  private qrDrawing = false;
+  private qrErr = ''
+  private qrDrawing = false
   private currText = ''
-  async drawQrcode (str: string) {
+  async drawQrcode(str: string) {
     this.qrErr = ''
     this.qrDrawing = true
     this.currText = str
-    await QRCode.toCanvas(this.$refs.qrCanvas, str, { width: this.width || 200 }).catch(e => {
-      this.qrErr = e.message
-    }).finally(() => {
-      this.qrDrawing = false
+    await QRCode.toCanvas(this.$refs.qrCanvas, str, {
+      width: this.width || 200,
     })
+      .catch((e) => {
+        this.qrErr = e.message
+      })
+      .finally(() => {
+        this.qrDrawing = false
+      })
   }
 
-  render () {
+  render() {
     return (
       <div class={this.getStyleName('root')}>
-        {this.qrDrawing && <Spin size='large' fix />}
+        {this.qrDrawing && <Spin size="large" fix />}
         <div class={this.getStyleName('main')}>
-          {this.qrErr || <canvas ref='qrCanvas' class={this.getStyleName('qr-box')} />}
+          {this.qrErr || (
+            <canvas ref="qrCanvas" class={this.getStyleName('qr-box')} />
+          )}
           {this.showText && <div>{this.currText}</div>}
         </div>
       </div>

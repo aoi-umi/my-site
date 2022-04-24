@@ -5,79 +5,92 @@ import { Button, Row, Col, Modal } from '../iview'
 import { MyBase } from '../my-base'
 
 type BtnType = {
-  text: string;
-  type?: string;
-  loading?: boolean;
-  onClick?: (ele: BtnType, idx: number) => any;
-};
+  text: string
+  type?: string
+  loading?: boolean
+  onClick?: (ele: BtnType, idx: number) => any
+}
 
 class MyConfirmProp {
   @Prop()
-  title?: string;
+  title?: string
 
   @Prop({ default: false })
-  loading?: boolean;
+  loading?: boolean
 
   @Prop()
-  btnList?: BtnType[];
+  btnList?: BtnType[]
 
   @Prop()
-  ok?: (ele: BtnType) => void | Promise<void>;
+  ok?: (ele: BtnType) => void | Promise<void>
 
   @Prop()
-  cancel?: (ele: BtnType) => void;
+  cancel?: (ele: BtnType) => void
 }
 @Component({
   extends: MyBase,
-  props: MyConfirmProp
+  props: MyConfirmProp,
 })
 export class MyConfirm extends Vue<MyConfirmProp, MyBase> {
-  stylePrefix = 'my-confirm-';
+  stylePrefix = 'my-confirm-'
 
-  private get innerBtnList () {
-    return this.btnList || [{
-      text: '取消',
-      onClick: (e) => {
-        this.cancel && this.cancel(e)
-      }
-    }, {
-      text: '确认',
-      type: 'primary',
-      onClick: async (e, idx) => {
-        if (this.ok) {
-          if (this.loading) {
-            e.loading = true
-            this.$forceUpdate()
-          }
-          await this.ok(e)
-          if (this.loading) {
-            e.loading = false
-            this.$forceUpdate()
-          }
-        }
-      }
-    }]
-  };
+  private get innerBtnList() {
+    return (
+      this.btnList || [
+        {
+          text: '取消',
+          onClick: (e) => {
+            this.cancel && this.cancel(e)
+          },
+        },
+        {
+          text: '确认',
+          type: 'primary',
+          onClick: async (e, idx) => {
+            if (this.ok) {
+              if (this.loading) {
+                e.loading = true
+                this.$forceUpdate()
+              }
+              await this.ok(e)
+              if (this.loading) {
+                e.loading = false
+                this.$forceUpdate()
+              }
+            }
+          },
+        },
+      ]
+    )
+  }
 
-  renderBtn () {
+  renderBtn() {
     const btnList = this.innerBtnList
 
     return (
-      <Row gutter={5} type='flex' justify='end'>
+      <Row gutter={5} type="flex" justify="end">
         {btnList.map((ele, idx) => {
-          if (!ele.loading) { ele.loading = false }
+          if (!ele.loading) {
+            ele.loading = false
+          }
           return (
             <Col>
-              <Button type={ele.type as any} on-click={() => {
-                ele.onClick && ele.onClick(ele, idx)
-              }} loading={ele.loading}>{ele.text}</Button>
+              <Button
+                type={ele.type as any}
+                on-click={() => {
+                  ele.onClick && ele.onClick(ele, idx)
+                }}
+                loading={ele.loading}
+              >
+                {ele.text}
+              </Button>
             </Col>
           )
         })}
       </Row>
     )
   }
-  render () {
+  render() {
     return (
       <div>
         <h2>{this.title || ''}</h2>
@@ -92,22 +105,22 @@ export class MyConfirm extends Vue<MyConfirmProp, MyBase> {
 
 export class MyConfirmModalProp {
   @Prop()
-  title?: string;
+  title?: string
 
   @Prop()
-  ok?: () => any | Promise<any>;
+  ok?: () => any | Promise<any>
 }
 
 @Component({
   extends: MyBase,
-  props: MyConfirmModalProp
+  props: MyConfirmModalProp,
 })
 export class MyConfirmModal extends Vue<MyConfirmModalProp, MyBase> {
   show = false
-  toggle (show?: boolean) {
+  toggle(show?: boolean) {
     this.show = typeof show === 'boolean' ? show : !this.show
   }
-  render () {
+  render() {
     return (
       <Modal v-model={this.show} footer-hide>
         <MyConfirm
@@ -119,18 +132,18 @@ export class MyConfirmModal extends Vue<MyConfirmModalProp, MyBase> {
             },
             ok: async () => {
               try {
-                this.ok && await this.ok()
+                this.ok && (await this.ok())
                 this.toggle(false)
               } catch (e) {
                 this.$Message.error(e.message)
               } finally {
               }
-            }
-          }}>
+            },
+          }}
+        >
           {this.$slots.default}
         </MyConfirm>
       </Modal>
     )
   }
 }
-

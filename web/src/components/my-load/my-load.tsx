@@ -8,56 +8,58 @@ import { cls } from '../style'
 
 class MyLoadProp {
   @Prop()
-  loadFn: () => Promise<any> | any;
+  loadFn: () => Promise<any> | any
 
   @Prop()
-  afterLoad?: () => Promise<any> | any;
+  afterLoad?: () => Promise<any> | any
 
   @Prop()
-  renderFn: (data: any) => any;
+  renderFn: (data: any) => any
 
   @Prop()
-  width?: number;
+  width?: number
 
   @Prop({
-    default: 200
+    default: 200,
   })
-  height?: number;
+  height?: number
 
   @Prop()
-  notLoadOnMounted?: boolean;
+  notLoadOnMounted?: boolean
 
   @Prop()
-  errMsgFn?: (e) => string;
+  errMsgFn?: (e) => string
 
   @Prop()
-  outLoading?: boolean;
+  outLoading?: boolean
 }
 @Component({
   extends: MyBase,
-  props: MyLoadProp
+  props: MyLoadProp,
 })
 export class MyLoad extends Vue<MyLoadProp, MyBase> {
-  stylePrefix = 'my-load-';
+  stylePrefix = 'my-load-'
 
-  loading = false;
+  loading = false
   result = {
     success: false,
     msg: '准备加载',
-    data: null
-  };
-
-  protected mounted () {
-    if (!this.notLoadOnMounted) { this.loadData() }
+    data: null,
   }
 
-  async loadData () {
+  protected mounted() {
+    if (!this.notLoadOnMounted) {
+      this.loadData()
+    }
+  }
+
+  async loadData() {
     this.loading = true
     try {
       this.result.data = await this.loadFn()
       this.result.success = true
       await this.$utils.wait()
-      this.afterLoad && await this.afterLoad()
+      this.afterLoad && (await this.afterLoad())
     } catch (e) {
       console.error(e)
       this.result.success = false
@@ -67,17 +69,30 @@ export class MyLoad extends Vue<MyLoadProp, MyBase> {
     }
   }
 
-  protected render () {
+  protected render() {
     if (!this.result.success) {
       return (
         <div class={this.getStyleName('root')}>
-          <Card class={cls.center} style={{ height: this.height ? this.height + 'px' : null, width: this.width ? this.width + 'px' : null }}>
-            {this.loading ? <Spin size='large' fix />
-              : <div class={this.getStyleName('content').concat(cls.center)}>
+          <Card
+            class={cls.center}
+            style={{
+              height: this.height ? this.height + 'px' : null,
+              width: this.width ? this.width + 'px' : null,
+            }}
+          >
+            {this.loading ? (
+              <Spin size="large" fix />
+            ) : (
+              <div class={this.getStyleName('content').concat(cls.center)}>
                 {this.result.msg}
-                <Button class={this.getStyleName('retry-btn')} on-click={this.loadData}>重试</Button>
+                <Button
+                  class={this.getStyleName('retry-btn')}
+                  on-click={this.loadData}
+                >
+                  重试
+                </Button>
               </div>
-            }
+            )}
           </Card>
         </div>
       )
@@ -85,7 +100,7 @@ export class MyLoad extends Vue<MyLoadProp, MyBase> {
 
     return (
       <div>
-        {this.outLoading && <Spin size='large' fix />}
+        {this.outLoading && <Spin size="large" fix />}
         {this.renderFn(this.result.data)}
       </div>
     )

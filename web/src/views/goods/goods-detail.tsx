@@ -5,7 +5,19 @@ import { testApi } from '@/api'
 import errConfig, { getErrorCfgByCode } from '@/config/error'
 import { myEnum } from '@/config'
 import { mathjs } from '@/helpers'
-import { Carousel, CarouselItem, Row, Col, Divider, Input, Button, Card, Modal, RadioGroup, Radio } from '@/components/iview'
+import {
+  Carousel,
+  CarouselItem,
+  Row,
+  Col,
+  Divider,
+  Input,
+  Button,
+  Card,
+  Modal,
+  RadioGroup,
+  Radio,
+} from '@/components/iview'
 import { MyTag, TagType } from '@/components/my-tag'
 import { MyLoad } from '@/components/my-load'
 import { MyImg } from '@/components/my-img'
@@ -20,16 +32,16 @@ import './goods.less'
 
 @Component
 export default class GoodsDetail extends Base {
-  stylePrefix = 'goods-';
-  private innerDetail: DetailType = {} as any;
-  private async loadDetailData () {
+  stylePrefix = 'goods-'
+  private innerDetail: DetailType = {} as any
+  private async loadDetailData() {
     const query = this.$route.query
     const detail = await testApi.goodsDetailQuery({ _id: query._id })
     this.innerDetail = detail
     return detail
   }
 
-  protected render () {
+  protected render() {
     return (
       <div>
         <MyLoad
@@ -38,7 +50,9 @@ export default class GoodsDetail extends Base {
             return <GoodsDetailMain data={detail} />
           }}
           errMsgFn={(e) => {
-            if (getErrorCfgByCode(e.code)) { return '商品不存在或已删除' }
+            if (getErrorCfgByCode(e.code)) {
+              return '商品不存在或已删除'
+            }
             return e.message
           }}
         />
@@ -49,61 +63,71 @@ export default class GoodsDetail extends Base {
 
 class GoodsDetailMainProp {
   @Prop({
-    required: true
+    required: true,
   })
-  data: DetailType;
+  data: DetailType
 }
 @Component({
   extends: Base,
-  props: GoodsDetailMainProp
+  props: GoodsDetailMainProp,
 })
 export class GoodsDetailMain extends Vue<GoodsDetailMainProp, Base> {
-  stylePrefix = 'goods-';
-  $refs: { imgViewer: MyImgViewer, pay: Pay };
+  stylePrefix = 'goods-'
+  $refs: { imgViewer: MyImgViewer; pay: Pay }
 
-  specTag: { name: string, value: TagType[] }[] = [];
+  specTag: { name: string; value: TagType[] }[] = []
   @Watch('data')
-  protected watchData (newValue: DetailType) {
-    this.specTag = newValue.specGroup.map((e, idx) => {
-      return {
-        name: e.name,
-        value: e.value.filter(v => newValue.sku.find(s => s.spec[idx] === v)).map((v) => {
-          return {
-            key: v,
-            tag: v,
-            checkable: true
-          }
-        })
-      }
-    }).filter(ele => ele.value.length)
+  protected watchData(newValue: DetailType) {
+    this.specTag = newValue.specGroup
+      .map((e, idx) => {
+        return {
+          name: e.name,
+          value: e.value
+            .filter((v) => newValue.sku.find((s) => s.spec[idx] === v))
+            .map((v) => {
+              return {
+                key: v,
+                tag: v,
+                checkable: true,
+              }
+            }),
+        }
+      })
+      .filter((ele) => ele.value.length)
   }
 
-  typeList: { key: string; value: any, checked?: boolean }[] = [];
-  created () {
-    this.typeList = myEnum.assetSourceType.toArray().filter(ele => ele.value === myEnum.assetSourceType.支付宝).map(ele => {
-      ele['checked'] = false
-      return ele
-    })
+  typeList: { key: string; value: any; checked?: boolean }[] = []
+  created() {
+    this.typeList = myEnum.assetSourceType
+      .toArray()
+      .filter((ele) => ele.value === myEnum.assetSourceType.支付宝)
+      .map((ele) => {
+        ele['checked'] = false
+        return ele
+      })
     this.watchData(this.data)
     this.selectSpec()
   }
 
-  sku: SkuType = null;
+  sku: SkuType = null
   buyInfo = {
     name: '',
     payType: myEnum.assetSourceType.支付宝,
-    quantity: 1
-  };
-  get totalPrice () {
-    return mathjs.round((this.sku ? this.sku.price : 0) * this.buyInfo.quantity, 2) as number
+    quantity: 1,
+  }
+  get totalPrice() {
+    return mathjs.round(
+      (this.sku ? this.sku.price : 0) * this.buyInfo.quantity,
+      2,
+    ) as number
   }
 
-  selectSpec () {
+  selectSpec() {
     const selectSpec = []
     let selectFinish = true
     for (let i = 0; i < this.specTag.length; i++) {
       const ele = this.specTag[i]
-      const match = ele.value.find(v => v.checked)
+      const match = ele.value.find((v) => v.checked)
       if (match) {
         selectSpec.push(match.key)
       } else {
@@ -112,7 +136,7 @@ export class GoodsDetailMain extends Vue<GoodsDetailMainProp, Base> {
       }
     }
     if (selectFinish) {
-      this.sku = this.data.sku.find(ele => {
+      this.sku = this.data.sku.find((ele) => {
         let match = true
         if (ele.spec.length !== this.specTag.length) {
           match = false
@@ -131,23 +155,30 @@ export class GoodsDetailMain extends Vue<GoodsDetailMainProp, Base> {
     }
     this.buyInfo.name = this.sku ? this.data.spu.name + '-' + this.sku.name : ''
 
-    function canBuy (s) {
+    function canBuy(s) {
       return s.quantity > 0 && s.status === myEnum.goodsSkuStatus.上架
     }
     // 不可选项
     this.specTag.forEach((ele, idx) => {
-      ele.value.forEach(v => {
-        v.disabled = !this.data.sku.find(s => canBuy(s) && s.spec[idx] === v.key)
+      ele.value.forEach((v) => {
+        v.disabled = !this.data.sku.find(
+          (s) => canBuy(s) && s.spec[idx] === v.key,
+        )
       })
 
       if (selectSpec[idx]) {
         this.specTag.forEach((ele2, idx2) => {
           if (idx !== idx2) {
             ele2.value.forEach((v, vIdx) => {
-              const match = this.data.sku.find(s =>
-                canBuy(s) &&
-                s.spec[idx] === selectSpec[idx] && s.spec[idx2] === v.key)
-              if (!match) { v.disabled = true }
+              const match = this.data.sku.find(
+                (s) =>
+                  canBuy(s) &&
+                  s.spec[idx] === selectSpec[idx] &&
+                  s.spec[idx2] === v.key,
+              )
+              if (!match) {
+                v.disabled = true
+              }
             })
           }
         })
@@ -155,43 +186,51 @@ export class GoodsDetailMain extends Vue<GoodsDetailMainProp, Base> {
     })
   }
 
-  private async buy () {
+  private async buy() {
     const rs = await testApi.goodsBuy({
       quantity: this.buyInfo.quantity,
       payType: this.buyInfo.payType,
       totalPrice: this.totalPrice,
-      skuId: this.sku._id
+      skuId: this.sku._id,
     })
     return rs
   }
 
-  showIdx = 0;
-  render () {
+  showIdx = 0
+  render() {
     const { spu } = this.data
     const multi = spu.imgUrls.length > 1
     return (
       <div>
-        <Pay ref='pay' payFn={async () => {
-          return this.buy()
-        }}>
+        <Pay
+          ref="pay"
+          payFn={async () => {
+            return this.buy()
+          }}
+        >
           <p>{this.buyInfo.name}</p>
           <p>支付金额: {this.totalPrice.toFixed(2)}</p>
         </Pay>
         <h2>{spu.name}</h2>
-        <MyImgViewer ref='imgViewer' src={spu.imgUrls} idx={this.showIdx} />
+        <MyImgViewer ref="imgViewer" src={spu.imgUrls} idx={this.showIdx} />
         <Row gutter={20}>
           <Col xs={24} sm={8}>
-            <Carousel class={this.getStyleName('carousel')} loop
+            <Carousel
+              class={this.getStyleName('carousel')}
+              loop
               arrow={multi ? 'hover' : 'never'}
               dots={multi ? 'inside' : 'none'}
             >
               {spu.imgUrls.map((ele, idx) => {
                 return (
                   <CarouselItem class={this.getStyleName('carousel-item')}>
-                    <div class={this.getStyleName('carousel-img')} on-click={() => {
-                      this.showIdx = idx
-                      this.$refs.imgViewer.show()
-                    }} >
+                    <div
+                      class={this.getStyleName('carousel-img')}
+                      on-click={() => {
+                        this.showIdx = idx
+                        this.$refs.imgViewer.show()
+                      }}
+                    >
                       <MyImg src={ele} />
                     </div>
                   </CarouselItem>
@@ -204,12 +243,18 @@ export class GoodsDetailMain extends Vue<GoodsDetailMainProp, Base> {
               return (
                 <div>
                   <div>
-                    <span class={this.getStyleName('spec-name')}>{ele.name}</span>
+                    <span class={this.getStyleName('spec-name')}>
+                      {ele.name}
+                    </span>
                   </div>
                   <div>
-                    <MyTag value={ele.value} singleCheck on-change={() => {
-                      this.selectSpec()
-                    }} />
+                    <MyTag
+                      value={ele.value}
+                      singleCheck
+                      on-change={() => {
+                        this.selectSpec()
+                      }}
+                    />
                   </div>
                   <Divider />
                 </div>
@@ -218,19 +263,28 @@ export class GoodsDetailMain extends Vue<GoodsDetailMainProp, Base> {
           </Col>
           <Card class={this.getStyleName('buy-box')}>
             <div class={this.getStyleName('buy-box-cont')}>
-              {this.sku &&
+              {this.sku && (
                 <div class={this.getStyleName('count-box')}>
                   <div>
                     单价 {this.sku.price} / 库存 {this.sku.quantity}
                   </div>
-                  <MyNumber v-model={this.buyInfo.quantity} min={1} max={this.sku.quantity} />
+                  <MyNumber
+                    v-model={this.buyInfo.quantity}
+                    min={1}
+                    max={this.sku.quantity}
+                  />
                 </div>
-              }
+              )}
               <div class={this.getStyleName('buy')}>
                 <span>总价:{this.totalPrice.toFixed(2)}</span>
-                <Button disabled={!this.sku} on-click={() => {
-                  this.$refs.pay.toggle(true)
-                }}>立即购买</Button>
+                <Button
+                  disabled={!this.sku}
+                  on-click={() => {
+                    this.$refs.pay.toggle(true)
+                  }}
+                >
+                  立即购买
+                </Button>
               </div>
             </div>
           </Card>
@@ -239,4 +293,3 @@ export class GoodsDetailMain extends Vue<GoodsDetailMainProp, Base> {
     )
   }
 }
-

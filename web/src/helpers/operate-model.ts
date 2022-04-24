@@ -25,7 +25,7 @@ export class OperateModel {
       success: true,
       msg: '',
       err: null,
-      data: null
+      data: null,
     }
     this.loading = true
     let opt = this.opt
@@ -66,6 +66,6 @@ export class OperateModel {
     } finally {
       this.loading = false
     }
-    return result;
+    return result
   }
 }

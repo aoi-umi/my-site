@@ -4,7 +4,18 @@ import { Component, Vue, Prop } from '@/components/decorator'
 import { myEnum, dev } from '@/config'
 import { testApi } from '@/api'
 import { routerConfig } from '@/router'
-import { Icon, Card, Row, Col, Checkbox, Time, Divider, Dropdown, DropdownMenu, DropdownItem } from '@/components/iview'
+import {
+  Icon,
+  Card,
+  Row,
+  Col,
+  Checkbox,
+  Time,
+  Divider,
+  Dropdown,
+  DropdownMenu,
+  DropdownItem,
+} from '@/components/iview'
 import { Utils } from '@/components/utils'
 import { MyTag } from '@/components/my-tag'
 
@@ -16,66 +27,88 @@ import './content.less'
 
 class ContentOperateProp {
   @Prop({
-    required: true
+    required: true,
   })
-  data: ContentDataType;
+  data: ContentDataType
 
   @Prop({
-    required: true
+    required: true,
   })
-  voteType: number;
+  voteType: number
 
   @Prop({
-    required: true
+    required: true,
   })
-  contentType: number;
+  contentType: number
 
   @Prop()
-  stretch?: boolean;
+  stretch?: boolean
 
   @Prop()
-  mgt?: boolean;
+  mgt?: boolean
 
   @Prop()
-  toDetail?: () => void;
+  toDetail?: () => void
 
   @Prop()
-  getShareUrl?: () => void;
+  getShareUrl?: () => void
 }
 @Component({
   extends: Base,
-  props: ContentOperateProp
+  props: ContentOperateProp,
 })
 export class ContentOperate extends Vue<ContentOperateProp, Base> {
   stylePrefix = 'content-op-'
 
   private handleVote(detail, value) {
-    this.operateHandler('', async () => {
-      const rs = await testApi.voteSubmit({ ownerId: detail._id, value, type: this.voteType })
-      for (const key in rs) {
-        detail[key] = rs[key]
-      }
-      detail.voteValue = value
-    }, {
-      noSuccessHandler: true
-    })
+    this.operateHandler(
+      '',
+      async () => {
+        const rs = await testApi.voteSubmit({
+          ownerId: detail._id,
+          value,
+          type: this.voteType,
+        })
+        for (const key in rs) {
+          detail[key] = rs[key]
+        }
+        detail.voteValue = value
+      },
+      {
+        noSuccessHandler: true,
+      },
+    )
   }
 
   private handleFavourite(detail, favourite) {
-    this.operateHandler('', async () => {
-      const rs = await testApi.favouriteSubmit({ ownerId: detail._id, favourite, type: this.voteType })
-      for (const key in rs) {
-        detail[key] = rs[key]
-      }
-      detail.favouriteValue = favourite
-    }, {
-      noSuccessHandler: true
-    })
+    this.operateHandler(
+      '',
+      async () => {
+        const rs = await testApi.favouriteSubmit({
+          ownerId: detail._id,
+          favourite,
+          type: this.voteType,
+        })
+        for (const key in rs) {
+          detail[key] = rs[key]
+        }
+        detail.favouriteValue = favourite
+      },
+      {
+        noSuccessHandler: true,
+      },
+    )
   }
 
   render() {
     return (
-      <div class={[this.getStyleName('main'), this.stretch && this.getStyleName('stretch'), this.mgt && 'not-important']}>
+      <div
+        class={[
+          this.getStyleName('main'),
+          this.stretch && this.getStyleName('stretch'),
+          this.mgt && 'not-important',
+        ]}
+      >
         {!this.mgt ? this.renderBtns() : this.renderMgtBtns()}
       </div>
     )
@@ -83,117 +116,139 @@ export class ContentOperate extends Vue<ContentOperateProp, Base> {
 
   getOperationCfg() {
     const ele = this.data
-    return [{
-      icon: 'md-eye',
-      type: myEnum.contentOperateType.查看,
-      text: ele.readTimes
-    }, {
-      icon: 'md-text',
-      type: myEnum.contentOperateType.评论,
-      text: ele.commentCount
-    }, {
-      icon: 'md-heart',
-      type: myEnum.contentOperateType.收藏,
-      class: 'pointer',
-      text: ele.favourite,
-      color: ele.favouriteValue ? 'red' : '',
-      onClick: () => {
-        this.handleFavourite(ele, !ele.favouriteValue)
-      }
-    }, {
-      icon: 'md-thumbs-up',
-      type: myEnum.contentOperateType.赞,
-      class: 'pointer',
-      text: ele.like,
-      color: ele.voteValue == myEnum.voteValue.喜欢 ? 'red' : '',
-      onClick: () => {
-        this.handleVote(ele, ele.voteValue == myEnum.voteValue.喜欢 ? myEnum.voteValue.无 : myEnum.voteValue.喜欢)
-      }
-    }, {
-      icon: 'md-thumbs-down',
-      type: myEnum.contentOperateType.踩,
-      class: 'pointer',
-      text: ele.dislike,
-      color: ele.voteValue == myEnum.voteValue.不喜欢 ? 'red' : '',
-      onClick: () => {
-        this.handleVote(ele, ele.voteValue == myEnum.voteValue.不喜欢 ? myEnum.voteValue.无 : myEnum.voteValue.不喜欢)
-      }
-    }, {
-      icon: 'md-share',
-      type: myEnum.contentOperateType.分享,
-      class: 'pointer',
-      onClick: () => {
-        const url = this.getShareUrl()
-        Utils.copy2Clipboard(url)
-        this.$Message.info('已复制到粘贴板')
-      }
-    }]
+    return [
+      {
+        icon: 'md-eye',
+        type: myEnum.contentOperateType.查看,
+        text: ele.readTimes,
+      },
+      {
+        icon: 'md-text',
+        type: myEnum.contentOperateType.评论,
+        text: ele.commentCount,
+      },
+      {
+        icon: 'md-heart',
+        type: myEnum.contentOperateType.收藏,
+        class: 'pointer',
+        text: ele.favourite,
+        color: ele.favouriteValue ? 'red' : '',
+        onClick: () => {
+          this.handleFavourite(ele, !ele.favouriteValue)
+        },
+      },
+      {
+        icon: 'md-thumbs-up',
+        type: myEnum.contentOperateType.赞,
+        class: 'pointer',
+        text: ele.like,
+        color: ele.voteValue == myEnum.voteValue.喜欢 ? 'red' : '',
+        onClick: () => {
+          this.handleVote(
+            ele,
+            ele.voteValue == myEnum.voteValue.喜欢
+              ? myEnum.voteValue.无
+              : myEnum.voteValue.喜欢,
+          )
+        },
+      },
+      {
+        icon: 'md-thumbs-down',
+        type: myEnum.contentOperateType.踩,
+        class: 'pointer',
+        text: ele.dislike,
+        color: ele.voteValue == myEnum.voteValue.不喜欢 ? 'red' : '',
+        onClick: () => {
+          this.handleVote(
+            ele,
+            ele.voteValue == myEnum.voteValue.不喜欢
+              ? myEnum.voteValue.无
+              : myEnum.voteValue.不喜欢,
+          )
+        },
+      },
+      {
+        icon: 'md-share',
+        type: myEnum.contentOperateType.分享,
+        class: 'pointer',
+        onClick: () => {
+          const url = this.getShareUrl()
+          Utils.copy2Clipboard(url)
+          this.$Message.info('已复制到粘贴板')
+        },
+      },
+    ]
   }
 
   renderBtns() {
     const list = this.getOperationCfg()
-    const minOperation = list.filter(cfg => [
-      myEnum.contentOperateType.查看,
-      myEnum.contentOperateType.评论,
-      myEnum.contentOperateType.收藏,
-      myEnum.contentOperateType.赞
-    ].includes(cfg.type))
+    const minOperation = list.filter((cfg) =>
+      [
+        myEnum.contentOperateType.查看,
+        myEnum.contentOperateType.评论,
+        myEnum.contentOperateType.收藏,
+        myEnum.contentOperateType.赞,
+      ].includes(cfg.type),
+    )
 
-    const otherOperation = list.filter(cfg => [
-      myEnum.contentOperateType.踩,
-      myEnum.contentOperateType.分享
-    ].includes(cfg.type))
+    const otherOperation = list.filter((cfg) =>
+      [myEnum.contentOperateType.踩, myEnum.contentOperateType.分享].includes(
+        cfg.type,
+      ),
+    )
 
     if (this.isSmall) {
       return [
-        ...minOperation.map(iconEle => {
+        ...minOperation.map((iconEle) => {
           return this.renderBtn(iconEle)
         }),
         <div class={['center', this.getStyleName('item')]}>
           <Dropdown>
-            <Icon type='md-more' size={24} />
-            <DropdownMenu slot='list'>
-              {otherOperation.map(iconEle => {
-                return (
-                  <DropdownItem>
-                    {this.renderBtn(iconEle)}
-                  </DropdownItem>
-                )
+            <Icon type="md-more" size={24} />
+            <DropdownMenu slot="list">
+              {otherOperation.map((iconEle) => {
+                return <DropdownItem>{this.renderBtn(iconEle)}</DropdownItem>
               })}
             </DropdownMenu>
           </Dropdown>
-        </div>
+        </div>,
       ]
     } else {
-      return list.map(iconEle => {
+      return list.map((iconEle) => {
         return this.renderBtn(iconEle)
       })
     }
   }
 
   renderMgtBtns() {
-    const list = this.getOperationCfg().filter(cfg => [
-      myEnum.contentOperateType.查看,
-      myEnum.contentOperateType.评论,
-      myEnum.contentOperateType.收藏,
-      myEnum.contentOperateType.赞,
-      myEnum.contentOperateType.踩
-    ].includes(cfg.type))
-    return list.map(iconEle => {
+    const list = this.getOperationCfg().filter((cfg) =>
+      [
+        myEnum.contentOperateType.查看,
+        myEnum.contentOperateType.评论,
+        myEnum.contentOperateType.收藏,
+        myEnum.contentOperateType.赞,
+        myEnum.contentOperateType.踩,
+      ].includes(cfg.type),
+    )
+    return list.map((iconEle) => {
       return this.renderBtn(iconEle)
     })
   }
 
   renderBtn(iconEle: {
-    icon: string;
-    type: number;
-    text?: string | number;
-    class?: string;
-    onClick?: () => void;
-    color?: string;
+    icon: string
+    type: number
+    text?: string | number
+    class?: string
+    onClick?: () => void
+    color?: string
   }) {
     return (
-      <div class={[this.getStyleName('item'), ...(!this.mgt ? [iconEle.class, 'center'] : [])]}
+      <div
+        class={[
+          this.getStyleName('item'),
+          ...(!this.mgt ? [iconEle.class, 'center'] : []),
+        ]}
         on-click={() => {
           if (this.mgt) return
           if (iconEle.onClick) {
@@ -202,11 +257,13 @@ export class ContentOperate extends Vue<ContentOperateProp, Base> {
           }
           this.toDetail && this.toDetail()
           this.$emit('operate-click', iconEle.type)
-        }} >
+        }}
+      >
         <Icon
           type={iconEle.icon}
           size={!this.mgt ? 24 : 20}
-          color={iconEle.color} />
+          color={iconEle.color}
+        />
         <b style={{ marginLeft: '4px' }}>{iconEle.text}</b>
       </div>
     )
@@ -215,49 +272,49 @@ export class ContentOperate extends Vue<ContentOperateProp, Base> {
 
 class ContentListItemProp {
   @Prop({
-    required: true
+    required: true,
   })
-  value: ContentDataType;
+  value: ContentDataType
 
   @Prop({
-    default: false
+    default: false,
   })
-  selectable?: boolean;
+  selectable?: boolean
 
   @Prop()
-  mgt?: boolean;
+  mgt?: boolean
 
   @Prop({
-    required: true
+    required: true,
   })
-  contentType: number;
+  contentType: number
 
   @Prop()
-  min?: boolean;
+  min?: boolean
 }
 
 @Component({
   extends: Base,
-  props: ContentListItemProp
+  props: ContentListItemProp,
 })
 export class ContentListItem extends Vue<ContentListItemProp, Base> {
-  stylePrefix = 'content-';
+  stylePrefix = 'content-'
 
   private cfgs = {
     [myEnum.contentType.文章]: {
       detailUrl: routerConfig.articleDetail.path,
       mgtDetailUrl: routerConfig.articleMgtDetail.path,
       profile: dev.defaultArticleProfile,
-      voteType: myEnum.voteType.文章
+      voteType: myEnum.voteType.文章,
     },
     [myEnum.contentType.视频]: {
       detailUrl: routerConfig.videoDetail.path,
       mgtDetailUrl: routerConfig.videoMgtDetail.path,
       profile: dev.defaultVideoProfile,
-      voteType: myEnum.voteType.视频
-    }
-  };
-  private cfg = this.cfgs[this.contentType];
+      voteType: myEnum.voteType.视频,
+    },
+  }
+  private cfg = this.cfgs[this.contentType]
 
   private toDetail(ele: ContentDataType) {
     this.goToPage(this.getDetailUrlObj(ele))
@@ -266,14 +323,14 @@ export class ContentListItem extends Vue<ContentListItemProp, Base> {
   private getDetailUrlObj(ele: ContentDataType) {
     return {
       path: this.mgt ? this.cfg.mgtDetailUrl : this.cfg.detailUrl,
-      query: { _id: ele._id }
+      query: { _id: ele._id },
     }
   }
 
   private getDetailUrl(ele: ContentDataType) {
     return this.$utils.getUrl({
       path: `${location.host}${this.cfg.detailUrl}`,
-      query: { _id: ele._id }
+      query: { _id: ele._id },
     })
   }
 
@@ -281,10 +338,23 @@ export class ContentListItem extends Vue<ContentListItemProp, Base> {
     const ele = this.value
     if (this.min) {
       return (
-        <router-link class={this.getStyleName('min-box')} to={this.$utils.getUrl(this.getDetailUrlObj(ele))}>
+        <router-link
+          class={this.getStyleName('min-box')}
+          to={this.$utils.getUrl(this.getDetailUrlObj(ele))}
+        >
           <div class={[...this.getStyleName('cover-box')]}>
-            {<img class={[...this.getStyleName('cover')]} v-lazy={ele.coverUrl} />}
-            <h4 class={[...this.getStyleName('list-title'), 'flex-stretch']} title={ele.title}>{ele.title}</h4>
+            {
+              <img
+                class={[...this.getStyleName('cover')]}
+                v-lazy={ele.coverUrl}
+              />
+            }
+            <h4
+              class={[...this.getStyleName('list-title'), 'flex-stretch']}
+              title={ele.title}
+            >
+              {ele.title}
+            </h4>
           </div>
           PO: <UserAvatar user={ele.user} type="text" />
         </router-link>
@@ -293,42 +363,92 @@ export class ContentListItem extends Vue<ContentListItemProp, Base> {
     return (
       <div>
         <Card style={{ marginTop: '5px', cursor: this.mgt ? '' : 'pointer' }}>
-          <div on-click={() => {
-            this.toDetail(ele)
-          }}>
+          <div
+            on-click={() => {
+              this.toDetail(ele)
+            }}
+          >
             <router-link to={this.$utils.getUrl(this.getDetailUrlObj(ele))}>
               <Row>
                 <Col class={this.getStyleName('top-col')} span={24}>
-                  <h3 class={[...this.getStyleName('list-title'), 'flex-stretch']} title={ele.title}>{ele.title}</h3>
+                  <h3
+                    class={[...this.getStyleName('list-title'), 'flex-stretch']}
+                    title={ele.title}
+                  >
+                    {ele.title}
+                  </h3>
                   {this.mgt && <MyTag value={ele.statusText} />}
-                  {this.selectable && <Checkbox value={ele._checked} disabled={ele._disabled} on-on-change={(checked) => {
-                    this.$emit('selected-change', checked)
-                  }} />}
+                  {this.selectable && (
+                    <Checkbox
+                      value={ele._checked}
+                      disabled={ele._disabled}
+                      on-on-change={(checked) => {
+                        this.$emit('selected-change', checked)
+                      }}
+                    />
+                  )}
                 </Col>
                 <Col class={this.getStyleName('user-col')} span={24}>
                   <UserAvatar user={ele.user} />
-                  {ele.publishAt && <span class='not-important' style={{ marginLeft: '5px' }}>发布于 <Time time={new Date(ele.publishAt)} /></span>}
+                  {ele.publishAt && (
+                    <span class="not-important" style={{ marginLeft: '5px' }}>
+                      发布于 <Time time={new Date(ele.publishAt)} />
+                    </span>
+                  )}
                 </Col>
               </Row>
               <Row class={this.getStyleName('content-row')}>
                 <Col class={this.getStyleName('cover-col')} span={24}>
-                  {ele.coverUrl && <img class={[...this.getStyleName('cover'), 'my-upload-item cover']} v-lazy={ele.coverUrl} />}
-                  {<p class={this.getStyleName('profile')}>{ele.profile || this.cfg.profile}</p>}
+                  {ele.coverUrl && (
+                    <img
+                      class={[
+                        ...this.getStyleName('cover'),
+                        'my-upload-item cover',
+                      ]}
+                      v-lazy={ele.coverUrl}
+                    />
+                  )}
+                  {
+                    <p class={this.getStyleName('profile')}>
+                      {ele.profile || this.cfg.profile}
+                    </p>
+                  }
                 </Col>
-                {this.mgt && <p class='not-important'>创建于 <Time time={new Date(ele.createdAt)} /></p>}
-                {this.mgt && <ContentOperate data={ele} contentType={this.contentType} voteType={this.cfg.voteType} mgt />}
+                {this.mgt && (
+                  <p class="not-important">
+                    创建于 <Time time={new Date(ele.createdAt)} />
+                  </p>
+                )}
+                {this.mgt && (
+                  <ContentOperate
+                    data={ele}
+                    contentType={this.contentType}
+                    voteType={this.cfg.voteType}
+                    mgt
+                  />
+                )}
               </Row>
             </router-link>
-            <Divider size='small' />
+            <Divider size="small" />
           </div>
-          <div style='display:flex;'>
-            {this.$slots.default || (!this.mgt
-              ? <ContentOperate data={ele} contentType={this.contentType} voteType={this.cfg.voteType} stretch toDetail={() => {
-                this.toDetail(ele)
-              }} getShareUrl={() => {
-                return this.getDetailUrl(ele)
-              }} />
-              : <div />)}
+          <div style="display:flex;">
+            {this.$slots.default ||
+              (!this.mgt ? (
+                <ContentOperate
+                  data={ele}
+                  contentType={this.contentType}
+                  voteType={this.cfg.voteType}
+                  stretch
+                  toDetail={() => {
+                    this.toDetail(ele)
+                  }}
+                  getShareUrl={() => {
+                    return this.getDetailUrl(ele)
+                  }}
+                />
+              ) : (
+                <div />
+              ))}
           </div>
         </Card>
       </div>

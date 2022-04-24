@@ -2,7 +2,15 @@ import { Watch } from 'vue-property-decorator'
 import * as parseJson from 'parse-json'
 
 import { Component, Vue, Prop } from '@/components/decorator'
-import { Card, Row, Col, Form, Button, Input, ButtonGroup } from '@/components/iview'
+import {
+  Card,
+  Row,
+  Col,
+  Form,
+  Button,
+  Input,
+  ButtonGroup,
+} from '@/components/iview'
 import { routerConfig } from '@/router'
 import { convert } from '@/helpers'
 
@@ -11,18 +19,22 @@ import './json.less'
 
 @Component
 export default class Apps extends Base {
-  stylePrefix = 'json-';
-  input = '';
-  output = '';
-  mounted () {
-  }
+  stylePrefix = 'json-'
+  input = ''
+  output = ''
+  mounted() {}
 
-  render () {
+  render() {
     return (
       <Row gutter={10}>
         <Col xs={24} sm={12}>
-          <Input v-model={this.input} class={this.getStyleName('input')} type='textarea' size='large' />
-          <div class={this.getStyleName('op')} >
+          <Input
+            v-model={this.input}
+            class={this.getStyleName('input')}
+            type="textarea"
+            size="large"
+          />
+          <div class={this.getStyleName('op')}>
             <ButtonGroup>
               <Button on-click={this.beautify}>校验JSON</Button>
               <Button on-click={this.xml2json}>xml转json</Button>
@@ -30,14 +42,12 @@ export default class Apps extends Base {
           </div>
         </Col>
         <Col xs={24} sm={12}>
-          <pre class={this.getStyleName('output')} >
-            {this.output}
-          </pre>
+          <pre class={this.getStyleName('output')}>{this.output}</pre>
         </Col>
       </Row>
     )
   }
-  handler (fn: (value:string)=>any) {
+  handler(fn: (value: string) => any) {
     if (this.input) {
       try {
         this.output = fn(this.input)
@@ -47,17 +57,17 @@ export default class Apps extends Base {
     }
   }
 
-  stringify (value: Object) {
+  stringify(value: Object) {
     return JSON.stringify(value, null, '  ')
   }
 
-  beautify () {
+  beautify() {
     this.handler((value) => {
       return this.stringify(parseJson(value))
     })
   }
 
-  xml2json () {
+  xml2json() {
     this.handler((value) => {
       let rs = convert.Xml.xml2json(value)
       return this.stringify(rs)

@@ -5,9 +5,9 @@ import { Socket } from './model'
 
 // todo 连接后创建id关联
 export class TestSocket extends Socket {
-  constructor (uri: string, opts?: SocketIOClient.ConnectOpts) {
+  constructor(uri: string, opts?: SocketIOClient.ConnectOpts) {
     opts = {
-      ...opts
+      ...opts,
     }
     if (!opts.query) {
       opts.query = {}
@@ -28,51 +28,51 @@ export class TestSocket extends Socket {
     })
   }
 
-  bindDanmakuRecv (fn: (data) => void) {
+  bindDanmakuRecv(fn: (data) => void) {
     this.socket.on(myEnum.socket.弹幕接收, (msg) => {
       fn(msg)
     })
   }
 
-  login (data) {
+  login(data) {
     this.socket.emit(myEnum.socket.登录, data)
   }
 
-  logout (data) {
+  logout(data) {
     this.socket.emit(myEnum.socket.登出, data)
   }
 
-  bindChatRecv (fn: (data) => void) {
+  bindChatRecv(fn: (data) => void) {
     this.socket.on(myEnum.socket.私信接收, (msg) => {
       fn(msg)
     })
   }
 
-  danmakuConnect (data) {
+  danmakuConnect(data) {
     this.socket.emit(myEnum.socket.弹幕池连接, data)
   }
 
-  danmakuDisconnect (data) {
+  danmakuDisconnect(data) {
     this.socket.emit(myEnum.socket.弹幕池断开, data)
   }
 
-  auth (data) {
+  auth(data) {
     this.socket.emit(myEnum.socket.授权, data)
   }
 
-  bindAuthRecv (fn: (data) => void) {
+  bindAuthRecv(fn: (data) => void) {
     this.socket.on(myEnum.socket.授权接收, (msg) => {
       fn(msg)
     })
   }
 
-  bindPayCallback (fn: (data) => void) {
+  bindPayCallback(fn: (data) => void) {
     this.socket.on(myEnum.socket.支付回调, (msg) => {
       fn(msg)
     })
   }
 
-  pay (data) {
+  pay(data) {
     this.socket.emit(myEnum.socket.支付, data)
   }
 }

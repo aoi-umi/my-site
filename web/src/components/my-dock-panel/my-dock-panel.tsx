@@ -6,36 +6,35 @@ import { Button, Row, Col, Modal } from '../iview'
 import { getInstCompName } from '../utils'
 import { MyBase } from '../my-base'
 
-class MyDockPanelProp {
-}
+class MyDockPanelProp {}
 
 const MyDockPanelName = 'MyDockPanel'
 @Component({
   name: MyDockPanelName,
   extends: MyBase,
-  props: MyDockPanelProp
+  props: MyDockPanelProp,
 })
 export class MyDockPanel extends Vue<MyDockPanelProp, MyBase> {
-  stylePrefix = 'my-dock-panel-';
+  stylePrefix = 'my-dock-panel-'
 
-  getDock (ele) {
+  getDock(ele) {
     let propsData = ele.componentOptions.propsData
     let dock = propsData.dock || 'top'
     let direction = ['left', 'right'].includes(dock) ? 'row' : 'column'
     return {
       dock,
       direction,
-      propsData
+      propsData,
     }
   }
 
-  get items () {
-    return this.$slots.default.filter(ele => {
+  get items() {
+    return this.$slots.default.filter((ele) => {
       return getInstCompName(ele) === MyDockPanelItemName
     })
   }
 
-  render () {
+  render() {
     let newItem
     let items = this.items
     for (let idx = items.length - 1; idx >= 0; idx--) {
@@ -43,19 +42,21 @@ export class MyDockPanel extends Vue<MyDockPanelProp, MyBase> {
       let lIdx = items.length - 1 - idx
       let { direction, dock } = this.getDock(ele)
       let style = ''
-      if (idx === 0) { style = 'width:100%;height:100%' }
+      if (idx === 0) {
+        style = 'width:100%;height:100%'
+      }
       newItem = (
-        <div class={this.getStyleName('container', 'stretch', direction)} style={style}>
+        <div
+          class={this.getStyleName('container', 'stretch', direction)}
+          style={style}
+        >
           {['bottom', 'right'].includes(dock) && newItem}
           {ele}
           {['left', 'top'].includes(dock) && newItem}
-        </div>)
+        </div>
+      )
     }
-    return (
-      <div>
-        {newItem}
-      </div>
-    )
+    return <div>{newItem}</div>
   }
 }
 
@@ -64,28 +65,31 @@ class MyDockPanelItemProp {
   dock?: 'top' | 'bottom' | 'left' | 'right'
 
   @Prop()
-  width?: string;
+  width?: string
 
   @Prop()
-  height?: string;
+  height?: string
 
   @Prop()
-  minWidth?: string;
+  minWidth?: string
 
   @Prop()
-  minHeight?: string;
+  minHeight?: string
 }
 
 const MyDockPanelItemName = 'MyDockPanelItem'
 @Component({
   name: MyDockPanelItemName,
   extends: MyBase,
-  props: MyDockPanelItemProp
+  props: MyDockPanelItemProp,
 })
 export class MyDockPanelItem extends Vue<MyDockPanelItemProp, MyBase> {
-  stylePrefix = 'my-dock-panel-item-';
-  render () {
-    let dockPanel: MyDockPanel = this.$utils.findComponentUpward(this, MyDockPanelName)
+  stylePrefix = 'my-dock-panel-item-'
+  render() {
+    let dockPanel: MyDockPanel = this.$utils.findComponentUpward(
+      this,
+      MyDockPanelName,
+    )
     let { direction, dock } = dockPanel.getDock(this.$vnode)
     let { width, height, minWidth, minHeight } = this
 
@@ -95,7 +99,13 @@ export class MyDockPanelItem extends Vue<MyDockPanelItemProp, MyBase> {
 
     let style = `width: ${width}; height: ${height}; min-width: ${minWidth}; min-height: ${minHeight};`
     return (
-      <div class={[...this.getStyleName('root'), ...dockPanel.getStyleName(lIdx == 0 && 'stretch')]} style={style}>
+      <div
+        class={[
+          ...this.getStyleName('root'),
+          ...dockPanel.getStyleName(lIdx == 0 && 'stretch'),
+        ]}
+        style={style}
+      >
         <div>{this.$slots.default}</div>
       </div>
     )

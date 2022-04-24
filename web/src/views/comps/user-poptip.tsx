@@ -15,49 +15,49 @@ import { FollowButton } from './follow-button'
 import './user-poptip.less'
 
 export type User = {
-  _id?: string;
-  nickname?: string;
-  account?: string;
-  avatarUrl?: string;
-  followStatus?: number;
-  followEachOther?: boolean;
-};
+  _id?: string
+  nickname?: string
+  account?: string
+  avatarUrl?: string
+  followStatus?: number
+  followEachOther?: boolean
+}
 
 class UserPoptipProp {
   @Prop()
-  user: User;
+  user: User
 
   @Prop()
-  noTips?: boolean;
+  noTips?: boolean
 
   @Prop()
-  self?: boolean;
+  self?: boolean
 
   @Prop()
-  showAccount?: boolean;
+  showAccount?: boolean
 
   @Prop()
-  hideAvatar?: boolean;
+  hideAvatar?: boolean
 
   @Prop({
-    default: 'right-start'
+    default: 'right-start',
   })
-  tipsPlacement?: iView.Poptip['placement'];
+  tipsPlacement?: iView.Poptip['placement']
 
   @Prop()
-  size?: iView.Avatar['size'];
+  size?: iView.Avatar['size']
 }
 @Component({
   extends: Base,
-  props: UserPoptipProp
+  props: UserPoptipProp,
 })
 export class UserPoptip extends Vue<UserPoptipProp, Base> {
-  stylePrefix = 'comp-user-poptip-';
+  stylePrefix = 'comp-user-poptip-'
 
-  private userDetail: DetailDataType = {};
-  avatarUrl = '';
+  private userDetail: DetailDataType = {}
+  avatarUrl = ''
 
-  $refs: { imgViewer: MyImgViewer };
+  $refs: { imgViewer: MyImgViewer }
 
   created() {
     this.init(this.user)
@@ -82,25 +82,40 @@ export class UserPoptip extends Vue<UserPoptipProp, Base> {
     for (const key in routerConfig) {
       const rtCfg = routerConfig[key]
       if (rtCfg.path === this.$route.path) {
-        if (rtCfg.authority && rtCfg.authority.includes(authority.login)) { this.$router.go(0) }
+        if (rtCfg.authority && rtCfg.authority.includes(authority.login)) {
+          this.$router.go(0)
+        }
         break
       }
     }
     this.storeUser.setUser(null)
   }
-  loading = false;
-  loadFailMsg = '';
+  loading = false
+  loadFailMsg = ''
   getUserDetail() {
-    if (!this.self && (!this.userDetail._id || this.userDetail._id != this.user._id)) {
-      this.operateHandler('', async () => {
-        this.loadFailMsg = ''
-        this.loading = true
-        this.userDetail = await testApi.userDetailQuery({ _id: this.user._id })
-      }, { noDefaultHandler: true }).then(rs => {
-        if (!rs.success) { this.loadFailMsg = '获取用户信息出错' }
-      }).finally(() => {
-        this.loading = false
-      })
+    if (
+      !this.self &&
+      (!this.userDetail._id || this.userDetail._id != this.user._id)
+    ) {
+      this.operateHandler(
+        '',
+        async () => {
+          this.loadFailMsg = ''
+          this.loading = true
+          this.userDetail = await testApi.userDetailQuery({
+            _id: this.user._id,
+          })
+        },
+        { noDefaultHandler: true },
+      )
+        .then((rs) => {
+          if (!rs.success) {
+            this.loadFailMsg = '获取用户信息出错'
+          }
+        })
+        .finally(() => {
+          this.loading = false
+        })
     }
   }
 
@@ -109,8 +124,13 @@ export class UserPoptip extends Vue<UserPoptipProp, Base> {
     const notSelf = this.user._id !== this.storeUser.user._id
     return (
       <div class={this.getStyleName('root')}>
-        <Poptip class='pointer' disabled={this.noTips} trigger='hover' transfer
-          placement={this.tipsPlacement} on-on-popper-show={() => {
+        <Poptip
+          class="pointer"
+          disabled={this.noTips}
+          trigger="hover"
+          transfer
+          placement={this.tipsPlacement}
+          on-on-popper-show={() => {
             this.getUserDetail()
           }}
           nativeOn-click={(e: MouseEvent) => {
@@ -118,63 +138,96 @@ export class UserPoptip extends Vue<UserPoptipProp, Base> {
           }}
         >
           {this.$slots.default}
-          {this.self ?
-            <div slot='content' class={this.getStyleName('content')}>
-              <router-link class='ivu-select-item' to={routerConfig.userInfo.path}>
+          {this.self ? (
+            <div slot="content" class={this.getStyleName('content')}>
+              <router-link
+                class="ivu-select-item"
+                to={routerConfig.userInfo.path}
+              >
                 主页
               </router-link>
-              <router-link class='ivu-select-item' to={routerConfig.viewHistory.path}>
+              <router-link
+                class="ivu-select-item"
+                to={routerConfig.viewHistory.path}
+              >
                 {routerConfig.viewHistory.text}
               </router-link>
-              <p class='ivu-select-item' on-click={this.signOut}>退出</p>
+              <p class="ivu-select-item" on-click={this.signOut}>
+                退出
+              </p>
             </div>
-            : <div slot='content' class={this.getStyleName('content')}>
-              {loadFail
-                ? <div class='center'>
-                  {this.loadFailMsg}
-                </div>
-                : <div>
+          ) : (
+            <div slot="content" class={this.getStyleName('content')}>
+              {loadFail ? (
+                <div class="center">{this.loadFailMsg}</div>
+              ) : (
+                <div>
                   {this.loading && <Spin fix />}
                   <div class={this.getStyleName('avatar-box').concat('center')}>
-                    <Avatar class='shadow' icon='md-person' src={this.userDetail.avatarUrl} size='large'
+                    <Avatar
+                      class="shadow"
+                      icon="md-person"
+                      src={this.userDetail.avatarUrl}
+                      size="large"
                       nativeOn-click={() => {
                         if (this.avatarUrl) {
                           this.$refs.imgViewer.show()
                         }
-                      }} />
+                      }}
+                    />
 
-                    <div class='not-important'>{this.user.nickname}({this.user.account})</div>
+                    <div class="not-important">
+                      {this.user.nickname}({this.user.account})
+                    </div>
                   </div>
                   <br />
                   {this.userDetail.profile || dev.defaultProfile}
                   <br />
-                  关注: {this.userDetail.following}  粉丝: {this.userDetail.follower}
+                  关注: {this.userDetail.following} 粉丝:{' '}
+                  {this.userDetail.follower}
                 </div>
-              }
+              )}
               <br />
               <div class={['center', 'button-group-normal']}>
-                {!!this.loadFailMsg &&
-                  <Button on-click={() => {
-                    this.getUserDetail()
-                  }}>重试</Button>}
+                {!!this.loadFailMsg && (
+                  <Button
+                    on-click={() => {
+                      this.getUserDetail()
+                    }}
+                  >
+                    重试
+                  </Button>
+                )}
                 <Button>
-                  <router-link to={this.$utils.getUrl({
-                    path: routerConfig.userInfo.path,
-                    query: { _id: this.user._id }
-                  })}>主页</router-link>
+                  <router-link
+                    to={this.$utils.getUrl({
+                      path: routerConfig.userInfo.path,
+                      query: { _id: this.user._id },
+                    })}
+                  >
+                    主页
+                  </router-link>
                 </Button>
-                {!loadFail && notSelf && <FollowButton user={this.userDetail} />}
-                {notSelf && <Button on-click={() => {
-                  this.goToPage({
-                    path: routerConfig.userChat.path,
-                    query: { _id: this.user._id }
-                  })
-                }}>私信</Button>}
+                {!loadFail && notSelf && (
+                  <FollowButton user={this.userDetail} />
+                )}
+                {notSelf && (
+                  <Button
+                    on-click={() => {
+                      this.goToPage({
+                        path: routerConfig.userChat.path,
+                        query: { _id: this.user._id },
+                      })
+                    }}
+                  >
+                    私信
+                  </Button>
+                )}
               </div>
             </div>
-          }
+          )}
         </Poptip>
-        {this.avatarUrl && <MyImgViewer src={this.avatarUrl} ref='imgViewer' />}
+        {this.avatarUrl && <MyImgViewer src={this.avatarUrl} ref="imgViewer" />}
       </div>
     )
   }

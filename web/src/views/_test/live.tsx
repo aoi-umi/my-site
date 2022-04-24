@@ -11,33 +11,34 @@ import { MyLoad } from '@/components/my-load'
 @Component
 export default class Live extends Base {
   $refs: { video: HTMLVideoElement }
-  private flvPlayer: flvjs.Player = null;
+  private flvPlayer: flvjs.Player = null
   private liveUrl = ''
-  private liveInfo: { rtmp: string, key: string }
+  private liveInfo: { rtmp: string; key: string }
 
-  mounted() {
-  }
+  mounted() {}
 
   render() {
     return (
       <div>
         <MyLoad
-          ref='loadView'
+          ref="loadView"
           loadFn={this.loadDetail}
           afterLoad={() => {
-            this.play(this.liveUrl);
+            this.play(this.liveUrl)
           }}
           renderFn={() => {
             return this.renderDetail()
-          }} />
+          }}
+        />
       </div>
     )
   }
 
   async loadDetail() {
     // let data = await testApi.liveInfo();
-    this.liveInfo = {} as any;
-    this.liveUrl = 'http://192.168.0.103:8888/live?port=1935&app=live&stream=test'
+    this.liveInfo = {} as any
+    this.liveUrl =
+      'http://192.168.0.103:8888/live?port=1935&app=live&stream=test'
   }
 
   renderDetail() {
@@ -49,24 +50,27 @@ export default class Live extends Base {
         <Input v-model={this.liveInfo.key} />
         <div style="width: 800px; height: 600px">
           <section>
-            <video class="full-height full-width" ref="video" width="800"></video>
+            <video
+              class="full-height full-width"
+              ref="video"
+              width="800"
+            ></video>
           </section>
         </div>
       </div>
     )
   }
 
-
   play(url) {
     if (flvjs.isSupported()) {
-      let videoElement = this.$refs.video;
-      let flvPlayer = this.flvPlayer = flvjs.createPlayer({
+      let videoElement = this.$refs.video
+      let flvPlayer = (this.flvPlayer = flvjs.createPlayer({
         type: 'flv',
-        url
-      });
-      flvPlayer.attachMediaElement(videoElement);
-      flvPlayer.load();
-      flvPlayer.play();
+        url,
+      }))
+      flvPlayer.attachMediaElement(videoElement)
+      flvPlayer.load()
+      flvPlayer.play()
     }
   }
 
