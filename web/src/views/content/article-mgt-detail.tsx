@@ -51,9 +51,6 @@ export default class ArticleMgtDetail extends ArticleMgtBase {
     if (query._id) {
       this.preview = this.$route.path == routerConfig.articleMgtDetail.path
       detail = await testApi.articleMgtDetailQuery({ _id: query._id })
-      if (query.repost) {
-        detail.detail._id = ''
-      }
     } else {
       detail = this.getDetailData() as any
     }
@@ -61,14 +58,16 @@ export default class ArticleMgtDetail extends ArticleMgtBase {
     return detail
   }
 
-  private async saveFn(detail: DetailDataType, submit) {
-    const { user, ...restDetail } = detail
-    const rs = await testApi.articleMgtSave({
-      ...restDetail,
-      contentType: this.$refs.editor.currType,
-      submit,
-    })
-    return rs
+  async saveFn(submit) {
+    return this.$refs.detailView.handleSave(async (detail) => {
+      const { user, ...restDetail } = detail
+      const rs = await testApi.articleMgtSave({
+        ...restDetail,
+        contentType: this.$refs.editor.currType,
+        submit,
+      })
+      return rs
+    }, submit)
   }
 
   private renderLog() {
@@ -122,7 +121,6 @@ export default class ArticleMgtDetail extends ArticleMgtBase {
         preview={this.preview}
         loadDetailData={this.loadDetailData}
         getRules={this.getRules}
-        saveFn={this.saveFn}
         saveSuccessFn={() => {
           this.toList()
         }}
@@ -140,6 +138,7 @@ export default class ArticleMgtDetail extends ArticleMgtBase {
             }}
           />
         </FormItem>
+        {this.renderDetailOpBox(detail)}
       </ContentMgtDetail>
     )
   }

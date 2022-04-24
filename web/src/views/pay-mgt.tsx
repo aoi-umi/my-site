@@ -1,6 +1,6 @@
 import { Watch } from 'vue-property-decorator'
 
-import { Component, Vue, Prop } from '@/components/decorator'
+import { Component, Vue, Prop, Confirm } from '@/components/decorator'
 import { testApi } from '@/api'
 import { myEnum, authority, dev } from '@/config'
 import { routerConfig } from '@/router'
@@ -216,6 +216,26 @@ export default class Pay extends Base {
     )
   }
 
+  @Confirm('确认要退款?')
+  private payRefund(detail) {
+    return this.operateHandler('退款', async () => {
+      const rs = await testApi.payRefund({
+        _id: detail._id,
+      })
+      this.updateRow(detail, rs)
+    })
+  }
+
+  @Confirm('确认要申请退款?')
+  private payRefundApply(detail) {
+    return this.operateHandler('申请退款', async () => {
+      const rs = await testApi.payRefundApply({
+        _id: detail._id,
+      })
+      this.updateRow(detail, rs)
+    })
+  }
+
   private getColumns() {
     let columns = []
     if (this.storeUser.user.hasAuth(authority.payMgtQuery)) {
@@ -331,8 +351,6 @@ export default class Pay extends Base {
                       },
                       { noSuccessHandler: true },
                     )
-
-                    // 调用支付宝 `alipays://platformapi/startapp?appId=20000067&url=${encodeURI(url)}`
                   }}
                 >
                   支付
@@ -341,12 +359,7 @@ export default class Pay extends Base {
               {detail.canRefundApply && (
                 <a
                   on-click={() => {
-                    this.operateHandler('申请退款', async () => {
-                      const rs = await testApi.payRefundApply({
-                        _id: detail._id,
-                      })
-                      this.updateRow(detail, rs)
-                    })
+                    this.payRefundApply(detail)
                   }}
                 >
                   申请退款
@@ -355,12 +368,7 @@ export default class Pay extends Base {
               {detail.canRefund && (
                 <a
                   on-click={() => {
-                    this.operateHandler('退款', async () => {
-                      const rs = await testApi.payRefund({
-                        _id: detail._id,
-                      })
-                      this.updateRow(detail, rs)
-                    })
+                    this.payRefund(detail)
                   }}
                 >
                   退款

@@ -66,9 +66,12 @@ async function initRole() {
 
   await initAuthority();
   await initRole();
+  console.log('运行结束');
 })().catch(e => {
   console.log(e);
-}).finally(() => {
-  db.close();
+}).finally(async () => {
+  await db.close();
+  console.log('db close');
+  process.exit(0);
 });
 

@@ -137,6 +137,14 @@ export default class GoodsMgtDetail extends Base {
     const spuRules = {
       name: [{ required: true, message: '请填写名称' }],
       profile: [{ required: true, message: '请填写简介' }],
+      imgs: [
+        {
+          required: true,
+          type: 'array',
+          // TODO 不对的
+          min: 1,
+        },
+      ],
     }
     const rules = {
       saveSku: [{ type: 'array', required: true, message: '请设置sku' }],

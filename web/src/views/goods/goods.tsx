@@ -39,15 +39,6 @@ export default class Goods extends Base {
     this.$refs.list.query(query)
   }
 
-  toDetail(data: SpuType) {
-    this.goToPage({
-      path: routerConfig.goodsDetail.path,
-      query: {
-        _id: data._id,
-      },
-    })
-  }
-
   render() {
     return (
       <div>
@@ -94,32 +85,32 @@ export default class Goods extends Base {
 
   private renderItem(ele: SpuType) {
     return (
-      <Col
-        class={this.getStyleName('item')}
-        xs={12}
-        sm={8}
-        md={6}
-        lg={5}
-        xl={4}
-        nativeOn-click={() => {
-          this.toDetail(ele)
-        }}
-      >
-        <Card>
-          <MyImg class={this.getStyleName('cover')} src={ele.imgUrls[0]} />
-          <Divider />
-          <div class={this.getStyleName('info')}>
-            <p title={ele.name} class={this.getStyleName('name')}>
-              {ele.name}
-            </p>
-            <div class={this.getStyleName('sale-box')}>
-              <span class={[...this.getStyleName('price'), 'flex-stretch']}>
-                ¥{ele.price}
-              </span>
-              <span class="not-important">已售{ele.saleQuantity}</span>
+      <Col xs={12} sm={8} md={6} lg={5} xl={4}>
+        <router-link
+          class={this.getStyleName('item')}
+          to={this.$utils.getUrl({
+            path: routerConfig.goodsDetail.path,
+            query: {
+              _id: ele._id,
+            },
+          })}
+        >
+          <Card>
+            <MyImg class={this.getStyleName('cover')} src={ele.imgUrls[0]} />
+            <Divider />
+            <div class={this.getStyleName('info')}>
+              <p title={ele.name} class={this.getStyleName('name')}>
+                {ele.name}
+              </p>
+              <div class={this.getStyleName('sale-box')}>
+                <span class={[...this.getStyleName('price'), 'flex-stretch']}>
+                  ¥{ele.price}
+                </span>
+                <span class="not-important">已售{ele.saleQuantity}</span>
+              </div>
             </div>
-          </div>
-        </Card>
+          </Card>
+        </router-link>
       </Col>
     )
   }

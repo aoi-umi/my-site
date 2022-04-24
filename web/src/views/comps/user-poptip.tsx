@@ -198,16 +198,14 @@ export class UserPoptip extends Vue<UserPoptipProp, Base> {
                     重试
                   </Button>
                 )}
-                <Button>
-                  <router-link
-                    to={this.$utils.getUrl({
-                      path: routerConfig.userInfo.path,
-                      query: { _id: this.user._id },
-                    })}
-                  >
-                    主页
-                  </router-link>
-                </Button>
+                <router-link
+                  to={this.$utils.getUrl({
+                    path: routerConfig.userInfo.path,
+                    query: { _id: this.user._id },
+                  })}
+                >
+                  <Button>主页</Button>
+                </router-link>
                 {!loadFail && notSelf && (
                   <FollowButton user={this.userDetail} />
                 )}

@@ -42,12 +42,18 @@ export const dbAuthority = {
   articleMgtAudit: {
     name: '文章管理审核'
   },
+  articleMgtRecovery: {
+    name: '文章管理恢复'
+  },
 
   videoMgtDel: {
     code: '视频管理删除'
   },
   videoMgtAudit: {
     name: '视频管理审核'
+  },
+  videoMgtRecovery: {
+    name: '视频管理恢复'
   },
 
   commentMgtDel: {

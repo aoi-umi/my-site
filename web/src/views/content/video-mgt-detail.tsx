@@ -71,9 +71,6 @@ export default class VideoMgtDetail extends VideoMgtBase {
           originFileType: ele.contentType,
         }
       })
-      if (query.repost) {
-        detail.detail._id = ''
-      }
     } else {
       detail = this.getDetailData() as any
     }
@@ -99,13 +96,15 @@ export default class VideoMgtDetail extends VideoMgtBase {
     )
   }
 
-  private async saveFn(detail: DetailDataType, submit) {
-    const { user, ...restDetail } = detail
-    const rs = await testApi.videoMgtSave({
-      ...restDetail,
-      submit,
+  async saveFn(submit) {
+    return this.$refs.detailView.handleSave(async (detail) => {
+      const { user, ...restDetail } = detail
+      const rs = await testApi.videoMgtSave({
+        ...restDetail,
+        submit,
+      })
+      return rs
     })
-    return rs
   }
 
   private renderLog() {
@@ -127,6 +126,7 @@ export default class VideoMgtDetail extends VideoMgtBase {
   }
 
   render() {
+    const { detail } = this.innerDetail
     const videoSize = 20
     return (
       <ContentMgtDetail
@@ -135,7 +135,6 @@ export default class VideoMgtDetail extends VideoMgtBase {
         loadDetailData={this.loadDetailData}
         getRules={this.getRules}
         beforeValidFn={this.beforeValidFn}
-        saveFn={this.saveFn}
         saveSuccessFn={() => {
           this.toList()
         }}
@@ -176,6 +175,7 @@ export default class VideoMgtDetail extends VideoMgtBase {
             showProgress
           ></MyUpload>
         </FormItem>
+        {this.renderDetailOpBox(detail)}
       </ContentMgtDetail>
     )
   }

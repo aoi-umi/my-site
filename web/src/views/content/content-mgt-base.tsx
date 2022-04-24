@@ -1,6 +1,6 @@
 import { Watch } from 'vue-property-decorator'
 
-import { Component, Vue, Prop } from '@/components/decorator'
+import { Component, Vue, Prop, Confirm } from '@/components/decorator'
 import { testApi } from '@/api'
 import { myEnum, dev } from '@/config'
 import { routerConfig } from '@/router'
@@ -73,7 +73,7 @@ export type ContentDataType = {
   _checked?: boolean
 }
 
-type OpType = { text: string; type?: string; fn: () => any }
+type OpType = { text: string; type?: string; fn?: () => any; to?: string }
 
 export interface IContentMgtBase {
   contentMgtType: string
@@ -85,6 +85,7 @@ export interface IContentMgtBase {
   toDetailUrl(preview: boolean): string
   isDel(detail: ContentDataType): boolean
   delFn(): Promise<any>
+  saveFn?(submit: boolean): Promise<any>
 }
 @Component({
   extends: Base,
@@ -110,6 +111,11 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
 
   protected auditSuccessHandler(detail) {
     this.toList()
+  }
+
+  @Confirm('确认通过?')
+  protected auditPass(detail: ContentDataType) {
+    return this.audit(detail, true)
   }
 
   protected async audit(detail: ContentDataType, pass: boolean) {
@@ -138,21 +144,46 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
       repost?: boolean
     },
   ) {
+    this.goToPage(this.getToDetailObject(_id, opt))
+  }
+
+  private getToDetailObject(
+    _id,
+    opt?: {
+      preview?: boolean
+      repost?: boolean
+    },
+  ) {
     opt = {
       ...opt,
     }
-    this.goToPage({
+    return {
       path: this.toDetailUrl(opt.preview),
       query: { _id: _id || '', repost: opt.repost ? 'true' : '' },
-    })
+    }
   }
 
-  protected getOperate(
-    detail: ContentDataType,
-    opt?: { noPreview?: boolean; isDetail?: boolean },
-  ) {
+  protected getOperate(detail: ContentDataType, opt?: { isDetail?: boolean }) {
     opt = { ...opt }
     let operate: OpType[] = []
+    if (opt.isDetail && !this.preview && (!detail._id || detail.canUpdate)) {
+      operate = [
+        ...operate,
+        {
+          text: '保存草稿',
+          fn: () => {
+            this.saveClick(false)
+          },
+        },
+        {
+          text: '发布',
+          type: 'primary',
+          fn: () => {
+            this.saveClick(true)
+          },
+        },
+      ]
+    }
     if (this.canAudit(detail)) {
       operate = [
         ...operate,
@@ -160,7 +191,7 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
           text: '审核通过',
           type: 'primary',
           fn: () => {
-            this.audit(detail, true)
+            this.auditPass(detail)
           },
         },
         {
@@ -172,24 +203,27 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
         },
       ]
     }
-    if (detail.canUpdate) {
-      operate.push({
+    if ((!opt.isDetail || this.preview) && detail.canUpdate) {
+      let update: any = {
         text: '修改',
-        fn: () => {
+      }
+      if (opt.isDetail) {
+        update.fn = () => {
           if (opt.isDetail) {
             this.preview = false
-          } else {
-            this.toDetail(detail._id)
           }
-        },
-      })
+        }
+      } else {
+        update.to = this.$utils.getUrl(this.getToDetailObject(detail._id))
+      }
+      operate.push(update)
     }
-    if (!opt.noPreview) {
+    if (!opt.isDetail) {
       operate.push({
         text: '预览',
-        fn: () => {
-          this.toDetail(detail._id, { preview: true })
-        },
+        to: this.$utils.getUrl(
+          this.getToDetailObject(detail._id, { preview: true }),
+        ),
       })
     }
     if (detail.canDel) {
@@ -201,15 +235,39 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
         },
       })
     }
-    if (detail.user._id === this.storeUser.user._id && this.isDel(detail)) {
+    if (detail.user?._id === this.storeUser.user._id && this.isDel(detail)) {
       operate.push({
         text: '重投',
-        fn: () => {
-          this.toDetail(detail._id, { repost: true })
-        },
+        to: this.$utils.getUrl(
+          this.getToDetailObject(detail._id, { repost: true }),
+        ),
       })
     }
     return operate
+  }
+
+  renderOpButton(ele: OpType) {
+    return ele.to ? (
+      <router-link to={ele.to}>
+        <Button
+          type={ele.type as any}
+          on-click={() => {
+            if (ele.fn) ele.fn()
+          }}
+        >
+          {ele.text}
+        </Button>
+      </router-link>
+    ) : (
+      <Button
+        type={ele.type as any}
+        on-click={() => {
+          if (ele.fn) ele.fn()
+        }}
+      >
+        {ele.text}
+      </Button>
+    )
   }
 
   protected renderListOpBox(
@@ -219,18 +277,14 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
     return (
       <div class={['content-mgt-item-op-box', 'button-group-normal']}>
         {this.getOperate(detail, opt).map((ele) => {
-          return (
-            <Button type={ele.type as any} on-click={ele.fn}>
-              {ele.text}
-            </Button>
-          )
+          return this.renderOpButton(ele)
         })}
       </div>
     )
   }
 
   protected renderDetailOpBox(detail: ContentDataType) {
-    const operate = this.getOperate(detail, { noPreview: true, isDetail: true })
+    const operate = this.getOperate(detail, { isDetail: true })
     return (
       operate.length && (
         <div>
@@ -238,11 +292,7 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
           <Affix offset-bottom={40}>
             <Card class="button-group-normal">
               {operate.map((ele) => {
-                return (
-                  <Button type={ele.type as any} on-click={ele.fn}>
-                    {ele.text}
-                  </Button>
-                )
+                return this.renderOpButton(ele)
               })}
             </Card>
           </Affix>
@@ -304,6 +354,9 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
       this.delSuccessHandler()
     })
   }
+  async saveClick(submit: boolean) {
+    this.saveFn(submit)
+  }
 }
 
 class ContentMgtDetailProp {
@@ -317,11 +370,6 @@ class ContentMgtDetailProp {
 
   @Prop()
   beforeValidFn?: (detail) => Promise<any>
-
-  @Prop({
-    required: true,
-  })
-  saveFn: (detail, submit: boolean) => Promise<any>
 
   @Prop({
     required: true,
@@ -343,6 +391,7 @@ class ContentMgtDetailProp {
 export class ContentMgtDetail extends Vue<ContentMgtDetailProp, Base> {
   $refs: { formVaild: iView.Form; cover: MyUpload; loadView: MyLoad }
 
+  protected isRepost = false
   @Watch('$route')
   route(to, from) {
     this.$refs.loadView.loadData()
@@ -379,7 +428,12 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp, Base> {
 
   private coverList = []
   private async loadDetail() {
+    const query = this.$route.query
     const detailInfo = await this.loadDetailData()
+    if (query.repost) {
+      detailInfo.detail._id = ''
+      this.isRepost = true
+    }
     const detail = detailInfo.detail
     this.coverList = detail.coverUrl
       ? [{ url: detail.coverUrl, fileType: FileDataType.图片 }]
@@ -403,14 +457,14 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp, Base> {
   }
 
   private saving = false
-  private async handleSave(submit?: boolean) {
+  async handleSave(saveFn: (detail) => Promise<any>, submit?: boolean) {
     this.saving = true
     const { detail } = this.innerDetail
     let rs
     await this.operateHandler(
       '保存',
       async () => {
-        rs = await this.saveFn(detail, submit)
+        rs = await saveFn(detail)
       },
       {
         validate: submit ? this.$refs.formVaild.validate : null,
@@ -534,29 +588,6 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp, Base> {
           <FormItem label="备注" prop="remark">
             <Input v-model={detail.remark} />
           </FormItem>
-          {(!detail._id || detail.canUpdate) && (
-            <Affix offset-bottom={40}>
-              <Card class="button-group-normal">
-                <Button
-                  on-click={() => {
-                    this.handleSave(false)
-                  }}
-                  loading={this.saving}
-                >
-                  保存草稿
-                </Button>
-                <Button
-                  type="primary"
-                  on-click={() => {
-                    this.handleSave(true)
-                  }}
-                  loading={this.saving}
-                >
-                  发布
-                </Button>
-              </Card>
-            </Affix>
-          )}
         </Form>
         {this.renderLog()}
       </div>

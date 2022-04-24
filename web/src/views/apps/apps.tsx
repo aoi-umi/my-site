@@ -31,14 +31,11 @@ export default class Apps extends Base {
       <div class={this.getStyleName('main')}>
         {this.apps.map((ele) => {
           return (
-            <Card
-              class={this.getStyleName('item')}
-              nativeOn-click={() => {
-                this.goToPage(ele.url)
-              }}
-            >
-              <span>{ele.text}</span>
-            </Card>
+            <router-link to={ele.url}>
+              <Card class={this.getStyleName('item')}>
+                <span>{ele.text}</span>
+              </Card>
+            </router-link>
           )
         })}
       </div>

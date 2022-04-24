@@ -18,8 +18,8 @@ import { BaseMapper } from '../_base';
 
 export class ArticleMapper {
   static async query(data: ValidSchema.ArticleQuery, opt: {
-        noTotal?: boolean,
-    } & ContentQueryOption) {
+    noTotal?: boolean,
+  } & ContentQueryOption) {
     function setMatch(match) {
       let userId = opt.userId;
       if (opt.normal) {
@@ -112,7 +112,7 @@ export class ArticleMapper {
       passCond: () => toStatus === myEnum.articleStatus.审核通过,
       delCond: (detail) => {
         return detail.status === myEnum.articleStatus.审核通过
-                    && toStatus === myEnum.articleStatus.已删除;
+          && toStatus === myEnum.articleStatus.已删除;
       },
       updateCountInUser: async (changeNum, dbUser, session) => {
         await dbUser.update({ article: dbUser.article + changeNum }, { session });

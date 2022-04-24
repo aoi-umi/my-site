@@ -60,11 +60,41 @@ export default class GoodsMgt extends Base {
     })
   }
 
-  private toEdit(data?) {
-    this.goToPage({
+  private getEditUrlObj(data?) {
+    return {
       path: routerConfig.goodsMgtEdit.path,
       query: data,
+    }
+  }
+  private toEdit(data?) {
+    this.goToPage(this.getEditUrlObj(data))
+  }
+
+  private getOp(detail) {
+    let operate = []
+    operate.push({
+      text: '预览',
+      to: this.$utils.getUrl({
+        path: routerConfig.goodsMgtDetail.path,
+        query: { _id: detail._id },
+      }),
     })
+    if (detail.canUpdate) {
+      operate.push({
+        text: '编辑',
+        to: this.$utils.getUrl(this.getEditUrlObj(detail)),
+      })
+    }
+    if (detail.canDel) {
+      operate.push({
+        text: '删除',
+        fn: () => {
+          this.delIds = [detail._id]
+          this.delConfirm()
+        },
+      })
+    }
+    return operate
   }
 
   render() {
@@ -118,35 +148,20 @@ export default class GoodsMgt extends Base {
                 const detail = params.row
                 return (
                   <div class={MyListConst.clsActBox}>
-                    <a
-                      on-click={() => {
-                        this.goToPage({
-                          path: routerConfig.goodsMgtDetail.path,
-                          query: { _id: detail._id },
-                        })
-                      }}
-                    >
-                      预览
-                    </a>
-                    {detail.canUpdate && (
-                      <a
-                        on-click={() => {
-                          this.toEdit({ _id: detail._id })
-                        }}
-                      >
-                        编辑
-                      </a>
-                    )}
-                    {detail.canDel && (
-                      <a
-                        on-click={() => {
-                          this.delIds = [detail._id]
-                          this.delConfirm()
-                        }}
-                      >
-                        删除
-                      </a>
-                    )}
+                    {this.getOp(detail).map((ele) => {
+                      // TODO 封装组件
+                      return ele.to ? (
+                        <router-link to={ele.to}>{ele.text}</router-link>
+                      ) : (
+                        <a
+                          on-click={() => {
+                            ele.fn && ele.fn()
+                          }}
+                        >
+                          {ele.text}
+                        </a>
+                      )
+                    })}
                   </div>
                 )
               },

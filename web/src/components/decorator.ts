@@ -59,7 +59,7 @@ export const Component = function (options) {
 } as any as typeof MyComponent
 
 export const Confirm = function <T extends vue.default>(
-  message: string | ((this: T) => any),
+  message: string | ((this: T, fnArgs: any[]) => any),
   opt?: { title?: string },
 ) {
   return (target: T, key, descriptor: TypedPropertyDescriptor<any>) => {
@@ -67,7 +67,9 @@ export const Confirm = function <T extends vue.default>(
     descriptor.value = function (...args) {
       return Utils.confirm(
         () => {
-          return typeof message === 'function' ? message.apply(this) : message
+          return typeof message === 'function'
+            ? message.apply(this, [args])
+            : message
         },
         {
           ...opt,
