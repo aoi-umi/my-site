@@ -54,6 +54,22 @@ export class ArticleMgtBase extends ContentMgtBase implements IContentMgtBase {
   isDel(detail) {
     return detail.status === myEnum.articleStatus.已删除
   }
+
+  async recoveryFn(detail: ContentDataType) {
+    let rs = await testApi.articleMgtRecovery({
+      idList: [detail._id],
+      operate: myEnum.contentOperate.恢复,
+    })
+    return rs
+  }
+
+  canRecovery(detail: ContentDataType) {
+    return (
+      detail.canRecovery &&
+      (this.storeUser.user.hasAuth(authority.articleMgtRecovery) ||
+        this.storeUser.user.equalsId(detail.userId))
+    )
+  }
 }
 
 class ArticleMgtProp extends ListBaseProp {}

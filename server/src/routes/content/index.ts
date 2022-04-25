@@ -29,6 +29,11 @@ router.post(
   MyRequestHandlerMid.convert(article.mgtDel),
 );
 router.post(
+  '/article/mgt/recovery',
+  UserAuthMid.normal(),
+  MyRequestHandlerMid.convert(article.mgtRecovery),
+);
+router.post(
   '/article/mgt/audit',
   UserAuthMid.normal([auth.articleMgtAudit]),
   MyRequestHandlerMid.convert(article.mgtAudit),
@@ -67,6 +72,11 @@ router.post(
   '/video/mgt/del',
   UserAuthMid.normal(),
   MyRequestHandlerMid.convert(video.mgtDel),
+);
+router.post(
+  '/video/mgt/recovery',
+  UserAuthMid.normal(),
+  MyRequestHandlerMid.convert(video.mgtRecovery),
 );
 router.post(
   '/video/mgt/audit',

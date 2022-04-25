@@ -72,6 +72,22 @@ export let mgtDel: MyRequestHandler = async (opt) => {
   });
 };
 
+export const mgtRecovery: MyRequestHandler = async (opt, ctx) => {
+  let user = opt.myData.user;
+  let data = paramsValid(opt.reqData, ValidSchema.VideoMgtRecovery);
+  let rs = await VideoMapper.updateStatus({
+    cond: {
+      idList: data.idList,
+      includeUserId: Auth.contains(user, config.auth.videoMgtRecovery)
+        ? null
+        : user._id,
+    },
+    operate: data.operate,
+    user,
+  });
+  return rs;
+};
+
 export let mgtAudit: MyRequestHandler = async (opt) => {
   let user = opt.myData.user;
   let data = paramsValid(opt.reqData, ValidSchema.VideoMgtAudit);

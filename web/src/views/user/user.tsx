@@ -82,7 +82,7 @@ export default class UserInfo extends Base {
   async getUserDetail() {
     const query = this.$route.query
     let detail: UserDetailDataType
-    const self = !query._id || query._id == this.storeUser.user._id
+    const self = !query._id || this.storeUser.user.equalsId(query._id as string)
     if (self) {
       detail = await testApi.userDetail()
     } else {

@@ -121,7 +121,7 @@ export class UserPoptip extends Vue<UserPoptipProp, Base> {
 
   render() {
     const loadFail = !!this.loadFailMsg
-    const notSelf = this.user._id !== this.storeUser.user._id
+    const notSelf = !this.storeUser.user.equalsId(this.user._id)
     return (
       <div class={this.getStyleName('root')}>
         <Poptip

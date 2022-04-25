@@ -7,6 +7,7 @@ import {
   ContentSave,
   ContentDel,
   ContentMgtAudit,
+  ContentMgtRecovery,
 } from './content';
 
 export class ArticleQuery extends ContentQuery {}
@@ -29,3 +30,5 @@ export class ArticleMgtAudit extends ContentMgtAudit {
   @IsIn([myEnum.articleStatus.审核通过, myEnum.articleStatus.审核不通过])
   status: number;
 }
+
+export class ArticleMgtRecovery extends ContentMgtRecovery {}

@@ -51,7 +51,7 @@ router.post(
 //#endregion
 
 //#region pay
-import * as pay from './pay';
+import * as pay from './pay/pay';
 router.post(
   '/pay/submit',
   UserAuthMid.normal([auth.login]),
@@ -80,13 +80,13 @@ router.post(
 //#endregion
 
 //#region notify
-import * as notify from './notify';
+import * as notify from './pay/notify';
 router.post('/alipay/notify', notify.alipayNotify);
 router.post('/wxpay/notify', notify.wxpayNotify);
 //#endregion
 
 //#region asset
-import * as asset from './asset';
+import * as asset from './pay/asset';
 router.get(
   '/asset/notifyQuery',
   UserAuthMid.normal([auth.payMgtQuery]),

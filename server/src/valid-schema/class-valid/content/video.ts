@@ -17,6 +17,7 @@ import {
   ContentSave,
   ContentDel,
   ContentMgtAudit,
+  ContentMgtRecovery,
 } from './content';
 
 export class VideoQuery extends ContentQuery {}
@@ -39,3 +40,5 @@ export class VideoMgtAudit extends ContentMgtAudit {
   @IsIn([myEnum.videoStatus.审核通过, myEnum.videoStatus.审核不通过])
   status: number;
 }
+
+export class VideoMgtRecovery extends ContentMgtRecovery {}

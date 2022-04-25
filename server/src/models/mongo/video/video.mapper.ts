@@ -136,25 +136,26 @@ export class VideoMapper {
   }
 
   static async updateStatus(opt: ContentUpdateStatusOutOption) {
-    let toStatus = opt.toStatus;
-    await ContentMapper.updateStatus({
+    let { toStatus, operate } = opt;
+    let rs = await ContentMapper.updateStatus({
       ...opt,
       model: VideoModel,
       contentType: myEnum.contentType.文章,
       passCond: () => toStatus === myEnum.videoStatus.审核通过,
       delCond: (detail) => {
-        return (
-          detail.status === myEnum.videoStatus.审核通过 &&
-          toStatus === myEnum.videoStatus.已删除
-        );
+        return detail.canDel;
       },
-      updateCountInUser: async (changeNum, dbUser, session) => {
-        await dbUser.update({ video: dbUser.video + changeNum }, { session });
-      },
+      recoveryCond: () => operate === myEnum.contentOperate.恢复,
     });
+    //将会弃用
+    let updateStatus = toStatus;
+    if (rs?.length === 1) {
+      updateStatus = rs[0].toStatus;
+    }
     return {
-      status: toStatus,
-      statusText: myEnum.videoStatus.getKey(toStatus),
+      status: updateStatus,
+      statusText: myEnum.videoStatus.getKey(updateStatus),
+      updateResult: rs,
     };
   }
 

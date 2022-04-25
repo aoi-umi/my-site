@@ -1,15 +1,10 @@
-import {
-  IsArray,
-  IsDefined,
-  MinLength,
-  isDefined,
-  ValidateIf,
-} from 'class-validator';
+import { IsDefined, MinLength } from 'class-validator';
 import { Types } from 'mongoose';
 import { Type, Transform } from 'class-transformer';
 
 import { ListBase, DelBase, DetailQueryBase } from '../base';
-import { arrayTransform, objectIdTransform } from '../util';
+import { objectIdTransform } from '../util';
+import { ContentOperateBase } from './content-base';
 
 export class ContentQuery extends ListBase {
   @Transform(objectIdTransform)
@@ -40,17 +35,12 @@ export class ContentDel extends DelBase {
   remark: string;
 }
 
-export class ContentMgtAudit {
-  @IsDefined()
-  @IsArray()
-  @Transform((value) => {
-    return arrayTransform(value, Types.ObjectId);
-  })
-  idList: Types.ObjectId[];
-
+export class ContentMgtAudit extends ContentOperateBase {
   @IsDefined()
   @Type()
   status: number;
 
   remark: string;
 }
+
+export class ContentMgtRecovery extends ContentOperateBase {}

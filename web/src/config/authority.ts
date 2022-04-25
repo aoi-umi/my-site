@@ -17,8 +17,11 @@ export default {
   settingSave: 'settingSave',
 
   articleMgtDel: 'articleMgtDel',
+  articleMgtRecovery: 'articleMgtRecovery',
   articleMgtAudit: 'articleMgtAudit',
+
   videoMgtDel: 'videoMgtDel',
+  videoMgtRecovery: 'videoMgtRecovery',
   videoMgtAudit: 'videoMgtAudit',
 
   goodsMgtAudit: 'goodsMgtAudit',

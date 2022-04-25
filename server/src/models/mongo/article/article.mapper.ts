@@ -110,28 +110,25 @@ export class ArticleMapper {
   }
 
   static async updateStatus(opt: ContentUpdateStatusOutOption) {
-    let toStatus = opt.toStatus;
-    await ContentMapper.updateStatus({
+    let { toStatus, operate } = opt;
+    let rs = await ContentMapper.updateStatus({
       ...opt,
       model: ArticleModel,
       contentType: myEnum.contentType.文章,
       passCond: () => toStatus === myEnum.articleStatus.审核通过,
       delCond: (detail) => {
-        return (
-          detail.status === myEnum.articleStatus.审核通过 &&
-          toStatus === myEnum.articleStatus.已删除
-        );
+        return detail.canDel;
       },
-      updateCountInUser: async (changeNum, dbUser, session) => {
-        await dbUser.update(
-          { article: dbUser.article + changeNum },
-          { session },
-        );
-      },
+      recoveryCond: () => operate === myEnum.contentOperate.恢复,
     });
+    let updateStatus = toStatus;
+    if (rs?.length === 1) {
+      updateStatus = rs[0].toStatus;
+    }
     return {
-      status: toStatus,
-      statusText: myEnum.articleStatus.getKey(toStatus),
+      status: updateStatus,
+      statusText: myEnum.articleStatus.getKey(updateStatus),
+      updateResult: rs,
     };
   }
 

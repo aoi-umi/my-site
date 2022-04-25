@@ -15,13 +15,18 @@ import { BaseMapper } from '../_base';
 import { FollowMapper } from '../follow';
 import { VoteMapper } from '../vote';
 import { UserMapper, UserModel, UserInstanceType } from '../user';
-import { ContentLogModel } from './content-log';
+import {
+  ContentLogDocType,
+  ContentLogInstanceType,
+  ContentLogModel,
+} from './content-log';
 import { FavouriteMapper } from '../favourite';
 import { ContentBase, ContentBaseDocType } from '.';
 import { ViewHistoryMapper } from '../view-history/view-history.mapper';
 import { ArticleModel } from '../article';
 import { VideoModel } from '../video';
 import { ContentContactBaseModelType } from './content-contact';
+import { Auth } from '@/_system/auth';
 
 export type ContentResetOption = {
   user?: LoginUser;
@@ -43,7 +48,9 @@ export type ContentUpdateStatusOutOption = {
     status?: any;
     includeUserId?: Types.ObjectId | string;
   };
-  toStatus: number;
+  // @dep
+  toStatus?: number;
+  operate?: string;
   user: LoginUser;
   logRemark?: string;
 };
@@ -126,19 +133,20 @@ export class ContentMapper {
   }
 
   static async detailQuery(
-    opt: ContentQueryOption & { query: () => Promise<any> },
+    opt: ContentQueryOption & { query: <T = any>() => Promise<T> },
   ) {
     let detail = await opt.query();
+    let dWithType = detail as ContentBaseInstanceType;
     if (!detail) throw error('', config.error.DB_NO_DATA);
     let rs = {
       detail,
-      log: null as any[],
+      log: null as ContentLogDocType[],
     };
     if (!opt.normal) {
       let logRs = await ContentLogModel.aggregatePaginate<{
         user: any;
       }>([
-        { $match: { contentId: detail._id } },
+        { $match: { contentId: dWithType._id } },
         ...UserMapper.lookupPipeline(),
         { $sort: { _id: -1 } },
       ]);
@@ -148,6 +156,14 @@ export class ContentMapper {
         obj.user = ele.user;
         return obj;
       });
+      let lastLog = rs.log[0];
+      if (lastLog) {
+        detail.canRecovery = this.canRecovery({
+          detail,
+          log: lastLog,
+          user: opt.resetOpt.user,
+        });
+      }
     }
     return rs;
   }
@@ -169,18 +185,32 @@ export class ContentMapper {
     return detail;
   }
 
+  static canRecovery(opt: {
+    detail: ContentBaseInstanceType;
+    log: ContentLogDocType;
+    user: LoginUser;
+  }) {
+    let { detail, log, user } = opt;
+    return (
+      detail.canRecoveryStatus &&
+      log &&
+      /*
+      1.有恢复权限，且不是本人删除
+      2.本人删除
+      */
+      ((Auth.contains(user, config.auth.articleMgtRecovery) &&
+        !detail.userId.equals(log.userId)) ||
+        user.equalsId(log.userId))
+    );
+  }
+
   static async updateStatus(
     opt: {
-      model: any;
+      model: ContentBaseModelType;
       contentType: number;
       passCond: (detail) => boolean;
       delCond: (detail) => boolean;
-      //更新稿件数量
-      updateCountInUser: (
-        changeNum: number,
-        user: UserInstanceType,
-        session: ClientSession,
-      ) => Promise<any>;
+      recoveryCond: (detail) => boolean;
     } & ContentUpdateStatusOutOption,
   ) {
     let { user, toStatus } = opt;
@@ -188,26 +218,28 @@ export class ContentMapper {
     let cond: any = { _id: { $in: idList } };
     if (status !== undefined) cond.status = status;
     if (includeUserId) cond.userId = Types.ObjectId(includeUserId as any);
-    let model = opt.model as ContentBaseModelType;
+    let model = opt.model;
     let list = await model.find(cond);
     if (!list.length) throw error('', config.error.NO_MATCH_DATA);
-    let dbUser = await UserModel.findById(user._id);
-    let changeNum = 0;
+    let changeNumUserMap = {};
     let bulk = [],
       log = [];
+    let updateRsList = [];
     for (let detail of list) {
-      if (detail.status === toStatus) continue;
-      log.push(
-        ContentLogMapper.create(detail, user, {
-          contentType: opt.contentType,
-          srcStatus: detail.status,
-          destStatus: toStatus,
-          remark: opt.logRemark,
-        }),
-      );
-      let update: any = { status: toStatus };
+      if (detail.status === toStatus) {
+        updateRsList.push({
+          _id: detail._id,
+          toStatus,
+        });
+        continue;
+      }
+      let update: any = {};
+      let updateStatus;
+      let userIdStr = detail.userId.toHexString();
+      if (!changeNumUserMap[userIdStr]) changeNumUserMap[userIdStr] = 0;
       if (opt.passCond(detail)) {
-        changeNum++;
+        updateStatus = toStatus;
+        changeNumUserMap[userIdStr]++;
         let now = new Date();
         update.publishAt = now;
         //指定时间发布
@@ -219,11 +251,44 @@ export class ContentMapper {
           update.publishAt = detail.setPublishAt;
         }
       } else if (opt.delCond(detail)) {
-        changeNum--;
+        updateStatus = toStatus;
+        changeNumUserMap[userIdStr]--;
+      } else if (opt.recoveryCond(detail)) {
+        let lastLog = await ContentLogModel.findOne({
+          contentId: detail._id,
+        }).sort({ _id: -1 });
+        let canRecovery = this.canRecovery({
+          detail,
+          log: lastLog,
+          user,
+        });
+        if (canRecovery) {
+          updateStatus = lastLog.srcStatus;
+        }
       }
+      update.status = updateStatus;
+      if (updateStatus === undefined) {
+        updateRsList.push({
+          _id: detail._id,
+          toStatus: detail.status,
+        });
+        continue;
+      }
+      updateRsList.push({
+        _id: detail._id,
+        toStatus: updateStatus,
+      });
+      log.push(
+        ContentLogMapper.create(detail, user, {
+          contentType: opt.contentType,
+          srcStatus: detail.status,
+          destStatus: updateStatus,
+          remark: opt.logRemark,
+        }),
+      );
       bulk.push({
         updateOne: {
-          filter: { ...cond, _id: detail._id },
+          filter: { _id: detail._id },
           update: {
             $set: update,
           },
@@ -233,11 +298,47 @@ export class ContentMapper {
 
     if (!bulk.length) return;
     await transaction(async (session) => {
-      if (changeNum) await opt.updateCountInUser(changeNum, dbUser, session);
+      await this.updateCountInUser({
+        contentType: opt.contentType,
+        changeNumUserMap,
+        session,
+      });
       await model.bulkWrite(bulk, { session });
       await ContentLogModel.insertMany(log, { session });
     });
+    return updateRsList;
   }
+
+  //更新稿件数量
+  static async updateCountInUser(opt: {
+    contentType: number;
+    changeNumUserMap: { [key: string]: number };
+    session?: ClientSession;
+  }) {
+    let { changeNumUserMap, session } = opt;
+    let userIds = Object.entries(changeNumUserMap)
+      .filter(([k, v]) => v !== 0)
+      .map(([k]) => k);
+    if (!userIds.length) return;
+    let key = '';
+    switch (opt.contentType) {
+      case myEnum.contentType.文章:
+        key = 'article';
+        break;
+      case myEnum.contentType.视频:
+        key = 'video';
+        break;
+      default:
+        throw error(`unhandle type: ${opt.contentType}`);
+    }
+    for (let userId of userIds) {
+      let changeNum = changeNumUserMap[userId];
+      let user = await UserModel.findOne({ _id: userId });
+      await user.update({ [key]: user[key] + changeNum }, { session });
+    }
+  }
+
+  static async recovery(opt: { model: any; contentType: number }) {}
 
   static async mgtSave(
     data: ValidSchema.ContentSave,

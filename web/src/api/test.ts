@@ -58,6 +58,7 @@ export type TestMethod = {
   articleMgtDetailQuery
   articleMgtSave
   articleMgtDel
+  articleMgtRecovery
   articleMgtAudit
 
   videoQuery
@@ -66,6 +67,7 @@ export type TestMethod = {
   videoMgtDetailQuery
   videoMgtSave
   videoMgtDel
+  videoMgtRecovery
   videoMgtAudit
 
   danmakuSubmit

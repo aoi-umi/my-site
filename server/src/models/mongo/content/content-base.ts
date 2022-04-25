@@ -97,4 +97,5 @@ export abstract class ContentBase
 
   abstract get canUpdate(): boolean;
   abstract get canDel(): boolean;
+  abstract get canRecoveryStatus(): boolean;
 }

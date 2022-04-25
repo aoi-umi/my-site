@@ -143,6 +143,9 @@ let test: TestApiConfigType = {
     articleMgtDel: {
       url: '/article/mgt/del',
     },
+    articleMgtRecovery: {
+      url: '/article/mgt/recovery',
+    },
     articleMgtAudit: {
       url: '/article/mgt/audit',
     },
@@ -168,6 +171,9 @@ let test: TestApiConfigType = {
     },
     videoMgtDel: {
       url: '/video/mgt/del',
+    },
+    videoMgtRecovery: {
+      url: '/video/mgt/recovery',
     },
     videoMgtAudit: {
       url: '/video/mgt/audit',

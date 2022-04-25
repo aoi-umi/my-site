@@ -68,6 +68,7 @@ export type ContentDataType = {
   favouriteValue: boolean
   canUpdate: boolean
   canDel: boolean
+  canRecovery: boolean
   user: { _id: string; nickname: string; account: string }
 
   _disabled?: boolean
@@ -87,6 +88,14 @@ export interface IContentMgtBase {
   isDel(detail: ContentDataType): boolean
   delFn(): Promise<any>
   saveFn?(submit: boolean): Promise<any>
+  recoveryFn(detail: ContentDataType): Promise<any>
+  canRecovery(detail: ContentDataType): boolean
+}
+
+type ToDetailOptions = {
+  preview?: boolean
+  repost?: boolean
+  refresh?: boolean
 }
 @Component({
   extends: Base,
@@ -129,6 +138,14 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
     })
   }
 
+  @Confirm('确认恢复?')
+  protected async recovery(detail: ContentDataType) {
+    await this.operateHandler('恢复', async () => {
+      const rs = await this.recoveryFn(detail)
+      this.toDetail(detail._id, { preview: true, refresh: true })
+    })
+  }
+
   protected toList() {
     this.goToPage({
       path: routerConfig.contentMgt.path,
@@ -138,29 +155,21 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
     })
   }
 
-  protected toDetail(
-    _id?,
-    opt?: {
-      preview?: boolean
-      repost?: boolean
-    },
-  ) {
+  protected toDetail(_id?, opt?: ToDetailOptions) {
     this.goToPage(this.getToDetailObject(_id, opt))
   }
 
-  private getToDetailObject(
-    _id,
-    opt?: {
-      preview?: boolean
-      repost?: boolean
-    },
-  ) {
+  private getToDetailObject(_id, opt?: ToDetailOptions) {
     opt = {
       ...opt,
     }
     return {
       path: this.toDetailUrl(opt.preview),
-      query: { _id: _id || '', repost: opt.repost ? 'true' : '' },
+      query: {
+        _id: _id || undefined,
+        repost: opt.repost ? 'true' : undefined,
+        t: opt.refresh ? String(Date.now()) : undefined,
+      },
     }
   }
 
@@ -230,13 +239,26 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
     if (detail.canDel) {
       operate.push({
         text: '删除',
+        type: 'danger',
         fn: () => {
           this.delIds = [detail._id]
           this.delShow = true
         },
       })
     }
-    if (detail.user?._id === this.storeUser.user._id && this.isDel(detail)) {
+    if (opt.isDetail && detail._id && this.canRecovery(detail)) {
+      operate.push({
+        text: '恢复',
+        fn: () => {
+          this.recovery(detail)
+        },
+      })
+    }
+    if (
+      this.storeUser.user.equalsId(detail.user?._id) &&
+      detail._id &&
+      this.isDel(detail)
+    ) {
       operate.push({
         text: '重投',
         to: this.$utils.getUrl(

@@ -53,6 +53,11 @@ export class Video extends ContentBase {
   get canDel() {
     return ![myEnum.videoStatus.已删除].includes(this.status);
   }
+
+  @prop()
+  get canRecoveryStatus() {
+    return [myEnum.videoStatus.已删除].includes(this.status);
+  }
 }
 
 export const VideoModel = getModelForClass<

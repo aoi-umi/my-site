@@ -58,6 +58,11 @@ export class Article extends ContentBase {
   get canDel() {
     return ![myEnum.articleStatus.已删除].includes(this.status);
   }
+
+  @prop()
+  get canRecoveryStatus() {
+    return [myEnum.articleStatus.已删除].includes(this.status);
+  }
 }
 
 export const ArticleModel = getModelForClass<

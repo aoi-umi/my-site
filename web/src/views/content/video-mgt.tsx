@@ -53,6 +53,22 @@ export class VideoMgtBase extends ContentMgtBase implements IContentMgtBase {
   isDel(detail) {
     return detail.status === myEnum.videoStatus.已删除
   }
+
+  async recoveryFn(detail: ContentDataType) {
+    let rs = await testApi.videoMgtRecovery({
+      idList: [detail._id],
+      operate: myEnum.contentOperate.恢复,
+    })
+    return rs
+  }
+
+  canRecovery(detail: ContentDataType) {
+    return (
+      detail.canRecovery &&
+      (this.storeUser.user.hasAuth(authority.videoMgtRecovery) ||
+        this.storeUser.user.equalsId(detail.userId))
+    )
+  }
 }
 
 class VideoMgtProp extends ListBaseProp {}

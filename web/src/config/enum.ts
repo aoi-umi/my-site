@@ -32,6 +32,11 @@ const enumDefine = {
   },
   articleStatus: contentStatus,
   videoStatus: contentStatus,
+  contentOperate: {
+    审核通过: 'auditPass',
+    审核不通过: 'auditNotPass',
+    恢复: 'recovery',
+  },
   contentType: {
     文章: 0,
     视频: 1,
