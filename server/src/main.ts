@@ -19,16 +19,16 @@ import { PayMapper } from './models/mongo/asset';
 export const auth = new Auth();
 export const mq = new MQ();
 export let sequelize: MySequelize;
-export const cache = new Cache(config.env.redis.uri, config.env.cachePrefix || '');
+export const cache = new Cache(
+  config.env.redis.uri,
+  config.env.cachePrefix || '',
+);
 export async function init(app: Koa) {
-
   await mq.connect(config.env.mq.mqUri);
 
   //创建重试延时队列
   await mq.ch.addSetup(async (ch: ConfirmChannel) => {
-    return Promise.all([
-      mq.createDelayQueue(ch)
-    ]);
+    return Promise.all([mq.createDelayQueue(ch)]);
   });
 
   await mq.ch.addSetup(async (ch: ConfirmChannel) => {
@@ -60,7 +60,10 @@ let register = function (app: Koa) {
   app.use(async (ctx, next) => {
     await helpers.myRequestHandler(async (opt) => {
       opt.noSend = true;
-      let ip = ctx.request.get('x-forwarded-for') || ctx.request.get('X-Real-IP') || ctx.ip;
+      let ip =
+        ctx.request.get('x-forwarded-for') ||
+        ctx.request.get('X-Real-IP') ||
+        ctx.ip;
       ctx.myData = {
         startTime: new Date().getTime(),
         ip,
@@ -91,8 +94,7 @@ let register = function (app: Koa) {
   });
 };
 
-export var mySocket: MySocket = null;
+export let mySocket: MySocket = null;
 export let initServer = function (server: Server) {
   mySocket = initSocket(server, cache);
 };
-

@@ -10,11 +10,9 @@ export class PrintQuery extends ListBase {
   idList: string[];
 }
 
-export class PrintDetailQuery extends DetailQueryBase {
-}
+export class PrintDetailQuery extends DetailQueryBase {}
 
-export class PrintDel extends DelBase {
-}
+export class PrintDel extends DelBase {}
 
 export class PrintGetDataOpt {
   @IsDefined()

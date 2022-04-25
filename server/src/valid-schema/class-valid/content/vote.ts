@@ -5,17 +5,17 @@ import { myEnum } from '@/dev-config';
 import { objectIdTransform } from '../util';
 
 export class VoteSubmit {
-    @IsDefined()
-    @Transform(objectIdTransform)
-    ownerId: Types.ObjectId;
+  @IsDefined()
+  @Transform(objectIdTransform)
+  ownerId: Types.ObjectId;
 
-    @IsDefined()
-    @IsIn(myEnum.voteType.getAllValue())
-    @Type()
-    type: number;
+  @IsDefined()
+  @IsIn(myEnum.voteType.getAllValue())
+  @Type()
+  type: number;
 
-    @IsDefined()
-    @IsIn(myEnum.voteValue.getAllValue())
-    @Type()
-    value: number;
+  @IsDefined()
+  @IsIn(myEnum.voteValue.getAllValue())
+  @Type()
+  value: number;
 }

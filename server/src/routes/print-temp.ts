@@ -12,7 +12,9 @@ export const mgtQuery: MyRequestHandler = async (opt) => {
 };
 
 export const mgtDetailQuery: MyRequestHandler = async (opt) => {
-  let rs = await PrintMapper.detailQuery(opt.reqData, { user: opt.myData.user });
+  let rs = await PrintMapper.detailQuery(opt.reqData, {
+    user: opt.myData.user,
+  });
   return rs;
 };
 
@@ -24,8 +26,7 @@ export const mgtSave: MyRequestHandler = async (opt) => {
 export const mgtDel: MyRequestHandler = async (opt) => {
   let data = paramsValid(opt.reqData, ValidSchema.PrintDel);
   let rs = await PrintModel.deleteMany({ _id: { $in: data.idList } });
-  if (!rs.n)
-    throw error('', config.error.NO_MATCH_DATA);
+  if (!rs.n) throw error('', config.error.NO_MATCH_DATA);
 };
 
 export const mgtExport: MyRequestHandler = async (opt) => {
@@ -38,7 +39,7 @@ export const mgtExport: MyRequestHandler = async (opt) => {
     ext: 'json',
     timeSuffix: true,
     data: {
-      printTemp: data
-    }
+      printTemp: data,
+    },
   } as ResFileType;
 };

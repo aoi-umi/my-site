@@ -19,12 +19,12 @@ export class UserStatMid {
       maxAge: 86400 * 1000, // 最大存活时间
       httpOnly: false,
       overwrite: true,
-      signed: true
+      signed: true,
     });
     //统计不影响next
     next();
     try {
-      //uv ip 
+      //uv ip
       let ip = ctx.myData.ip;
       let uv = val;
       await StatUserMapper.create([

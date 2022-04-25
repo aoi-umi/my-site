@@ -9,26 +9,26 @@ const contentStatus = {
 export const enumDefine = {
   authorityStatus: {
     禁用: 0,
-    启用: 1
+    启用: 1,
   },
   roleStatus: {
     禁用: 0,
-    启用: 1
+    启用: 1,
   },
   userStatus: {
     禁用: 0,
     待审核: 1,
-    正常: 2
+    正常: 2,
   },
   userBy: {
-    微信授权: 'wxCode'
+    微信授权: 'wxCode',
   },
   userBind: {
     微信: 'wx',
   },
   oauthName: {
     微信: 'wx',
-    github: 'github'
+    github: 'github',
   },
   articleStatus: contentStatus,
   videoStatus: contentStatus,
@@ -45,17 +45,17 @@ export const enumDefine = {
   },
   commentStatus: {
     正常: 0,
-    已删除: -1
+    已删除: -1,
   },
   voteType: {
     文章: 0,
     视频: 1,
-    评论: 10
+    评论: 10,
   },
   voteValue: {
     无: 0,
     喜欢: 1,
-    不喜欢: 2
+    不喜欢: 2,
   },
   followStatus: {
     未关注: 0,
@@ -64,7 +64,7 @@ export const enumDefine = {
   },
   followQueryType: {
     关注: 1,
-    粉丝: 2
+    粉丝: 2,
   },
   assetSourceType: {
     微信: 1,
@@ -130,25 +130,25 @@ export const enumDefine = {
   },
   fileStorgeType: {
     硬盘: 'disk',
-    数据库: 'db'
+    数据库: 'db',
   },
   fileOperate: {
     删除: 'del',
-    恢复: 'recovery'
+    恢复: 'recovery',
   },
   settingSignUpType: {
     开放: 0,
     限时开放: 1,
     关闭: 2,
-    限时关闭: 3
+    限时关闭: 3,
   },
   dynamicSqlType: {
     列表: 'list',
-    无数据: 'noData'
+    无数据: 'noData',
   },
   dynamicSqlCalcType: {
     求和: 'sum',
-    平均: 'avg'
+    平均: 'avg',
   },
 
   dynamicCompType: {
@@ -158,7 +158,7 @@ export const enumDefine = {
     多选框: 'checkbox',
     日期: 'date',
     时间: 'time',
-    日期时间: 'datetime'
+    日期时间: 'datetime',
   },
   dynamicCompStringQueryType: {
     等于: 'eq',
@@ -172,18 +172,21 @@ export const enumDefine = {
     小于: '<',
     小于等于: '<=',
     等于: '=',
-    不等于: '!='
-  }
+    不等于: '!=',
+  },
 };
 export const myEnum = Enum.createInstance(enumDefine);
 
-export function getEnumValueByStr(enumTs: EnumInstance<any, any>, enumStr: string, split = ',') {
+export function getEnumValueByStr(
+  enumTs: EnumInstance<any, any>,
+  enumStr: string,
+  split = ',',
+) {
   let arr = enumTs.toArray();
   let matchEnum = [];
-  enumStr.split(split).forEach(ele => {
-    let match = arr.find(s => s.value == ele);
-    if (match)
-      matchEnum.push(match.value);
+  enumStr.split(split).forEach((ele) => {
+    let match = arr.find((s) => s.value == ele);
+    if (match) matchEnum.push(match.value);
   });
   return matchEnum;
 }

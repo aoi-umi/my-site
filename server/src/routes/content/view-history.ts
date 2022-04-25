@@ -10,10 +10,11 @@ export let query: MyRequestHandler = async (opt) => {
   let data = paramsValid(opt.reqData, ValidSchema.ViewHistoryQuery);
 
   let { rows, total } = await ViewHistoryMapper.query(data, {
-    user: user, imgHost: myData.imgHost
+    user: user,
+    imgHost: myData.imgHost,
   });
   return {
     rows,
-    total
+    total,
   };
 };

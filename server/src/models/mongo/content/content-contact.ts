@@ -16,30 +16,34 @@ import { myEnum } from '@/dev-config/enum';
 import { Base } from '../_base';
 import { pagination, IPagination } from '../_plugins/pagination';
 
-type contentContact = typeof ContentContactBase & IPagination<ContentContactBase>;
+type contentContact = typeof ContentContactBase &
+  IPagination<ContentContactBase>;
 export type ContentContactBaseInstanceType = InstanceType<ContentContactBase>;
-export type ContentContactBaseModelType = ModelType<ContentContactBase, contentContact>;
+export type ContentContactBaseModelType = ModelType<
+  ContentContactBase,
+  contentContact
+>;
 export type ContentContactBaseDocType = DocType<ContentContactBaseInstanceType>;
 
 //与内容关联的类
 @setSchema()
 @setPlugin(pagination)
 export class ContentContactBase extends Base {
-    @prop({
-      required: true,
-      type: SchemaTypes.ObjectId,
-    })
-    userId: Types.ObjectId;
+  @prop({
+    required: true,
+    type: SchemaTypes.ObjectId,
+  })
+  userId: Types.ObjectId;
 
-    @prop({
-      required: true,
-      type: SchemaTypes.ObjectId,
-    })
-    ownerId: Types.ObjectId;
+  @prop({
+    required: true,
+    type: SchemaTypes.ObjectId,
+  })
+  ownerId: Types.ObjectId;
 
-    @prop({
-      required: true,
-      enum: myEnum.contentType.getAllValue(),
-    })
-    type: number;
+  @prop({
+    required: true,
+    enum: myEnum.contentType.getAllValue(),
+  })
+  type: number;
 }

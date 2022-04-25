@@ -8,8 +8,15 @@ import { ContentResetOption, ContentMapper } from '../content';
 import { ViewHistoryModel } from './view-history';
 
 export class ViewHistoryMapper {
-  static async save(data: { ownerId: Types.ObjectId, type: number }, user: LoginUser) {
-    let matchCond = { ownerId: data.ownerId, userId: user._id, type: data.type };
+  static async save(
+    data: { ownerId: Types.ObjectId; type: number },
+    user: LoginUser,
+  ) {
+    let matchCond = {
+      ownerId: data.ownerId,
+      userId: user._id,
+      type: data.type,
+    };
     let match = await ViewHistoryModel.findOne(matchCond);
     let update: any = { viewAt: new Date() };
     if (!match) {
@@ -21,19 +28,20 @@ export class ViewHistoryMapper {
         update.type = data.type;
       }
     }
-    if (match)
-      await match.update(update);
-    else
-      await ViewHistoryModel.create({ ...matchCond, viewAt: new Date() });
+    if (match) await match.update(update);
+    else await ViewHistoryModel.create({ ...matchCond, viewAt: new Date() });
   }
 
-  static async query(data: ValidSchema.ViewHistoryQuery, opt: ContentResetOption) {
+  static async query(
+    data: ValidSchema.ViewHistoryQuery,
+    opt: ContentResetOption,
+  ) {
     data.orderBy = 'viewAt';
     data.sortOrder = -1;
     let rs = await ContentMapper.mixQuery(data, {
       resetOpt: opt,
       ContentContactModel: ViewHistoryModel,
-      merge: { viewAt: '$root.viewAt' }
+      merge: { viewAt: '$root.viewAt' },
     });
     return rs;
   }

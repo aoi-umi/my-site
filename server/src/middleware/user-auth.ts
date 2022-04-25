@@ -10,12 +10,14 @@ import { UserMapper } from '@/models/mongo/user';
 import { LoginUser } from '@/models/login-user';
 import * as common from '@/_system/common';
 
-
 export class UserAuthMid {
-  static async getUser(token, opt?: {
-    resetOpt?;
-    autoLogin?: boolean;
-  }) {
+  static async getUser(
+    token,
+    opt?: {
+      resetOpt?;
+      autoLogin?: boolean;
+    },
+  ) {
     opt = { ...opt };
     let user = plainToClass(LoginUser, {
       _id: undefined,
@@ -23,7 +25,7 @@ export class UserAuthMid {
       account: '',
       authority: {},
       isLogin: false,
-      key: token || ''
+      key: token || '',
     });
     if (token) {
       let userCacheCfg = {
@@ -35,18 +37,26 @@ export class UserAuthMid {
         user = plainToClass(LoginUser, userData);
         user.isLogin = true;
 
-        let { disableResult, user: dbUser } = await UserMapper.accountCheck(user.account, user);
+        let { disableResult, user: dbUser } = await UserMapper.accountCheck(
+          user.account,
+          user,
+        );
         user.isDisabled = disableResult.disabled;
 
         //自动重新登录
-        if (opt.autoLogin && user.cacheAt && user.cacheAt.getTime() < new Date().getTime() - 1000 * config.dev.autoLoginTime) {
+        if (
+          opt.autoLogin &&
+          user.cacheAt &&
+          user.cacheAt.getTime() <
+            new Date().getTime() - 1000 * config.dev.autoLoginTime
+        ) {
           try {
-            let cacheUser = user = await UserMapper.login(user.loginData, {
+            let cacheUser = (user = await UserMapper.login(user.loginData, {
               resetOpt: opt.resetOpt,
               token,
               user: dbUser,
               oldData: user,
-            });
+            }));
             await cache.setByCfg(userCacheCfg, cacheUser);
           } catch (e) {
             logger.error(e);
@@ -58,21 +68,23 @@ export class UserAuthMid {
     return user;
   }
 
-  static normal(authData?: AuthType, opt?: {
-    allowIfDisabled?: boolean
-  }) {
+  static normal(
+    authData?: AuthType,
+    opt?: {
+      allowIfDisabled?: boolean;
+    },
+  ) {
     opt = {
-      ...opt
+      ...opt,
     };
     return async (ctx: Context & RouterContext, next) => {
       let tokenKey = config.dev.cache.user.prefix;
       let cookieToken = ctx.cookies.get(tokenKey);
-      let token = ctx.query[tokenKey]
-        || ctx.request.get(tokenKey)
-        || cookieToken;
+      let token =
+        ctx.query[tokenKey] || ctx.request.get(tokenKey) || cookieToken;
       let user = await UserAuthMid.getUser(token, {
         autoLogin: true,
-        resetOpt: { imgHost: ctx.myData.imgHost }
+        resetOpt: { imgHost: ctx.myData.imgHost },
       });
       ctx.myData.user = user;
       if (!cookieToken) {
@@ -84,8 +96,7 @@ export class UserAuthMid {
       }
 
       //url权限认证
-      if (authData)
-        auth.checkAccessable(user, authData);
+      if (authData) auth.checkAccessable(user, authData);
       await next();
     };
   }

@@ -60,6 +60,6 @@ let errorConfig = {
   },
   NO_MATCH_DATA: {
     code: 'NO_MATCH_DATA',
-  }
+  },
 };
 export default errorConfig;

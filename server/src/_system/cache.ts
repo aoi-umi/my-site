@@ -5,7 +5,10 @@ import * as config from '@/dev-config';
 import * as common from './common';
 
 function writeCacheErr(err) {
-  console.error(moment().format('YYYY-MM-DD HH:mm:ss'), 'Cache Error [' + err + ']');
+  console.error(
+    moment().format('YYYY-MM-DD HH:mm:ss'),
+    'Cache Error [' + err + ']',
+  );
 }
 
 let connectErrorTimes = 0;
@@ -20,7 +23,7 @@ export class Cache {
   client: Redis.Redis;
   cachePrefix: string;
   constructor(uri: string, cachePrefix?: string) {
-    let client = this.client = new Redis(uri);
+    let client = (this.client = new Redis(uri));
     client.on('error', function (err) {
       if (err.code == 'ECONNREFUSED') {
         if (connectErrorTimes % 10 == 0) {
@@ -41,16 +44,17 @@ export class Cache {
 
   get(key: string) {
     return new Promise<any>((resolve, reject) => {
-      this.client.get(this.getKey([this.cachePrefix, key])).then(result => {
-        if (result && typeof result == 'string') {
-          try {
-            result = JSON.parse(result);
+      this.client
+        .get(this.getKey([this.cachePrefix, key]))
+        .then((result) => {
+          if (result && typeof result == 'string') {
+            try {
+              result = JSON.parse(result);
+            } catch (e) {}
           }
-          catch (e) {
-          }
-        }
-        resolve(result);
-      }).catch(reject);
+          resolve(result);
+        })
+        .catch(reject);
       //超时
       common.wait(10 * 1000).then(() => {
         reject(common.error('Cache Get Timeout', config.error.CACHE_TIMEOUT));
@@ -60,11 +64,9 @@ export class Cache {
 
   //expire seconds
   set(key: string, value, expire?) {
-    if (typeof value == 'object')
-      value = JSON.stringify(value);
+    if (typeof value == 'object') value = JSON.stringify(value);
     let args = [this.getKey([this.cachePrefix, key]), value];
-    if (expire)
-      args = [...args, 'EX', expire];
+    if (expire) args = [...args, 'EX', expire];
     return (this.client.set as any)(...args);
   }
 
@@ -78,22 +80,19 @@ export class Cache {
 
   getByCfg(cfg: CacheConfig) {
     let l = [cfg.prefix];
-    if (cfg.key)
-      l.push(cfg.key);
+    if (cfg.key) l.push(cfg.key);
     return this.get(this.getKey(l));
   }
 
   setByCfg(cfg: CacheConfig, value) {
     let l = [cfg.prefix];
-    if (cfg.key)
-      l.push(cfg.key);
+    if (cfg.key) l.push(cfg.key);
     return this.set(this.getKey(l), value, cfg.time);
   }
 
   delByCfg(cfg: CacheConfig) {
     let l = [cfg.prefix];
-    if (cfg.key)
-      l.push(cfg.key);
+    if (cfg.key) l.push(cfg.key);
     return this.del(this.getKey(l));
   }
 }

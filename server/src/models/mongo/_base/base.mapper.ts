@@ -6,7 +6,7 @@ export class BaseMapper {
       page: data.page,
       rows: data.rows,
       sortOrder: data.sortOrder,
-      orderBy: data.orderBy
+      orderBy: data.orderBy,
     };
   }
 
@@ -17,7 +17,7 @@ export class BaseMapper {
       keyList = escapeRegExp(key.trim()).split(splitKey);
     }
     if (keyList.length) {
-      and = keyList.map(ele => {
+      and = keyList.map((ele) => {
         let anykey = new RegExp(ele, 'i');
         return likeFn(anykey);
       });
@@ -27,9 +27,8 @@ export class BaseMapper {
 
   static getLikeCond(data, keyList: string[]) {
     let query: any = {};
-    keyList.forEach(key => {
-      if (data[key])
-        query[key] = new RegExp(escapeRegExp(data[key]), 'i');
+    keyList.forEach((key) => {
+      if (data[key]) query[key] = new RegExp(escapeRegExp(data[key]), 'i');
     });
     return query;
   }

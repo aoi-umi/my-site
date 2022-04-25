@@ -7,7 +7,7 @@ alipay.AliPayStatic.config({
   sandbox: aliConfig.sandbox,
   requestLog: (log) => {
     // console.log('ali', log);
-  }
+  },
 });
 
 export const alipayInst = new alipay.AliPay({

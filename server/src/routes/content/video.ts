@@ -1,4 +1,3 @@
-
 import { paramsValid } from '@/helpers';
 import { myEnum } from '@/dev-config';
 import * as config from '@/dev-config';
@@ -20,11 +19,11 @@ export let mgtQuery: MyRequestHandler = async (opt) => {
     resetOpt: {
       imgHost: myData.imgHost,
       user,
-    }
+    },
   });
   return {
     rows,
-    total
+    total,
   };
 };
 
@@ -32,15 +31,18 @@ export let mgtDetailQuery: MyRequestHandler = async (opt) => {
   let myData = opt.myData;
   let user = myData.user;
   let data = paramsValid(opt.reqData, ValidSchema.VideoDetailQuery);
-  let rs = await VideoMapper.detailQuery({ _id: data._id }, {
-    userId: user._id,
-    audit: Auth.contains(user, config.auth.videoMgtAudit),
-    resetOpt: {
-      imgHost: myData.imgHost,
-      videoHost: myData.videoHost,
-      user,
-    }
-  });
+  let rs = await VideoMapper.detailQuery(
+    { _id: data._id },
+    {
+      userId: user._id,
+      audit: Auth.contains(user, config.auth.videoMgtAudit),
+      resetOpt: {
+        imgHost: myData.imgHost,
+        videoHost: myData.videoHost,
+        user,
+      },
+    },
+  );
   return rs;
 };
 
@@ -49,7 +51,7 @@ export let mgtSave: MyRequestHandler = async (opt) => {
   let data = paramsValid(opt.reqData, ValidSchema.VideoSave);
   let detail = await VideoMapper.mgtSave(data, { user });
   return {
-    _id: detail._id
+    _id: detail._id,
   };
 };
 
@@ -59,10 +61,13 @@ export let mgtDel: MyRequestHandler = async (opt) => {
   await VideoMapper.updateStatus({
     cond: {
       idList: data.idList,
-      includeUserId: Auth.contains(user, config.auth.videoMgtDel) ? null : user._id,
+      includeUserId: Auth.contains(user, config.auth.videoMgtDel)
+        ? null
+        : user._id,
       status: { $ne: myEnum.videoStatus.已删除 },
     },
-    toStatus: myEnum.videoStatus.已删除, user,
+    toStatus: myEnum.videoStatus.已删除,
+    user,
     logRemark: data.remark,
   });
 };
@@ -75,12 +80,12 @@ export let mgtAudit: MyRequestHandler = async (opt) => {
       idList: data.idList,
       status: myEnum.videoStatus.待审核,
     },
-    toStatus: data.status, user,
+    toStatus: data.status,
+    user,
     logRemark: data.remark,
   });
   return rs;
 };
-
 
 export let query: MyRequestHandler = async (opt) => {
   let myData = opt.myData;
@@ -92,11 +97,11 @@ export let query: MyRequestHandler = async (opt) => {
     resetOpt: {
       imgHost: myData.imgHost,
       user: user.isLogin ? user : null,
-    }
+    },
   });
   return {
     rows,
-    total
+    total,
   };
 };
 
@@ -104,15 +109,23 @@ export let detailQuery: MyRequestHandler = async (opt) => {
   let myData = opt.myData;
   let user = myData.user;
   let data = paramsValid(opt.reqData, ValidSchema.VideoDetailQuery);
-  let rs = await VideoMapper.detailQuery({ _id: data._id }, {
-    normal: true,
-    resetOpt: {
-      imgHost: myData.imgHost,
-      videoHost: myData.videoHost,
-      user: user.isLogin ? user : null,
-    }
-  });
+  let rs = await VideoMapper.detailQuery(
+    { _id: data._id },
+    {
+      normal: true,
+      resetOpt: {
+        imgHost: myData.imgHost,
+        videoHost: myData.videoHost,
+        user: user.isLogin ? user : null,
+      },
+    },
+  );
   let detail = rs.detail;
-  ContentMapper.contentView({ detail, model: VideoModel, user, type: myEnum.contentType.视频 });
+  ContentMapper.contentView({
+    detail,
+    model: VideoModel,
+    user,
+    type: myEnum.contentType.视频,
+  });
   return rs;
 };

@@ -1,4 +1,3 @@
-
 import { paramsValid } from '@/helpers';
 import { myEnum } from '@/dev-config';
 import * as config from '@/dev-config';
@@ -26,6 +25,6 @@ export let query: MyRequestHandler = async (opt) => {
   let data = paramsValid(opt.reqData, ValidSchema.DanmakuQuery);
   let rows = await DanmakuModel.find({ videoId: data.videoId });
   return {
-    rows
+    rows,
   };
 };

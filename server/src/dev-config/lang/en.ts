@@ -17,5 +17,5 @@ export let errorConfig = {
   //缓存
   CACHE_TIMEOUT: 'Cache Timeout',
   CACHE_EXPIRE: 'Cache Expire',
-  CAPTCHA_EXPIRE: 'Captcha Expire'
+  CAPTCHA_EXPIRE: 'Captcha Expire',
 };

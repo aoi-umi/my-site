@@ -7,7 +7,7 @@ wxpay.WxPayStatic.config({
   sandbox: false, //wxConfig.sandbox,
   requestLog: (log) => {
     // console.log('wx', log);
-  }
+  },
 });
 
 export const wxpayInst = new wxpay.WxPay({
@@ -15,5 +15,5 @@ export const wxpayInst = new wxpay.WxPay({
   appid: wxConfig.app.appId,
   key: wxConfig.pay.key,
   pfxPath: wxConfig.pay.certPath,
-  payNotifyUrl: wxConfig.payNotifyUrl
+  payNotifyUrl: wxConfig.payNotifyUrl,
 });

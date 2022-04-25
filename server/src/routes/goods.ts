@@ -1,4 +1,3 @@
-
 import * as config from '@/dev-config';
 import { myEnum } from '@/dev-config';
 import { paramsValid } from '@/helpers';
@@ -14,7 +13,7 @@ export const mgtSave: MyRequestHandler = async (opt) => {
   let user = opt.myData.user;
   let rs = await GoodsMapper.mgtSave(data, { user });
   return {
-    _id: rs.spu._id
+    _id: rs.spu._id,
   };
 };
 
@@ -45,7 +44,7 @@ export const mgtQuery: MyRequestHandler = async (opt) => {
     resetOpt: {
       imgHost: myData.imgHost,
       user,
-    }
+    },
   });
   return {
     rows,
@@ -59,10 +58,13 @@ export let mgtDel: MyRequestHandler = async (opt) => {
   await GoodsMapper.updateStatus({
     cond: {
       idList: data.idList,
-      includeUserId: Auth.contains(user, config.auth.goodsMgtAudit) ? null : user._id,
+      includeUserId: Auth.contains(user, config.auth.goodsMgtAudit)
+        ? null
+        : user._id,
       status: { $ne: myEnum.goodsStatus.已删除 },
     },
-    toStatus: myEnum.goodsStatus.已删除, user,
+    toStatus: myEnum.goodsStatus.已删除,
+    user,
   });
 };
 
@@ -90,7 +92,7 @@ export const query: MyRequestHandler = async (opt) => {
     resetOpt: {
       imgHost: myData.imgHost,
       user,
-    }
+    },
   });
   return {
     rows,

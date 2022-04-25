@@ -4,25 +4,26 @@ import { myRequestHandler } from '@/helpers';
 import { MyData } from '@/typings/libs';
 
 export type MyRequestHandlerOpt = {
-    reqData?: any;
-    params?: any;
-    reqOption?: any;
-    myData?: MyData;
-    json?: boolean;
-    noSend?: boolean;
-    sendAsFile?: boolean;
-    originRes?: boolean;
-}
+  reqData?: any;
+  params?: any;
+  reqOption?: any;
+  myData?: MyData;
+  json?: boolean;
+  noSend?: boolean;
+  sendAsFile?: boolean;
+  originRes?: boolean;
+};
 
 export interface MyRequestHandler {
-    (opt: MyRequestHandlerOpt, ctx?: Context, next?: Next): any;
+  (opt: MyRequestHandlerOpt, ctx?: Context, next?: Next): any;
 }
 
 export class MyRequestHandlerMid {
   static convert(fn: MyRequestHandler) {
     let rh = async (ctx: Context & RouterContext, next) => {
       let rs = await myRequestHandler(async (opt) => {
-        opt.reqData = ctx.method === 'GET' ? ctx.request.query : ctx.request.body;
+        opt.reqData =
+          ctx.method === 'GET' ? ctx.request.query : ctx.request.body;
         opt.myData = ctx.myData;
         opt.params = ctx.params;
         let rs = await fn(opt, ctx, next);

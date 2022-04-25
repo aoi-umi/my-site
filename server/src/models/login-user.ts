@@ -4,28 +4,28 @@ import { Types } from 'mongoose';
 import { objectIdTransform } from '@/valid-schema/class-valid/util';
 
 export class LoginUser {
-    isLogin: boolean;
-    isDisabled: boolean;
+  isLogin: boolean;
+  isDisabled: boolean;
 
-    @Transform(objectIdTransform)
-    _id: Types.ObjectId;
-    nickname: string;
-    account: string;
-    avatar?: string;
-    avatarUrl?: string;
+  @Transform(objectIdTransform)
+  _id: Types.ObjectId;
+  nickname: string;
+  account: string;
+  avatar?: string;
+  avatarUrl?: string;
 
-    authority: { [key: string]: any };
-    key?: string;
-    loginData?: any;
+  authority: { [key: string]: any };
+  key?: string;
+  loginData?: any;
 
-    @Type()
-    cacheAt?: Date;
+  @Type()
+  cacheAt?: Date;
 
-    nameToString() {
-      return this.nickname + '(' + this.account + ')';
-    }
+  nameToString() {
+    return this.nickname + '(' + this.account + ')';
+  }
 
-    equalsId(id) {
-      return this._id?.equals(id);
-    }
+  equalsId(id) {
+    return this._id?.equals(id);
+  }
 }

@@ -1,8 +1,3 @@
+import { ContentQuery } from './content';
 
-import {
-  ContentQuery
-} from './content';
-
-export class ViewHistoryQuery extends ContentQuery {
-}
-
+export class ViewHistoryQuery extends ContentQuery {}

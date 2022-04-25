@@ -4,10 +4,12 @@ import { myEnum } from '@/dev-config';
 
 export let pvSave: MyRequestHandler = async (opt) => {
   let data = opt.reqData;
-  await StatUserMapper.create([{
-    type: myEnum.statUserType.pv,
-    val: data.path
-  }]);
+  await StatUserMapper.create([
+    {
+      type: myEnum.statUserType.pv,
+      val: data.path,
+    },
+  ]);
 };
 
 export let query: MyRequestHandler = async (opt) => {

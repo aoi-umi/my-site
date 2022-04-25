@@ -1,26 +1,25 @@
 module.exports = {
-  // "extends": "eslint:recommended",
   parser: '@typescript-eslint/parser',
-  plugins: [
-    '@typescript-eslint'
-  ],
   parserOptions: {
-    ecmaVersion: 2020,
-    sourceType: 'module'
+    project: 'tsconfig.json',
+    sourceType: 'module',
   },
-  'rules': {
-    // "consistent-return": 2,
-    'indent': [1, 2],
-    // "no-else-return": 1,
-    'comma-spacing': 1,
-    'key-spacing': 1, 
-    'space-before-blocks': [1, 'always'],
-    'semi': [1, 'always'],
-    'quotes': [1, 'single'],
-    'keyword-spacing': [1, {
-      'before': true,
-      'after': true,
-      'overrides': {}
-    }],
+  plugins: ['@typescript-eslint/eslint-plugin'],
+  extends: [
+    'plugin:@typescript-eslint/recommended',
+    'plugin:prettier/recommended',
+  ],
+  ignorePatterns: ['.eslintrc.js'],
+  rules: {
+    '@typescript-eslint/interface-name-prefix': 'off',
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-var-requires': 'off',
+    '@typescript-eslint/no-empty-function': 'off',
+    '@typescript-eslint/ban-types': 'off',
+    '@typescript-eslint/no-this-alias': 'off',
+    
+    'prefer-const':'off',
   }
-};
+}

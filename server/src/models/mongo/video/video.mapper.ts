@@ -9,20 +9,28 @@ import { transaction } from '@/_system/dbMongo';
 
 import { LoginUser } from '../../login-user';
 import { UserModel, UserMapper } from '../user';
-import { ContentMapper, ContentResetOption, ContentQueryOption, ContentUpdateStatusOutOption, ContentLogModel } from '../content';
+import {
+  ContentMapper,
+  ContentResetOption,
+  ContentQueryOption,
+  ContentUpdateStatusOutOption,
+  ContentLogModel,
+} from '../content';
 import { VideoInstanceType, VideoModel, VideoDocType } from './video';
 import { BaseMapper } from '../_base';
 import { FileMapper, FileModel } from '../file';
 
 type VideoResetOption = ContentResetOption & {
   videoHost?: string;
-}
+};
 type VideoQueryOption = ContentQueryOption<VideoResetOption>;
 export class VideoMapper {
-
-  static async query(data: ValidSchema.VideoQuery, opt: {
-    noTotal?: boolean,
-  } & VideoQueryOption) {
+  static async query(
+    data: ValidSchema.VideoQuery,
+    opt: {
+      noTotal?: boolean;
+    } & VideoQueryOption,
+  ) {
     function setMatch(match) {
       let userId = opt.userId;
       if (opt.normal) {
@@ -34,10 +42,9 @@ export class VideoMapper {
           $not: {
             $and: [
               { $ne: ['$userId', userId] },
-              { $eq: ['$status', myEnum.videoStatus.草稿] }
-            ]
-          }
-
+              { $eq: ['$status', myEnum.videoStatus.草稿] },
+            ],
+          },
         };
       } else {
         match.userId = userId;
@@ -50,12 +57,12 @@ export class VideoMapper {
             { profile: anykey },
             { 'user.nickname': anykey },
             { 'user.account': anykey },
-          ]
+          ],
         };
       });
       if (anyKeyAnd.length) {
         and.push({
-          $and: anyKeyAnd
+          $and: anyKeyAnd,
         });
       }
 
@@ -69,7 +76,7 @@ export class VideoMapper {
       setMatch,
       resetDetail: (data) => {
         return this.resetDetail(data, opt.resetOpt);
-      }
+      },
     });
   }
 
@@ -80,20 +87,19 @@ export class VideoMapper {
         let { rows } = await this.query(data, { ...opt, noTotal: true });
         let detail = rows[0];
         return detail;
-      }
+      },
     });
     let detail = rs.detail;
     let fileList = await FileMapper.findWithRaw({ _id: detail.videoIdList });
-    detail.videoList = detail.videoIdList.map(videoId => {
-      let file = fileList.find(f => f.file._id.equals(videoId));
+    detail.videoList = detail.videoIdList.map((videoId) => {
+      let file = fileList.find((f) => f.file._id.equals(videoId));
       let rawFile = file.rawFile;
       let merge = {
         contentType: '',
       };
       if (rawFile) {
         for (let key in merge) {
-          if (rawFile[key])
-            merge[key] = rawFile[key];
+          if (rawFile[key]) merge[key] = rawFile[key];
         }
       }
       return {
@@ -108,8 +114,7 @@ export class VideoMapper {
 
   static async findOne(data) {
     let detail = await VideoModel.findOne(data);
-    if (!detail)
-      throw error('', config.error.DB_NO_DATA);
+    if (!detail) throw error('', config.error.DB_NO_DATA);
     return detail;
   }
 
@@ -117,7 +122,10 @@ export class VideoMapper {
     let { user } = opt;
     if (user) {
       let rs = {
-        canDel: detail.canDel && (user.equalsId(detail.userId) || Auth.contains(user, config.auth.articleMgtAudit)),
+        canDel:
+          detail.canDel &&
+          (user.equalsId(detail.userId) ||
+            Auth.contains(user, config.auth.articleMgtAudit)),
         canUpdate: detail.canUpdate && user.equalsId(detail.userId),
       };
       detail.canDel = rs.canDel;
@@ -135,24 +143,33 @@ export class VideoMapper {
       contentType: myEnum.contentType.文章,
       passCond: () => toStatus === myEnum.videoStatus.审核通过,
       delCond: (detail) => {
-        return detail.status === myEnum.videoStatus.审核通过
-          && toStatus === myEnum.videoStatus.已删除;
+        return (
+          detail.status === myEnum.videoStatus.审核通过 &&
+          toStatus === myEnum.videoStatus.已删除
+        );
       },
       updateCountInUser: async (changeNum, dbUser, session) => {
         await dbUser.update({ video: dbUser.video + changeNum }, { session });
-      }
+      },
     });
     return {
       status: toStatus,
-      statusText: myEnum.videoStatus.getKey(toStatus)
+      statusText: myEnum.videoStatus.getKey(toStatus),
     };
   }
 
   static async mgtSave(data: ValidSchema.VideoSave, opt: { user: LoginUser }) {
-    let status = data.submit ? myEnum.articleStatus.待审核 : myEnum.articleStatus.草稿;
+    let status = data.submit
+      ? myEnum.articleStatus.待审核
+      : myEnum.articleStatus.草稿;
     let saveKey: (keyof VideoDocType)[] = [
-      'cover', 'title', 'profile', 'videoIdList', 'remark',
-      'setPublish', 'setPublishAt'
+      'cover',
+      'title',
+      'profile',
+      'videoIdList',
+      'remark',
+      'setPublish',
+      'setPublishAt',
     ];
     let rs = await ContentMapper.mgtSave(data, {
       ...opt,
@@ -163,7 +180,7 @@ export class VideoMapper {
       getDetail: async () => {
         let detail = await VideoMapper.findOne({ _id: data._id });
         return detail;
-      }
+      },
     });
     return rs;
   }

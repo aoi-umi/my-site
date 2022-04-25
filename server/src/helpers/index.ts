@@ -23,15 +23,17 @@ configure({
   categories: {
     default: {
       appenders: [config.env.logger.name],
-      level: 'info'
-    }
-  }
+      level: 'info',
+    },
+  },
 });
 console.log = logger.info.bind(logger);
 console.error = logger.error.bind(logger);
 
-
-export let myRequestHandler = async function (fn: (opt?: MyRequestHandlerOpt) => any, ctx: Context) {
+export let myRequestHandler = async function (
+  fn: (opt?: MyRequestHandlerOpt) => any,
+  ctx: Context,
+) {
   let opt: MyRequestHandlerOpt = {
     json: true,
   };
@@ -39,8 +41,7 @@ export let myRequestHandler = async function (fn: (opt?: MyRequestHandlerOpt) =>
   try {
     let result = await fn(opt);
     //fn中自行处理
-    if (opt.noSend)
-      return result;
+    if (opt.noSend) return result;
     //result = {fileBuff, filename}
     if (opt.sendAsFile) {
       let fileRs = result as ResFileType;
@@ -57,9 +58,11 @@ export let myRequestHandler = async function (fn: (opt?: MyRequestHandlerOpt) =>
 
       let filename = fileRs.filename || '未命名';
       if (fileRs.timeSuffix)
-        filename += common.dateFormat(fileRs.timeSuffix === true ? '' : fileRs.timeSuffix, 'YYYY-MM-DD_HH_mm_ss');
-      if (fileRs.ext)
-        filename += `.${fileRs.ext}`;
+        filename += common.dateFormat(
+          fileRs.timeSuffix === true ? '' : fileRs.timeSuffix,
+          'YYYY-MM-DD_HH_mm_ss',
+        );
+      if (fileRs.ext) filename += `.${fileRs.ext}`;
       ctx.attachment(filename);
       ctx.body = fileRs.data;
     } else {
@@ -82,13 +85,13 @@ export let myRequestHandler = async function (fn: (opt?: MyRequestHandlerOpt) =>
   } finally {
     // if (log.response)
     //     new LogModel(log).save();
-  };
+  }
 };
 
 /**
  * 数据校验
  * @param data 已经转换了的数据，如果未转换，传入schema
- * @param schema 
+ * @param schema
  */
 export function paramsValid<T>(data: T): T;
 export function paramsValid<T>(data, schema: ClassType<T>): T;
@@ -102,14 +105,11 @@ export function paramsValid(data, schema?) {
   }
 
   if (rtnData instanceof ValidSchema.ListBase) {
-    if (!rtnData.page)
-      rtnData.page = 1;
-    if (!rtnData.rows)
-      rtnData.rows = 10;
+    if (!rtnData.page) rtnData.page = 1;
+    if (!rtnData.rows) rtnData.rows = 10;
 
     let maxRows = 100;
-    if (rtnData.rows > maxRows)
-      rtnData.rows = maxRows;
+    if (rtnData.rows > maxRows) rtnData.rows = maxRows;
   }
   return rtnData;
 }
@@ -117,7 +117,9 @@ export function paramsValid(data, schema?) {
 /**
  * mongoose数据模型验证
  */
-export let mongooseValid = function (dict: { [key: string]: MongooseDocument }) {
+export let mongooseValid = function (dict: {
+  [key: string]: MongooseDocument;
+}) {
   let list = [];
   let invalid = false;
   for (let key in dict) {

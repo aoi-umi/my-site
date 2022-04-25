@@ -1,9 +1,8 @@
-
 import { Context } from 'koa';
 
 import * as common from '@/_system/common';
 import { MyRequestHandler } from '@/middleware';
-import { paramsValid, logger, } from '@/helpers';
+import { paramsValid, logger } from '@/helpers';
 import * as config from '@/dev-config';
 import { myEnum } from '@/dev-config';
 import { cache } from '@/main';
@@ -20,13 +19,18 @@ import { OauthModel } from '@/models/mongo/oauth';
 
 export let accountExists: MyRequestHandler = async (opt) => {
   let data = paramsValid(opt.reqData, ValidSchema.UserAccountExists);
-  let userByRs = await ThirdPartyAuthMapper.userByHandler({ by: data.by, val: data.val });
+  let userByRs = await ThirdPartyAuthMapper.userByHandler({
+    by: data.by,
+    val: data.val,
+  });
   let rs = await UserMapper.accountExists(userByRs.val, data.by);
-  return rs && {
-    _id: rs._id,
-    nickname: rs.nickname,
-    avatarUrl: FileMapper.getImgUrl(rs.avatar, opt.myData.imgHost)
-  };
+  return (
+    rs && {
+      _id: rs._id,
+      nickname: rs.nickname,
+      avatarUrl: FileMapper.getImgUrl(rs.avatar, opt.myData.imgHost),
+    }
+  );
 };
 
 export let signUp: MyRequestHandler = async (opt) => {
@@ -35,14 +39,16 @@ export let signUp: MyRequestHandler = async (opt) => {
   if (!setting.canSignUp)
     throw common.error('暂不开放注册', config.error.NO_PERMISSIONS);
   let rs = await UserMapper.accountExists(data.account);
-  if (rs)
-    throw common.error('账号已存在');
+  if (rs) throw common.error('账号已存在');
 
-  let userByRs = await ThirdPartyAuthMapper.userByHandler({
-    by: data.by,
-    val: data.byVal,
-    oauthToken: data.oauthToken
-  }, { checkIsBind: true });
+  let userByRs = await ThirdPartyAuthMapper.userByHandler(
+    {
+      by: data.by,
+      val: data.byVal,
+      oauthToken: data.oauthToken,
+    },
+    { checkIsBind: true },
+  );
 
   let user = new UserModel(data);
   if (userByRs) {
@@ -52,7 +58,9 @@ export let signUp: MyRequestHandler = async (opt) => {
     if (userByRs.avatarUrl) {
       try {
         let rs = await common.requestService({
-          url: userByRs.avatarUrl, method: 'get', raw: true,
+          url: userByRs.avatarUrl,
+          method: 'get',
+          raw: true,
           responseType: 'arraybuffer',
         });
         let uploadRs = await FileMapper.upload({
@@ -61,11 +69,13 @@ export let signUp: MyRequestHandler = async (opt) => {
           buffer: rs.data,
           filename: userByRs.avatarUrl,
           imgHost: opt.myData.imgHost,
-          user
+          user,
         });
         user.avatar = uploadRs.fileId;
       } catch (e) {
-        logger.error(['获取头像', userByRs.avatarUrl, '失败', `${e.message}`].join('\r\n'));
+        logger.error(
+          ['获取头像', userByRs.avatarUrl, '失败', `${e.message}`].join('\r\n'),
+        );
       }
     }
   }
@@ -76,7 +86,11 @@ export let signUp: MyRequestHandler = async (opt) => {
     await user.save({ session });
 
     if (userByRs.oauthName) {
-      let oauth = new OauthModel({ id: userByRs.id, name: userByRs.oauthName, userId: user._id });
+      let oauth = new OauthModel({
+        id: userByRs.id,
+        name: userByRs.oauthName,
+        userId: user._id,
+      });
       await oauth.save({ session });
     } else if (data.oauthToken) {
       msg.push('但绑定失败');
@@ -96,11 +110,14 @@ export let signUpCheck: MyRequestHandler = async () => {
     throw common.error('暂不开放注册', config.error.NO_PERMISSIONS);
 };
 
-let signInFn = async (data: ValidSchema.UserSignIn, opt: {
-  noPwd?: boolean,
-  myData: MyData,
-  ctx: Context
-}) => {
+let signInFn = async (
+  data: ValidSchema.UserSignIn,
+  opt: {
+    noPwd?: boolean;
+    myData: MyData;
+    ctx: Context;
+  },
+) => {
   let { myData } = opt;
   let token = myData.user.key;
   let { user } = await UserMapper.accountCheck(data.account);
@@ -109,7 +126,7 @@ let signInFn = async (data: ValidSchema.UserSignIn, opt: {
     resetOpt: { imgHost: myData.imgHost },
     token,
     user,
-    noPwd: opt.noPwd
+    noPwd: opt.noPwd,
   });
   let userInfoCfg = { ...config.dev.cache.user, key: returnUser.key };
   await cache.setByCfg(userInfoCfg, returnUser);
@@ -124,18 +141,23 @@ export let signIn: MyRequestHandler = async (opt, ctx) => {
 
 export let signInByAuth: MyRequestHandler = async (opt, ctx) => {
   let data = paramsValid(opt.reqData, ValidSchema.UserSignInByAuth);
-  let userByRs = await ThirdPartyAuthMapper.userByHandler({ by: data.by, val: data.val });
-  let existsRs = await UserMapper.accountExists(userByRs.val, data.by);
-  if (!existsRs)
-    throw common.error('账号未绑定');
-  let rs = await signInFn({ account: existsRs.account, rand: data.val }, {
-    myData: opt.myData,
-    noPwd: true,
-    ctx
+  let userByRs = await ThirdPartyAuthMapper.userByHandler({
+    by: data.by,
+    val: data.val,
   });
+  let existsRs = await UserMapper.accountExists(userByRs.val, data.by);
+  if (!existsRs) throw common.error('账号未绑定');
+  let rs = await signInFn(
+    { account: existsRs.account, rand: data.val },
+    {
+      myData: opt.myData,
+      noPwd: true,
+      ctx,
+    },
+  );
   cache.delByCfg({
     ...config.dev.cache.wxAuthCode,
-    key: data.val
+    key: data.val,
   });
   return rs;
 };
@@ -148,21 +170,30 @@ export let oauthSignIn: MyRequestHandler = async (opt, ctx) => {
     return;
   }
   let data = paramsValid(opt.reqData, ValidSchema.UserOauthSignIn);
-  let oauthUserRs = await ThirdPartyAuthMapper.oauthUserGet({ oauthName: params.name, code: data.code });
+  let oauthUserRs = await ThirdPartyAuthMapper.oauthUserGet({
+    oauthName: params.name,
+    code: data.code,
+  });
   let signUpToken;
   if (!oauthUserRs.userId) {
     signUpToken = common.guid();
-    await cache.setByCfg({
-      ...config.dev.cache.oauthSignIn,
-      key: signUpToken
-    }, oauthUserRs);
+    await cache.setByCfg(
+      {
+        ...config.dev.cache.oauthSignIn,
+        key: signUpToken,
+      },
+      oauthUserRs,
+    );
   } else {
     let existsRs = await UserMapper.accountExists(oauthUserRs.userId, 'id');
-    let rs = await signInFn({ account: existsRs.account, rand: common.randStr() }, {
-      myData: opt.myData,
-      noPwd: true,
-      ctx
-    });
+    let rs = await signInFn(
+      { account: existsRs.account, rand: common.randStr() },
+      {
+        myData: opt.myData,
+        noPwd: true,
+        ctx,
+      },
+    );
     oauthUserRs['userInfo'] = rs;
   }
   delete oauthUserRs.id;
@@ -177,7 +208,7 @@ export let signOut: MyRequestHandler = async (opt) => {
   if (user) {
     await cache.delByCfg({
       ...config.dev.cache.user,
-      key: user.key
+      key: user.key,
     });
   }
 };

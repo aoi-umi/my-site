@@ -20,12 +20,15 @@ import { RefundModel } from './refund';
 import { GoodsSkuModel } from '../goods';
 
 export class PayMapper {
-  static async query(data: ValidSchema.PayQuery, opt: {
-        user: LoginUser
-        imgHost?: string;
-    }) {
+  static async query(
+    data: ValidSchema.PayQuery,
+    opt: {
+      user: LoginUser;
+      imgHost?: string;
+    },
+  ) {
     opt = {
-      ...opt
+      ...opt,
     };
     let match: any = {};
 
@@ -34,40 +37,48 @@ export class PayMapper {
     }
 
     if (data.status)
-      match.status = { $in: data.status.split(',').map(ele => parseInt(ele)) };
+      match.status = {
+        $in: data.status.split(',').map((ele) => parseInt(ele)),
+      };
     if (data.type)
-      match.type = { $in: data.type.split(',').map(ele => parseInt(ele)) };
+      match.type = { $in: data.type.split(',').map((ele) => parseInt(ele)) };
     if (data.anyKey) {
       let reg = new RegExp(escapeRegExp(data.anyKey), 'i');
-      match.$or = [{
-        title: reg,
-      }, {
-        content: reg,
-      }];
+      match.$or = [
+        {
+          title: reg,
+        },
+        {
+          content: reg,
+        },
+      ];
     }
-    let createdAt = helpers.dbDateMatch(data.createdAtFrom, data.createdAtTo).mongoDate;
-    if (createdAt)
-      match.createdAt = createdAt;
+    let createdAt = helpers.dbDateMatch(
+      data.createdAtFrom,
+      data.createdAtTo,
+    ).mongoDate;
+    if (createdAt) match.createdAt = createdAt;
 
     let match2: any = {};
     let cond = BaseMapper.getLikeCond(data, ['orderNo', 'outOrderNo']);
-    if (cond.orderNo)
-      match2['assetLog.orderNo'] = cond.orderNo;
-    if (cond.outOrderNo)
-      match2['assetLog.outOrderNo'] = cond.outOrderNo;
+    if (cond.orderNo) match2['assetLog.orderNo'] = cond.orderNo;
+    if (cond.outOrderNo) match2['assetLog.outOrderNo'] = cond.outOrderNo;
 
     let rs = await PayModel.aggregatePaginate<{
-            user: any,
-            assetLog: any,
-        }>([
-          { $match: match },
-          ...UserMapper.lookupPipeline(),
-          ...AssetLogMapper.lookupPipeline(),
-          { $match: match2 },
-        ], {
-          ...BaseMapper.getListOptions(data)
-        });
-    let rows = rs.rows.map(ele => {
+      user: any;
+      assetLog: any;
+    }>(
+      [
+        { $match: match },
+        ...UserMapper.lookupPipeline(),
+        ...AssetLogMapper.lookupPipeline(),
+        { $match: match2 },
+      ],
+      {
+        ...BaseMapper.getListOptions(data),
+      },
+    );
+    let rows = rs.rows.map((ele) => {
       let obj = new PayModel(ele).toJSON();
       UserMapper.resetDetail(ele.user, { imgHost: opt.imgHost });
       obj.user = ele.user;
@@ -78,7 +89,7 @@ export class PayMapper {
     });
     return {
       ...rs,
-      rows
+      rows,
     };
   }
 
@@ -93,21 +104,21 @@ export class PayMapper {
 
   static async queryOne(match) {
     let detail = await PayModel.findOne(match);
-    if (!detail)
-      throw error('', config.error.NO_MATCH_DATA);
+    if (!detail) throw error('', config.error.NO_MATCH_DATA);
     return detail;
   }
 
-  static async cancel(data: ValidSchema.PayCancel, opt: { auto?: boolean, user?: LoginUser }) {
+  static async cancel(
+    data: ValidSchema.PayCancel,
+    opt: { auto?: boolean; user?: LoginUser },
+  ) {
     let { user, auto } = opt;
     let match: any = { _id: data._id };
-    if (!auto)
-      match.userId = user._id;
+    if (!auto) match.userId = user._id;
     let detail = await PayMapper.queryOne(match);
     if (detail.status !== myEnum.payStatus.已取消) {
       if (!detail.canCancel) {
-        if (auto)
-          return;
+        if (auto) return;
         throw error('当前状态无法取消');
       }
       let toStatus = myEnum.payStatus.已取消;
@@ -115,8 +126,7 @@ export class PayMapper {
       detail.status = toStatus;
       await this.contactCancel(detail);
     }
-    if (auto)
-      return;
+    if (auto) return;
 
     let obj = detail.toJSON();
     let rtn = {
@@ -140,17 +150,19 @@ export class PayMapper {
     }
   }
 
-  static async refundApply(data: ValidSchema.PayRefundApply, opt: { user: LoginUser }) {
+  static async refundApply(
+    data: ValidSchema.PayRefundApply,
+    opt: { user: LoginUser },
+  ) {
     let { user } = opt;
     let pay = await PayMapper.queryOne({ _id: data._id, userId: user._id });
-    if (!pay.canRefundApply)
-      throw error('当前状态无法申请退款');
+    if (!pay.canRefundApply) throw error('当前状态无法申请退款');
 
     let refund = new RefundModel({
       userId: user._id,
       type: pay.type,
       moneyCent: pay.moneyCent,
-      payOrderNo: pay.orderNo
+      payOrderNo: pay.orderNo,
     });
     let payAssetLog = await AssetLogModel.findById(pay.assetLogId);
     let assetLog = new AssetLogModel({
@@ -173,21 +185,24 @@ export class PayMapper {
         refundStatus,
         refundStatusText: myEnum.payRefundStatus.getKey(refundStatus),
         canRefundApply: false,
-      }
+      },
     };
   }
 
-  static async create(data: ValidSchema.PayCreate, opt: {
-        user: LoginUser,
-        contactType: number,
-        contactObj: any
-    }) {
+  static async create(
+    data: ValidSchema.PayCreate,
+    opt: {
+      user: LoginUser;
+      contactType: number;
+      contactObj: any;
+    },
+  ) {
     let { user } = opt;
     let pay = new PayModel({
       ...data,
       userId: user._id,
       contactType: opt.contactType,
-      contactObj: opt.contactObj
+      contactObj: opt.contactObj,
     });
     let { assetLog, payInfo } = await ThirdPartyPayMapper.createPay({
       pay,
@@ -202,7 +217,7 @@ export class PayMapper {
     return {
       payId: pay._id,
       orderNo: pay.orderNo,
-      ...payInfo
+      ...payInfo,
     };
   }
 }

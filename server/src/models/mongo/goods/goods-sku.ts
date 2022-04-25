@@ -1,6 +1,12 @@
 import {
-  getModelForClass, ModelType, DocType, InstanceType,
-  setSchema, prop, arrayProp, getSchema
+  getModelForClass,
+  ModelType,
+  DocType,
+  InstanceType,
+  setSchema,
+  prop,
+  arrayProp,
+  getSchema,
 } from 'mongoose-ts-ua';
 import { Types, SchemaTypes } from 'mongoose';
 
@@ -13,57 +19,59 @@ export type GoodsSkuDocType = DocType<GoodsSkuInstanceType>;
 
 @setSchema({
   schemaOptions: {
-    toJSON: { virtuals: true }
-  }
+    toJSON: { virtuals: true },
+  },
 })
 export class GoodsSku extends Base {
-    @prop({
-      type: SchemaTypes.ObjectId,
-      required: true
-    })
-    spuId: Types.ObjectId;
+  @prop({
+    type: SchemaTypes.ObjectId,
+    required: true,
+  })
+  spuId: Types.ObjectId;
 
-    @prop({
-      required: true,
-    })
-    name: string;
+  @prop({
+    required: true,
+  })
+  name: string;
 
-    @arrayProp({
-      required: true,
-      type: String,
-    })
-    spec: string[];
+  @arrayProp({
+    required: true,
+    type: String,
+  })
+  spec: string[];
 
-    @prop({
-      // required: true,
-    })
-    code: string;
+  @prop({
+    // required: true,
+  })
+  code: string;
 
-    @prop({
-      required: true,
-      enum: myEnum.goodsSkuStatus.getAllValue(),
-    })
-    status: number;
+  @prop({
+    required: true,
+    enum: myEnum.goodsSkuStatus.getAllValue(),
+  })
+  status: number;
 
-    @prop({
-      required: true
-    })
-    price: number;
+  @prop({
+    required: true,
+  })
+  price: number;
 
-    @prop({
-      required: true
-    })
-    quantity: number;
+  @prop({
+    required: true,
+  })
+  quantity: number;
 
-    @prop({
-      default: 0,
-    })
-    saleQuantity: number;
+  @prop({
+    default: 0,
+  })
+  saleQuantity: number;
 
-    @arrayProp({
-      type: String,
-    })
-    imgs: string[];
+  @arrayProp({
+    type: String,
+  })
+  imgs: string[];
 }
 
-export const GoodsSkuModel = getModelForClass<GoodsSku, typeof GoodsSku>(GoodsSku);
+export const GoodsSkuModel = getModelForClass<GoodsSku, typeof GoodsSku>(
+  GoodsSku,
+);

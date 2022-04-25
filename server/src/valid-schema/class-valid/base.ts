@@ -32,10 +32,9 @@ export class OperateBase {
   @IsDefined()
   @IsArray()
   @ArrayMinSize(1)
-  @Transform(value => {
+  @Transform((value) => {
     return arrayTransform(value, Types.ObjectId);
   })
   idList: Types.ObjectId[];
 }
-export class DelBase extends OperateBase {
-}
+export class DelBase extends OperateBase {}

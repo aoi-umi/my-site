@@ -18,6 +18,6 @@ export let errorConfig = {
   CACHE_TIMEOUT: '缓存超时',
   CACHE_EXPIRE: '缓存失效',
   CAPTCHA_EXPIRE: '验证码失效',
-    
-  USER_NOT_FOUND: '没有对应的用户'
+
+  USER_NOT_FOUND: '没有对应的用户',
 };

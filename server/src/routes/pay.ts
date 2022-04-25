@@ -1,4 +1,3 @@
-
 import { paramsValid } from '@/helpers';
 import { ThirdPartyPayMapper } from '@/3rd-party';
 import * as ValidSchema from '@/valid-schema/class-valid';
@@ -12,7 +11,7 @@ export let submit: MyRequestHandler = async (opt) => {
   let pay = await PayModel.findOne({ _id: data._id, userId: user._id });
   let assetLog = await AssetLogModel.findById(pay.assetLogId);
   return {
-    url: assetLog.req
+    url: assetLog.req,
   };
 };
 
@@ -24,7 +23,10 @@ export let cancel: MyRequestHandler = async (opt) => {
 
 export let query: MyRequestHandler = async (opt) => {
   let data = paramsValid(opt.reqData, ValidSchema.PayQuery);
-  let rs = await PayMapper.query(data, { user: opt.myData.user, imgHost: opt.myData.imgHost });
+  let rs = await PayMapper.query(data, {
+    user: opt.myData.user,
+    imgHost: opt.myData.imgHost,
+  });
   return { rows: rs.rows, total: rs.total };
 };
 

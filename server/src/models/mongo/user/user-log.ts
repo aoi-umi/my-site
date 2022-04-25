@@ -1,6 +1,12 @@
 import {
-  getModelForClass, ModelType, DocType, InstanceType,
-  setSchema, prop, arrayProp, setMethod
+  getModelForClass,
+  ModelType,
+  DocType,
+  InstanceType,
+  setSchema,
+  prop,
+  arrayProp,
+  setMethod,
 } from 'mongoose-ts-ua';
 import { Types, SchemaTypes } from 'mongoose';
 
@@ -12,34 +18,33 @@ export type UserLogDocType = DocType<UserLogInstanceType>;
 @setSchema({
   schemaOptions: {
     toJSON: {
-      virtuals: true
-    }
-  }
+      virtuals: true,
+    },
+  },
 })
 export class UserLog extends Base {
-    @prop({
-      required: true,
-      type: SchemaTypes.ObjectId,
-    })
-    userId: Types.ObjectId;
+  @prop({
+    required: true,
+    type: SchemaTypes.ObjectId,
+  })
+  userId: Types.ObjectId;
 
-    @prop({
-      required: true,
-      type: SchemaTypes.ObjectId,
-    })
-    operatorId: Types.ObjectId;
+  @prop({
+    required: true,
+    type: SchemaTypes.ObjectId,
+  })
+  operatorId: Types.ObjectId;
 
-    @prop()
-    operator: string;
+  @prop()
+  operator: string;
 
-    @prop()
-    remark: string;
+  @prop()
+  remark: string;
 
-    @prop({
-      type: Object
-    })
-    oldData: any;
+  @prop({
+    type: Object,
+  })
+  oldData: any;
 }
 
 export const UserLogModel = getModelForClass<UserLog, typeof UserLog>(UserLog);
-

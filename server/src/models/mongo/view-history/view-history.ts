@@ -23,11 +23,13 @@ export type ViewHistoryDocType = DocType<ViewHistoryInstanceType>;
 
 @setSchema()
 export class ViewHistory extends ContentContactBase {
-    @prop()
-    viewAt: Date;
+  @prop()
+  viewAt: Date;
 }
 
 let schema = getSchema(ViewHistory);
 schema.index({ ownerId: 1, userId: 1 }, { unique: true });
 
-export const ViewHistoryModel = getModelForClass<ViewHistory, viewHistory>(ViewHistory);
+export const ViewHistoryModel = getModelForClass<ViewHistory, viewHistory>(
+  ViewHistory,
+);

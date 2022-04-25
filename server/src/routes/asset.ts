@@ -1,4 +1,3 @@
-
 import { paramsValid } from '@/helpers';
 import * as ValidSchema from '@/valid-schema/class-valid';
 import { ThirdPartyPayMapper } from '@/3rd-party';
@@ -12,7 +11,7 @@ export const notifyQuery: MyRequestHandler = async (opt) => {
   let { rows, total } = await NotifyMapper.query(data);
   return {
     rows,
-    total
+    total,
   };
 };
 
@@ -27,6 +26,6 @@ export const logQuery: MyRequestHandler = async (opt) => {
   let { rows, total } = await AssetLogMapper.query(data);
   return {
     rows,
-    total
+    total,
   };
 };

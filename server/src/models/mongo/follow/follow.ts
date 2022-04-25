@@ -1,6 +1,13 @@
 import {
-  getModelForClass, ModelType, DocType, InstanceType,
-  setSchema, prop, arrayProp, getSchema, setPlugin
+  getModelForClass,
+  ModelType,
+  DocType,
+  InstanceType,
+  setSchema,
+  prop,
+  arrayProp,
+  getSchema,
+  setPlugin,
 } from 'mongoose-ts-ua';
 import { Types, SchemaTypes } from 'mongoose';
 
@@ -16,26 +23,28 @@ export type FollowDocType = DocType<FollowInstanceType>;
 @setSchema()
 @setPlugin(pagination)
 export class Follow extends Base {
-    @prop({
-      type: SchemaTypes.ObjectId,
-      required: true
-    })
-    userId: Types.ObjectId;
+  @prop({
+    type: SchemaTypes.ObjectId,
+    required: true,
+  })
+  userId: Types.ObjectId;
 
-    @prop({
-      type: SchemaTypes.ObjectId,
-      required: true
-    })
-    followUserId: Types.ObjectId;
+  @prop({
+    type: SchemaTypes.ObjectId,
+    required: true,
+  })
+  followUserId: Types.ObjectId;
 
-    @prop({
-      required: true,
-      enum: myEnum.followStatus.getAllValue()
-    })
-    status: number;
+  @prop({
+    required: true,
+    enum: myEnum.followStatus.getAllValue(),
+  })
+  status: number;
 }
 
 let schema = getSchema(Follow);
 schema.index({ userId: 1, followUserId: 1 }, { unique: true });
-export const FollowModel = getModelForClass<Follow, typeof Follow & IPagination<Follow>>(Follow);
-
+export const FollowModel = getModelForClass<
+  Follow,
+  typeof Follow & IPagination<Follow>
+>(Follow);

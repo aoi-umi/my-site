@@ -1,4 +1,3 @@
-
 import { transaction } from '@/_system/dbMongo';
 import { error } from '@/_system/common';
 import { myEnum } from '@/dev-config';
@@ -15,11 +14,14 @@ export let save: MyRequestHandler = async (opt) => {
   if (user.equalsId(data.userId)) {
     throw error('不能关注自己');
   }
-  let detail = await FollowMapper.create({ userId: user._id, followUserId: data.userId });
+  let detail = await FollowMapper.create({
+    userId: user._id,
+    followUserId: data.userId,
+  });
   let { followEachOther } = await FollowMapper.isFollowEach({
     srcStatus: data.status,
     srcUserId: user._id,
-    destUserId: data.userId
+    destUserId: data.userId,
   });
   if (detail.status !== data.status) {
     let self = await UserModel.findById(user._id);
@@ -43,7 +45,10 @@ export let save: MyRequestHandler = async (opt) => {
 export let query: MyRequestHandler = async (opt) => {
   let user = opt.myData.user;
   let data = paramsValid(opt.reqData, ValidSchema.FollowQuery);
-  let { rows, total } = await FollowMapper.query(data, { user, imgHost: opt.myData.imgHost });
+  let { rows, total } = await FollowMapper.query(data, {
+    user,
+    imgHost: opt.myData.imgHost,
+  });
   return {
     rows,
     total,

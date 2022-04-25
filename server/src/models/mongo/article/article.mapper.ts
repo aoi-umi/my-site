@@ -10,16 +10,21 @@ import { LoginUser } from '../../login-user';
 import { UserMapper } from '../user';
 import {
   ContentLogModel,
-  ContentQueryOption, ContentResetOption, ContentMapper, ContentUpdateStatusOutOption
+  ContentQueryOption,
+  ContentResetOption,
+  ContentMapper,
+  ContentUpdateStatusOutOption,
 } from '../content';
 import { ArticleModel, ArticleDocType } from './article';
 import { BaseMapper } from '../_base';
 
-
 export class ArticleMapper {
-  static async query(data: ValidSchema.ArticleQuery, opt: {
-    noTotal?: boolean,
-  } & ContentQueryOption) {
+  static async query(
+    data: ValidSchema.ArticleQuery,
+    opt: {
+      noTotal?: boolean;
+    } & ContentQueryOption,
+  ) {
     function setMatch(match) {
       let userId = opt.userId;
       if (opt.normal) {
@@ -31,10 +36,9 @@ export class ArticleMapper {
           $not: {
             $and: [
               { $ne: ['$userId', userId] },
-              { $eq: ['$status', myEnum.articleStatus.草稿] }
-            ]
-          }
-
+              { $eq: ['$status', myEnum.articleStatus.草稿] },
+            ],
+          },
         };
       } else {
         match.userId = userId;
@@ -48,12 +52,12 @@ export class ArticleMapper {
             { profile: anykey },
             { 'user.nickname': anykey },
             { 'user.account': anykey },
-          ]
+          ],
         };
       });
       if (anyKeyAnd.length) {
         and.push({
-          $and: anyKeyAnd
+          $and: anyKeyAnd,
         });
       }
       if (and.length) {
@@ -66,7 +70,7 @@ export class ArticleMapper {
       setMatch,
       resetDetail: (data) => {
         return this.resetDetail(data, opt.resetOpt);
-      }
+      },
     });
   }
 
@@ -77,15 +81,14 @@ export class ArticleMapper {
         let { rows } = await this.query(data, { ...opt, noTotal: true });
         let detail = rows[0];
         return detail;
-      }
+      },
     });
     return rs;
   }
 
   static async findOne(data) {
     let detail = await ArticleModel.findOne(data);
-    if (!detail)
-      throw error('', config.error.DB_NO_DATA);
+    if (!detail) throw error('', config.error.DB_NO_DATA);
     return detail;
   }
 
@@ -93,7 +96,10 @@ export class ArticleMapper {
     let { user } = opt;
     if (user) {
       let rs = {
-        canDel: detail.canDel && (user.equalsId(detail.userId) || Auth.contains(user, config.auth.articleMgtDel)),
+        canDel:
+          detail.canDel &&
+          (user.equalsId(detail.userId) ||
+            Auth.contains(user, config.auth.articleMgtDel)),
         canUpdate: detail.canUpdate && user.equalsId(detail.userId),
       };
       detail.canDel = rs.canDel;
@@ -111,24 +117,40 @@ export class ArticleMapper {
       contentType: myEnum.contentType.文章,
       passCond: () => toStatus === myEnum.articleStatus.审核通过,
       delCond: (detail) => {
-        return detail.status === myEnum.articleStatus.审核通过
-          && toStatus === myEnum.articleStatus.已删除;
+        return (
+          detail.status === myEnum.articleStatus.审核通过 &&
+          toStatus === myEnum.articleStatus.已删除
+        );
       },
       updateCountInUser: async (changeNum, dbUser, session) => {
-        await dbUser.update({ article: dbUser.article + changeNum }, { session });
-      }
+        await dbUser.update(
+          { article: dbUser.article + changeNum },
+          { session },
+        );
+      },
     });
     return {
       status: toStatus,
-      statusText: myEnum.articleStatus.getKey(toStatus)
+      statusText: myEnum.articleStatus.getKey(toStatus),
     };
   }
 
-  static async mgtSave(data: ValidSchema.ArticleSave, opt: { user: LoginUser }) {
-    let status = data.submit ? myEnum.articleStatus.待审核 : myEnum.articleStatus.草稿;
+  static async mgtSave(
+    data: ValidSchema.ArticleSave,
+    opt: { user: LoginUser },
+  ) {
+    let status = data.submit
+      ? myEnum.articleStatus.待审核
+      : myEnum.articleStatus.草稿;
     let saveKey: (keyof ArticleDocType)[] = [
-      'cover', 'title', 'profile', 'content', 'contentType', 'remark',
-      'setPublish', 'setPublishAt'
+      'cover',
+      'title',
+      'profile',
+      'content',
+      'contentType',
+      'remark',
+      'setPublish',
+      'setPublishAt',
     ];
     let rs = await ContentMapper.mgtSave(data, {
       ...opt,
@@ -139,7 +161,7 @@ export class ArticleMapper {
       getDetail: async () => {
         let detail = await ArticleMapper.findOne({ _id: data._id });
         return detail;
-      }
+      },
     });
     return rs;
   }

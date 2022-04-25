@@ -1,6 +1,13 @@
 import {
-  getModelForClass, ModelType, DocType, InstanceType,
-  setSchema, prop, arrayProp, setPlugin, getSchema
+  getModelForClass,
+  ModelType,
+  DocType,
+  InstanceType,
+  setSchema,
+  prop,
+  arrayProp,
+  setPlugin,
+  getSchema,
 } from 'mongoose-ts-ua';
 import { Types, SchemaTypes } from 'mongoose';
 
@@ -15,26 +22,26 @@ export type OauthDocType = DocType<OauthInstanceType>;
 @setSchema({
   schemaOptions: {
     toJSON: {
-      virtuals: true
+      virtuals: true,
     },
-  }
+  },
 })
 export class Oauth extends Base {
   @prop({
     required: true,
-    enum: myEnum.oauthName.getAllValue()
+    enum: myEnum.oauthName.getAllValue(),
   })
-  name: string
+  name: string;
 
   @prop({
     required: true,
   })
-  id: string
+  id: string;
 
   @prop({
     required: true,
   })
-  userId: Types.ObjectId
+  userId: Types.ObjectId;
 }
 
 let schema = getSchema(Oauth);

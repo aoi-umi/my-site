@@ -1,6 +1,12 @@
 import {
-  getModelForClass, ModelType, DocType, InstanceType,
-  setSchema, prop, arrayProp, getSchema
+  getModelForClass,
+  ModelType,
+  DocType,
+  InstanceType,
+  setSchema,
+  prop,
+  arrayProp,
+  getSchema,
 } from 'mongoose-ts-ua';
 import { Types, SchemaTypes } from 'mongoose';
 
@@ -13,22 +19,24 @@ export type GoodsTypeDocType = DocType<GoodsTypeInstanceType>;
 
 @setSchema({
   schemaOptions: {
-    toJSON: { virtuals: true }
-  }
+    toJSON: { virtuals: true },
+  },
 })
 export class GoodsType extends Base {
-    @prop({
-      required: true,
-    })
-    name: string;
+  @prop({
+    required: true,
+  })
+  name: string;
 
-    @prop({
-      required: true
-    })
-    code: string;
+  @prop({
+    required: true,
+  })
+  code: string;
 
-    @prop()
-    parentCode: string;
+  @prop()
+  parentCode: string;
 }
 
-export const GoodsTypeModel = getModelForClass<GoodsType, typeof GoodsType>(GoodsType);
+export const GoodsTypeModel = getModelForClass<GoodsType, typeof GoodsType>(
+  GoodsType,
+);

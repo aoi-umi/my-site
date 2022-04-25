@@ -29,24 +29,27 @@ type RawFileType = {
   md5: string;
   contentType: string;
   filepath?: string;
-  isDel?: boolean
-}
+  isDel?: boolean;
+};
 
 type UploadOption = {
-  contentType: string,
-  filename: string,
-  user: LoginUser | UserDocType,
-  imgHost?: string,
-}
+  contentType: string;
+  filename: string;
+  user: LoginUser | UserDocType;
+  imgHost?: string;
+};
 export class FileMapper {
-  static getUrl(_id, fileType: string, opt?: {
-    host?: string;
-    isRaw?: boolean;
-  }) {
-    if (!_id)
-      return '';
+  static getUrl(
+    _id,
+    fileType: string,
+    opt?: {
+      host?: string;
+      isRaw?: boolean;
+    },
+  ) {
+    if (!_id) return '';
     opt = {
-      ...opt
+      ...opt,
     };
     let host = opt.host;
     if (host) {
@@ -54,16 +57,18 @@ export class FileMapper {
     }
     let url = Prefix[fileType];
     let params: any = {
-      _id
+      _id,
     };
-    if (opt.isRaw)
-      params.isRaw = true;
-    return !url ? '' :
-      host + url + '?' +
-      Object.entries(params)
-        .filter(o => o[1])
-        .map(o => `${o[0]}=${o[1]}`)
-        .join('&');
+    if (opt.isRaw) params.isRaw = true;
+    return !url
+      ? ''
+      : host +
+          url +
+          '?' +
+          Object.entries(params)
+            .filter((o) => o[1])
+            .map((o) => `${o[0]}=${o[1]}`)
+            .join('&');
   }
 
   static getImgUrl(_id, host?: string) {
@@ -78,7 +83,7 @@ export class FileMapper {
     let rawFileList = await FileModel.rawFind(cond);
     let rawDiskFileList = await FileDiskModel.find(cond);
     let rs: RawFileType[] = [];
-    rawDiskFileList?.forEach(ele => {
+    rawDiskFileList?.forEach((ele) => {
       let filename = this.getDiskFilePath(ele.md5);
       if (fs.existsSync(filename)) {
         let stat = fs.statSync(filename);
@@ -95,7 +100,7 @@ export class FileMapper {
         });
       }
     });
-    rawFileList?.forEach(ele => {
+    rawFileList?.forEach((ele) => {
       rs.push({
         type: myEnum.fileStorgeType.数据库,
         _id: ele._id,
@@ -113,13 +118,15 @@ export class FileMapper {
     let fileList = await FileModel.find(cond);
     let rawFileList: RawFileType[] = [];
     if (fileList.length) {
-      rawFileList = await this.findRaw({ _id: { $in: fileList.map(ele => ele.fileId) } });
+      rawFileList = await this.findRaw({
+        _id: { $in: fileList.map((ele) => ele.fileId) },
+      });
     }
-    return fileList.map(file => {
-      let rawFile = rawFileList.find(raw => raw._id.equals(file.fileId));
+    return fileList.map((file) => {
+      let rawFile = rawFileList.find((raw) => raw._id.equals(file.fileId));
       return {
         file,
-        rawFile
+        rawFile,
       };
     });
   }
@@ -129,49 +136,49 @@ export class FileMapper {
   }
 
   private static async saveFileToDisk(opt: {
-    data: Buffer,
-    filename: string,
-    overwite?: boolean
+    data: Buffer;
+    filename: string;
+    overwite?: boolean;
   }) {
     let filename = this.getDiskFilePath(opt.filename);
     if (!fs.existsSync(filename) || opt.overwite) {
       await common.writeFile([{ data: opt.data }], filename);
     }
     return {
-      fullFilename: filename
+      fullFilename: filename,
     };
   }
 
   private static async saveFileToDiskDefault(opt: {
-    data: Buffer,
-    contentType: string
+    data: Buffer;
+    contentType: string;
   }) {
     let { data, contentType } = opt;
     let md5 = common.md5(data);
     let length = data.length;
     let saveRs = await this.saveFileToDisk({
       filename: md5,
-      data
+      data,
     });
     let fd = await this.findOrCreateDiskFileRow({
       md5,
       filename: md5,
       length,
-      contentType
+      contentType,
     });
     return {
       md5,
       fullFilename: saveRs.fullFilename,
       fileId: fd._id,
-      length
+      length,
     };
   }
 
   static async findOrCreateDiskFileRow(opt: {
-    filename: string
-    contentType: string
-    length: number
-    md5: string
+    filename: string;
+    contentType: string;
+    length: number;
+    md5: string;
   }) {
     let fd = await FileDiskModel.findOne({ md5: opt.md5 });
     if (!fd) {
@@ -182,39 +189,43 @@ export class FileMapper {
     return fd;
   }
 
-  static async upload(opt: {
-    fileType: string,
-    buffer: Buffer,
-  } & UploadOption) {
+  static async upload(
+    opt: {
+      fileType: string;
+      buffer: Buffer;
+    } & UploadOption,
+  ) {
     let fileContentType = opt.contentType.split('/')[0];
     if (
-      (opt.fileType === myEnum.fileType.视频 && fileContentType !== 'video')
-      || opt.fileType === myEnum.fileType.图片 && fileContentType !== 'image'
+      (opt.fileType === myEnum.fileType.视频 && fileContentType !== 'video') ||
+      (opt.fileType === myEnum.fileType.图片 && fileContentType !== 'image')
     )
       throw common.error('错误的文件类型');
 
     let fileObj = await this.saveFileToDiskDefault({
       data: opt.buffer,
-      contentType: opt.contentType
+      contentType: opt.contentType,
     });
 
     let obj = await this.saveByUser({
       ...opt,
       length: fileObj.length,
-      md5: fileObj.md5
+      md5: fileObj.md5,
     });
     return obj;
   }
 
-  static async saveByUser(opt: {
-    fileType: string,
-    md5: string,
-    length: number
-  } & UploadOption) {
+  static async saveByUser(
+    opt: {
+      fileType: string;
+      md5: string;
+      length: number;
+    } & UploadOption,
+  ) {
     let { user, contentType, md5, length } = opt;
     let fs = new FileModel({
       filename: opt.filename,
-      fileType: opt.fileType
+      fileType: opt.fileType,
     });
     if (user) {
       fs.userId = user._id;
@@ -225,7 +236,7 @@ export class FileMapper {
       md5,
       filename: md5,
       length,
-      contentType
+      contentType,
     });
     fs.fileId = fd._id;
     fs.storageDisk = true;
@@ -238,13 +249,16 @@ export class FileMapper {
 
   private static chunksDir = 'chunks';
 
-  static async uploadCheck(opt: {
-    hash: string,
-    fileSize: number,
-    chunkSize: number,
-  } & UploadOption) {
+  static async uploadCheck(
+    opt: {
+      hash: string;
+      fileSize: number;
+      chunkSize: number;
+    } & UploadOption,
+  ) {
     let { chunkSize } = opt;
-    let existsChunks = [], requiredChunks = [];
+    let existsChunks = [],
+      requiredChunks = [];
     let filename = this.getDiskFilePath(opt.hash);
     let exists = fs.existsSync(filename);
     let chunkFileDir = this.getDiskFilePath(this.chunksDir, opt.hash);
@@ -257,15 +271,19 @@ export class FileMapper {
       let allChunks = new Array(Math.ceil(opt.fileSize / chunkSize))
         .fill(0)
         .map((ele, idx) => idx);
-      requiredChunks = allChunks.filter(ele => {
+      requiredChunks = allChunks.filter((ele) => {
         return !existsChunks.includes(ele.toString());
       });
       // 合并文件
       if (!requiredChunks.length) {
         let outFile = this.getDiskFilePath(this.chunksDir, opt.hash, opt.hash);
-        let sources = allChunks.map(inFile => {
+        let sources = allChunks.map((inFile) => {
           return {
-            filePath: this.getDiskFilePath(this.chunksDir, opt.hash, inFile.toString())
+            filePath: this.getDiskFilePath(
+              this.chunksDir,
+              opt.hash,
+              inFile.toString(),
+            ),
           };
         });
         await common.writeFile(sources, outFile);
@@ -283,50 +301,56 @@ export class FileMapper {
       common.delDir(chunkFileDir);
       let stat = fs.statSync(filename);
       let fileContentType = opt.contentType.split('/')[0];
-      let fileType = {
-        'video': myEnum.fileType.视频,
-        'image': myEnum.fileType.图片,
-      }[fileContentType] || '';
+      let fileType =
+        {
+          video: myEnum.fileType.视频,
+          image: myEnum.fileType.图片,
+        }[fileContentType] || '';
       fileObj = await this.saveByUser({
         ...opt,
         md5: opt.hash,
         fileType,
-        length: stat.size
+        length: stat.size,
       });
     }
     return {
       chunkSize,
       requiredChunks,
-      fileObj
+      fileObj,
     };
   }
 
-  static async uploadByChunks(opt: {
-    hash: string,
-    chunkIndex: string,
-    buffer: Buffer,
-  } & UploadOption) {
-    let prefix = '';//'chunk_';
+  static async uploadByChunks(
+    opt: {
+      hash: string;
+      chunkIndex: string;
+      buffer: Buffer;
+    } & UploadOption,
+  ) {
+    let prefix = ''; //'chunk_';
     await this.saveFileToDisk({
       data: opt.buffer,
-      filename: path.join(this.chunksDir, opt.hash, prefix, opt.chunkIndex)
+      filename: path.join(this.chunksDir, opt.hash, prefix, opt.chunkIndex),
     });
   }
 
   /**
   目前有两种存储方式，一种存在数据库，一种存在disk
   */
-  static async download(data: ValidSchema.FileGet, opt: {
-    fileType?: string
-    range?: {
-      start: number
-      end: number
+  static async download(
+    data: ValidSchema.FileGet,
+    opt: {
+      fileType?: string;
+      range?: {
+        start: number;
+        end: number;
+      };
+      ifModifiedSince?: string;
+      mgt?: boolean;
     },
-    ifModifiedSince?: string
-    mgt?: boolean
-  }) {
+  ) {
     let rawFile: RawFileType;
-    let range: { start: number, end: number };
+    let range: { start: number; end: number };
     let { ifModifiedSince } = opt;
 
     let rawId;
@@ -335,7 +359,10 @@ export class FileMapper {
     if (data.isRaw) {
       rawId = data._id;
     } else {
-      let fileModel = await FileModel.findOne({ _id: data._id, fileType: opt.fileType });
+      let fileModel = await FileModel.findOne({
+        _id: data._id,
+        fileType: opt.fileType,
+      });
       if (fileModel) {
         rawId = fileModel.fileId;
         filename = fileModel.filename;
@@ -355,11 +382,11 @@ export class FileMapper {
       if (opt.range) {
         range = {
           start: opt.range.start,
-          end: opt.range.end || (length - 1)
+          end: opt.range.end || length - 1,
         };
         streamOpt = {
           start: range.start,
-          end: range.end + 1
+          end: range.end + 1,
         };
       }
     };
@@ -373,17 +400,18 @@ export class FileMapper {
       } else if (ifModifiedSince) {
         downloadOpt.ifModifiedSince = ifModifiedSince;
       }
-      let rs = await new FileModel({ fileId: rawFile._id }).download(downloadOpt);
+      let rs = await new FileModel({ fileId: rawFile._id }).download(
+        downloadOpt,
+      );
       stream = rs.stream;
       noModified = rs.noModified;
     } else if (rawFile.type === myEnum.fileStorgeType.硬盘) {
-      let {
-        modifiedDate,
-        filepath: filename
-      } = rawFile;
+      let { modifiedDate, filepath: filename } = rawFile;
       setRange();
-      noModified = ifModifiedSince
-        && parseInt(new Date(ifModifiedSince).getTime() / 1000 as any) == parseInt(modifiedDate.getTime() / 1000 as any);
+      noModified =
+        ifModifiedSince &&
+        parseInt((new Date(ifModifiedSince).getTime() / 1000) as any) ==
+          parseInt((modifiedDate.getTime() / 1000) as any);
 
       let rsOpt: any = {};
       if (streamOpt) {
@@ -400,55 +428,57 @@ export class FileMapper {
       stream,
       range,
       noModified,
-      filename
+      filename,
     };
   }
 
-  static async query(data: ValidSchema.ListBase & { fileType?: string },
-    opt: { user: LoginUser, host?: string; mgt?: boolean }
+  static async query(
+    data: ValidSchema.ListBase & { fileType?: string },
+    opt: { user: LoginUser; host?: string; mgt?: boolean },
   ) {
     let { user } = opt;
     let cond: any = {};
     if (!opt.mgt) {
       cond = {
         userId: user._id,
-        isUserDel: { $ne: true }
+        isUserDel: { $ne: true },
       };
     }
-    if (data.fileType)
-      cond.fileType = data.fileType;
-    let pipeline = [
-      ...UserMapper.lookupPipeline(),
-      { $match: cond }
-    ];
+    if (data.fileType) cond.fileType = data.fileType;
+    let pipeline = [...UserMapper.lookupPipeline(), { $match: cond }];
     let rs = await FileModel.aggregatePaginate(pipeline, {
       ...BaseMapper.getListOptions(data),
     });
-    let rows = rs.rows.map(ele => {
+    let rows = rs.rows.map((ele) => {
       let obj = ele as typeof ele & { url?: string };
       obj.url = this.getUrl(ele._id, ele.fileType, { host: opt.host });
       return obj;
     });
     return {
       ...rs,
-      rows
+      rows,
     };
   }
 
-  static async diskFileQuery(data: ValidSchema.FileList, opt: { host?: string }) {
+  static async diskFileQuery(
+    data: ValidSchema.FileList,
+    opt: { host?: string },
+  ) {
     let cond: any = {};
-    ['md5'].forEach(key => {
+    ['md5'].forEach((key) => {
       if (data[key])
         cond[key] = new RegExp(common.escapeRegExp(data[key]), 'i');
     });
-    let pipeline = [{
-      $match: cond
-    }];
+    let pipeline = [
+      {
+        $match: cond,
+      },
+    ];
     let rs = await FileDiskModel.aggregatePaginate(pipeline, {
       ...BaseMapper.getListOptions(data),
     });
-    let rows = rs.rows.map(ele => {
-      let obj = ele as typeof ele & { url?: string, fileType?: string };
+    let rows = rs.rows.map((ele) => {
+      let obj = ele as typeof ele & { url?: string; fileType?: string };
       let fileType = ele.contentType?.split('/')[0];
       obj.fileType = fileType;
       obj.url = this.getUrl(ele._id, myEnum.fileType.RAW, { host: opt.host });
@@ -456,13 +486,19 @@ export class FileMapper {
     });
     return {
       ...rs,
-      rows
+      rows,
     };
   }
 
-  static async diskFileOperate(data: ValidSchema.OperateBase, opt: { operate: string }) {
-    await FileDiskModel.updateMany({ _id: data.idList }, {
-      isDel: opt.operate === myEnum.fileOperate.删除 ? true : false
-    });
+  static async diskFileOperate(
+    data: ValidSchema.OperateBase,
+    opt: { operate: string },
+  ) {
+    await FileDiskModel.updateMany(
+      { _id: data.idList },
+      {
+        isDel: opt.operate === myEnum.fileOperate.删除 ? true : false,
+      },
+    );
   }
 }

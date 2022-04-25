@@ -13,8 +13,8 @@ const accessToken = async (reqData: { code: string }) => {
     params: {
       code: reqData.code,
       client_id: env.github.clientId,
-      client_secret: env.github.clientSecret
-    }
+      client_secret: env.github.clientSecret,
+    },
   });
   return rs.data as {
     access_token: string;
@@ -29,7 +29,7 @@ const getUser = async (reqData: AuthRes) => {
     method: 'GET',
     headers: {
       Authorization: `${reqData.token_type} ${reqData.access_token}`,
-    }
+    },
   });
   return rs.data as {
     login: string;
@@ -43,5 +43,5 @@ export const githubInst = {
     let tokenRs = await accessToken(reqData);
     let user = await getUser(tokenRs);
     return user;
-  }
+  },
 };

@@ -1,6 +1,12 @@
 import {
-  getModelForClass, ModelType, DocType, InstanceType,
-  setSchema, prop, arrayProp, setPlugin
+  getModelForClass,
+  ModelType,
+  DocType,
+  InstanceType,
+  setSchema,
+  prop,
+  arrayProp,
+  setPlugin,
 } from 'mongoose-ts-ua';
 import { Types, SchemaTypes } from 'mongoose';
 
@@ -13,34 +19,36 @@ export type CompDocType = DocType<CompInstanceType>;
 @setSchema({
   schemaOptions: {
     toJSON: {
-      virtuals: true
-    }
-  }
+      virtuals: true,
+    },
+  },
 })
 @setPlugin(pagination)
 export class Comp extends Base {
-    @prop({
-      type: SchemaTypes.ObjectId,
-    })
-    userId: Types.ObjectId;
-    
-    @prop({
-      required: true,
-      trim: true,
-      index: {
-        unique: true
-      }
-    })
-    name: string;
-    
-    @prop({
-      trim: true, 
-    })
-    text: string;
-    
-    @prop()
-    icon: string;
+  @prop({
+    type: SchemaTypes.ObjectId,
+  })
+  userId: Types.ObjectId;
+
+  @prop({
+    required: true,
+    trim: true,
+    index: {
+      unique: true,
+    },
+  })
+  name: string;
+
+  @prop({
+    trim: true,
+  })
+  text: string;
+
+  @prop()
+  icon: string;
 }
 
-export const CompModel = getModelForClass<Comp, typeof Comp & IPagination<Comp>>(Comp);
-
+export const CompModel = getModelForClass<
+  Comp,
+  typeof Comp & IPagination<Comp>
+>(Comp);

@@ -1,10 +1,13 @@
 import 'reflect-metadata';
-import { ValidationTypes, ValidationError, validateSync } from 'class-validator';
+import {
+  ValidationTypes,
+  ValidationError,
+  validateSync,
+} from 'class-validator';
 
 function getError(e: ValidationError, parent?: string) {
   let property = e.property;
-  if (parent)
-    property = parent + '.' + property;
+  if (parent) property = parent + '.' + property;
   let l = [];
   // console.log(e);
   if (e.constraints) {
@@ -13,7 +16,7 @@ function getError(e: ValidationError, parent?: string) {
     }
   }
   if (e.children.length) {
-    e.children.forEach(ele => {
+    e.children.forEach((ele) => {
       l = [...l, ...getError(ele, property)];
     });
   }
@@ -23,7 +26,7 @@ function getError(e: ValidationError, parent?: string) {
 export function valid(data) {
   let errors = validateSync(data, { skipMissingProperties: true });
   // console.log(errors)
-  let msg = errors.map(e => {
+  let msg = errors.map((e) => {
     let l = getError(e);
     return `${l.join(';')}`;
   });

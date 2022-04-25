@@ -1,4 +1,10 @@
-import { IsArray, IsDefined, ArrayMinSize, MinLength, IsIn } from 'class-validator';
+import {
+  IsArray,
+  IsDefined,
+  ArrayMinSize,
+  MinLength,
+  IsIn,
+} from 'class-validator';
 import { Types } from 'mongoose';
 import { Type, Transform } from 'class-transformer';
 
@@ -7,21 +13,21 @@ import { myEnum } from '@/dev-config';
 import { arrayTransform, objectIdTransform } from '../util';
 
 export class DanmakuQuery {
-    @IsDefined()
-    @Transform(objectIdTransform)
-    videoId: Types.ObjectId;
+  @IsDefined()
+  @Transform(objectIdTransform)
+  videoId: Types.ObjectId;
 }
 
 export class DanmakuSubmit {
-    @IsDefined()
-    @Transform(objectIdTransform)
-    videoId: Types.ObjectId;
+  @IsDefined()
+  @Transform(objectIdTransform)
+  videoId: Types.ObjectId;
 
-    @IsDefined()
-    msg: string;
+  @IsDefined()
+  msg: string;
 
-    type: number;
+  type: number;
 
-    @IsDefined()
-    pos: number;
+  @IsDefined()
+  pos: number;
 }

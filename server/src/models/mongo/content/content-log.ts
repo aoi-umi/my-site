@@ -1,6 +1,13 @@
 import {
-  getModelForClass, ModelType, DocType, InstanceType,
-  setSchema, prop, arrayProp, setMethod, setPlugin
+  getModelForClass,
+  ModelType,
+  DocType,
+  InstanceType,
+  setSchema,
+  prop,
+  arrayProp,
+  setMethod,
+  setPlugin,
 } from 'mongoose-ts-ua';
 import { Types, SchemaTypes } from 'mongoose';
 
@@ -15,67 +22,67 @@ export type ContentLogDocType = DocType<ContentLogInstanceType>;
 @setSchema({
   schemaOptions: {
     toJSON: {
-      virtuals: true
-    }
-  }
+      virtuals: true,
+    },
+  },
 })
 @setPlugin(pagination)
 export class ContentLog extends Base {
-    @prop({
-      type: SchemaTypes.ObjectId,
-      required: true,
-    })
-    userId: Types.ObjectId;
+  @prop({
+    type: SchemaTypes.ObjectId,
+    required: true,
+  })
+  userId: Types.ObjectId;
 
-    @prop()
-    logUser: string;
+  @prop()
+  logUser: string;
 
-    @prop({
-      required: true,
-      enum: myEnum.contentType.getAllValue(),
-    })
-    contentType: string;
+  @prop({
+    required: true,
+    enum: myEnum.contentType.getAllValue(),
+  })
+  contentType: string;
 
-    @prop({
-      type: SchemaTypes.ObjectId,
-      required: true,
-    })
-    contentId: Types.ObjectId;
+  @prop({
+    type: SchemaTypes.ObjectId,
+    required: true,
+  })
+  contentId: Types.ObjectId;
 
-    @prop({
-      required: true,
-    })
-    srcStatus: number;
+  @prop({
+    required: true,
+  })
+  srcStatus: number;
 
-    @prop({
-      required: true,
-    })
-    destStatus: number;
+  @prop({
+    required: true,
+  })
+  destStatus: number;
 
-    @setMethod
-    getStatusText(status) {
-      let map = {
-        [myEnum.contentType.文章]: myEnum.articleStatus,
-        [myEnum.contentType.视频]: myEnum.videoStatus,
-      };
-      return map[this.contentType].getKey(status);
-    }
+  @setMethod
+  getStatusText(status) {
+    let map = {
+      [myEnum.contentType.文章]: myEnum.articleStatus,
+      [myEnum.contentType.视频]: myEnum.videoStatus,
+    };
+    return map[this.contentType].getKey(status);
+  }
 
-    @prop()
-    get srcStatusText() {
-      return this.getStatusText(this.srcStatus);
-    }
+  @prop()
+  get srcStatusText() {
+    return this.getStatusText(this.srcStatus);
+  }
 
-    @prop()
-    get destStatusText() {
-      return this.getStatusText(this.destStatus);
-    }
+  @prop()
+  get destStatusText() {
+    return this.getStatusText(this.destStatus);
+  }
 
-    @prop()
-    remark: string;
+  @prop()
+  remark: string;
 }
 
-export const ContentLogModel = getModelForClass<ContentLog, typeof ContentLog & IPagination<ContentLog>>(ContentLog);
-
-
-
+export const ContentLogModel = getModelForClass<
+  ContentLog,
+  typeof ContentLog & IPagination<ContentLog>
+>(ContentLog);

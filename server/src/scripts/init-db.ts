@@ -1,4 +1,3 @@
-
 import 'reflect-metadata';
 import '../moduleAlias';
 
@@ -22,12 +21,15 @@ async function initAuthority() {
     });
   }
 
-  let codeList = list.map(ele => ele.code);
-  let exists = await AuthorityModel.find({ code: { $in: codeList } }, { code: 1 });
-  let existsCode = exists.map(ele => ele.code);
-  let notExists = list.filter(ele => !existsCode.includes(ele.code));
+  let codeList = list.map((ele) => ele.code);
+  let exists = await AuthorityModel.find(
+    { code: { $in: codeList } },
+    { code: 1 },
+  );
+  let existsCode = exists.map((ele) => ele.code);
+  let notExists = list.filter((ele) => !existsCode.includes(ele.code));
   if (notExists.length) {
-    console.log(`插入权限: ${notExists.map(ele => ele.code).join(',')}`);
+    console.log(`插入权限: ${notExists.map((ele) => ele.code).join(',')}`);
     await AuthorityModel.create(notExists);
   }
 }
@@ -36,8 +38,8 @@ async function initRole() {
   let { RoleModel } = await import('@/models/mongo/role');
   let role = {
     root: {
-      name: '系统管理员'
-    }
+      name: '系统管理员',
+    },
   };
 
   let list: RoleDocType[] = [];
@@ -51,12 +53,12 @@ async function initRole() {
     });
   }
 
-  let codeList = list.map(ele => ele.code);
+  let codeList = list.map((ele) => ele.code);
   let exists = await RoleModel.find({ code: { $in: codeList } }, { code: 1 });
-  let existsCode = exists.map(ele => ele.code);
-  let notExists = list.filter(ele => !existsCode.includes(ele.code));
+  let existsCode = exists.map((ele) => ele.code);
+  let notExists = list.filter((ele) => !existsCode.includes(ele.code));
   if (notExists.length) {
-    console.log(`插入角色: ${notExists.map(ele => ele.code).join(',')}`);
+    console.log(`插入角色: ${notExists.map((ele) => ele.code).join(',')}`);
     await RoleModel.create(notExists);
   }
 }
@@ -67,11 +69,12 @@ async function initRole() {
   await initAuthority();
   await initRole();
   console.log('运行结束');
-})().catch(e => {
-  console.log(e);
-}).finally(async () => {
-  await db.close();
-  console.log('db close');
-  process.exit(0);
-});
-
+})()
+  .catch((e) => {
+    console.log(e);
+  })
+  .finally(async () => {
+    await db.close();
+    console.log('db close');
+    process.exit(0);
+  });

@@ -30,17 +30,23 @@ export let initSocket = function (server: Server, cache: Cache) {
     });
 
     socket.on(myEnum.socket.授权, (msg) => {
-      cache.setByCfg({
-        ...config.dev.cache.wxAuth,
-        key: msg.token
-      }, sessionId);
+      cache.setByCfg(
+        {
+          ...config.dev.cache.wxAuth,
+          key: msg.token,
+        },
+        sessionId,
+      );
     });
 
     socket.on(myEnum.socket.支付, (msg) => {
-      cache.setByCfg({
-        ...config.dev.cache.pay,
-        key: msg.orderNo
-      }, sessionId);
+      cache.setByCfg(
+        {
+          ...config.dev.cache.pay,
+          key: msg.orderNo,
+        },
+        sessionId,
+      );
     });
 
     socket.on('disconnect', function () {

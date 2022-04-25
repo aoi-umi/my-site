@@ -28,7 +28,7 @@ export default {
     oauthSignIn: {
       prefix: 'oauthSignIn',
       time: 60 * 10,
-    }
+    },
   },
   //自动重新登录时间 秒
   autoLoginTime: 3600 * 2,
@@ -53,5 +53,5 @@ export default {
       delay: 1000 * 60 * 16,
     },
   },
-  maxViewHistoryCount: 100
+  maxViewHistoryCount: 100,
 };

@@ -1,6 +1,12 @@
 import {
-  getModelForClass, ModelType, DocType, InstanceType,
-  setSchema, prop, arrayProp, setPlugin
+  getModelForClass,
+  ModelType,
+  DocType,
+  InstanceType,
+  setSchema,
+  prop,
+  arrayProp,
+  setPlugin,
 } from 'mongoose-ts-ua';
 
 import { Base } from '../_base';
@@ -10,21 +16,23 @@ export type BookmarkInstanceType = InstanceType<Bookmark>;
 export type BookmarkModelType = ModelType<Bookmark, typeof Bookmark>;
 export type BookmarkDocType = DocType<BookmarkInstanceType>;
 @setSchema({
-  schemaOptions: {}
+  schemaOptions: {},
 })
 @setPlugin(pagination)
 export class Bookmark extends Base {
-    @prop()
-    name: string;
+  @prop()
+  name: string;
 
-    @prop()
-    url: string;
+  @prop()
+  url: string;
 
-    @arrayProp({
-      type: String
-    })
-    tagList: string[];
+  @arrayProp({
+    type: String,
+  })
+  tagList: string[];
 }
 
-export const BookmarkModel = getModelForClass<Bookmark, typeof Bookmark & IPagination<Bookmark>>(Bookmark);
-
+export const BookmarkModel = getModelForClass<
+  Bookmark,
+  typeof Bookmark & IPagination<Bookmark>
+>(Bookmark);

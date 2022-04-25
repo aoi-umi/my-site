@@ -1,4 +1,10 @@
-import { IsArray, IsDefined, ArrayMinSize, MinLength, IsIn } from 'class-validator';
+import {
+  IsArray,
+  IsDefined,
+  ArrayMinSize,
+  MinLength,
+  IsIn,
+} from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 import { ListBase, DelBase, DetailQueryBase } from '../base';
 import { objectIdTransform } from '../util';
@@ -12,7 +18,6 @@ export class UserAccountExists {
   @IsIn(myEnum.userBy.getAllValue())
   by?: string;
 }
-
 
 export class UserSignUp {
   @IsDefined()
@@ -29,7 +34,7 @@ export class UserSignUp {
 
   byVal?: string;
 
-  oauthToken?: string
+  oauthToken?: string;
 }
 
 export class UserSignIn {
@@ -53,12 +58,8 @@ export class UserOauth {
   @IsDefined()
   code: string;
 }
-export class UserOauthSignIn extends UserOauth {
-
-}
-export class UserOauthBind extends UserOauth {
-
-}
+export class UserOauthSignIn extends UserOauth {}
+export class UserOauthBind extends UserOauth {}
 
 export class UserUpdate {
   newPassword: string;
@@ -91,8 +92,7 @@ export class UserBind {
   val: string;
 }
 
-export class UserDetailQuery extends DetailQueryBase {
-}
+export class UserDetailQuery extends DetailQueryBase {}
 
 export class UserMgtQuery extends ListBase {
   @Transform(objectIdTransform)

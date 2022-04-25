@@ -4,7 +4,12 @@ export type DecorateIfHandler = (value: any, data: any) => boolean;
 
 export const DECORATE_IF = 'decorateIf';
 
-export function decorateIf(value: unknown, data: any, condition: DecorateIfHandler, decorate: DecorateIfHandler): boolean {
+export function decorateIf(
+  value: unknown,
+  data: any,
+  condition: DecorateIfHandler,
+  decorate: DecorateIfHandler,
+): boolean {
   const shouldDecorate = condition(value, data);
   console.log(value, data, shouldDecorate);
 
@@ -23,9 +28,17 @@ export function DecorateIf(
       validator: {
         validate: (value, args) => {
           console.log(value, args);
-          return decorateIf(value, args.object, args.constraints[0], args.constraints[1]);
+          return decorateIf(
+            value,
+            args.object,
+            args.constraints[0],
+            args.constraints[1],
+          );
         },
-        defaultMessage: buildMessage(eachPrefix => eachPrefix + '$property is invalid', validationOptions),
+        defaultMessage: buildMessage(
+          (eachPrefix) => eachPrefix + '$property is invalid',
+          validationOptions,
+        ),
       },
     },
     validationOptions,

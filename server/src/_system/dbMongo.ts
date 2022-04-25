@@ -1,9 +1,7 @@
 import * as Q from 'q';
 import * as mongoose from 'mongoose';
 import { Model, Types, ConnectionOptions } from 'mongoose';
-import {
-  config as mongooseTsConfig
-} from 'mongoose-ts-ua';
+import { config as mongooseTsConfig } from 'mongoose-ts-ua';
 import * as mongodb from 'mongodb';
 import { ClientSession, CommonOptions } from 'mongodb';
 import * as common from './common';
@@ -14,43 +12,62 @@ declare module 'mongoose' {
 
   //补充
   interface Document {
-    remove(opt?: CommonOptions, fn?: (err: any, product: this) => void): Promise<this>;
+    remove(
+      opt?: CommonOptions,
+      fn?: (err: any, product: this) => void,
+    ): Promise<this>;
   }
   interface Model<T extends Document, QueryHelpers = {}> {
-    deleteMany(conditions: any, opt?: CommonOptions, callback?: (err: any) => void): Query<mongodb.WriteOpResult['result']> & QueryHelpers;
+    deleteMany(
+      conditions: any,
+      opt?: CommonOptions,
+      callback?: (err: any) => void,
+    ): Query<mongodb.WriteOpResult['result']> & QueryHelpers;
 
-    findByIdAndDelete(id: any, options?: CommonOptions & {
-      /** if multiple docs are found by the conditions, sets the sort order to choose which doc to update */
-      sort?: any;
-      /** sets the document fields to return */
-      select?: any;
-    }): DocumentQuery<T | null, T> & QueryHelpers;
+    findByIdAndDelete(
+      id: any,
+      options?: CommonOptions & {
+        /** if multiple docs are found by the conditions, sets the sort order to choose which doc to update */
+        sort?: any;
+        /** sets the document fields to return */
+        select?: any;
+      },
+    ): DocumentQuery<T | null, T> & QueryHelpers;
 
-    findOneAndRemove(conditions: any, options: CommonOptions & {
-      /**
-       * if multiple docs are found by the conditions, sets the sort order to choose
-       * which doc to update
-       */
-      sort?: any;
-      /** puts a time limit on the query - requires mongodb >= 2.6.0 */
-      maxTimeMS?: number;
-      /** sets the document fields to return */
-      select?: any;
-    }): DocumentQuery<T | null, T> & QueryHelpers;
+    findOneAndRemove(
+      conditions: any,
+      options: CommonOptions & {
+        /**
+         * if multiple docs are found by the conditions, sets the sort order to choose
+         * which doc to update
+         */
+        sort?: any;
+        /** puts a time limit on the query - requires mongodb >= 2.6.0 */
+        maxTimeMS?: number;
+        /** sets the document fields to return */
+        select?: any;
+      },
+    ): DocumentQuery<T | null, T> & QueryHelpers;
 
-    bulkWrite(writes: any[], options?: CommonOptions): Promise<mongodb.BulkWriteOpResultObject>;
+    bulkWrite(
+      writes: any[],
+      options?: CommonOptions,
+    ): Promise<mongodb.BulkWriteOpResultObject>;
   }
 }
 
-export async function transaction(fn: (session: ClientSession) => any, conn?: mongoose.Connection) {
+export async function transaction(
+  fn: (session: ClientSession) => any,
+  conn?: mongoose.Connection,
+) {
   const session = await (conn || mongoose.connection).startSession();
   session.startTransaction({
     readConcern: {
-      level: 'snapshot'
+      level: 'snapshot',
     },
     writeConcern: {
-      w: 'majority'
-    }
+      w: 'majority',
+    },
   });
   let result;
   try {
@@ -70,8 +87,7 @@ function createCollection(model) {
   (async () => {
     let collectionName = model.collection.collectionName;
     //防止重复处理
-    if (coll[collectionName])
-      return;
+    if (coll[collectionName]) return;
     coll[collectionName] = true;
     let listCol = model.collection.conn.db.listCollections({
       name: collectionName,
@@ -80,12 +96,12 @@ function createCollection(model) {
     if (!t.length) {
       let x = await model.collection.conn.createCollection(collectionName);
     }
-  })().catch(e => {
+  })().catch((e) => {
     console.log(e);
   });
 }
-(mongoose.model as any) = function () {
-  let model: Model<any> = orgModel.apply(mongoose, arguments);
+(mongoose.model as any) = function (...args) {
+  let model: Model<any> = orgModel.apply(mongoose, args);
   createCollection(model);
   return model;
 };
@@ -98,14 +114,16 @@ function createCollection(model) {
 // });
 export type MongoOpt = {
   uri: string;
-  options?: ConnectionOptions
-}
+  options?: ConnectionOptions;
+};
 export async function init(mongoOpt: MongoOpt) {
   mongooseTsConfig.schemaOptions = {
-    timestamps: true, versionKey: false, id: false,
+    timestamps: true,
+    versionKey: false,
+    id: false,
     toJSON: {
-      virtuals: true
-    }
+      virtuals: true,
+    },
   };
   mongooseTsConfig.toCollectionName = common.stringToLowerCaseWithUnderscore;
   await mongoose.connect(mongoOpt.uri, mongoOpt.options);
@@ -114,4 +132,3 @@ export async function init(mongoOpt: MongoOpt) {
 export async function close() {
   await mongoose.disconnect();
 }
-

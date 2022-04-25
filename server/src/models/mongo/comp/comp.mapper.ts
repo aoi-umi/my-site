@@ -5,32 +5,35 @@ import { transaction } from '@/_system/dbMongo';
 import * as config from '@/dev-config';
 import { BaseMapper } from '../_base';
 
-import { CompInstanceType, CompModel, } from './comp';
-import { CompItemInstanceType, CompItemModel, } from './comp-item';
+import { CompInstanceType, CompModel } from './comp';
+import { CompItemInstanceType, CompItemModel } from './comp-item';
 import { CompModuleModel } from './comp-module';
 import { CompButtonModel } from './comp-button';
 
 type DetailQueryOptType = {
-  user: LoginUser,
-  preview?: boolean
-}
+  user: LoginUser;
+  preview?: boolean;
+};
 export class CompMapper {
-  static async query(data, opt: {
-    user: LoginUser
-  }) {
-    let query: any = {}, $and = [];
+  static async query(
+    data,
+    opt: {
+      user: LoginUser;
+    },
+  ) {
+    let query: any = {},
+      $and = [];
 
     query = BaseMapper.getLikeCond(data, ['name', 'text']);
-    
-    let $or = [{ userId: null }, ];
+
+    let $or = [{ userId: null }];
     if (opt.user.isLogin) {
       $or.push({ userId: opt.user._id });
     }
     $and.push({
-      $or
+      $or,
     });
-    if ($and.length)
-      query.$and = $and;
+    if ($and.length) query.$and = $and;
     let rs = await CompModel.findAndCountAll({
       ...BaseMapper.getListOptions(data),
       conditions: query,
@@ -42,7 +45,7 @@ export class CompMapper {
   static async mgtDetailQuery(data, opt: DetailQueryOptType) {
     let main = await this.findDetail(data, opt);
     let moduleList = await CompModuleModel.find({ compId: main._id }).sort({
-      sort: 1
+      sort: 1,
     });
     return {
       main,
@@ -52,19 +55,30 @@ export class CompMapper {
 
   static async detailQuery(data, opt: DetailQueryOptType) {
     let main = await this.findDetail(data, opt);
-    let moduleList = await CompModuleModel.find({ compId: main._id, disabled: { $ne: true } }).sort({
-      sort: 1
+    let moduleList = await CompModuleModel.find({
+      compId: main._id,
+      disabled: { $ne: true },
+    }).sort({
+      sort: 1,
     });
-    let itemList = await CompItemModel.find({ compId: main._id, disabled: { $ne: true } }).sort({
-      sort: 1
+    let itemList = await CompItemModel.find({
+      compId: main._id,
+      disabled: { $ne: true },
+    }).sort({
+      sort: 1,
     });
-    let buttonList = await CompButtonModel.find({ compId: main._id, disabled: { $ne: true } }).sort({
-      sort: 1
+    let buttonList = await CompButtonModel.find({
+      compId: main._id,
+      disabled: { $ne: true },
+    }).sort({
+      sort: 1,
     });
-    let moduleListDoc = moduleList.map(ele => {
+    let moduleListDoc = moduleList.map((ele) => {
       let json = ele.toJSON();
-      json.itemList = itemList.filter(cfg => cfg.moduleId.equals(ele._id));
-      json.buttonList = buttonList.filter(cfg => cfg.moduleId.equals(ele._id));
+      json.itemList = itemList.filter((cfg) => cfg.moduleId.equals(ele._id));
+      json.buttonList = buttonList.filter((cfg) =>
+        cfg.moduleId.equals(ele._id),
+      );
       return json;
     });
     return {
@@ -73,17 +87,16 @@ export class CompMapper {
     };
   }
 
-  private static async findDetail(data: { _id?: any, name?: any }, opt: DetailQueryOptType) {
+  private static async findDetail(
+    data: { _id?: any; name?: any },
+    opt: DetailQueryOptType,
+  ) {
     let cond: any = {};
-    if (data._id)
-      cond._id = data._id;
-    else if (data.name)
-      cond.name = data.name;
-    else
-      throw new Error('缺少参数');
+    if (data._id) cond._id = data._id;
+    else if (data.name) cond.name = data.name;
+    else throw new Error('缺少参数');
     let detail = await CompModel.findOne(cond);
-    if (!detail)
-      throw error('', config.error.DB_NO_DATA);
+    if (!detail) throw error('', config.error.DB_NO_DATA);
     let checkPer = !opt.preview;
     if (checkPer) {
       if (detail.userId && !opt.user.equalsId(detail.userId))
@@ -92,26 +105,26 @@ export class CompMapper {
     return detail;
   }
 
-  static async save(data: any, opt: {
-    user: LoginUser
-  }) {
+  static async save(
+    data: any,
+    opt: {
+      user: LoginUser;
+    },
+  ) {
     let detail: CompInstanceType;
     let existsCond: any = { name: data.name };
-    if (data._id)
-      existsCond._id = { $ne: data._id };
+    if (data._id) existsCond._id = { $ne: data._id };
     let exists = await CompModel.findOne(existsCond);
-    if (exists)
-      throw new Error(`[${data.name}]已存在`);
+    if (exists) throw new Error(`[${data.name}]已存在`);
     if (!data._id) {
       delete data._id;
-      if (opt.user.isLogin)
-        data.userId = opt.user._id;
+      if (opt.user.isLogin) data.userId = opt.user._id;
       detail = new CompModel(data);
       await detail.save();
     } else {
       detail = await this.findDetail(data, opt);
       let update: any = {};
-      ['name', 'text'].forEach(key => {
+      ['name', 'text'].forEach((key) => {
         update[key] = data[key];
       });
       await detail.update(update);
@@ -119,47 +132,61 @@ export class CompMapper {
     return detail;
   }
 
-  static async moduleSave(data: { compId: any, moduleList: any[] }, opt: {
-    user: LoginUser
-  }) {
+  static async moduleSave(
+    data: { compId: any; moduleList: any[] },
+    opt: {
+      user: LoginUser;
+    },
+  ) {
     let detail = await this.findDetail({ _id: data.compId }, opt);
     let delModule = {
-      $nin: []
+      $nin: [],
     };
     data.moduleList.forEach((ele, idx) => {
       ele.compId = detail._id;
       ele.sort = idx;
-      if (ele._id)
-        delModule.$nin.push(ele._id);
+      if (ele._id) delModule.$nin.push(ele._id);
     });
     let moduleList;
     await transaction(async (session) => {
       await CompModuleModel.deleteMany({ compId: detail._id }, { session });
-      await CompItemModel.deleteMany({ compId: detail._id, moduleId: delModule }, { session });
-      await CompButtonModel.deleteMany({ compId: detail._id, moduleId: delModule }, { session });
+      await CompItemModel.deleteMany(
+        { compId: detail._id, moduleId: delModule },
+        { session },
+      );
+      await CompButtonModel.deleteMany(
+        { compId: detail._id, moduleId: delModule },
+        { session },
+      );
       moduleList = await CompModuleModel.create(data.moduleList, { session });
     });
     return { moduleList };
   }
 
-  static async configQuery(data: any, opt: {
-    user: LoginUser
-  }) {
+  static async configQuery(
+    data: any,
+    opt: {
+      user: LoginUser;
+    },
+  ) {
     let itemList = await CompItemModel.find(data).sort({
-      sort: 1
+      sort: 1,
     });
     let buttonList = await CompButtonModel.find(data).sort({
-      sort: 1
+      sort: 1,
     });
     return {
       itemList,
-      buttonList
+      buttonList,
     };
   }
 
-  static async configSave(data: any, opt: {
-    user: LoginUser
-  }) {
+  static async configSave(
+    data: any,
+    opt: {
+      user: LoginUser;
+    },
+  ) {
     let detail = await this.findDetail({ _id: data.compId }, opt);
 
     data.itemList.forEach((ele, idx) => {
@@ -174,28 +201,35 @@ export class CompMapper {
     });
     let itemList, buttonList;
     await transaction(async (session) => {
-      await CompItemModel.deleteMany({ compId: detail._id, moduleId: data.moduleId }, { session });
-      await CompButtonModel.deleteMany({ compId: detail._id, moduleId: data.moduleId }, { session });
+      await CompItemModel.deleteMany(
+        { compId: detail._id, moduleId: data.moduleId },
+        { session },
+      );
+      await CompButtonModel.deleteMany(
+        { compId: detail._id, moduleId: data.moduleId },
+        { session },
+      );
 
       itemList = await CompItemModel.create(data.itemList, { session });
       buttonList = await CompButtonModel.create(data.buttonList, { session });
-      if (!itemList)
-        itemList = [];
-      if (!buttonList)
-        buttonList = [];
+      if (!itemList) itemList = [];
+      if (!buttonList) buttonList = [];
     });
     return { itemList, buttonList };
   }
 
-  static async del(data, opt: {
-    user: LoginUser
-  }) {
+  static async del(
+    data,
+    opt: {
+      user: LoginUser;
+    },
+  ) {
     let $or = [{ userId: null }];
     if (opt.user.isLogin) {
       $or.push({ userId: opt.user._id });
     }
     let comp = await CompModel.find({ $and: [{ _id: data._id }, { $or }] });
-    let id = comp.map(ele => ele._id);
+    let id = comp.map((ele) => ele._id);
     if (!id.length) return;
     await transaction(async (session) => {
       await CompModel.deleteMany({ _id: id }, { session });

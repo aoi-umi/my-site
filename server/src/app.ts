@@ -23,23 +23,27 @@ if (config.env.monitorEnable && config.env.isDev) {
 const app = new Koa();
 
 app.use(logger('dev'));
-app.use(xmlParser({
-  xmlOptions: {
-    explicitArray: false
-  }
-}));
+app.use(
+  xmlParser({
+    xmlOptions: {
+      explicitArray: false,
+    },
+  }),
+);
 app.use(bodyParser());
 // app.use(express.static(path.join(__dirname, 'public')));
 //app.use(express.static(config.fileDir));
-app.use(cors({
-  credentials: true,
-  // origin: '*',
-}));
+app.use(
+  cors({
+    credentials: true,
+    // origin: '*',
+  }),
+);
 (async () => {
   await db.init(config.env.mongoose);
   let rs = await dbSeq.init(config.env.sequelize);
   return {
-    sequelize: rs.sequelize
+    sequelize: rs.sequelize,
   };
 })().then(async (data) => {
   let helpers = await import('./helpers');
@@ -54,12 +58,14 @@ app.use(cors({
   let port = process.env.PORT || config.env.port;
   const server = app.listen(port);
   let address = server.address() as AddressInfo;
-  console.log([
-    '#################',
-    '#',
-    `# ${config.env.name} run at ${address.address}:${address.port},version:${config.env.version}`,
-    '#',
-    '#################',
-  ].join('\r\n'));
+  console.log(
+    [
+      '#################',
+      '#',
+      `# ${config.env.name} run at ${address.address}:${address.port},version:${config.env.version}`,
+      '#',
+      '#################',
+    ].join('\r\n'),
+  );
   main.initServer(server);
 });

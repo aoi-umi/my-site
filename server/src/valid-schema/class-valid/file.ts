@@ -5,36 +5,36 @@ import { objectIdTransform } from './util';
 import { ListBase, OperateBase } from './base';
 
 export class FileGet {
-    @IsDefined()
-    @Transform(objectIdTransform)
-    _id: Types.ObjectId;
+  @IsDefined()
+  @Transform(objectIdTransform)
+  _id: Types.ObjectId;
 
-    @Type()
-    isRaw?: boolean;
+  @Type()
+  isRaw?: boolean;
 }
 
 export class FileUploadCheck {
-    @IsDefined()
-    @Type()
-    fileSize: number;
+  @IsDefined()
+  @Type()
+  fileSize: number;
 
-    @IsDefined()
-    hash: string;
+  @IsDefined()
+  hash: string;
 
-    @IsDefined()
-    filename: string;
-    
-    @IsDefined()
-    contentType: string;
+  @IsDefined()
+  filename: string;
 
-    @IsDefined()
-    @Type()
-    chunkSize: number;
+  @IsDefined()
+  contentType: string;
+
+  @IsDefined()
+  @Type()
+  chunkSize: number;
 }
 
 export class FileList extends ListBase {
   @Type()
-  hash: string
+  hash: string;
 }
 
 export class FileOperate extends OperateBase {}

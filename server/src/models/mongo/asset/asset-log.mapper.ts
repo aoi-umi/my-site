@@ -11,7 +11,7 @@ export class AssetLogMapper {
     match?: object;
   }) {
     opt = {
-      ...opt
+      ...opt,
     };
     let asName = opt.asName || 'assetLog';
     return [
@@ -19,14 +19,16 @@ export class AssetLogMapper {
         $lookup: {
           from: AssetLogModel.collection.collectionName,
           let: { assetLogId: '$' + (opt.assetLogIdKey || 'assetLogId') },
-          pipeline: [{
-            $match: {
-              ...opt.match,
-              $expr: { $eq: ['$$assetLogId', '$_id'] }
-            }
-          }],
-          as: asName
-        }
+          pipeline: [
+            {
+              $match: {
+                ...opt.match,
+                $expr: { $eq: ['$$assetLogId', '$_id'] },
+              },
+            },
+          ],
+          as: asName,
+        },
       },
       { $unwind: '$' + asName },
     ];
@@ -34,13 +36,12 @@ export class AssetLogMapper {
 
   static async query(data: ValidSchema.AssetLogQuery) {
     let match: any = BaseMapper.getLikeCond(data, ['orderNo', 'outOrderNo']);
-    
-    if (data.status)
-      match.status = { $in: data.status.split(',') };
+
+    if (data.status) match.status = { $in: data.status.split(',') };
 
     return await AssetLogModel.findAndCountAll({
       conditions: match,
-      ...BaseMapper.getListOptions(data)
+      ...BaseMapper.getListOptions(data),
     });
   }
 }

@@ -1,6 +1,12 @@
 import {
-  getModelForClass, ModelType, DocType, InstanceType,
-  setSchema, prop, arrayProp, setMethod
+  getModelForClass,
+  ModelType,
+  DocType,
+  InstanceType,
+  setSchema,
+  prop,
+  arrayProp,
+  setMethod,
 } from 'mongoose-ts-ua';
 
 import { Base } from '../_base';
@@ -12,32 +18,34 @@ export type StatUserDocType = DocType<StatUserInstanceType>;
 @setSchema({
   schemaOptions: {
     toJSON: {
-      virtuals: true
-    }
-  }
+      virtuals: true,
+    },
+  },
 })
 export class StatUser extends Base {
-    //统计日期
-    @prop({
-      required: true
-    })
-    date: Date;
+  //统计日期
+  @prop({
+    required: true,
+  })
+  date: Date;
 
-    @prop({
-      enum: myEnum.statUserType.getAllValue(),
-      required: true
-    })
-    type: string;
+  @prop({
+    enum: myEnum.statUserType.getAllValue(),
+    required: true,
+  })
+  type: string;
 
-    @prop({
-      required: true
-    })
-    val: string;
+  @prop({
+    required: true,
+  })
+  val: string;
 
-    @prop({
-      default: 1
-    })
-    times: number;
+  @prop({
+    default: 1,
+  })
+  times: number;
 }
 
-export const StatUserModel = getModelForClass<StatUser, typeof StatUser>(StatUser);
+export const StatUserModel = getModelForClass<StatUser, typeof StatUser>(
+  StatUser,
+);

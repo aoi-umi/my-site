@@ -1,5 +1,14 @@
 import { Types, SchemaTypes } from 'mongoose';
-import { GridFSFile, GridFSModel, setSchema, prop, setMethod, getGridFSModel, setPlugin, InstanceType } from 'mongoose-ts-ua';
+import {
+  GridFSFile,
+  GridFSModel,
+  setSchema,
+  prop,
+  setMethod,
+  getGridFSModel,
+  setPlugin,
+  InstanceType,
+} from 'mongoose-ts-ua';
 
 import { pagination, IPagination } from '../_plugins/pagination';
 
@@ -14,7 +23,7 @@ class File extends GridFSFile {
   account: string;
 
   @prop({
-    type: SchemaTypes.ObjectId
+    type: SchemaTypes.ObjectId,
   })
   userId: Types.ObjectId;
 

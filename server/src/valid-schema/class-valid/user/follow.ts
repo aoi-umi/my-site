@@ -6,25 +6,25 @@ import { ListBase } from '../base';
 import { objectIdTransform } from '../util';
 
 export class FollowSave {
-    @IsDefined()
-    @Transform(objectIdTransform)
-    userId: Types.ObjectId;
+  @IsDefined()
+  @Transform(objectIdTransform)
+  userId: Types.ObjectId;
 
-    @IsDefined()
-    @IsIn([myEnum.followStatus.已关注, myEnum.followStatus.已取消])
-    @Type()
-    status: number;
+  @IsDefined()
+  @IsIn([myEnum.followStatus.已关注, myEnum.followStatus.已取消])
+  @Type()
+  status: number;
 }
 
 export class FollowQuery extends ListBase {
-    @IsDefined()
-    @IsIn(myEnum.followQueryType.getAllValue())
-    @Type()
-    type: number;
+  @IsDefined()
+  @IsIn(myEnum.followQueryType.getAllValue())
+  @Type()
+  type: number;
 
-    anyKey: string;
+  anyKey: string;
 
-    @IsDefined()
-    @Transform(objectIdTransform)
-    userId: Types.ObjectId;
+  @IsDefined()
+  @Transform(objectIdTransform)
+  userId: Types.ObjectId;
 }
