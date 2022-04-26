@@ -36,6 +36,8 @@ const enumDefine = {
     审核通过: 'auditPass',
     审核不通过: 'auditNotPass',
     恢复: 'recovery',
+    保存: 'save',
+    删除: 'del',
   },
   contentType: {
     文章: 0,
@@ -173,6 +175,9 @@ const enumDefineFront = {
     踩: 3,
     收藏: 4,
     分享: 5,
+  },
+  contentMgtOperate: {
+    ...enumDefine.contentOperate,
   },
   userEditType: {
     修改: 'edit',

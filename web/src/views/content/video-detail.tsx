@@ -28,6 +28,7 @@ export default class VideoDetail extends Base {
         loadFn={async () => {
           const query = this.$route.query
           const rs = await testApi.videoDetailQuery({ _id: query._id })
+          this.setTitle(rs.detail.title)
           return rs
         }}
         renderFn={(t: DetailType) => {

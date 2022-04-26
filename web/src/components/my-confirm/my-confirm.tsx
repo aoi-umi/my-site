@@ -22,7 +22,7 @@ class MyConfirmProp {
   btnList?: BtnType[]
 
   @Prop()
-  ok?: (ele: BtnType) => void | Promise<void>
+  ok?: (ele: BtnType) => any | Promise<any>
 
   @Prop()
   cancel?: (ele: BtnType) => void

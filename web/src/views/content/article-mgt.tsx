@@ -58,7 +58,6 @@ export class ArticleMgtBase extends ContentMgtBase implements IContentMgtBase {
   async recoveryFn(detail: ContentDataType) {
     let rs = await testApi.articleMgtRecovery({
       idList: [detail._id],
-      operate: myEnum.contentOperate.恢复,
     })
     return rs
   }

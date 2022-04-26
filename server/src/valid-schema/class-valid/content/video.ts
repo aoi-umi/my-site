@@ -37,6 +37,7 @@ export class VideoSave extends ContentSave {
 export class VideoDel extends ContentDel {}
 
 export class VideoMgtAudit extends ContentMgtAudit {
+  @IsDefined()
   @IsIn([myEnum.videoStatus.审核通过, myEnum.videoStatus.审核不通过])
   status: number;
 }

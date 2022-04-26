@@ -1,6 +1,7 @@
 import { LoginUser } from '../../login-user';
 import { ContentLog, ContentLogModel } from './content-log';
 import { ContentBaseInstanceType } from './content-base';
+import { myEnum } from '@/dev-config';
 
 export class ContentLogMapper {
   static create(
@@ -11,6 +12,7 @@ export class ContentLogMapper {
       srcStatus: number;
       destStatus: number;
       remark?: string;
+      operate?: string;
     },
   ) {
     let log = new ContentLogModel({
@@ -21,8 +23,10 @@ export class ContentLogMapper {
       destStatus: opt.destStatus,
       logUser: user.nameToString(),
     });
+    let op = myEnum.contentOperate.getKey(opt.operate);
     log.remark =
       opt.remark ||
+      op ||
       log.getStatusText(log.srcStatus) +
         '=>' +
         log.getStatusText(log.destStatus);

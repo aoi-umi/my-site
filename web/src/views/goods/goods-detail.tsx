@@ -11,12 +11,8 @@ import {
   Row,
   Col,
   Divider,
-  Input,
   Button,
   Card,
-  Modal,
-  RadioGroup,
-  Radio,
 } from '@/components/iview'
 import { MyTag, TagType } from '@/components/my-tag'
 import { MyLoad } from '@/components/my-load'
@@ -36,8 +32,11 @@ export default class GoodsDetail extends Base {
   private innerDetail: DetailType = {} as any
   private async loadDetailData() {
     const query = this.$route.query
-    const detail = await testApi.goodsDetailQuery({ _id: query._id })
+    const detail: DetailType = await testApi.goodsDetailQuery({
+      _id: query._id,
+    })
     this.innerDetail = detail
+    this.setTitle(detail.spu.name)
     return detail
   }
 

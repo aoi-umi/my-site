@@ -1,25 +1,29 @@
 import Vue from 'vue'
 const vm = Vue.prototype as Vue
-export type OperateOption = {
+export type OperateOption<T = any> = {
   prefix?: string
-  fn: (args?) => any
-  beforeValid?: () => any
+  fn: (args?: T) => any
+  beforeValid?: (args?: T) => any
   onSuccessClose?: () => any
-  validate?: () => Promise<boolean> | void
+  validate?: (args?: T) => Promise<boolean> | boolean | void
   noValidMessage?: boolean
   noDefaultHandler?: boolean
   noSuccessHandler?: boolean
   noErrorHandler?: boolean
   defaultErrHandler?: (e: Error & { code?: string }) => boolean | void
 }
-export class OperateModel {
+export class OperateModel<T = any> {
   loading = false
-  protected opt: OperateOption
-  constructor(opt: OperateOption) {
+  protected opt: OperateOption<T>
+  constructor(opt: OperateOption<T>) {
     this.opt = opt
   }
 
-  async run(args?) {
+  async run(
+    args?: T & {
+      options?: Partial<OperateOption>
+    },
+  ) {
     if (this.loading) return
     const result = {
       success: true,
@@ -28,12 +32,15 @@ export class OperateModel {
       data: null,
     }
     this.loading = true
-    let opt = this.opt
+    let opt = {
+      ...this.opt,
+      ...args.options,
+    }
     let operate = opt.prefix || ''
     try {
-      opt.beforeValid && (await opt.beforeValid())
+      opt.beforeValid && (await opt.beforeValid(args))
       if (opt.validate) {
-        let valid = await opt.validate()
+        let valid = await opt.validate(args)
         if (!valid) {
           result.success = false
           result.msg = '参数有误'

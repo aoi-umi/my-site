@@ -47,27 +47,33 @@ export default class ArticleMgtDetail extends ArticleMgtBase {
 
   private async loadDetailData() {
     const query = this.$route.query
-    let detail: DetailType
+    let data: DetailType
     if (query._id) {
       this.preview = this.$route.path == routerConfig.articleMgtDetail.path
-      detail = await testApi.articleMgtDetailQuery({ _id: query._id })
+      data = await testApi.articleMgtDetailQuery({ _id: query._id })
+      this.setTitle(data.detail.title)
     } else {
-      detail = this.getDetailData() as any
+      data = this.getDetailData() as any
     }
-    this.innerDetail = detail
-    return detail
+    this.innerDetail = data
+    return data
   }
 
   async saveFn(submit) {
-    return this.$refs.detailView.handleSave(async (detail) => {
-      const { user, ...restDetail } = detail
-      const rs = await testApi.articleMgtSave({
-        ...restDetail,
-        contentType: this.$refs.editor.currType,
-        submit,
-      })
-      return rs
-    }, submit)
+    const { detail } = this.innerDetail
+    return this.$refs.detailView.saveOp.run({
+      detail,
+      saveFn: async (detail) => {
+        const { user, ...restDetail } = detail
+        const rs = await testApi.articleMgtSave({
+          ...restDetail,
+          contentType: this.$refs.editor.currType,
+          submit,
+        })
+        return rs
+      },
+      submit,
+    })
   }
 
   private renderLog() {
@@ -121,9 +127,6 @@ export default class ArticleMgtDetail extends ArticleMgtBase {
         preview={this.preview}
         loadDetailData={this.loadDetailData}
         getRules={this.getRules}
-        saveSuccessFn={() => {
-          this.toList()
-        }}
         renderPreviewFn={this.renderPreview}
       >
         <FormItem label="内容" prop="content">
@@ -139,6 +142,7 @@ export default class ArticleMgtDetail extends ArticleMgtBase {
           />
         </FormItem>
         {this.renderDetailOpBox(detail)}
+        {this.renderDelConfirm()}
       </ContentMgtDetail>
     )
   }

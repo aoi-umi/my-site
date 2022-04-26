@@ -40,6 +40,7 @@ export default class ArticleDetail extends Base {
         loadFn={async () => {
           const query = this.$route.query
           const rs = await testApi.articleDetailQuery({ _id: query._id })
+          this.setTitle(rs.detail.title)
           return rs
         }}
         renderFn={(t: DetailType) => {

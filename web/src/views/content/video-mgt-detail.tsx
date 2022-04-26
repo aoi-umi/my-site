@@ -60,22 +60,23 @@ export default class VideoMgtDetail extends VideoMgtBase {
   videoList: FileType[] = []
   private async loadDetailData() {
     const query = this.$route.query
-    let detail: DetailType
+    let data: DetailType
     if (query._id) {
       this.preview = this.$route.path == routerConfig.videoMgtDetail.path
-      detail = await testApi.videoMgtDetailQuery({ _id: query._id })
-      this.videoList = detail.detail.videoList.map((ele) => {
+      data = await testApi.videoMgtDetailQuery({ _id: query._id })
+      this.videoList = data.detail.videoList.map((ele) => {
         return {
           url: ele.url,
           fileType: FileDataType.视频,
           originFileType: ele.contentType,
         }
       })
+      this.setTitle(data.detail.title)
     } else {
-      detail = this.getDetailData() as any
+      data = this.getDetailData() as any
     }
-    this.innerDetail = detail
-    return detail
+    this.innerDetail = data
+    return data
   }
 
   private async beforeValidFn(detail: DetailDataType) {
@@ -97,13 +98,18 @@ export default class VideoMgtDetail extends VideoMgtBase {
   }
 
   async saveFn(submit) {
-    return this.$refs.detailView.handleSave(async (detail) => {
-      const { user, ...restDetail } = detail
-      const rs = await testApi.videoMgtSave({
-        ...restDetail,
-        submit,
-      })
-      return rs
+    const { detail } = this.innerDetail
+    return this.$refs.detailView.saveOp.run({
+      detail,
+      saveFn: async (detail) => {
+        const { user, ...restDetail } = detail
+        const rs = await testApi.videoMgtSave({
+          ...restDetail,
+          submit,
+        })
+        return rs
+      },
+      submit,
     })
   }
 
@@ -135,9 +141,6 @@ export default class VideoMgtDetail extends VideoMgtBase {
         loadDetailData={this.loadDetailData}
         getRules={this.getRules}
         beforeValidFn={this.beforeValidFn}
-        saveSuccessFn={() => {
-          this.toList()
-        }}
         renderPreviewFn={this.renderPreview}
       >
         <FormItem label="视频" prop="videoIdList">

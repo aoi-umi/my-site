@@ -57,7 +57,6 @@ export class VideoMgtBase extends ContentMgtBase implements IContentMgtBase {
   async recoveryFn(detail: ContentDataType) {
     let rs = await testApi.videoMgtRecovery({
       idList: [detail._id],
-      operate: myEnum.contentOperate.恢复,
     })
     return rs
   }

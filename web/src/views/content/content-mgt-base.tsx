@@ -15,6 +15,7 @@ import {
   DatePicker,
   Affix,
   Card,
+  Spin,
 } from '@/components/iview'
 import { MyConfirm } from '@/components/my-confirm'
 import { MyList } from '@/components/my-list'
@@ -24,6 +25,7 @@ import { MyLoad } from '@/components/my-load'
 import { UserAvatar } from '../comps/user-avatar'
 import { Base } from '../base'
 import { OperateDataType, OperateButton } from '../comps/operate-button'
+import { OperateModel } from '@/helpers'
 export class ContentDetailType<T extends ContentDataType = ContentDataType> {
   detail: T
   log?: any[]
@@ -108,6 +110,36 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
   notPassRemark = ''
   operateDetail: ContentDataType
   protected preview = false
+  protected op: OperateModel<{
+    operate: string
+    detail?: ContentDataType
+    data?: any
+  }> = null
+
+  protected created() {
+    this.initOp()
+  }
+
+  private initOp() {
+    this.op = new OperateModel({
+      fn: async (args) => {
+        // await this.$utils.wait(3000)
+        let { operate, detail, data } = args
+        switch (operate) {
+          case myEnum.contentMgtOperate.审核通过:
+            return this.audit(detail, true)
+          case myEnum.contentMgtOperate.审核不通过:
+            return this.audit(detail, false)
+          case myEnum.contentMgtOperate.恢复:
+            return this.recovery(detail)
+          case myEnum.contentMgtOperate.删除:
+            return this.del()
+          case myEnum.contentMgtOperate.保存:
+            return this.saveFn(data.submit)
+        }
+      },
+    })
+  }
 
   protected getDefaultDetail<T extends ContentDataType = ContentDataType>() {
     const data = ContentDetailType.create<T>()
@@ -124,26 +156,32 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
   }
 
   @Confirm('确认通过?')
-  protected auditPass(detail: ContentDataType) {
-    return this.audit(detail, true)
+  protected auditPassClick(detail: ContentDataType) {
+    return this.op.run({
+      operate: myEnum.contentMgtOperate.审核通过,
+      detail,
+    })
   }
 
-  protected async audit(detail: ContentDataType, pass: boolean) {
-    await this.operateHandler('审核', async () => {
-      const rs = await this.auditFn(detail, pass)
-      detail.status = rs.status
-      detail.statusText = rs.statusText
-      this.auditSuccessHandler(detail)
-      this.toggleNotPass(false)
-    })
+  private async audit(detail: ContentDataType, pass: boolean) {
+    const rs = await this.auditFn(detail, pass)
+    detail.status = rs.status
+    detail.statusText = rs.statusText
+    this.auditSuccessHandler(detail)
+    this.toggleNotPass(false)
   }
 
   @Confirm('确认恢复?')
-  protected async recovery(detail: ContentDataType) {
-    await this.operateHandler('恢复', async () => {
-      const rs = await this.recoveryFn(detail)
-      this.toDetail(detail._id, { preview: true, refresh: true })
+  protected async recoveryClick(detail: ContentDataType) {
+    await this.op.run({
+      operate: myEnum.contentMgtOperate.恢复,
+      detail,
     })
+  }
+
+  private async recovery(detail: ContentDataType) {
+    const rs = await this.recoveryFn(detail)
+    this.toDetail(detail._id, { preview: true, refresh: true })
   }
 
   protected toList() {
@@ -201,7 +239,7 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
           text: '审核通过',
           type: 'primary',
           fn: () => {
-            this.auditPass(detail)
+            this.auditPassClick(detail)
           },
         },
         {
@@ -239,7 +277,7 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
     if (detail.canDel) {
       operate.push({
         text: '删除',
-        type: 'danger',
+        type: 'error',
         fn: () => {
           this.delIds = [detail._id]
           this.delShow = true
@@ -250,7 +288,7 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
       operate.push({
         text: '恢复',
         fn: () => {
-          this.recovery(detail)
+          this.recoveryClick(detail)
         },
       })
     }
@@ -284,7 +322,11 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
     opt?: { noPreview?: boolean; isDetail?: boolean },
   ) {
     return (
-      <div class={['content-mgt-item-op-box', 'button-group-normal']}>
+      <div
+        class={['content-mgt-item-op-box', 'button-group-normal']}
+        style="position: relative"
+      >
+        {this.op.loading && <Spin fix />}
         {this.getOperate(detail, opt).map((ele) => {
           return <OperateButton data={ele}></OperateButton>
         })}
@@ -300,6 +342,7 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
           <Divider />
           <Affix offset-bottom={40}>
             <Card class="button-group-normal">
+              {this.op.loading && <Spin fix />}
               {operate.map((ele) => {
                 return <OperateButton data={ele}></OperateButton>
               })}
@@ -320,7 +363,10 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
             this.toggleNotPass(false)
           }}
           ok={() => {
-            return this.audit(this.operateDetail, false)
+            return this.op.run({
+              operate: myEnum.contentMgtOperate.审核不通过,
+              detail: this.operateDetail,
+            })
           }}
         >
           备注: <Input v-model={this.notPassRemark} />
@@ -355,16 +401,31 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
     this.toList()
   }
   async delClick() {
-    await this.operateHandler('删除', async () => {
-      await this.delFn()
-      this.delIds = []
-      this.delShow = false
-      this.delRemark = ''
-      this.delSuccessHandler()
+    return this.op.run({
+      operate: myEnum.contentMgtOperate.删除,
     })
   }
+  private async del() {
+    await this.delFn()
+    this.delIds = []
+    this.delShow = false
+    this.delRemark = ''
+    this.delSuccessHandler()
+  }
+
+  protected saveSuccessHandler() {
+    this.toList()
+  }
   async saveClick(submit: boolean) {
-    this.saveFn(submit)
+    return this.op.run({
+      operate: myEnum.contentMgtOperate.保存,
+      data: { submit },
+      options: {
+        onSuccessClose: () => {
+          this.saveSuccessHandler()
+        },
+      },
+    })
   }
 }
 
@@ -379,11 +440,6 @@ class ContentMgtDetailProp {
 
   @Prop()
   beforeValidFn?: (detail) => Promise<any>
-
-  @Prop({
-    required: true,
-  })
-  saveSuccessFn: (rs) => void
 
   @Prop()
   preview?: boolean
@@ -407,6 +463,41 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp, Base> {
   }
 
   innerDetail: ContentDetailType = null
+  saveOp: OperateModel<{
+    detail: ContentDataType
+    submit: boolean
+    saveFn: (detail) => Promise<any>
+  }> = null
+
+  protected created() {
+    this.initSaveOp()
+  }
+
+  private initSaveOp() {
+    this.saveOp = new OperateModel({
+      prefix: '保存',
+      beforeValid: async (args) => {
+        let { detail } = args
+        const file = await this.uploadCover()
+        if (!file) {
+          detail.cover = ''
+        } else if (file.uploadRes) {
+          detail.cover = file.uploadRes
+        }
+        this.beforeValidFn && (await this.beforeValidFn(detail))
+      },
+      validate: (args) => {
+        let { submit } = args
+        if (!submit) return true
+        return this.$refs.formVaild.validate()
+      },
+      fn: async (args) => {
+        let { detail, saveFn } = args
+        return await saveFn(detail)
+      },
+      noDefaultHandler: true,
+    })
+  }
 
   rules = {}
   private getCommonRules() {
@@ -463,36 +554,6 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp, Base> {
     }
     const file = upload.fileList[0]
     return file
-  }
-
-  private saving = false
-  async handleSave(saveFn: (detail) => Promise<any>, submit?: boolean) {
-    this.saving = true
-    const { detail } = this.innerDetail
-    let rs
-    await this.operateHandler(
-      '保存',
-      async () => {
-        rs = await saveFn(detail)
-      },
-      {
-        validate: submit ? this.$refs.formVaild.validate : null,
-        beforeValid: async () => {
-          const file = await this.uploadCover()
-          if (!file) {
-            detail.cover = ''
-          } else if (file.uploadRes) {
-            detail.cover = file.uploadRes
-          }
-          this.beforeValidFn && (await this.beforeValidFn(detail))
-        },
-        onSuccessClose: () => {
-          this.saveSuccessFn(rs)
-        },
-      },
-    ).finally(() => {
-      this.saving = false
-    })
   }
 
   protected render() {

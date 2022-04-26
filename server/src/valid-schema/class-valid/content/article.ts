@@ -27,6 +27,7 @@ export class ArticleSave extends ContentSave {
 export class ArticleDel extends ContentDel {}
 
 export class ArticleMgtAudit extends ContentMgtAudit {
+  @IsDefined()
   @IsIn([myEnum.articleStatus.审核通过, myEnum.articleStatus.审核不通过])
   status: number;
 }

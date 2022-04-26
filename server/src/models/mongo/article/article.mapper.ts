@@ -116,9 +116,7 @@ export class ArticleMapper {
       model: ArticleModel,
       contentType: myEnum.contentType.文章,
       passCond: () => toStatus === myEnum.articleStatus.审核通过,
-      delCond: (detail) => {
-        return detail.canDel;
-      },
+      delCond: () => operate === myEnum.contentOperate.删除,
       recoveryCond: () => operate === myEnum.contentOperate.恢复,
     });
     let updateStatus = toStatus;

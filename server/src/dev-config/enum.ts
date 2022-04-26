@@ -36,6 +36,8 @@ export const enumDefine = {
     审核通过: 'auditPass',
     审核不通过: 'auditNotPass',
     恢复: 'recovery',
+    保存: 'save',
+    删除: 'del',
   },
   danmakuType: {
     默认: 0,

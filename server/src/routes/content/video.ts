@@ -67,6 +67,7 @@ export let mgtDel: MyRequestHandler = async (opt) => {
       status: { $ne: myEnum.videoStatus.已删除 },
     },
     toStatus: myEnum.videoStatus.已删除,
+    operate: myEnum.contentOperate.删除,
     user,
     logRemark: data.remark,
   });
@@ -82,7 +83,7 @@ export const mgtRecovery: MyRequestHandler = async (opt, ctx) => {
         ? null
         : user._id,
     },
-    operate: data.operate,
+    operate: myEnum.contentOperate.恢复,
     user,
   });
   return rs;

@@ -1,10 +1,11 @@
-import { IsDefined, MinLength } from 'class-validator';
+import { IsDefined, MinLength, IsIn } from 'class-validator';
 import { Types } from 'mongoose';
 import { Type, Transform } from 'class-transformer';
 
-import { ListBase, DelBase, DetailQueryBase } from '../base';
+import { myEnum } from '@/dev-config';
+
+import { ListBase, DelBase, DetailQueryBase, OperateBase } from '../base';
 import { objectIdTransform } from '../util';
-import { ContentOperateBase } from './content-base';
 
 export class ContentQuery extends ListBase {
   @Transform(objectIdTransform)
@@ -35,12 +36,11 @@ export class ContentDel extends DelBase {
   remark: string;
 }
 
-export class ContentMgtAudit extends ContentOperateBase {
-  @IsDefined()
-  @Type()
-  status: number;
+export class ContentMgtAudit extends OperateBase {
+  @IsIn([myEnum.contentOperate.审核通过, myEnum.contentOperate.审核不通过])
+  operate: string;
 
   remark: string;
 }
 
-export class ContentMgtRecovery extends ContentOperateBase {}
+export class ContentMgtRecovery extends OperateBase {}

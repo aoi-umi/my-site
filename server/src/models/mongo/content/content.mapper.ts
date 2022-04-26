@@ -251,8 +251,10 @@ export class ContentMapper {
           update.publishAt = detail.setPublishAt;
         }
       } else if (opt.delCond(detail)) {
-        updateStatus = toStatus;
-        changeNumUserMap[userIdStr]--;
+        if (detail.canDel) {
+          updateStatus = toStatus;
+          changeNumUserMap[userIdStr]--;
+        }
       } else if (opt.recoveryCond(detail)) {
         let lastLog = await ContentLogModel.findOne({
           contentId: detail._id,
@@ -265,6 +267,8 @@ export class ContentMapper {
         if (canRecovery) {
           updateStatus = lastLog.srcStatus;
         }
+      } else {
+        updateStatus = toStatus;
       }
       update.status = updateStatus;
       if (updateStatus === undefined) {
@@ -284,6 +288,7 @@ export class ContentMapper {
           srcStatus: detail.status,
           destStatus: updateStatus,
           remark: opt.logRemark,
+          operate: opt.operate,
         }),
       );
       bulk.push({
