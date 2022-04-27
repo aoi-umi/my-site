@@ -496,6 +496,7 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp, Base> {
         return await saveFn(detail)
       },
       noDefaultHandler: true,
+      throwError: true,
     })
   }
 

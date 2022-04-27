@@ -22,12 +22,12 @@ export class VideoMgtBase extends ContentMgtBase implements IContentMgtBase {
   contentMgtType = myEnum.contentMgtType.视频
 
   async auditFn(detail, pass) {
-    const toStatus = pass
-      ? myEnum.videoStatus.审核通过
-      : myEnum.videoStatus.审核不通过
+    const operate = pass
+      ? myEnum.contentMgtOperate.审核通过
+      : myEnum.contentMgtOperate.审核不通过
     const rs = await testApi.videoMgtAudit({
       idList: [detail._id],
-      status: toStatus,
+      operate,
       remark: this.notPassRemark,
     })
     return rs

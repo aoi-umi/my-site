@@ -4,7 +4,7 @@ import { VueCropper } from 'vue-cropper'
 
 import { Component, Vue, Prop } from '@/components/decorator'
 
-import { Upload, Modal, Icon, Progress, Button } from '../iview'
+import { Upload, Icon, Progress, Button } from '../iview'
 import { Utils, Md5FileResult } from '../utils'
 import { MyImg } from '../my-img'
 import { MyImgViewer } from '../my-img-viewer'
@@ -184,7 +184,7 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
   private cropperShow = false
   private editIndex = -1
   private selectedIndex = -1
-  private file: File
+  private file: File = null
   private fileType = FileDataType.未知
   private cropper: CropperOption = {
     img: '',
@@ -405,17 +405,22 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
     })
   }
 
+  private setCurrFile(file: File) {
+    this.file = file
+    if (file) {
+      if (file.type.includes('image/')) {
+        this.fileType = FileDataType.图片
+      } else if (file.type.includes('video/')) {
+        this.fileType = FileDataType.视频
+      }
+    }
+  }
   private handleBeforeUpload(file: File) {
     const rs = this.checkFormat(file)
     if (!rs) {
       return false
     }
-    this.file = file
-    if (file.type.includes('image/')) {
-      this.fileType = FileDataType.图片
-    } else if (file.type.includes('video/')) {
-      this.fileType = FileDataType.视频
-    }
+    this.setCurrFile(file)
 
     const reader = new FileReader()
     reader.readAsDataURL(file)
@@ -449,6 +454,9 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
         ...option,
       }
     })
+    if (this.fileList.length) {
+      this.setCurrFile(this.fileList[0].file)
+    }
   }
 
   private pushFile(data, originData?) {

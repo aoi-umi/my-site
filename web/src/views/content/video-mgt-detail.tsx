@@ -167,7 +167,7 @@ export default class VideoMgtDetail extends VideoMgtBase {
               if (!crop || !crop.data) {
                 return
               }
-              const file = new File([], '截图', { type: crop.type })
+              const file = this.$utils.base64ToFile(crop.data, '截图')
               this.$refs.detailView.$refs.cover.setFile({
                 data: crop.data,
                 file: file,

@@ -136,19 +136,43 @@ export class VideoMapper {
   }
 
   static async updateStatus(opt: ContentUpdateStatusOutOption) {
-    let { toStatus, operate } = opt;
     let rs = await ContentMapper.updateStatus({
       ...opt,
       model: VideoModel,
-      contentType: myEnum.contentType.文章,
-      passCond: () => toStatus === myEnum.videoStatus.审核通过,
-      delCond: () => operate === myEnum.contentOperate.删除,
-      recoveryCond: () => operate === myEnum.contentOperate.恢复,
+      contentType: myEnum.contentType.视频,
+      getChangeData: (option) => {
+        let { operate, lastLog, detail } = option;
+        if (operate === myEnum.contentOperate.审核通过) {
+          return {
+            status: myEnum.videoStatus.审核通过,
+            changeNum: 1,
+          };
+        }
+        if (operate === myEnum.contentOperate.审核不通过) {
+          return {
+            status: myEnum.videoStatus.审核不通过,
+          };
+        }
+        if (operate === myEnum.contentOperate.删除) {
+          return {
+            status: myEnum.videoStatus.已删除,
+            changeNum: detail.status === myEnum.videoStatus.审核通过 ? -1 : 0,
+          };
+        }
+        if (operate === myEnum.contentOperate.恢复) {
+          return {
+            changeNum:
+              lastLog.srcStatus === myEnum.videoStatus.审核通过 ? 1 : 0,
+          };
+        }
+      },
     });
-    //将会弃用
-    let updateStatus = toStatus;
+    let updateStatus = null;
     if (rs?.length === 1) {
       updateStatus = rs[0].toStatus;
+      if (!updateStatus) {
+        throw error('update failed');
+      }
     }
     return {
       status: updateStatus,

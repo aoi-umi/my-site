@@ -66,7 +66,6 @@ export let mgtDel: MyRequestHandler = async (opt) => {
         : user._id,
       status: { $ne: myEnum.videoStatus.已删除 },
     },
-    toStatus: myEnum.videoStatus.已删除,
     operate: myEnum.contentOperate.删除,
     user,
     logRemark: data.remark,
@@ -97,7 +96,7 @@ export let mgtAudit: MyRequestHandler = async (opt) => {
       idList: data.idList,
       status: myEnum.videoStatus.待审核,
     },
-    toStatus: data.status,
+    operate: data.operate,
     user,
     logRemark: data.remark,
   });

@@ -23,12 +23,12 @@ export class ArticleMgtBase extends ContentMgtBase implements IContentMgtBase {
   contentMgtType = myEnum.contentMgtType.文章
 
   async auditFn(detail, pass) {
-    const toStatus = pass
-      ? myEnum.articleStatus.审核通过
-      : myEnum.articleStatus.审核不通过
+    const operate = pass
+      ? myEnum.contentOperate.审核通过
+      : myEnum.contentOperate.审核不通过
     const rs = await testApi.articleMgtAudit({
       idList: [detail._id],
-      status: toStatus,
+      operate,
       remark: this.notPassRemark,
     })
     return rs

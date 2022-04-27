@@ -37,6 +37,7 @@ export class ContentDel extends DelBase {
 }
 
 export class ContentMgtAudit extends OperateBase {
+  @IsDefined()
   @IsIn([myEnum.contentOperate.审核通过, myEnum.contentOperate.审核不通过])
   operate: string;
 

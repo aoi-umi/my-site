@@ -10,6 +10,7 @@ export type OperateOption<T = any> = {
   noDefaultHandler?: boolean
   noSuccessHandler?: boolean
   noErrorHandler?: boolean
+  throwError?: boolean
   defaultErrHandler?: (e: Error & { code?: string }) => boolean | void
 }
 export class OperateModel<T = any> {
@@ -44,6 +45,7 @@ export class OperateModel<T = any> {
         if (!valid) {
           result.success = false
           result.msg = '参数有误'
+          if (opt.throwError) throw new Error(result.msg)
           if (!this.opt.noValidMessage) {
             vm.$Message.error(result.msg)
           }
@@ -58,6 +60,7 @@ export class OperateModel<T = any> {
         })
       }
     } catch (e) {
+      if (opt.throwError) throw e
       result.success = false
       result.msg = e.message
       result.err = e

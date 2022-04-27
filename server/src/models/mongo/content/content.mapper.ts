@@ -48,9 +48,7 @@ export type ContentUpdateStatusOutOption = {
     status?: any;
     includeUserId?: Types.ObjectId | string;
   };
-  // @dep
-  toStatus?: number;
-  operate?: string;
+  operate: string;
   user: LoginUser;
   logRemark?: string;
 };
@@ -208,16 +206,21 @@ export class ContentMapper {
     opt: {
       model: ContentBaseModelType;
       contentType: number;
-      passCond: (detail) => boolean;
-      delCond: (detail) => boolean;
-      recoveryCond: (detail) => boolean;
+      getChangeData: (opt: {
+        detail: ContentBaseInstanceType;
+        operate;
+        lastLog: ContentLogInstanceType;
+      }) => {
+        status?: number;
+        // 用户里的文章/视频数量
+        changeNum?: number;
+      };
     } & ContentUpdateStatusOutOption,
   ) {
-    let { user, toStatus } = opt;
+    let { user, operate } = opt;
     let { idList, includeUserId, status } = opt.cond;
     let cond: any = { _id: { $in: idList } };
     if (status !== undefined) cond.status = status;
-    if (includeUserId) cond.userId = Types.ObjectId(includeUserId as any);
     let model = opt.model;
     let list = await model.find(cond);
     if (!list.length) throw error('', config.error.NO_MATCH_DATA);
@@ -226,10 +229,30 @@ export class ContentMapper {
       log = [];
     let updateRsList = [];
     for (let detail of list) {
+      if (includeUserId && !detail.userId.equals(includeUserId)) {
+        updateRsList.push({
+          _id: detail._id,
+          msg: '无权限',
+        });
+        continue;
+      }
+      let lastLog = await ContentLogModel.findOne({
+        contentId: detail._id,
+      }).sort({ _id: -1 });
+      let changeData = opt.getChangeData({
+        detail,
+        operate,
+        lastLog,
+      });
+      changeData = {
+        changeNum: 0,
+        ...changeData,
+      };
+      let toStatus = changeData.status;
       if (detail.status === toStatus) {
         updateRsList.push({
           _id: detail._id,
-          toStatus,
+          status: toStatus,
         });
         continue;
       }
@@ -237,9 +260,9 @@ export class ContentMapper {
       let updateStatus;
       let userIdStr = detail.userId.toHexString();
       if (!changeNumUserMap[userIdStr]) changeNumUserMap[userIdStr] = 0;
-      if (opt.passCond(detail)) {
+      if (operate === myEnum.contentOperate.审核通过) {
         updateStatus = toStatus;
-        changeNumUserMap[userIdStr]++;
+        changeNumUserMap[userIdStr] += changeData.changeNum;
         let now = new Date();
         update.publishAt = now;
         //指定时间发布
@@ -250,15 +273,12 @@ export class ContentMapper {
         ) {
           update.publishAt = detail.setPublishAt;
         }
-      } else if (opt.delCond(detail)) {
+      } else if (operate === myEnum.contentOperate.删除) {
         if (detail.canDel) {
           updateStatus = toStatus;
-          changeNumUserMap[userIdStr]--;
+          changeNumUserMap[userIdStr] += changeData.changeNum;
         }
-      } else if (opt.recoveryCond(detail)) {
-        let lastLog = await ContentLogModel.findOne({
-          contentId: detail._id,
-        }).sort({ _id: -1 });
+      } else if (operate === myEnum.contentOperate.恢复) {
         let canRecovery = this.canRecovery({
           detail,
           log: lastLog,
@@ -266,15 +286,17 @@ export class ContentMapper {
         });
         if (canRecovery) {
           updateStatus = lastLog.srcStatus;
+          changeNumUserMap[userIdStr] += changeData.changeNum;
         }
       } else {
         updateStatus = toStatus;
+        changeNumUserMap[userIdStr] += changeData.changeNum;
       }
       update.status = updateStatus;
       if (updateStatus === undefined) {
         updateRsList.push({
           _id: detail._id,
-          toStatus: detail.status,
+          toStatus: null,
         });
         continue;
       }
@@ -301,7 +323,7 @@ export class ContentMapper {
       });
     }
 
-    if (!bulk.length) return;
+    if (!bulk.length) return updateRsList;
     await transaction(async (session) => {
       await this.updateCountInUser({
         contentType: opt.contentType,
