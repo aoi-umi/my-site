@@ -144,7 +144,7 @@ export class ArticleMapper {
     let updateStatus = null;
     if (rs?.length === 1) {
       updateStatus = rs[0].toStatus;
-      if (updateStatus ?? '' === '') {
+      if ((updateStatus ?? '') === '') {
         throw error('update failed');
       }
     }
