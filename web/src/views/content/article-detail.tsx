@@ -8,6 +8,7 @@ import { testApi } from '@/api'
 import { myEnum, dev } from '@/config'
 import { Divider, Affix, Card } from '@/components/iview'
 import { MyLoad } from '@/components/my-load'
+import { MyTag } from '@/components/my-tag'
 
 import { UserAvatar } from '../comps/user-avatar'
 import { Base } from '../base'
@@ -86,6 +87,9 @@ class ArticleDetailMainProp {
     required: true,
   })
   data: DetailDataType
+
+  @Prop()
+  mgt?: boolean
 }
 @Component({
   extends: Base,
@@ -121,7 +125,10 @@ export class ArticleDetailMain extends Vue<ArticleDetailMainProp, Base> {
     const detail = this.data
     return (
       <div>
-        <h1>{detail.title}</h1>
+        <div class="flex">
+          <h1 class="flex-stretch">{detail.title}</h1>
+          {this.mgt && <MyTag value={detail.statusText} />}
+        </div>
         <br />
         {this.renderHeader(detail)}
         <br />

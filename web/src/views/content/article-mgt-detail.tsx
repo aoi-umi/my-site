@@ -1,10 +1,10 @@
 import { Watch } from 'vue-property-decorator'
 
-import { Component, Vue, Prop } from '@/components/decorator'
+import { Component } from '@/components/decorator'
 import { testApi } from '@/api'
-import { myEnum, dev } from '@/config'
+import { myEnum } from '@/config'
 import { routerConfig } from '@/router'
-import { FormItem, Button, Divider, Affix, Card } from '@/components/iview'
+import { FormItem } from '@/components/iview'
 import { MyEditor } from '@/components/my-editor'
 
 import {
@@ -85,7 +85,7 @@ export default class ArticleMgtDetail extends ArticleMgtBase {
     const { detail } = this.innerDetail
     return (
       <div>
-        <ArticleDetailMain data={detail} />
+        <ArticleDetailMain data={detail} mgt />
         {this.renderDetailOpBox(detail)}
         {this.renderLog()}
         {this.renderDelConfirm()}

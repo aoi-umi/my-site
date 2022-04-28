@@ -122,7 +122,7 @@ export default class VideoMgtDetail extends VideoMgtBase {
     const { detail } = this.innerDetail
     return (
       <div>
-        <VideoDetailMain data={detail} />
+        <VideoDetailMain data={detail} mgt />
         {this.renderDetailOpBox(detail)}
         {this.renderLog()}
         {this.renderDelConfirm()}

@@ -4,6 +4,7 @@ import { Component, Vue, Prop, Confirm } from '@/components/decorator'
 import { testApi } from '@/api'
 import { myEnum, dev } from '@/config'
 import { routerConfig } from '@/router'
+import { OperateModel } from '@/helpers'
 import {
   Form,
   FormItem,
@@ -21,11 +22,11 @@ import { MyConfirm } from '@/components/my-confirm'
 import { MyList } from '@/components/my-list'
 import { MyUpload, FileDataType } from '@/components/my-upload'
 import { MyLoad } from '@/components/my-load'
+import { MyTag } from '@/components/my-tag'
 
 import { UserAvatar } from '../comps/user-avatar'
 import { Base } from '../base'
 import { OperateDataType, OperateButton } from '../comps/operate-button'
-import { OperateModel } from '@/helpers'
 export class ContentDetailType<T extends ContentDataType = ContentDataType> {
   detail: T
   log?: any[]
@@ -337,7 +338,7 @@ export class ContentMgtBase extends Vue<{}, IContentMgtBase & Base> {
   protected renderDetailOpBox(detail: ContentDataType) {
     const operate = this.getOperate(detail, { isDetail: true })
     return (
-      operate.length && (
+      operate.length > 0 && (
         <div>
           <Divider />
           <Affix offset-bottom={40}>
@@ -577,7 +578,6 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp, Base> {
       <div>
         <UserAvatar user={detail.user} />
         {[
-          '状态: ' + detail.statusText,
           '创建于: ' + this.$utils.dateFormat(detail.createdAt),
           detail.publishAt &&
             '发布于:' + this.$utils.dateFormat(detail.publishAt),
@@ -601,15 +601,24 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp, Base> {
     const { detail } = this.innerDetail
     return (
       <div>
-        <h3>{detail._id ? '修改' : '新增'}</h3>
+        <div class="flex">
+          <h3 class="flex-stretch">{detail._id ? '修改' : '新增'}</h3>
+          <MyTag value={detail.statusText} />
+        </div>
+        <br />
         <Form
           ref="formVaild"
           label-position="top"
           props={{ model: detail }}
           rules={this.rules}
         >
-          <FormItem label="" prop="header" v-show={!detail._id}>
-            {!!detail._id && this.renderHeader(detail)}
+          {detail._id && (
+            <FormItem label="" prop="header">
+              {this.renderHeader(detail)}
+            </FormItem>
+          )}
+          <FormItem label="标题" prop="title">
+            <Input v-model={detail.title} />
           </FormItem>
           <FormItem label="封面" prop="cover">
             <MyUpload
@@ -627,9 +636,6 @@ export class ContentMgtDetail extends Vue<ContentMgtDetailProp, Base> {
               v-model={this.coverList}
               showProgress
             />
-          </FormItem>
-          <FormItem label="标题" prop="title">
-            <Input v-model={detail.title} />
           </FormItem>
           <FormItem label="简介" prop="profile">
             <Input v-model={detail.profile} type="textarea" />

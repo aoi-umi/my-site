@@ -7,6 +7,7 @@ import { Divider, Spin, Affix, Card } from '@/components/iview'
 import { MyLoad } from '@/components/my-load'
 import { MyVideo } from '@/components/my-video'
 import { FileType, FileDataType } from '@/components/my-upload'
+import { MyTag } from '@/components/my-tag'
 
 import { UserAvatar } from '../comps/user-avatar'
 import { Base } from '../base'
@@ -74,6 +75,9 @@ class VideoDetailMainProp {
     required: true,
   })
   data: DetailDataType
+
+  @Prop()
+  mgt?: boolean
 }
 @Component({
   extends: Base,
@@ -142,7 +146,10 @@ export class VideoDetailMain extends Vue<VideoDetailMainProp, Base> {
     const detail = this.data
     return (
       <div>
-        <h1>{detail.title}</h1>
+        <div class="flex">
+          <h1 class="flex-stretch">{detail.title}</h1>
+          {this.mgt && <MyTag value={detail.statusText} />}
+        </div>
         <br />
         {this.renderHeader(detail)}
         <br />
