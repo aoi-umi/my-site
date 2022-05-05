@@ -293,32 +293,27 @@ export class ChatList extends Base {
     return rs
   }
 
-  private toChat(userId) {
-    this.goToPage({
-      path: routerConfig.userChat.path,
-      query: { _id: userId },
-    })
-  }
-
   private renderChat(rs: ResultType) {
     return rs.data.map((ele) => {
       const user = ele.user
       return (
-        <Card
-          class={[...this.getStyleName('item'), 'pointer']}
-          nativeOn-click={() => {
-            this.toChat(user._id)
-          }}
+        <router-link
+          to={this.$utils.getUrl({
+            path: routerConfig.userChat.path,
+            query: { _id: user._id },
+          })}
         >
-          <div class={this.getStyleName('item-first-row')}>
-            <UserAvatar user={user} />
-            <div class="flex-stretch" />
-            <Time class="not-important" time={ele.createdAt} />
-          </div>
-          <div class="pointer">
-            <span class={this.getStyleName('item-msg')}>{ele.content}</span>
-          </div>
-        </Card>
+          <Card class={[...this.getStyleName('item')]}>
+            <div class={this.getStyleName('item-first-row')}>
+              <UserAvatar user={user} />
+              <div class="flex-stretch" />
+              <Time class="not-important" time={ele.createdAt} />
+            </div>
+            <div class="pointer">
+              <span class={this.getStyleName('item-msg')}>{ele.content}</span>
+            </div>
+          </Card>
+        </router-link>
       )
     })
   }

@@ -61,21 +61,20 @@ export class FollowList extends Vue<FollowListProp, Base> {
           ? ele.followerUser
           : ele.followingUser
       return (
-        <Card
-          class={[...this.getStyleName('main'), 'pointer']}
-          nativeOn-click={() => {
-            this.goToPage({
-              path: routerConfig.userInfo.path,
-              query: { _id: user._id },
-            })
-          }}
-        >
+        <Card class={[...this.getStyleName('main')]}>
           <div class={this.getStyleName('content')}>
-            <UserAvatar user={user} />
-            <span class={this.getStyleName('profile')}>
-              {user.profile || dev.defaultProfile}
-            </span>
-            <div class="flex-stretch" />
+            <router-link
+              class="flex-stretch"
+              to={this.$utils.getUrl({
+                path: routerConfig.userInfo.path,
+                query: { _id: user._id },
+              })}
+            >
+              <UserAvatar user={user} />
+              <span class={this.getStyleName('profile')}>
+                {user.profile || dev.defaultProfile}
+              </span>
+            </router-link>
             <FollowButton user={user} />
           </div>
         </Card>

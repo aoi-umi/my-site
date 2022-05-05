@@ -474,12 +474,12 @@ export class CommentDetail extends Vue<CommentDetailProp, Base> {
     )
   }
 
-  toOwner(ele) {
+  getToOwnerUrl(ele) {
     let detailUrl = {
       [this.$enum.contentType.文章]: routerConfig.articleDetail.path,
       [this.$enum.contentType.视频]: routerConfig.videoDetail.path,
     }[ele.type]
-    this.goToPage({
+    return this.$utils.getUrl({
       path: detailUrl,
       query: { _id: ele.ownerId },
       hash: String(ele.floor),
@@ -506,19 +506,19 @@ export class CommentDetail extends Vue<CommentDetailProp, Base> {
             <UserAvatar user={ele.user} isAuthor={this.isAuthor(ele)} />
           )}
           {!reply && ele.owner && (
-            <div
-              class={[...this.getStyleName('owner'), 'not-important']}
-              on-click={() => {
-                this.toOwner(ele)
-              }}
-            >
-              <span>在{this.$enum.contentType.getName(ele.type)}</span>
-              <span class={this.getStyleName('owner-title')}>
-                《{ele.owner.title}》
-              </span>
-              <span>
-                {ele.quote || ele.replyList?.length > 0 ? '回复了' : '评论了'}
-              </span>
+            <div>
+              <router-link
+                class={[...this.getStyleName('owner'), 'not-important']}
+                to={this.getToOwnerUrl(ele)}
+              >
+                <span>在{this.$enum.contentType.getName(ele.type)}</span>
+                <span class={this.getStyleName('owner-title')}>
+                  《{ele.owner.title}》
+                </span>
+                <span>
+                  {ele.quote || ele.replyList?.length > 0 ? '回复了' : '评论了'}
+                </span>
+              </router-link>
             </div>
           )}
           {!reply && (
