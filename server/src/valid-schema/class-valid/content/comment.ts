@@ -3,7 +3,7 @@ import { IsDefined, MinLength, MaxLength, IsIn } from 'class-validator';
 import { Types } from 'mongoose';
 
 import { myEnum } from '@/dev-config';
-import { ListBase, DelBase } from '../base';
+import { ListBase, DelBase, UpdateBase } from '../base';
 import { objectIdTransform } from '../util';
 
 export class CommentSubmit {
@@ -38,6 +38,15 @@ export class CommentQuery extends ListBase {
 
   @Transform(objectIdTransform)
   topId?: Types.ObjectId;
+
+  @Type()
+  isHot?: boolean;
 }
 
 export class CommentDel extends DelBase {}
+
+export class CommentSetAsTop extends UpdateBase {
+  @IsDefined()
+  @Type()
+  isSetAsTop: boolean;
+}

@@ -28,6 +28,12 @@ export class DetailQueryBase {
   _id: Types.ObjectId;
 }
 
+export class UpdateBase {
+  @IsDefined()
+  @Transform(objectIdTransform)
+  _id: Types.ObjectId;
+}
+
 export class OperateBase {
   @IsDefined()
   @IsArray()

@@ -197,6 +197,9 @@ let test: TestApiConfigType = {
     commentDel: {
       url: '/comment/del',
     },
+    commentSetAsTop: {
+      url: '/comment/setAsTop',
+    },
 
     voteSubmit: {
       url: '/vote/submit',

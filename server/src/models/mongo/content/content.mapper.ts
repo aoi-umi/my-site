@@ -12,7 +12,6 @@ import { FileMapper } from '../file';
 import { ContentBaseInstanceType, ContentBaseModelType } from './content-base';
 import { ContentLogMapper } from './content-log.mapper';
 import { BaseMapper } from '../_base';
-import { FollowMapper } from '../follow';
 import { VoteMapper } from '../vote';
 import { UserMapper, UserModel, UserInstanceType } from '../user';
 import {
@@ -525,6 +524,20 @@ export class ContentMapper {
       ContentMapper.resetDetail(ele, resetOpt);
       return ele;
     });
+    return rs;
+  }
+
+  static async mixModelQuery(opt: { contentType: number; _id: any }) {
+    let { contentType } = opt;
+    let rs: ContentBaseInstanceType;
+    switch (contentType) {
+      case myEnum.contentType.文章:
+        rs = await ArticleModel.findById(opt._id);
+        break;
+      case myEnum.contentType.视频:
+        rs = await VideoModel.findById(opt._id);
+        break;
+    }
     return rs;
   }
 

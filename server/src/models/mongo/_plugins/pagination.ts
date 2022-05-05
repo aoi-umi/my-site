@@ -82,6 +82,8 @@ const Pagination: IPagination<{}> = {
     return {
       rows,
       total,
+      pageIndex: opt.page,
+      pageSize: opt.rows,
     };
   },
 

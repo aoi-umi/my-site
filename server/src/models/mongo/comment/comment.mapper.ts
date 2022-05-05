@@ -76,6 +76,10 @@ export class CommentMapper {
       };
     }
 
+    if (data.isHot) {
+      match.isSetAsTop = true;
+    }
+
     let pipeline: any[] = [
       {
         $match: match,

@@ -29,7 +29,7 @@ export type CommentDocType = DocType<CommentInstanceType>;
 @setPlugin(pagination)
 export class Comment extends Base implements IVoteOwner {
   /**
-   * 所属文章等id
+   * 所属内容id
    */
   @prop({
     required: true,
@@ -56,6 +56,7 @@ export class Comment extends Base implements IVoteOwner {
   })
   status: number;
 
+  // 最顶层回复的id
   @prop({
     type: SchemaTypes.ObjectId,
   })
@@ -96,6 +97,12 @@ export class Comment extends Base implements IVoteOwner {
     default: 0,
   })
   dislike: number;
+
+  // 置顶
+  @prop({
+    default: false,
+  })
+  isSetAsTop: boolean;
 
   @prop()
   get canDel() {

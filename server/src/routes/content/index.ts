@@ -108,10 +108,20 @@ router.get(
   UserAuthMid.normal(),
   MyRequestHandlerMid.convert(comment.query),
 );
+router.get(
+  '/comment/hotQuery',
+  UserAuthMid.normal(),
+  MyRequestHandlerMid.convert(comment.hotQuery),
+);
 router.post(
   '/comment/del',
   UserAuthMid.normal(),
   MyRequestHandlerMid.convert(comment.del),
+);
+router.post(
+  '/comment/setAsTop',
+  UserAuthMid.normal(),
+  MyRequestHandlerMid.convert(comment.setAsTop),
 );
 //#endregion
 

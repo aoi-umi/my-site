@@ -76,6 +76,7 @@ export type TestMethod = {
   commentSubmit
   commentQuery
   commentDel
+  commentSetAsTop
 
   voteSubmit
   favouriteSubmit

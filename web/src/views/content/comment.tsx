@@ -34,15 +34,26 @@ class CommentProp {
 export class Comment extends Vue<CommentProp, Base> {
   stylePrefix = 'comment-'
 
-  $refs: { list: MyList<any>; replyList: MyList<any> }
+  $refs: { list: MyList<any>; hotList: MyList<any>; replyList: MyList<any> }
   mounted() {
-    this.query()
+    this.query(null, { init: true })
     this.$refs.replyList.model.setPage({ size: 3 })
   }
 
-  async query(opt?, noClear?) {
+  async query(
+    data?,
+    opt?: {
+      init?: boolean
+    },
+  ) {
+    opt = {
+      ...opt,
+    }
     this.refreshLoading = true
-    await this.$refs.list.query(opt)
+    await this.$refs.list.query(data)
+    if (opt.init) {
+      await this.$refs.hotList.query(data)
+    }
     this.refreshLoading = false
   }
 
@@ -198,7 +209,6 @@ export class Comment extends Vue<CommentProp, Base> {
 
   render() {
     const send = this.reply.quote === this.newComment
-    const newData = this.getReplyData(this.newComment._id)
     return (
       <div>
         <div
@@ -208,7 +218,9 @@ export class Comment extends Vue<CommentProp, Base> {
         >
           <Button
             on-click={() => {
-              this.query(convert.Test.listModelToQuery(this.$refs.list.model))
+              this.query(convert.Test.listModelToQuery(this.$refs.list.model), {
+                init: true,
+              })
             }}
             loading={this.refreshLoading}
           >
@@ -235,6 +247,26 @@ export class Comment extends Vue<CommentProp, Base> {
           )}
         </div>
         {send && this.renderSubmitBox()}
+        <MyList
+          ref="hotList"
+          hideSearchBox
+          type="custom"
+          pagePosition="none"
+          defaultCustomFail={false}
+          customRenderFn={this.renderResult}
+          on-query={(t) => {
+            this.query(convert.Test.listModelToQuery(t))
+          }}
+          queryFn={async (data) => {
+            const rs = await testApi.commentQuery({
+              ownerId: this.ownerId,
+              type: this.type,
+              isHot: true,
+            })
+            return rs
+          }}
+        ></MyList>
+        <Divider />
         <MyList
           ref="list"
           hideSearchBox
@@ -397,8 +429,16 @@ export class CommentDetail extends Vue<CommentDetailProp, Base> {
     })
   }
 
+  voteClick(detail) {
+    this.handleVote(
+      detail,
+      detail.voteValue == myEnum.voteValue.喜欢
+        ? myEnum.voteValue.无
+        : myEnum.voteValue.喜欢,
+    )
+  }
   handleVote(detail, value) {
-    this.operateHandler(
+    return this.operateHandler(
       '',
       async () => {
         const rs = await testApi.voteSubmit({
@@ -410,6 +450,23 @@ export class CommentDetail extends Vue<CommentDetailProp, Base> {
           detail[key] = rs[key]
         }
         detail.voteValue = value
+      },
+      {
+        noSuccessHandler: true,
+      },
+    )
+  }
+
+  setAsTopClick(detail) {
+    return this.operateHandler(
+      '置顶',
+      async () => {
+        let isSetAsTop = !detail.isSetAsTop
+        const rs = await testApi.commentSetAsTop({
+          _id: detail._id,
+          isSetAsTop,
+        })
+        detail.isSetAsTop = isSetAsTop
       },
       {
         noSuccessHandler: true,
@@ -437,15 +494,16 @@ export class CommentDetail extends Vue<CommentDetailProp, Base> {
     )
   }
 
+  isAuthor(ele) {
+    return ele.user._id === this.ownUserId
+  }
+
   renderComment(ele, reply?: boolean) {
     return (
       <div class={this.getStyleName(!reply ? 'main' : 'reply')} key={ele._id}>
         <div class={this.getStyleName('content-root')}>
           {ele.user && (
-            <UserAvatar
-              user={ele.user}
-              isAuthor={ele.user._id === this.ownUserId}
-            />
+            <UserAvatar user={ele.user} isAuthor={this.isAuthor(ele)} />
           )}
           {!reply && ele.owner && (
             <div
@@ -503,12 +561,7 @@ export class CommentDetail extends Vue<CommentDetailProp, Base> {
                         ele.voteValue == myEnum.voteValue.喜欢 ? 'red' : ''
                       }
                       on-click={() => {
-                        this.handleVote(
-                          ele,
-                          ele.voteValue == myEnum.voteValue.喜欢
-                            ? myEnum.voteValue.无
-                            : myEnum.voteValue.喜欢,
-                        )
+                        this.voteClick(ele)
                       }}
                     />
                     {ele.like}
@@ -523,6 +576,18 @@ export class CommentDetail extends Vue<CommentDetailProp, Base> {
                     }}
                   />
                 )}
+                {!reply &&
+                  (!ele.isDel || ele.isSetAsTop) &&
+                  this.storeUser.user.equalsId(this.ownUserId) && (
+                    <Icon
+                      type="md-flame"
+                      size={20}
+                      color={ele.isSetAsTop ? 'red' : ''}
+                      on-click={() => {
+                        this.setAsTopClick(ele)
+                      }}
+                    />
+                  )}
               </div>
             </div>
           </div>

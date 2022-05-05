@@ -158,7 +158,7 @@ class MyListProp<QueryArgs = any> {
   @Prop({
     default: 'bottom',
   })
-  pagePosition?: 'top' | 'bottom' | 'both'
+  pagePosition?: 'top' | 'bottom' | 'both' | 'none'
 
   @Prop()
   tableHeight?: string | number

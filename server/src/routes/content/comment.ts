@@ -8,6 +8,7 @@ import { MyRequestHandler } from '@/middleware';
 
 import { CommentMapper, CommentModel } from '@/models/mongo/comment';
 import { UserMapper } from '@/models/mongo/user';
+import { ContentMapper } from '@/models/mongo/content';
 
 export let submit: MyRequestHandler = async (opt) => {
   let user = opt.myData.user;
@@ -68,6 +69,27 @@ export let query: MyRequestHandler = async (opt) => {
   };
 };
 
+export let hotQuery: MyRequestHandler = async (opt) => {
+  let user = opt.myData.user;
+  let data = paramsValid(opt.reqData, ValidSchema.CommentQuery);
+  let { total, rows } = await CommentMapper.query(
+    {
+      ...data,
+    },
+    {
+      resetOpt: {
+        imgHost: opt.myData.imgHost,
+        user: user.isLogin ? user : null,
+      },
+    },
+  );
+
+  return {
+    rows,
+    total,
+  };
+};
+
 export let del: MyRequestHandler = async (opt) => {
   let user = opt.myData.user;
   let data = paramsValid(opt.reqData, ValidSchema.CommentDel);
@@ -93,4 +115,27 @@ export let del: MyRequestHandler = async (opt) => {
     status: config.myEnum.commentStatus.已删除,
   });
   if (!rs.n) throw error('', config.error.NO_MATCH_DATA);
+};
+
+export let setAsTop: MyRequestHandler = async (opt) => {
+  let user = opt.myData.user;
+  let data = paramsValid(opt.reqData, ValidSchema.CommentSetAsTop);
+  let id = data._id;
+  let detail = await CommentModel.findById(id);
+  if (!detail) throw error('comment not found', config.error.NO_MATCH_DATA);
+  let content = await ContentMapper.mixModelQuery({
+    contentType: detail.type,
+    _id: detail.ownerId,
+  });
+  if (!content) throw error('content not found', config.error.NO_MATCH_DATA);
+  if (!user.equalsId(content.userId))
+    throw error('', config.error.NO_PERMISSIONS);
+  await transaction(async (session) => {
+    await CommentModel.updateMany(
+      { ownerId: detail.ownerId },
+      { isSetAsTop: false },
+      { session },
+    );
+    if (data.isSetAsTop) await detail.update({ isSetAsTop: true }, { session });
+  });
 };
