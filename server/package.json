@@ -8,10 +8,14 @@
     "deploy": "rm -rf ./depoly && tsc -p tsconfig-deploy.json",
     "dev": "ts-node src/app",
     "doc": "apidoc -i src/ -o _test/docs",
+    "lint": "eslint --quiet ./src/**/*.ts",
     "format": "eslint --fix --quiet ./src/**/*.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "pm2": "pm2 start pm2.config.js"
   },
+  "pre-commit": [
+    "lint"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -66,6 +70,7 @@
     "eslint": "^7.22.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^3.4.1",
+    "pre-commit": "^1.2.2",
     "prettier": "^2.6.2",
     "prettier-eslint": "^14.0.1",
     "ts-node": "^8.10.1",
