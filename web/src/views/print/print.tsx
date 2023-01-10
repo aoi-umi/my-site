@@ -594,10 +594,11 @@ export default class Print extends Base {
 
             <li>
               <a
-                class={[
-                  'btn hiprint-toolbar-item ',
+                class={{
+                  btn: true,
+                  'hiprint-toolbar-item': true,
                   ...this.getStyleName('important-btn'),
-                ]}
+                }}
                 on-click={() => {
                   this.print()
                 }}
@@ -607,10 +608,11 @@ export default class Print extends Base {
             </li>
             <li>
               <a
-                class={[
-                  'btn hiprint-toolbar-item ',
+                class={{
+                  btn: true,
+                  'hiprint-toolbar-item': true,
                   ...this.getStyleName('important-btn'),
-                ]}
+                }}
                 on-click={() => {
                   this.save()
                 }}
@@ -621,10 +623,11 @@ export default class Print extends Base {
             </li>
             <li>
               <a
-                class={[
-                  'btn hiprint-toolbar-item ',
+                class={{
+                  btn: true,
+                  'hiprint-toolbar-item': true,
                   ...this.getStyleName('important-btn'),
-                ]}
+                }}
                 on-click={() => {
                   this.updateTestData()
                 }}

@@ -103,7 +103,12 @@ export default class Goods extends Base {
                 {ele.name}
               </p>
               <div class={this.getStyleName('sale-box')}>
-                <span class={[...this.getStyleName('price'), 'flex-stretch']}>
+                <span
+                  class={{
+                    ...this.getStyleName('price'),
+                    'flex-stretch': true,
+                  }}
+                >
                   ¥{ele.price}
                 </span>
                 <span class="not-important">已售{ele.saleQuantity}</span>

@@ -94,14 +94,14 @@ export class UserAvatar extends Vue<UserAvatarProp, Base> {
         >
           <Badge dot count={this.count}>
             <Avatar
-              class={this.getStyleName('avatar').concat('shadow')}
+              class={{ ...this.getStyleName('avatar'), shadow: true }}
               icon="md-person"
               size={this.size}
               src={this.avatarUrl}
             />
           </Badge>
         </UserPoptip>
-        <span class={this.getStyleName('text').concat('not-important')}>
+        <span class={{ ...this.getStyleName('text'), 'not-important': true }}>
           {this.user.nickname}
           {this.showAccount && `(${this.user.account})`}
           {this.isAuthor && `(发布者)`}

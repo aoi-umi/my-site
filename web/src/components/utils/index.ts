@@ -46,7 +46,15 @@ const _Utils = {
   },
 
   getStyleName(stylePrefix: string, ...args: string[]) {
-    return args.filter((ele) => !!ele).map((ele) => stylePrefix + ele)
+    return args
+      .filter((ele) => !!ele)
+      .map((ele) => stylePrefix + ele)
+      .reduce((pre, curr) => {
+        return {
+          ...pre,
+          [curr]: true,
+        }
+      }, {})
   },
 
   dateParse(date) {

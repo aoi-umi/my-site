@@ -222,10 +222,10 @@ export default class ChatDetail extends Base {
                               </div>
                             </div>
                             <Time
-                              class={[
+                              class={{
                                 ...this.getStyleName('msg-send-time'),
-                                'not-important',
-                              ]}
+                                'not-important': true,
+                              }}
                               time={new Date(ele.createdAt)}
                             />
                           </div>
@@ -254,10 +254,10 @@ export default class ChatDetail extends Base {
                 </Split>
                 <div class={this.getStyleName('send-btn-box')}>
                   <span
-                    class={[
+                    class={{
                       ...this.getStyleName('send-notice'),
-                      'not-important',
-                    ]}
+                      'not-important': true,
+                    }}
                   >
                     Alt + Enter换行
                   </span>
@@ -303,7 +303,7 @@ export class ChatList extends Base {
             query: { _id: user._id },
           })}
         >
-          <Card class={[...this.getStyleName('item')]}>
+          <Card class={this.getStyleName('item')}>
             <div class={this.getStyleName('item-first-row')}>
               <UserAvatar user={user} />
               <div class="flex-stretch" />

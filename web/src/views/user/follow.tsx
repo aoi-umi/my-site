@@ -61,7 +61,7 @@ export class FollowList extends Vue<FollowListProp, Base> {
           ? ele.followerUser
           : ele.followingUser
       return (
-        <Card class={[...this.getStyleName('main')]}>
+        <Card class={this.getStyleName('main')}>
           <div class={this.getStyleName('content')}>
             <router-link
               class="flex-stretch"

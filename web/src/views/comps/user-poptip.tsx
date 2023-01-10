@@ -163,7 +163,9 @@ export class UserPoptip extends Vue<UserPoptipProp, Base> {
               ) : (
                 <div>
                   {this.loading && <Spin fix />}
-                  <div class={this.getStyleName('avatar-box').concat('center')}>
+                  <div
+                    class={{ ...this.getStyleName('avatar-box'), center: true }}
+                  >
                     <Avatar
                       class="shadow"
                       icon="md-person"

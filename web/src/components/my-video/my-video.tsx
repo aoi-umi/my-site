@@ -150,9 +150,12 @@ export class MyVideo extends Vue<MyVideoProp, MyBase> {
       <div class={this.getStyleName('video-box')}>
         <video
           ref="video"
-          class={this.getStyleName('video').concat([
-            'video-js vjs-default-skin vjs-big-play-centered',
-          ])}
+          class={{
+            ...this.getStyleName('video'),
+            'video-js': true,
+            'vjs-default-skin': true,
+            'vjs-big-play-centered': true,
+          }}
           crossOrigin="*"
           x5-video-player-type="h5"
           // x5-video-orientation="landscape"

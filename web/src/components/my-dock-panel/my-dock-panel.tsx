@@ -100,10 +100,10 @@ export class MyDockPanelItem extends Vue<MyDockPanelItemProp, MyBase> {
     let style = `width: ${width}; height: ${height}; min-width: ${minWidth}; min-height: ${minHeight};`
     return (
       <div
-        class={[
+        class={{
           ...this.getStyleName('root'),
           ...dockPanel.getStyleName(lIdx == 0 && 'stretch'),
-        ]}
+        }}
         style={style}
       >
         <div>{this.$slots.default}</div>

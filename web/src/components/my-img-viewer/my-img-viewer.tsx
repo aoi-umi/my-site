@@ -191,7 +191,7 @@ class Gesture extends Vue<{}, MyBase> {
     return (
       <div
         ref="root"
-        class={[...this.getStyleName('root'), 'center']}
+        class={{ ...this.getStyleName('root'), center: true }}
         on-mousewheel={(event) => {
           event.preventDefault()
           this.scaleHandler(event.wheelDeltaY > 0)

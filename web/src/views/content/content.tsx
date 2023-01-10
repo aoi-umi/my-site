@@ -340,7 +340,10 @@ export class ContentListItem extends Vue<ContentListItemProp, Base> {
         <Row>
           <Col class={this.getStyleName('top-col')} span={24}>
             <h3
-              class={[...this.getStyleName('list-title'), 'flex-stretch']}
+              class={{
+                ...this.getStyleName('list-title'),
+                'flex-stretch': true,
+              }}
               title={ele.title}
             >
               {ele.title}
@@ -369,7 +372,10 @@ export class ContentListItem extends Vue<ContentListItemProp, Base> {
           <Col class={this.getStyleName('cover-col')} span={24}>
             {ele.coverUrl && (
               <img
-                class={[...this.getStyleName('cover'), 'my-upload-item cover']}
+                class={{
+                  ...this.getStyleName('cover'),
+                  'my-upload-item cover': true,
+                }}
                 v-lazy={ele.coverUrl}
               />
             )}
@@ -405,15 +411,13 @@ export class ContentListItem extends Vue<ContentListItemProp, Base> {
           class={this.getStyleName('min-box')}
           to={this.$utils.getUrl(this.getDetailUrlObj(ele))}
         >
-          <div class={[...this.getStyleName('cover-box')]}>
-            {
-              <img
-                class={[...this.getStyleName('cover')]}
-                v-lazy={ele.coverUrl}
-              />
-            }
+          <div class={this.getStyleName('cover-box')}>
+            {<img class={this.getStyleName('cover')} v-lazy={ele.coverUrl} />}
             <h4
-              class={[...this.getStyleName('list-title'), 'flex-stretch']}
+              class={{
+                ...this.getStyleName('list-title'),
+                'flex-stretch': true,
+              }}
               title={ele.title}
             >
               {ele.title}

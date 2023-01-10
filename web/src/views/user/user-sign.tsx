@@ -300,9 +300,10 @@ export class ThirdPartyLogin extends Vue<ThirdPartyLoginProp, Base> {
           const noBind = this.bind && !this.user.oauth[ele.oauthName]
           return (
             <img
-              class={this.getStyleName('item').concat([
-                noBind ? 'disabled' : '',
-              ])}
+              class={{
+                ...this.getStyleName('item'),
+                disabled: noBind,
+              }}
               src={ele.src}
               on-click={() => {
                 if (!this.bind) {

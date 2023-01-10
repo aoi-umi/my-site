@@ -503,11 +503,11 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
           return (
             <div class={this.getStyleName('item-root')}>
               <div
-                class={[
+                class={{
                   ...this.getStyleName('item'),
-                  this.shape == 'circle' ? style.cls.circle : '',
-                  this.fileList.length > 1 ? 'move' : '',
-                ]}
+                  [style.cls.circle]: this.shape == 'circle',
+                  move: this.fileList.length > 1,
+                }}
                 style={{ width, height }}
                 v-dragging={{ item, list: this.fileList, group: 'upload-item' }}
                 key={idx}
@@ -535,7 +535,7 @@ export class MyUpload extends Vue<MyUploadProp, MyBase> {
                 )}
                 {!this.readonly && (
                   <div
-                    class={[...this.getStyleName('item-cover')]}
+                    class={this.getStyleName('item-cover')}
                     style={{ lineHeight: coverHeight }}
                   >
                     {isImg && item.originData && (

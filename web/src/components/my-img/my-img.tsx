@@ -40,7 +40,7 @@ export class MyImg extends Vue<MyImgProp, MyBase> {
     this.isFail = this.src && !this.isLoadSuccess
     const rootCls = this.getStyleName('root')
     if (this.isFail && !this.failImg) {
-      rootCls.push('fail-icon')
+      rootCls['fail-icon'] = true
     }
     return (
       <div class={rootCls}>

@@ -83,7 +83,9 @@ export class MyLoad extends Vue<MyLoadProp, MyBase> {
             {this.loading ? (
               <Spin size="large" fix />
             ) : (
-              <div class={this.getStyleName('content').concat(cls.center)}>
+              <div
+                class={{ ...this.getStyleName('content'), [cls.center]: true }}
+              >
                 {this.result.msg}
                 <Button
                   class={this.getStyleName('retry-btn')}

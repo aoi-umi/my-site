@@ -219,11 +219,11 @@ export class SideMenu extends Vue<SideMenuProp, Base> {
     const collapsedWidth = this.isSmall ? 0 : this.collapsedWidth
     return (
       <Layout
-        class={[
+        class={{
           ...this.getStyleName('root'),
-          'no-bg',
-          this.isCollapsed ? '' : 'open',
-        ]}
+          'no-bg': true,
+          open: !this.isCollapsed,
+        }}
       >
         <Sider
           class={this.getStyleName('sider')}
@@ -262,7 +262,7 @@ export class SideMenu extends Vue<SideMenuProp, Base> {
         ) : (
           <transition name="fade">
             <div
-              class={[style.cls.mask, ...this.getStyleName('mask')]}
+              class={{ [style.cls.mask]: true, ...this.getStyleName('mask') }}
               v-show={!this.isCollapsed}
               on-click={() => {
                 this.isCollapsed = true

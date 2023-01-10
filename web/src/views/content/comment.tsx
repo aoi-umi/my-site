@@ -165,7 +165,7 @@ export class Comment extends Vue<CommentProp, Base> {
       >
         <div>
           {ele.replyList?.length && (
-            <div class={[...this.getStyleName('more-reply'), 'center']}>
+            <div class={{ ...this.getStyleName('more-reply'), center: true }}>
               <a
                 on-click={() => {
                   this.moreReplyShow = true
@@ -212,9 +212,10 @@ export class Comment extends Vue<CommentProp, Base> {
     return (
       <div>
         <div
-          class={this.getStyleName('send-op-box').concat([
-            'button-group-normal',
-          ])}
+          class={{
+            ...this.getStyleName('send-op-box'),
+            'button-group-normal': true,
+          }}
         >
           <Button
             on-click={() => {
@@ -358,7 +359,10 @@ class CommentSubmitBox extends Vue<CommentSubmitBoxProp, MyInputBase> {
           defaultOnly
         />
         <div
-          class={[...this.getStyleName('send-op-box'), 'button-group-normal']}
+          class={{
+            ...this.getStyleName('send-op-box'),
+            'button-group-normal': true,
+          }}
         >
           <Button
             on-click={() => {
@@ -508,7 +512,7 @@ export class CommentDetail extends Vue<CommentDetailProp, Base> {
           {!reply && ele.owner && (
             <div>
               <router-link
-                class={[...this.getStyleName('owner'), 'not-important']}
+                class={{ ...this.getStyleName('owner'), 'not-important': true }}
                 to={this.getToOwnerUrl(ele)}
               >
                 <span>在{this.$enum.contentType.getName(ele.type)}</span>
@@ -542,7 +546,7 @@ export class CommentDetail extends Vue<CommentDetailProp, Base> {
                 <Time time={new Date(ele.createdAt)} />
               </span>
               <div class="flex-stretch"></div>
-              <div class={[...this.getStyleName('op-box'), 'pointer']}>
+              <div class={{ ...this.getStyleName('op-box'), pointer: true }}>
                 {ele.canDel && (
                   <Icon
                     type="md-trash"

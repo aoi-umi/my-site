@@ -129,17 +129,19 @@ export class DynamicComp extends Vue<DynamicCompProp, MyBase> {
       <Tooltip class={this.getStyleName('root')} disabled={!this.toolTips}>
         {this.showText && (
           <span
-            class={this.getStyleName('text').concat([
-              this.actuallyRequired && 'required',
-            ])}
+            class={{
+              ...this.getStyleName('text'),
+              required: this.actuallyRequired,
+            }}
           >
             {this.actualOption.config.text}
           </span>
         )}
         <div
-          class={this.getStyleName('container').concat([
-            !this.showText && this.actuallyRequired && 'required',
-          ])}
+          class={{
+            ...this.getStyleName('container'),
+            required: !this.showText && this.actuallyRequired,
+          }}
         >
           {this.renderComp()}
         </div>

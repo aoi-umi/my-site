@@ -501,7 +501,7 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<
   private get bottomBarClass() {
     const cls = this.getStyleName('bottom-bar')
     if (this.multiOperateBtnList.length && this.selectedRows.length) {
-      cls.push('active')
+      cls['active'] = true
     }
     return cls
   }
@@ -613,9 +613,10 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<
               </div>
             </div>
             <div
-              class={this.getStyleName('query-args-box').concat(
-                this.showQuery ? '' : 'collapsed',
-              )}
+              class={{
+                ...this.getStyleName('query-args-box'),
+                collapsed: !this.showQuery,
+              }}
               on-keypress={this.handlePress}
             >
               <Row gutter={5}>
@@ -647,7 +648,10 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<
               {this.customQueryNode}
               <Divider size="small" />
               <div
-                class={['button-group-normal', ...this.getStyleName('op-box')]}
+                class={{
+                  'button-group-normal': true,
+                  ...this.getStyleName('op-box'),
+                }}
               >
                 {[
                   {
@@ -754,9 +758,10 @@ export class MyList<QueryArgs extends QueryArgsType = any> extends Vue<
             this.loading && <Spin size="large" fix />
           ) : (
             <div
-              class={this.getStyleName('bottom-loading').concat(
-                style.cls.center,
-              )}
+              class={{
+                ...this.getStyleName('bottom-loading'),
+                [style.cls.center]: true,
+              }}
             >
               {this.loading && <Spin size="large" fix />}
               <Divider
