@@ -374,7 +374,8 @@ export class ContentListItem extends Vue<ContentListItemProp, Base> {
               <img
                 class={{
                   ...this.getStyleName('cover'),
-                  'my-upload-item cover': true,
+                  'my-upload-item': true,
+                  cover: true,
                 }}
                 v-lazy={ele.coverUrl}
               />
