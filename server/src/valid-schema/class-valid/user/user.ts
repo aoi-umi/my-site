@@ -6,10 +6,10 @@ import {
   IsIn,
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
-import { ListBase, DelBase, DetailQueryBase } from '../base';
-import { objectIdTransform } from '../util';
 import { myEnum } from '@/dev-config';
+import { TransformMongoId } from '@/valid-schema/class-transformer';
 
+import { ListBase, DelBase, DetailQueryBase } from '../base';
 export class UserAccountExists {
   @IsDefined()
   @MinLength(1)
@@ -95,7 +95,7 @@ export class UserBind {
 export class UserDetailQuery extends DetailQueryBase {}
 
 export class UserMgtQuery extends ListBase {
-  @Transform(objectIdTransform)
+  @TransformMongoId()
   _id?: string;
   account?: string;
   nickname?: string;
@@ -110,7 +110,7 @@ export class UserMgtQuery extends ListBase {
 
 export class UserMgtSave {
   @IsDefined()
-  @Transform(objectIdTransform)
+  @TransformMongoId()
   _id: string;
 
   @IsArray()
@@ -130,7 +130,7 @@ export class UserMgtSave {
 
 export class UserMgtDisable {
   @IsDefined()
-  @Transform(objectIdTransform)
+  @TransformMongoId()
   _id: string;
 
   @Type()

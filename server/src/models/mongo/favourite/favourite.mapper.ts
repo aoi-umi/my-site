@@ -5,6 +5,7 @@ import { myEnum } from '@/dev-config';
 import * as config from '@/dev-config';
 import { error } from '@/_system/common';
 import * as ValidSchema from '@/valid-schema/class-valid';
+import { getObjectId } from '@/helpers';
 
 import { ArticleModel } from '../article';
 import { VideoModel } from '../video';
@@ -58,7 +59,7 @@ export class FavouriteMapper {
           pipeline: [
             {
               $match: {
-                userId: Types.ObjectId(opt.userId),
+                userId: getObjectId(opt.userId),
                 $expr: { $eq: ['$$ownerId', '$ownerId'] },
               },
             },

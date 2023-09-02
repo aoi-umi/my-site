@@ -360,7 +360,7 @@ export class ContentMapper {
     for (let userId of userIds) {
       let changeNum = changeNumUserMap[userId];
       let user = await UserModel.findOne({ _id: userId });
-      await user.update({ [key]: user[key] + changeNum }, { session });
+      await user.updateOne({ [key]: user[key] + changeNum }, { session });
     }
   }
 
@@ -421,7 +421,7 @@ export class ContentMapper {
         remark: logRemark,
       });
       await transaction(async (session) => {
-        await detail.update(update);
+        await detail.updateOne(update);
         await log.save({ session });
       });
     }
@@ -549,7 +549,7 @@ export class ContentMapper {
   }) {
     let { user, model, detail, type } = opt;
     model
-      .update({ _id: detail._id }, { readTimes: detail.readTimes + 1 })
+      .updateOne({ _id: detail._id }, { readTimes: detail.readTimes + 1 })
       .exec();
     if (user?.isLogin) {
       ViewHistoryMapper.save({ ownerId: detail._id, type }, user);

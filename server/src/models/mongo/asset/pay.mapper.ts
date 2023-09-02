@@ -122,7 +122,7 @@ export class PayMapper {
         throw error('当前状态无法取消');
       }
       let toStatus = myEnum.payStatus.已取消;
-      await detail.update({ status: toStatus });
+      await detail.updateOne({ status: toStatus });
       detail.status = toStatus;
       await this.contactCancel(detail);
     }
@@ -145,7 +145,7 @@ export class PayMapper {
       let sku = await GoodsSkuModel.findById(pay.contactObj.skuId);
       if (sku) {
         let saleQuantity = sku.saleQuantity - pay.contactObj.quantity;
-        await sku.update({ saleQuantity: saleQuantity < 0 ? 0 : saleQuantity });
+        await sku.updateOne({ saleQuantity: saleQuantity < 0 ? 0 : saleQuantity });
       }
     }
   }
@@ -178,7 +178,7 @@ export class PayMapper {
     await transaction(async (session) => {
       await refund.save({ session });
       await assetLog.save({ session });
-      await pay.update({ refundStatus }, { session });
+      await pay.updateOne({ refundStatus }, { session });
     });
     return {
       pay: {

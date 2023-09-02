@@ -1,18 +1,18 @@
 import { IsDefined, MinLength, IsIn } from 'class-validator';
 import { Types } from 'mongoose';
 import { Type, Transform } from 'class-transformer';
+import { TransformMongoId } from '@/valid-schema/class-transformer';
 
 import { myEnum } from '@/dev-config';
 
 import { ListBase, DelBase, DetailQueryBase, OperateBase } from '../base';
-import { objectIdTransform } from '../util';
 
 export class ContentQuery extends ListBase {
-  @Transform(objectIdTransform)
+  @TransformMongoId()
   _id: Types.ObjectId;
   title: string;
   user: string;
-  @Transform(objectIdTransform)
+  @TransformMongoId()
   userId: Types.ObjectId;
   anyKey: string;
   status: string;
@@ -21,7 +21,7 @@ export class ContentQuery extends ListBase {
 export class ContentDetailQuery extends DetailQueryBase {}
 
 export class ContentSave {
-  @Transform(objectIdTransform)
+  @TransformMongoId()
   _id?: Types.ObjectId;
 
   @IsDefined()

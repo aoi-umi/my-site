@@ -2,11 +2,11 @@ import { Transform, Type } from 'class-transformer';
 import { IsDefined, MinLength, MaxLength, IsIn } from 'class-validator';
 import { Types } from 'mongoose';
 import { myEnum } from '@/dev-config';
-import { objectIdTransform } from '../util';
+import { TransformMongoId } from '@/valid-schema/class-transformer';
 
 export class VoteSubmit {
   @IsDefined()
-  @Transform(objectIdTransform)
+  @TransformMongoId()
   ownerId: Types.ObjectId;
 
   @IsDefined()

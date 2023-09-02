@@ -93,7 +93,7 @@ export let update: MyRequestHandler = async (opt) => {
   }
   let log = UserLogMapper.create(dbUser, user, { update });
   await transaction(async (session) => {
-    await dbUser.update(update, { session });
+    await dbUser.updateOne(update, { session });
     await log.save({ session });
   });
   if (updateCache.avatar)
@@ -126,7 +126,7 @@ export let unbind: MyRequestHandler = async (opt) => {
   if (oauthName === myEnum.oauthName.微信) {
     let update: UserDocType = {};
     update.wxOpenId = '';
-    await dbUser.update(update);
+    await dbUser.updateOne(update);
   } else {
     await OauthModel.deleteOne({ name: oauthName, userId: dbUser._id });
   }
@@ -142,7 +142,7 @@ export let bind: MyRequestHandler = async (opt) => {
   let dbUser = await UserModel.findById(user._id);
   let update: UserDocType = {};
   update[userByRs.saveKey] = userByRs.val;
-  await dbUser.update(update);
+  await dbUser.updateOne(update);
 };
 export let oauthBind: MyRequestHandler = async (opt, ctx) => {
   let { params } = ctx;
@@ -215,7 +215,7 @@ export let mgtSave: MyRequestHandler = async (opt) => {
 
   let log = UserLogMapper.create(detail, user, { remark });
   await transaction(async (session) => {
-    await detail.update(update, { session });
+    await detail.updateOne(update, { session });
     await log.save({ session });
   });
   return {
@@ -248,7 +248,7 @@ export let mgtDisable: MyRequestHandler = async (opt) => {
 
   let log = UserLogMapper.create(detail, user, { remark });
   await transaction(async (session) => {
-    await detail.update(update, { session });
+    await detail.updateOne(update, { session });
     await log.save({ session });
   });
   return {

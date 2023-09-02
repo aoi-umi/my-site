@@ -4,6 +4,7 @@ import { Types } from 'mongoose';
 import { myEnum } from '@/dev-config';
 import * as config from '@/dev-config';
 import { error } from '@/_system/common';
+import { getObjectId } from '@/helpers';
 
 import { ArticleMapper, ArticleModel } from '../article';
 import { VideoModel } from '../video';
@@ -58,7 +59,7 @@ export class VoteMapper {
           pipeline: [
             {
               $match: {
-                userId: Types.ObjectId(opt.userId),
+                userId: getObjectId(opt.userId),
                 $expr: { $eq: ['$$ownerId', '$ownerId'] },
               },
             },

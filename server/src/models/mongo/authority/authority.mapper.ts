@@ -2,6 +2,7 @@ import { Types } from 'mongoose';
 
 import * as ValidSchema from '@/valid-schema/class-valid';
 import { escapeRegExp } from '@/_system/common';
+import { getObjectId } from '@/helpers';
 
 import { BaseMapper } from '../_base';
 import { AuthorityModel } from '.';
@@ -10,7 +11,7 @@ export class AuthorityMapper {
   static async codeExists(code: string, _id?: any) {
     let cond: any = { code };
     if (_id) {
-      cond._id = { $ne: Types.ObjectId(_id) };
+      cond._id = { $ne: getObjectId(_id) };
     }
     let rs = await AuthorityModel.findOne(cond);
     return rs;

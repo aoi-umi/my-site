@@ -88,12 +88,12 @@ export class ThirdPartyPayMapper {
     }
     let refundStatus = myEnum.payRefundStatus.已退款;
     await transaction(async (session) => {
-      await refund.update({ status: refundStatus }, { session });
-      await assetLog.update(
+      await refund.updateOne({ status: refundStatus }, { session });
+      await assetLog.updateOne(
         { status: myEnum.assetLogStatus.已完成 },
         { session },
       );
-      await pay.update(
+      await pay.updateOne(
         {
           refundStatus,
           refundMoneyCent: refund.moneyCent + pay.refundMoneyCent,
@@ -118,7 +118,7 @@ export class ThirdPartyPayMapper {
       if (!assetLog) throw common.error('无对应资金记录');
       if (assetLog.status !== myEnum.assetLogStatus.已完成) {
         if (!assetLog.notifyId) {
-          await assetLog.update({
+          await assetLog.updateOne({
             notifyId: notify._id,
             outOrderNo: notify.outOrderNo,
           });
@@ -139,7 +139,7 @@ export class ThirdPartyPayMapper {
             throw common.error('金额不一致');
           }
         }
-        await assetLog.update({ status: myEnum.assetLogStatus.已完成 });
+        await assetLog.updateOne({ status: myEnum.assetLogStatus.已完成 });
       }
       await PayModel.updateOne(
         {
@@ -152,7 +152,7 @@ export class ThirdPartyPayMapper {
       mySocket.payCallBack(notify.orderNo);
     } catch (e) {
       if (assetLog)
-        await assetLog.update({
+        await assetLog.updateOne({
           remark: e.message,
           $push: { remarkList: { msg: e.message, notifyId: notify._id } },
         });

@@ -1,12 +1,12 @@
 import { IsDefined } from 'class-validator';
 import { Types } from 'mongoose';
 import { Transform, Type } from 'class-transformer';
-import { objectIdTransform } from './util';
 import { ListBase, OperateBase } from './base';
+import { TransformMongoId } from '../class-transformer';
 
 export class FileGet {
   @IsDefined()
-  @Transform(objectIdTransform)
+  @TransformMongoId()
   _id: Types.ObjectId;
 
   @Type()

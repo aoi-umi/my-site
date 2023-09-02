@@ -12,7 +12,7 @@ import { Types } from 'mongoose';
 
 import { myEnum } from '@/dev-config';
 import { ListBase, DetailQueryBase } from './base';
-import { objectIdTransform } from './util';
+import { TransformMongoId } from '../class-transformer';
 
 export class PayCreate {
   // @IsDecimal({
@@ -34,7 +34,7 @@ export class PayCreate {
 
 export class PaySubmit {
   @IsDefined()
-  @Transform(objectIdTransform)
+  @TransformMongoId()
   _id: Types.ObjectId;
 }
 

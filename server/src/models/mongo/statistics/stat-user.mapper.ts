@@ -15,7 +15,7 @@ export class StatUserMapper {
       let match = await StatUserModel.findOne(obj);
       if (!match) await StatUserModel.create(obj);
       else if (ele.type === myEnum.statUserType.pv) {
-        await match.update({ times: match.times + 1 });
+        await match.updateOne({ times: match.times + 1 });
       }
     }
   }

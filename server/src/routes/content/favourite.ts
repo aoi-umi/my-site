@@ -32,7 +32,7 @@ export let submit: MyRequestHandler = async (opt) => {
   detail.favourite = data.favourite;
   if (data.favourite) detail.favourAt = new Date();
   await transaction(async (session) => {
-    await owner.update(updateOwner, { session });
+    await owner.updateOne(updateOwner, { session });
     await detail.save({ session });
   });
   return updateOwner;

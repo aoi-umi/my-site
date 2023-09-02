@@ -59,7 +59,7 @@ export let save: MyRequestHandler = async (opt) => {
       detail.authorityList = [...detail.authorityList, ...data.addAuthList];
     }
     update.authorityList = detail.authorityList;
-    await detail.update(update);
+    await detail.updateOne(update);
   }
   return {
     _id: detail._id,
@@ -77,7 +77,7 @@ export let update: MyRequestHandler = async (opt) => {
   ['status'].forEach((key) => {
     if (data.hasOwnProperty(key)) update[key] = data[key];
   });
-  await model.update(update);
+  await model.updateOne(update);
 
   return {
     _id: model._id,

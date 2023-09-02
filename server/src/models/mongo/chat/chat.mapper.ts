@@ -2,6 +2,7 @@ import { Model, InstanceType } from 'mongoose-ts-ua';
 import { Types } from 'mongoose';
 
 import * as ValidSchema from '@/valid-schema/class-valid';
+import { getObjectId } from '@/helpers';
 
 import { UserMapper, UserResetOption } from '../user';
 import { ChatModel } from './chat';
@@ -11,7 +12,7 @@ export class ChatMapper {
     data: ValidSchema.ChatQuery,
     opt: { userId: any } & UserResetOption,
   ) {
-    let userId = Types.ObjectId(opt.userId);
+    let userId = getObjectId(opt.userId);
     let match: any = {
       $or: [
         {

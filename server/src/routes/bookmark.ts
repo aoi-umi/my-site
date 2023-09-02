@@ -50,7 +50,7 @@ export let save: MyRequestHandler = async (opt) => {
       detail.tagList = [...detail.tagList, ...data.addTagList];
     }
     update.tagList = detail.tagList;
-    await detail.update(update);
+    await detail.updateOne(update);
   }
   return {
     _id: detail._id,

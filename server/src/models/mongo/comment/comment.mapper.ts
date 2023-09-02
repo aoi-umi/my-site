@@ -5,6 +5,7 @@ import { Auth } from '@/_system/auth';
 import * as common from '@/_system/common';
 import * as config from '@/dev-config';
 import { myEnum } from '@/dev-config';
+import { getObjectId } from '@/helpers';
 
 import { LoginUser } from '../../login-user';
 import { BaseMapper } from '../_base';
@@ -188,8 +189,8 @@ export class CommentMapper {
   }) {
     let topId =
       opt.replyTopId instanceof Array
-        ? { $in: opt.replyTopId.map((ele) => Types.ObjectId(ele)) }
-        : Types.ObjectId(opt.replyTopId);
+        ? { $in: opt.replyTopId.map((ele) => getObjectId(ele)) }
+        : getObjectId(opt.replyTopId);
     let match = { _id: topId };
     let pipeline: any[] = [
       {

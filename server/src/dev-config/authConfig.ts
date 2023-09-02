@@ -46,7 +46,7 @@ export const dbAuthority = {
   },
 
   videoMgtDel: {
-    code: '视频管理删除',
+    name: '视频管理删除',
   },
   videoMgtAudit: {
     name: '视频管理审核',

@@ -1,7 +1,8 @@
 import { Type, Transform } from 'class-transformer';
 import { IsIn, IsArray, IsDefined, ArrayMinSize, IsInt } from 'class-validator';
 import { Types } from 'mongoose';
-import { arrayTransform, objectIdTransform } from './util';
+import { arrayTransform } from './util';
+import { TransformMongoId } from '../class-transformer';
 
 export class ListBase {
   @IsInt()
@@ -24,13 +25,13 @@ export class ListBase {
 
 export class DetailQueryBase {
   @IsDefined()
-  @Transform(objectIdTransform)
+  @TransformMongoId()
   _id: Types.ObjectId;
 }
 
 export class UpdateBase {
   @IsDefined()
-  @Transform(objectIdTransform)
+  @TransformMongoId()
   _id: Types.ObjectId;
 }
 

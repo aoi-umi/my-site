@@ -9,18 +9,19 @@ import { Types } from 'mongoose';
 import { Type, Transform } from 'class-transformer';
 
 import { myEnum } from '@/dev-config';
+import { TransformMongoId } from '@/valid-schema/class-transformer';
 
-import { arrayTransform, objectIdTransform } from '../util';
+import { arrayTransform } from '../util';
 
 export class DanmakuQuery {
   @IsDefined()
-  @Transform(objectIdTransform)
+  @TransformMongoId()
   videoId: Types.ObjectId;
 }
 
 export class DanmakuSubmit {
   @IsDefined()
-  @Transform(objectIdTransform)
+  @TransformMongoId()
   videoId: Types.ObjectId;
 
   @IsDefined()

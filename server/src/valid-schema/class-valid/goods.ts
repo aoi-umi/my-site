@@ -10,11 +10,11 @@ import {
 } from 'class-validator';
 import { Types } from 'mongoose';
 import { myEnum } from '@/dev-config';
-import { objectIdTransform } from './util';
 import { DetailQueryBase, ListBase, DelBase } from './base';
+import { TransformMongoId } from '../class-transformer';
 
 class Spu {
-  @Transform(objectIdTransform)
+  @TransformMongoId()
   _id: Types.ObjectId;
 
   @IsDefined()
@@ -112,7 +112,7 @@ export class GoodsQuery extends GoodsMgtQuery {}
 
 export class GoodsBuy {
   @IsDefined()
-  @Transform(objectIdTransform)
+  @TransformMongoId()
   skuId: Types.ObjectId;
 
   @IsDefined()

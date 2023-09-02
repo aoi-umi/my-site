@@ -21,7 +21,7 @@ export let submit: MyRequestHandler = async (opt) => {
   comment.ip = opt.myData.ip;
   await transaction(async (session) => {
     await comment.save({ session });
-    await owner.update({ commentCount: owner.commentCount + 1 });
+    await owner.updateOne({ commentCount: owner.commentCount + 1 });
   });
   let ret = {
     ...comment.toJSON(),
@@ -136,6 +136,7 @@ export let setAsTop: MyRequestHandler = async (opt) => {
       { isSetAsTop: false },
       { session },
     );
-    if (data.isSetAsTop) await detail.update({ isSetAsTop: true }, { session });
+    if (data.isSetAsTop)
+      await detail.updateOne({ isSetAsTop: true }, { session });
   });
 };

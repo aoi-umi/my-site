@@ -63,11 +63,24 @@ async function initRole() {
   }
 }
 
+// run this after user create
+async function setAdmin() {
+  let { UserModel } = await import('@/models/mongo/user');
+  let user = await UserModel.findOne().sort({ _id: 1 });
+  if (user) {
+    if (!user.roleList.includes(config.dev.rootRole)) {
+      console.log('设置admin');
+      await user.updateOne({ $push: { roleList: config.dev.rootRole } });
+    }
+  }
+}
+
 (async () => {
   await db.init(config.env.mongoose);
 
   await initAuthority();
   await initRole();
+  await setAdmin();
   console.log('运行结束');
 })()
   .catch((e) => {

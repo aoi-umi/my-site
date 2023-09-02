@@ -31,8 +31,11 @@ export let save: MyRequestHandler = async (opt) => {
     detail.status = data.status;
     await transaction(async (session) => {
       await detail.save({ session });
-      await self.update({ following: self.following + change }, { session });
-      await follow.update({ follower: follow.follower + change }, { session });
+      await self.updateOne({ following: self.following + change }, { session });
+      await follow.updateOne(
+        { follower: follow.follower + change },
+        { session },
+      );
     });
   }
 

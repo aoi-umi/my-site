@@ -30,14 +30,14 @@ const cfg: ConfigType = {
     uri: 'redis://localhost',
   },
   mongoose: {
-    uri: 'mongodb://localhost',
+    uri: 'mongodb://127.0.0.1',
     options: {
       useNewUrlParser: true,
       // autoReconnect: true,
-      useFindAndModify: false,
+      // useFindAndModify: false,
       dbName: 'devMgt',
-      useCreateIndex: true,
-      // useUnifiedTopology: true
+      // useCreateIndex: true,
+      useUnifiedTopology: true
     }
   },
   sequelize: {

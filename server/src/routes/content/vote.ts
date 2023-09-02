@@ -43,7 +43,7 @@ export let submit: MyRequestHandler = async (opt) => {
   }
   detail.value = data.value;
   await transaction(async (session) => {
-    await owner.update(updateOwner, { session });
+    await owner.updateOne(updateOwner, { session });
     await detail.save({ session });
   });
   return updateOwner;

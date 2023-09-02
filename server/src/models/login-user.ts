@@ -1,13 +1,13 @@
 import { Type, Transform } from 'class-transformer';
 import { Types } from 'mongoose';
 
-import { objectIdTransform } from '@/valid-schema/class-valid/util';
+import { TransformMongoId } from '@/valid-schema/class-transformer';
 
 export class LoginUser {
   isLogin: boolean;
   isDisabled: boolean;
 
-  @Transform(objectIdTransform)
+  @TransformMongoId()
   _id: Types.ObjectId;
   nickname: string;
   account: string;

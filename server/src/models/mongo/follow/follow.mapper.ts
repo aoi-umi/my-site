@@ -3,6 +3,7 @@ import { Types } from 'mongoose';
 import { myEnum } from '@/dev-config';
 import * as ValidSchema from '@/valid-schema/class-valid';
 import { escapeRegExp } from '@/_system/common';
+import { getObjectId } from '@/helpers';
 
 import { LoginUser } from '../../login-user';
 import { UserMapper } from '../user';
@@ -35,7 +36,7 @@ export class FollowMapper {
           pipeline: [
             {
               $match: {
-                userId: Types.ObjectId(opt.userId),
+                userId: getObjectId(opt.userId),
                 $expr: { $eq: ['$$followUserId', '$followUserId'] },
               },
             },

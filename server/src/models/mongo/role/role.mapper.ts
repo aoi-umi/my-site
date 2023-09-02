@@ -3,6 +3,7 @@ import { Types } from 'mongoose';
 import { myEnum } from '@/dev-config';
 import { escapeRegExp } from '@/_system/common';
 import * as ValidSchema from '@/valid-schema/class-valid';
+import { getObjectId } from '@/helpers';
 
 import { AuthorityModel } from '../authority';
 import { UserMapper } from '../user';
@@ -13,7 +14,7 @@ export class RoleMapper {
   static async codeExists(code: string, _id?: any) {
     let cond: any = { code };
     if (_id) {
-      cond._id = { $ne: Types.ObjectId(_id) };
+      cond._id = { $ne: getObjectId(_id) };
     }
     let rs = await RoleModel.findOne(cond);
     return rs;
@@ -23,7 +24,7 @@ export class RoleMapper {
     let query: any = BaseMapper.getLikeCond(data, ['name', 'code']);
     let noTotal = false;
     if (data._id) {
-      query._id = Types.ObjectId(data._id);
+      query._id = getObjectId(data._id);
       noTotal = true;
     }
 

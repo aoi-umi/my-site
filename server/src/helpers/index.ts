@@ -1,6 +1,6 @@
 import { Context, Next } from 'koa';
 import * as moment from 'dayjs';
-import { MongooseDocument, Error } from 'mongoose';
+import { MongooseDocument, Error, Types } from 'mongoose';
 import { ClassType } from 'class-transformer/ClassTransformer';
 import { plainToClass } from 'class-transformer';
 import { configure, getLogger } from 'log4js';
@@ -178,4 +178,8 @@ export let tryFn = function (fn) {
   } catch (e) {
     console.error('出错了', e);
   }
+};
+
+export let getObjectId = (id?) => {
+  return new Types.ObjectId(id);
 };

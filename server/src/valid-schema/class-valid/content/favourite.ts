@@ -8,13 +8,13 @@ import {
 } from 'class-validator';
 import { Types } from 'mongoose';
 import { myEnum } from '@/dev-config';
-import { objectIdTransform } from '../util';
 import { ListBase } from '../base';
 import { ContentQuery } from './content';
+import { TransformMongoId } from '@/valid-schema/class-transformer';
 
 export class FavouriteSubmit {
   @IsDefined()
-  @Transform(objectIdTransform)
+  @TransformMongoId()
   ownerId: Types.ObjectId;
 
   @IsDefined()

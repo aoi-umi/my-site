@@ -4,11 +4,11 @@ import { Types } from 'mongoose';
 
 import { myEnum } from '@/dev-config';
 import { ListBase, DelBase, UpdateBase } from '../base';
-import { objectIdTransform } from '../util';
+import { TransformMongoId } from '@/valid-schema/class-transformer';
 
 export class CommentSubmit {
   @IsDefined()
-  @Transform(objectIdTransform)
+  @TransformMongoId()
   ownerId: Types.ObjectId;
 
   @IsDefined()
@@ -16,10 +16,10 @@ export class CommentSubmit {
   // @MaxLength(1024)
   comment: string;
 
-  @Transform(objectIdTransform)
+  @TransformMongoId()
   quoteId: Types.ObjectId;
 
-  @Transform(objectIdTransform)
+  @TransformMongoId()
   topId: Types.ObjectId;
 
   @IsDefined()
@@ -30,13 +30,13 @@ export class CommentSubmit {
 
 export class CommentQuery extends ListBase {
   @IsDefined()
-  @Transform(objectIdTransform)
+  @TransformMongoId()
   ownerId: Types.ObjectId;
 
   @Type()
   type: number;
 
-  @Transform(objectIdTransform)
+  @TransformMongoId()
   topId?: Types.ObjectId;
 
   @Type()

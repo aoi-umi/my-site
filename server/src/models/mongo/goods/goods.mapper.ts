@@ -6,6 +6,7 @@ import { myEnum } from '@/dev-config';
 import * as ValidSchema from '@/valid-schema/class-valid';
 import { error, escapeRegExp } from '@/_system/common';
 import { transaction } from '@/_system/dbMongo';
+import { getObjectId } from '@/helpers';
 import { LoginUser } from '@/models/login-user';
 
 import { GoodsSpuModel, GoodsSpuInstanceType } from './goods-spu';
@@ -85,7 +86,7 @@ export class GoodsMapper {
     if (!detail.spu.putOnAt) detail.spu.putOnAt = new Date();
 
     detail.specGroup = data.specGroup.map((ele) => {
-      ele._id = Types.ObjectId();
+      ele._id = getObjectId();
       let obj = new GoodsSpecGroupModel(ele);
       obj.spuId = detail.spu._id;
       return obj;
@@ -100,7 +101,7 @@ export class GoodsMapper {
           });
         }
       } else {
-        ele._id = Types.ObjectId();
+        ele._id = getObjectId();
       }
       let obj = new GoodsSkuModel(ele);
       obj.spuId = detail.spu._id;
@@ -279,7 +280,7 @@ export class GoodsMapper {
     let { idList, includeUserId, status } = opt.cond;
     let cond: any = { _id: { $in: idList } };
     if (status !== undefined) cond.status = status;
-    if (includeUserId) cond.userId = Types.ObjectId(includeUserId as any);
+    if (includeUserId) cond.userId = getObjectId(includeUserId as any);
     let list = await GoodsSpuModel.find(cond);
     if (!list.length) throw error('', config.error.NO_MATCH_DATA);
     let bulk = [];
@@ -331,7 +332,7 @@ export class GoodsMapper {
         contactObj: { skuId: sku._id, quantity: data.quantity },
       },
     );
-    await sku.update({ saleQuantity: sku.saleQuantity + data.quantity });
+    await sku.updateOne({ saleQuantity: sku.saleQuantity + data.quantity });
     return payRs;
   }
 }

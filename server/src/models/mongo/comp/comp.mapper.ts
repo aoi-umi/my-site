@@ -127,7 +127,7 @@ export class CompMapper {
       ['name', 'text'].forEach((key) => {
         update[key] = data[key];
       });
-      await detail.update(update);
+      await detail.updateOne(update);
     }
     return detail;
   }

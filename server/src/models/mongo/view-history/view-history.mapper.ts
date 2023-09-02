@@ -28,7 +28,7 @@ export class ViewHistoryMapper {
         update.type = data.type;
       }
     }
-    if (match) await match.update(update);
+    if (match) await match.updateOne(update);
     else await ViewHistoryModel.create({ ...matchCond, viewAt: new Date() });
   }
 

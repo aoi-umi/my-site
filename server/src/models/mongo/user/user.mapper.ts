@@ -6,6 +6,8 @@ import * as common from '@/_system/common';
 import { myEnum } from '@/dev-config/enum';
 import * as config from '@/dev-config';
 import * as ValidSchema from '@/valid-schema/class-valid';
+import { ThirdPartyAuthMapper } from '@/3rd-party';
+import { getObjectId } from '@/helpers';
 
 import { LoginUser } from '../../login-user';
 import { AuthorityModel } from '../authority';
@@ -18,7 +20,6 @@ import { UserLogModel } from './user-log';
 import { UserDocType, UserModel, UserInstanceType } from './user';
 import { VideoModel } from '../video';
 import { OauthModel } from '../oauth';
-import { ThirdPartyAuthMapper } from '@/3rd-party';
 
 export type UserResetOption = {
   imgHost?: string;
@@ -57,7 +58,7 @@ export class UserMapper {
     let query: any = BaseMapper.getLikeCond(data, ['nickname', 'account']);
     let noTotal = false;
     if (data._id) {
-      query._id = Types.ObjectId(data._id);
+      query._id = getObjectId(data._id);
       noTotal = true;
     }
 
@@ -334,7 +335,11 @@ export class UserMapper {
       lastLoginAt,
     };
     UserMapper.resetDetail(rtn, opt.resetOpt);
-    return plainToClass(LoginUser, rtn);
+    console.log(rtn._id);
+    let loginUser = plainToClass(LoginUser, rtn);
+    console.log(rtn._id);
+    console.log(loginUser._id);
+    return loginUser;
   }
 
   static resetDetail(detail, opt: UserResetOption) {
@@ -379,7 +384,7 @@ export class UserMapper {
       }
     });
     if (!common.isObjectEmpty(update)) {
-      await detail.update(update);
+      await detail.updateOne(update);
     }
   }
 
