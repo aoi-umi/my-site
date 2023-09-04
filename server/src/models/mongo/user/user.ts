@@ -19,6 +19,7 @@ import { pagination, IPagination } from '../_plugins/pagination';
 export type UserInstanceType = InstanceType<User>;
 export type UserModelType = ModelType<User, typeof User>;
 export type UserDocType = DocType<UserInstanceType>;
+
 @setSchema({
   schemaOptions: {
     toJSON: {
