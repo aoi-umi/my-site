@@ -9,7 +9,7 @@ import { ViewHistoryModel } from './view-history';
 
 export class ViewHistoryMapper {
   static async save(
-    data: { ownerId: Types.ObjectId; type: number },
+    data: { ownerId: Types.ObjectId | any; type: number },
     user: LoginUser,
   ) {
     let matchCond = {

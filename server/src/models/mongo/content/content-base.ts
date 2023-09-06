@@ -19,7 +19,9 @@ export type ContentBaseInstanceType = InstanceType<ContentBase>;
 export type ContentBaseDocType = DocType<ContentBaseInstanceType>;
 export type ContentBaseModelType = ModelType<
   ContentBase,
-  typeof ContentBase & IPagination<ContentBase>
+  Omit<typeof ContentBase, never> &
+    (new (...args) => ContentBase) &
+    IPagination<ContentBase>
 >;
 
 @setSchema()

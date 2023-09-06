@@ -60,5 +60,5 @@ export let save: MyRequestHandler = async (opt) => {
 export let del: MyRequestHandler = async (opt) => {
   let data = paramsValid(opt.reqData, ValidSchema.BookmarkDel);
   let rs = await BookmarkModel.deleteMany({ _id: { $in: data.idList } });
-  if (!rs.n) throw error('', config.error.NO_MATCH_DATA);
+  if (!rs.deletedCount) throw error('', config.error.NO_MATCH_DATA);
 };

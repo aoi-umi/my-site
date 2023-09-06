@@ -67,7 +67,13 @@ export class NotifyMapper {
       },
     );
     let rows = rs.rows.map((ele) => {
-      let obj = new NotifyModel(ele).toJSON();
+      let data = new NotifyModel(ele).toJSON();
+      let obj = data as typeof data & {
+        assetLog?: {
+          status: any;
+          statusText: string;
+        };
+      };
       if (ele.assetLog) {
         obj.assetLog = {
           status: ele.assetLog.status,

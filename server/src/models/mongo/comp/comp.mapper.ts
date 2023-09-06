@@ -74,7 +74,11 @@ export class CompMapper {
       sort: 1,
     });
     let moduleListDoc = moduleList.map((ele) => {
-      let json = ele.toJSON();
+      let data = ele.toJSON();
+      let json = data as typeof data & {
+        itemList?: typeof itemList;
+        buttonList?: typeof buttonList;
+      };
       json.itemList = itemList.filter((cfg) => cfg.moduleId.equals(ele._id));
       json.buttonList = buttonList.filter((cfg) =>
         cfg.moduleId.equals(ele._id),

@@ -13,6 +13,7 @@
       "./src/typings",
       "./config"
     ],
+    "types": [],
     "sourceMap": true,
     //"noImplicitAny": false,
     //"strict": false,

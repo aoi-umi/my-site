@@ -56,7 +56,10 @@ export class PrintMapper {
       _id: rsData.filter((ele) => ele.userId).map((ele) => ele.userId),
     });
     return rsData.map((ele) => {
-      let obj = ele.toJSON();
+      let data = ele.toJSON();
+      let obj = data as typeof data & {
+        user?: string;
+      };
       let u = user.find((u) => u._id.equals(ele.userId));
       obj.user = u?.account || '';
       return obj;

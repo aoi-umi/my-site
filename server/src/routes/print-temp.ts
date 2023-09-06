@@ -26,7 +26,7 @@ export const mgtSave: MyRequestHandler = async (opt) => {
 export const mgtDel: MyRequestHandler = async (opt) => {
   let data = paramsValid(opt.reqData, ValidSchema.PrintDel);
   let rs = await PrintModel.deleteMany({ _id: { $in: data.idList } });
-  if (!rs.n) throw error('', config.error.NO_MATCH_DATA);
+  if (!rs.deletedCount) throw error('', config.error.NO_MATCH_DATA);
 };
 
 export const mgtExport: MyRequestHandler = async (opt) => {

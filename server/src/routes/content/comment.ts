@@ -114,7 +114,7 @@ export let del: MyRequestHandler = async (opt) => {
   let rs = await CommentModel.updateMany(match, {
     status: config.myEnum.commentStatus.已删除,
   });
-  if (!rs.n) throw error('', config.error.NO_MATCH_DATA);
+  if (!rs.upsertedCount) throw error('', config.error.NO_MATCH_DATA);
 };
 
 export let setAsTop: MyRequestHandler = async (opt) => {

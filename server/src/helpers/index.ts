@@ -1,6 +1,6 @@
 import { Context, Next } from 'koa';
 import * as moment from 'dayjs';
-import { MongooseDocument, Error, Types } from 'mongoose';
+import { Error, Types, Document } from 'mongoose';
 import { ClassType } from 'class-transformer/ClassTransformer';
 import { plainToClass } from 'class-transformer';
 import { configure, getLogger } from 'log4js';
@@ -117,9 +117,7 @@ export function paramsValid(data, schema?) {
 /**
  * mongoose数据模型验证
  */
-export let mongooseValid = function (dict: {
-  [key: string]: MongooseDocument;
-}) {
+export let mongooseValid = function (dict: { [key: string]: Document }) {
   let list = [];
   let invalid = false;
   for (let key in dict) {

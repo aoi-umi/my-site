@@ -79,7 +79,12 @@ export class PayMapper {
       },
     );
     let rows = rs.rows.map((ele) => {
-      let obj = new PayModel(ele).toJSON();
+      let data = new PayModel(ele).toJSON();
+      let obj = data as typeof data & {
+        user?: any;
+        orderNo?: string;
+        outOrderNo?: string;
+      };
       UserMapper.resetDetail(ele.user, { imgHost: opt.imgHost });
       obj.user = ele.user;
       obj.orderNo = ele.assetLog.orderNo;
@@ -145,7 +150,9 @@ export class PayMapper {
       let sku = await GoodsSkuModel.findById(pay.contactObj.skuId);
       if (sku) {
         let saleQuantity = sku.saleQuantity - pay.contactObj.quantity;
-        await sku.updateOne({ saleQuantity: saleQuantity < 0 ? 0 : saleQuantity });
+        await sku.updateOne({
+          saleQuantity: saleQuantity < 0 ? 0 : saleQuantity,
+        });
       }
     }
   }
