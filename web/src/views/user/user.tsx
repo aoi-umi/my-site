@@ -531,9 +531,6 @@ export default class UserInfo extends Base {
           <FormItem label="角色">
             <RoleTag value={detail.roleList} hideCode />
           </FormItem>
-          <FormItem label="权限">
-            <AuthorityTag value={detail.authorityList} hideCode />
-          </FormItem>
           <FormItem label="可用权限">
             <AuthorityTag value={Object.values(detail.auth)} hideCode />
           </FormItem>
