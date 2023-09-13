@@ -89,7 +89,6 @@ class UserMgtDetail extends Vue<UserMgtDetailProp, Base> {
   $refs: {
     formVaild: iView.Form
     roleTransfer: RoleTransfer
-    authTransfer: AuthorityTransfer
   }
   private disableType = myEnum.userDisableType.解封
   private password = ''
@@ -101,14 +100,10 @@ class UserMgtDetail extends Vue<UserMgtDetailProp, Base> {
       const detail = this.innerDetail
       let rs
       if (this.type == myEnum.userEditType.修改) {
-        const { addList: addAuthList, delList: delAuthList } =
-          this.$refs.authTransfer.getChangeData('key')
         const { addList: addRoleList, delList: delRoleList } =
           this.$refs.roleTransfer.getChangeData('key')
         rs = await testApi.userMgtSave({
           _id: detail._id,
-          addAuthList,
-          delAuthList,
           addRoleList,
           delRoleList,
           password: this.password,
@@ -133,7 +128,7 @@ class UserMgtDetail extends Vue<UserMgtDetailProp, Base> {
         <h3>{myEnum.userEditType.getKey(this.type)}</h3>
         <br />
         <Form
-          label-width={60}
+          label-width={80}
           ref="formVaild"
           props={{ model: detail }}
           rules={this.rules}
@@ -153,12 +148,6 @@ class UserMgtDetail extends Vue<UserMgtDetailProp, Base> {
                 <RoleTransfer
                   ref="roleTransfer"
                   selectedData={detail.roleList}
-                />
-              </FormItem>
-              <FormItem label="权限">
-                <AuthorityTransfer
-                  ref="authTransfer"
-                  selectedData={detail.authorityList}
                 />
               </FormItem>
             </div>
@@ -290,13 +279,6 @@ export default class UserMgt extends Base {
         },
       },
       {
-        title: '权限',
-        key: 'authorityList',
-        render: (h, params) => {
-          return <AuthorityTag value={params.row.authorityList} />
-        },
-      },
-      {
         title: '创建时间',
         key: 'createdAt',
         sortable: 'custom' as any,
@@ -341,7 +323,12 @@ export default class UserMgt extends Base {
   protected render() {
     return (
       <div>
-        <Modal v-model={this.detailShow} footer-hide mask-closable={false}>
+        <Modal
+          v-model={this.detailShow}
+          footer-hide
+          mask-closable={false}
+          width={600}
+        >
           <UserMgtDetail
             type={this.editType}
             detail={this.detail}

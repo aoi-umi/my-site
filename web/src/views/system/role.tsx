@@ -102,7 +102,7 @@ class RoleDetail extends Vue<RoleDetailProp, Base> {
         <h3>{detail._id ? '修改' : '新增'}</h3>
         <br />
         <Form
-          label-width={50}
+          label-width={60}
           ref="formVaild"
           props={{ model: detail }}
           rules={this.rules}
@@ -217,7 +217,14 @@ export default class Role extends Base {
 
   private getOp(detail) {
     let operate: OperateDataType[] = []
-    if (this.storeUser.user.hasAuth(authority.roleSave)) {
+    operate = [
+      ...operate,
+      {
+        text: '查看',
+        fn: () => {},
+      },
+    ]
+    if (detail.canEdit && this.storeUser.user.hasAuth(authority.roleSave)) {
       operate = [
         ...operate,
         {
@@ -235,7 +242,7 @@ export default class Role extends Base {
         },
       ]
     }
-    if (this.storeUser.user.hasAuth(authority.roleDel)) {
+    if (detail.canEdit && this.storeUser.user.hasAuth(authority.roleDel)) {
       operate.push({
         text: '删除',
         fn: () => {

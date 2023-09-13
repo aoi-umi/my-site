@@ -7,10 +7,12 @@ import {
   prop,
   arrayProp,
   setMethod,
+  setPlugin,
 } from 'mongoose-ts-ua';
 import { Types, SchemaTypes } from 'mongoose';
 
 import { Base } from '../_base';
+import { IPagination, pagination } from '../_plugins/pagination';
 
 export type UserLogInstanceType = InstanceType<UserLog>;
 export type UserLogModelType = ModelType<UserLog, typeof UserLog>;
@@ -22,6 +24,7 @@ export type UserLogDocType = DocType<UserLogInstanceType>;
     },
   },
 })
+@setPlugin(pagination)
 export class UserLog extends Base {
   @prop({
     required: true,
@@ -47,4 +50,7 @@ export class UserLog extends Base {
   oldData: any;
 }
 
-export const UserLogModel = getModelForClass<UserLog, typeof UserLog>(UserLog);
+export const UserLogModel = getModelForClass<
+  UserLog,
+  typeof UserLog & IPagination<UserLog>
+>(UserLog);

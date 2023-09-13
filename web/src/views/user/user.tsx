@@ -30,6 +30,7 @@ import { ThirdPartyLogin } from './user-sign'
 import { FavouriteList } from './favourite'
 import { FollowList } from './follow'
 import { UserCommentList } from './userComment'
+import { LogList } from './log'
 
 import './user.less'
 import { routerConfig } from '@/router'
@@ -404,6 +405,16 @@ export default class UserInfo extends Base {
           }}
         >
           <TabPane label="概览">{this.renderUserDetail()}</TabPane>
+          {detail.self && (
+            <TabPane
+              name={myEnum.userTab.日志}
+              label={() => {
+                return <div>日志</div>
+              }}
+            >
+              <LogList ref={myEnum.userTab.日志} userId={this.detail._id} />
+            </TabPane>
+          )}
           <TabPane
             name={myEnum.userTab.视频}
             label={() => {

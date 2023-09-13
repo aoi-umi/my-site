@@ -62,11 +62,6 @@ export class User extends Base {
   @arrayProp({
     type: String,
   })
-  authorityList: string[];
-
-  @arrayProp({
-    type: String,
-  })
   roleList: string[];
 
   @prop({

@@ -72,9 +72,8 @@ export class UserMapper {
           $or: [
             { nickname: anykey },
             { account: anykey },
-            { authorityList: anykey },
-            { 'newAuthorityList.code': anykey },
-            { 'newAuthorityList.name': anykey },
+            { 'newRoleList.newAuthorityList.code': anykey },
+            { 'newRoleList.newAuthorityList.name': anykey },
             { 'newRoleList.code': anykey },
             { 'newRoleList.name': anykey },
           ],
@@ -100,9 +99,8 @@ export class UserMapper {
         ...and2,
         {
           $or: [
-            { authorityList: authority },
-            { 'newAuthorityList.code': authority },
-            { 'newAuthorityList.name': authority },
+            { 'newRoleList.newAuthorityList.code': authority },
+            { 'newRoleList.newAuthorityList.name': authority },
           ],
         },
       ];
@@ -121,25 +119,6 @@ export class UserMapper {
       {
         $project: {
           password: 0,
-        },
-      },
-      {
-        $lookup: {
-          from: AuthorityModel.collection.collectionName,
-          let: {
-            authorityList: '$authorityList',
-          },
-          pipeline: [
-            {
-              $match: {
-                $expr: { $in: ['$code', '$$authorityList'] },
-              },
-            },
-            {
-              $project: authProject,
-            },
-          ],
-          as: 'newAuthorityList',
         },
       },
       {
@@ -203,15 +182,6 @@ export class UserMapper {
       delete obj.wxOpenId;
       //可用权限
       let auth = {};
-      let authorityList = ele.newAuthorityList;
-      authorityList.forEach((authority) => {
-        if (authority.status == myEnum.authorityStatus.启用)
-          auth[authority.code] = authority;
-      });
-      if (data.includeDelAuth) {
-        UserMapper.setDelAuthOrRole(authorityList, ele.authorityList);
-      }
-      obj.authorityList = authorityList;
 
       let roleList = ele.newRoleList;
       roleList.forEach((role) => {
@@ -335,10 +305,7 @@ export class UserMapper {
       lastLoginAt,
     };
     UserMapper.resetDetail(rtn, opt.resetOpt);
-    console.log(rtn._id);
     let loginUser = plainToClass(LoginUser, rtn);
-    console.log(rtn._id);
-    console.log(loginUser._id);
     return loginUser;
   }
 
@@ -491,5 +458,15 @@ export class UserLogMapper {
     }
     log.remark = remark;
     return log;
+  }
+
+  static async query(data: ValidSchema.UserLogQuery) {
+    let match: any = {};
+    if (data.userId) match.userId = data.userId;
+
+    return await UserLogModel.findAndCountAll({
+      conditions: match,
+      ...BaseMapper.getListOptions(data),
+    });
   }
 }

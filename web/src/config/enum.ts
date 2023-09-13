@@ -196,6 +196,7 @@ const enumDefineFront = {
     收藏: 'favourite',
     评论: 'comment',
     回复评论: 'replyComment',
+    日志: 'log',
   },
   chatSendStatus: {
     发送中: 0,

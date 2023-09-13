@@ -9,7 +9,7 @@ import {
   setPlugin,
 } from 'mongoose-ts-ua';
 
-import { myEnum } from '@/dev-config/enum';
+import { myEnum, dev } from '@/dev-config';
 
 import { Base } from '../_base';
 import { pagination, IPagination } from '../_plugins/pagination';
@@ -56,6 +56,11 @@ export class Role extends Base {
     type: String,
   })
   authorityList: string[];
+
+  @prop()
+  get canEdit() {
+    return !(this.code === dev.rootRole);
+  }
 }
 
 export const RoleModel = getModelForClass<

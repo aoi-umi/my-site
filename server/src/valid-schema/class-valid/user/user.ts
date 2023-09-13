@@ -68,6 +68,10 @@ export class UserUpdate {
 
   token: string;
 }
+
+export class UserLogQuery extends ListBase {
+  userId: any;
+}
 export class UserUnbind {
   @IsIn(myEnum.oauthName.getAllValue())
   @IsDefined()

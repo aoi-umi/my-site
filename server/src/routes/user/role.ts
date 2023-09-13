@@ -1,4 +1,5 @@
 import { paramsValid } from '@/helpers';
+import * as common from '@/_system/common';
 import { error } from '@/_system/common';
 import * as config from '@/dev-config';
 import * as ValidSchema from '@/valid-schema/class-valid';
@@ -45,6 +46,7 @@ export let save: MyRequestHandler = async (opt) => {
   } else {
     detail = await RoleModel.findById(data._id);
     if (!detail) throw error('not exists');
+    if (!detail.canEdit) throw common.error('不可修改此账号');
     let update: any = {};
     ['name', 'code', 'status'].forEach((key) => {
       update[key] = data[key];

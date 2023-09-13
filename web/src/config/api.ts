@@ -76,6 +76,11 @@ let test: TestApiConfigType = {
       method: 'get',
     },
 
+    userLogQuery: {
+      url: '/user/log/query',
+      method: 'get',
+    },
+
     bookmarkQuery: {
       url: '/bookmark/query',
       method: 'GET',

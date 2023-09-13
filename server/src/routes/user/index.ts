@@ -68,6 +68,11 @@ router.post(
   UserAuthMid.normal([auth.login]),
   MyRequestHandlerMid.convert(user.update),
 );
+router.get(
+  '/user/log/query',
+  UserAuthMid.normal([auth.login]),
+  MyRequestHandlerMid.convert(user.logQuery),
+);
 router.post(
   '/user/unbind',
   UserAuthMid.normal([auth.login]),

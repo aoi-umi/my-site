@@ -117,6 +117,15 @@ export let update: MyRequestHandler = async (opt) => {
   return updateCache;
 };
 
+export let logQuery: MyRequestHandler = async (opt) => {
+  let user = opt.myData.user;
+  let data = paramsValid(opt.reqData, ValidSchema.UserLogQuery);
+  return UserLogMapper.query({
+    ...data,
+    userId: user._id,
+  });
+};
+
 export let unbind: MyRequestHandler = async (opt) => {
   let data = paramsValid(opt.reqData, ValidSchema.UserUnbind);
   let user = opt.myData.user;
@@ -184,28 +193,16 @@ export let mgtSave: MyRequestHandler = async (opt) => {
   let update: any = {};
 
   let remark = '';
-  if (data.delAuthList?.length) {
-    detail.authorityList = detail.authorityList.filter(
-      (ele) => !data.delAuthList.includes(ele),
-    );
-    remark += `[删除了权限:${data.delAuthList.join(',')}]`;
-  }
   if (data.delRoleList?.length) {
     detail.roleList = detail.roleList.filter(
       (ele) => !data.delRoleList.includes(ele),
     );
     remark += `[删除了角色:${data.delRoleList.join(',')}]`;
   }
-
-  if (data.addAuthList?.length) {
-    detail.authorityList = [...detail.authorityList, ...data.addAuthList];
-    remark += `[增加了权限:${data.addAuthList.join(',')}]`;
-  }
   if (data.addRoleList?.length) {
     detail.roleList = [...detail.roleList, ...data.addRoleList];
     remark += `[增加了角色:${data.addRoleList.join(',')}]`;
   }
-  update.authorityList = detail.authorityList;
   update.roleList = detail.roleList;
 
   if (data.password) {
