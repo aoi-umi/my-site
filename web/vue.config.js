@@ -18,7 +18,7 @@ function getCdn(commonCfg, cfg) {
   return rs
 }
 let cdnOpt = {
-  urlPrefix: env.URL_PREFIX || (isProd ? 'http://static.sellfishboy.top/cdn' : 'https://cdn.jsdelivr.net/npm'),
+  urlPrefix: env.URL_PREFIX || (isProd ? 'http://144.202.99.178:8888/cdn' : 'https://cdn.jsdelivr.net/npm'),
   css: {
     'view-design/dist/styles/iview.css': {
       package: 'view-design',
